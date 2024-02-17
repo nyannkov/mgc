@@ -7,7 +7,7 @@ mgcは、マイコン上で動作する小規模なゲームを開発するた�
 
 <div style="display: flex;">
   <img src="samples/platformer/img/lcd+controller.jpg" style="width: 35%;">
-  <img src="samples/platformer/img/platformer.gif" style="width: 40%;">
+  <img src="samples/platformer/img/platformer.gif" style="width: 100%;">
 </div>
 
 プログラム: [samples/platformer](samples/platformer)
