@@ -118,7 +118,7 @@ def gen_fontset_c_file(args):
         f.write('\n')
                 
         ofs_addr = 0
-        f.write('static const struct mgc_glyph glyph[] = {\n')
+        f.write('static const mgc_glyph_t glyph[] = {\n')
         for glyph in bdf_glyph_info_list:
             f.write('    /* {} */ '.format(glyph['STARTCHAR']))
             f.write('{')
@@ -141,7 +141,7 @@ def gen_fontset_c_file(args):
         f.write('};')
         f.write('\n')
         f.write('\n')
-        f.write('const struct mgc_font {} = {{\n'.format(filename))
+        f.write('const mgc_font_t {} = {{\n'.format(filename))
         f.write('    .name = "{}",\n'.format(bdf_global_font_info['FONT'][0]))
         f.write('    .fbb_x = {},\n'.format(bdf_global_font_info['FONTBOUNDINGBOX'][0]))
         f.write('    .fbb_y = {},\n'.format(bdf_global_font_info['FONTBOUNDINGBOX'][1]))
@@ -189,7 +189,7 @@ def gen_fontset_h_file(args):
         f.write('\n')
 
         # Extern tile instance
-        f.write('extern const struct mgc_font {};\n'.format(entity_name))
+        f.write('extern const mgc_font_t {};\n'.format(entity_name))
         f.write('\n')
         
         # End of extern "C"
@@ -203,10 +203,13 @@ def gen_fontset_h_file(args):
     
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('fontfile', help='Set bitmap file path.')
-    parser.add_argument('-d', '--dir',  help='Destination directory.')
-    parser.add_argument('-s', '--subsettext', help='font subset file path.')
+    parser = argparse.ArgumentParser(description='''\
+    This script is a utility for handling font data with mgc. It converts BDF format font files to mgc_font_t structure constants and generates them as C language source code. 
+    It can also subset font data using a specified text file.
+    ''', formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('fontfile', help='Set the path to the BDF font data file.')
+    parser.add_argument('-d', '--dir',  help='Set the output directory.')
+    parser.add_argument('-s', '--subsettext', help='Set the path to the font subset file.')
     args = parser.parse_args()
 
     if args.dir:
