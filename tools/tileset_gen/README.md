@@ -12,8 +12,8 @@
 
 
 <div style="display: flex;">
-  <img src="img/ex_tile_count.bmp" style="width: 100%;">
-  <img src="img/ex_tile_width_height.bmp" style="width: 100%;">
+  <img src="img/ex_tile_count.bmp" style="width: 30%;">
+  <img src="img/ex_tile_width_height.bmp" style="width: 30%;">
 </div>
 
 
