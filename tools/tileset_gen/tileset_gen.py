@@ -47,7 +47,7 @@ def gen_tileset_h_file(args):
         f.write('\n')
 
         # Extern tile instance
-        f.write('extern const struct mgc_tileset {};\n'.format(entity_name))
+        f.write('extern const mgc_tileset_t {};\n'.format(entity_name))
         f.write('\n')
         
         # End of extern "C"
@@ -139,7 +139,7 @@ def gen_tileset_c_file(args):
 
         # Declare tileset instance
         text = '\n'.join([
-            'const struct mgc_tileset {} = {{'.format(entity_name),
+            'const mgc_tileset_t {} = {{'.format(entity_name),
             '    .pixel_format = MGC_{},'.format(pixel_format),
             '    .tile_width = {},'.format(tile_width),
             '    .tile_height = {},'.format(tile_height),
@@ -153,13 +153,13 @@ def gen_tileset_c_file(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('bitmapfile', help='Set bitmap file path.')
-    parser.add_argument('-w', '--width', default=16, type=int, help='Set tile width.')
-    parser.add_argument('-H', '--height', default=16, type=int, help='Set tile height.')
-    parser.add_argument('-c', '--count', default=0, type=int, help='Set tile count.')
-    parser.add_argument('-p', '--pixelformat',default='RGB565',  help='Set pixel format.')
-    parser.add_argument('-d', '--dir',  help='Destination directory.')
+    parser = argparse.ArgumentParser(description='Utility to convert bitmap images into mgc_tileset_t structure constants in C source code.')
+    parser.add_argument('bitmapfile', help='Set the path of the bitmap file.')
+    parser.add_argument('-w', '--width', default=16, type=int, help='Set the width of each tile. Default is 16 pixels.')
+    parser.add_argument('-H', '--height', default=16, type=int, help='Set the height of each tile. Default is 16 pixels.')
+    parser.add_argument('-c', '--count', default=0, type=int, help='Set the number of tiles. If not specified, it will be calculated based on the image dimensions and tile size.')
+    parser.add_argument('-p', '--pixelformat',default='RGB565',  help='Set the pixel format.')
+    parser.add_argument('-d', '--dir',  help='Set the destination directory to save the generated files.')
 
     args = parser.parse_args()
     image = Image.open(args.bitmapfile)
