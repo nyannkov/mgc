@@ -23,20 +23,19 @@
 python3 tileset_gen.py ./img/ex_tile_count.bmp --dir ./generates --width 16 --height 16 --count 11
 ```
 
-この例では、ビットマップ画像ex_tile_count.bmpを、幅16px、高さ16pxのタイル11個を
-mgc_tileset_t構造体定数に変換し、C言語のソースコードとして./generatesに保存します。
+この例では、ビットマップ画像ex_tile_count.bmpから、幅が16px、高さが16pxである11個のタイルを
+mgc_tileset_t構造体定数に変換し、./generatesにC言語のソースコードとして保存します。
 
 
-width, heightのデフォルト値はいずれも16pxです。また、countを省略すると、以下の計算式の値を
-count値として取り扱われます。
-
+width, heightオプションにはそれぞれタイルの幅、高さを指定します。これらのデフォルト値はいずれも16pxです。
+countオプションには、ビットマップ画像内のタイル数を指定します。countを省略すると、以下の計算式でタイル数が算出されます。
 
 ```python
 count = (bitmap_width//tile_width)*(bitmap_height//tile_height)
 ```
 
-さらに、countとして1を指定した場合、タイルの幅および高さは強制的にビットマップ画像の幅、高さに変換されます。
-以下に例では、タイルの幅および高さはデフォルト値の16pxではなく、ビットマップ画像の幅および高さとなります。
+また、countオプションに1を指定した場合、タイルの幅および高さは、それぞれ強制的にビットマップ画像の幅、高さに変換されます。
+以下の例では、タイルの幅および高さは、それぞれ、ビットマップ画像の幅および高さになります。
 
 ```bash
 python3 tileset_gen.py ./img/ex_count_1.bmp --dir ./generates --count 1
@@ -44,5 +43,5 @@ python3 tileset_gen.py ./img/ex_count_1.bmp --dir ./generates --count 1
 
 ## 注意
 
-取り扱えるビットマップ画像はインデックスカラー形式のみとなります。
-また、mgcでは、インデックス番号0の色は透明色として取り扱われます。
+ - スクリプトで読み込み可能なビットマップ画像は、インデックスカラー形式のみとなります。
+ - インデックス番号0の色は、透明色として取り扱われます。

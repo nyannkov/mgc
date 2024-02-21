@@ -29,7 +29,7 @@ def gen_tilemap_h_file(args):
         f.write('\n')
 
         # Extern tile instance
-        f.write('extern const struct mgc_map {};\n'.format(entity_name))
+        f.write('extern const mgc_map_t {};\n'.format(entity_name))
         f.write('\n')
 
         # End of extern "C"
@@ -127,7 +127,7 @@ def gen_tilemap_c_file(args):
         # Declare tileset instance
         comp_type = 'MGC_MAP_COMPRESSION_RUN_LENGTH' if args.compression == 'runlength' else 'MGC_MAP_COMPRESSION_NONE'
         text = '\n'.join([
-            'const struct mgc_map {} = {{'.format(entity_name),
+            'const mgc_map_t {} = {{'.format(entity_name),
             '    .map = map,',
             '    .cell_count = sizeof(map)/sizeof(map[0]),',
             '    .map_width = {},'.format(map_width),
@@ -139,11 +139,10 @@ def gen_tilemap_c_file(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('mapfile', help='Set csv file path to create map.')
-    parser.add_argument('-d', '--dir',  help='Destination directory.')
-    parser.add_argument('-c', '--compression',  choices=['none', 'runlength'], default='none', help='')
-
+    parser = argparse.ArgumentParser(description='Convert CSV map file to C source code for mgc.')
+    parser.add_argument('mapfile', help='Specify the path to the CSV file containing map data.')
+    parser.add_argument('-d', '--dir',  help='Specify the destination directory to save the generated files.')
+    parser.add_argument('-c', '--compression',  choices=['none', 'runlength'], default='none', help='Specify the compression method for the generated map array. Choose between "none" (no compression) or "runlength" (run-length compression). Default is "none".')
     args = parser.parse_args()
 
     if args.dir:
