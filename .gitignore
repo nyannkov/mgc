@@ -10,6 +10,8 @@
 /examples/label/hello_label/resources/generates/
 /examples/tilemap/hello_tilemap/build/
 /examples/tilemap/hello_tilemap/resources/generates/
+/examples/sprhit/hello_sprhit/build/
+/examples/sprhit/hello_sprhit/resources/generates/
 
 # Prerequisites
 *.d
