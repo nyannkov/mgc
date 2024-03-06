@@ -35,6 +35,10 @@ typedef uint16_t mgc_id_t;
 #define MGC_DEFAULT_ENABLED     true
 #endif/*MGC_DEFAULT_ENABLED*/
 
+#ifndef MGC_ABS
+#define MGC_ABS(x)              (((x) >= 0) ? (x) : ((x)*-1))
+#endif/*MGC_ABS*/
+
 #define MGC_CELL_LEN_LOG2       (4)
 #define MGC_CELL_LEN            (1<<MGC_CELL_LEN_LOG2)
 #define MGC_CELL_LEN_MOD        (MGC_CELL_LEN-1)
