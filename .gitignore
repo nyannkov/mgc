@@ -3,15 +3,8 @@
 !/fonts/.gitkeep
 /samples/platformer/build/
 /samples/platformer/resources/generates/
-/examples/pixelbuffer/hello_pixelbuffer/build/
-/examples/sprite/hello_sprite/build/
-/examples/sprite/hello_sprite/resources/generates/
-/examples/label/hello_label/build/
-/examples/label/hello_label/resources/generates/
-/examples/tilemap/hello_tilemap/build/
-/examples/tilemap/hello_tilemap/resources/generates/
-/examples/sprhit/hello_sprhit/build/
-/examples/sprhit/hello_sprhit/resources/generates/
+/examples/**/resources/generates/
+/examples/**/build/
 
 # Prerequisites
 *.d
