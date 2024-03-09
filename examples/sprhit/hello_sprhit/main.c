@@ -4,7 +4,6 @@
  *
  * Copyright (c) 2024 nyannkov
  */
-#include <stdlib.h>
 #include "mgc/mgc.h"
 #include "system/system.h"
 #include "resources/generates/tileset/tileset_balls_32x32.h"
