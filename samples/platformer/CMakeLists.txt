@@ -23,7 +23,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     screen/main/scenes/scene_001.cpp
     screen/main/scenes/scene_002.cpp
     screen/main/scenes/scenes.cpp
-    screen/sub/dlghdr_sub_screen.c
+    screen/sub/dlgflow_handler_sub_screen.c
     screen/sub/scenes/scene_sub.cpp
     actor/actor_if.cpp
     actor/static_object.cpp

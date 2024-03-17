@@ -35,7 +35,7 @@ private:
     mgc_tilemap tilemap_bg_;
     mgc_maphit maphit_;
     mgc_sprhit sprhit_;
-    mgc_dlgctrl dlgctrl_;
+    mgc_dlgflow dlgflow_;
     SceneState scene_state_;
     int16_t cell_mask_;
     void init_components(SceneId prev_id);

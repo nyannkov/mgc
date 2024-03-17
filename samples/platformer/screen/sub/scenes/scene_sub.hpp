@@ -19,11 +19,13 @@ struct SceneSub {
 private:
     mgc_pixelbuffer pixelbuffer_;
     mgc_dialoguebox dialoguebox_;
-    mgc_selectbox yesnobox_;
+    mgc_selectbox selectbox_;
     mgc_label label_frame_rate_;
     mgc_sprite sprte_life_;
     char str_frame_rate_[32];
     bool all_draw_flag_;
+    bool proc_dialoguebox_flag_;
+    bool proc_selectbox_flag_;
     void init_components();
     void update_frame_rate();
 };

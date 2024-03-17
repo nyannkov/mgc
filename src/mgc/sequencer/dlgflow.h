@@ -16,7 +16,7 @@ extern "C" {
 #include "dlgflow_if.h"
 
 enum mgc_dlgflow_state {
-    MGC_DLG_FLOW_INIT,
+    MGC_DLG_FLOW_STOP,
     MGC_DLG_FLOW_READY,
     MGC_DLG_FLOW_ERROR,
     MGC_DLG_FLOW_NODE_PROGRESSING,
@@ -36,6 +36,7 @@ void dlgflow_init(mgc_dlgflow_t *dlgflow, const mgc_dlgflow_if_t *handler);
 void dlgflow_set_node_array(mgc_dlgflow_t *dlgflow, const mgc_dlgnode_t *node_array, size_t node_count, mgc_node_id_t start_id);
 bool dlgflow_run_node_proc(mgc_dlgflow_t *dlgflow);
 void dlgflow_switch_to_next_node(mgc_dlgflow_t *dlgflow);
+void dlgflow_clear_state(mgc_dlgflow_t *dlgflow);
 
 bool dlgflow_is_flow_terminated(const mgc_dlgflow_t *dlgflow);
 enum mgc_dlgflow_state dlgflow_get_state(const mgc_dlgflow_t *dlgflow);

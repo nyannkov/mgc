@@ -28,7 +28,7 @@ void dlgflow_init(mgc_dlgflow_t *dlgflow, const mgc_dlgflow_if_t *handler) {
     dlgflow->node_count = 0;
     dlgflow->current_node_idx = 0;
     dlgflow->handler = handler;
-    dlgflow->state = MGC_DLG_FLOW_INIT;
+    dlgflow->state = MGC_DLG_FLOW_STOP;
 }
 
 void dlgflow_set_node_array(mgc_dlgflow_t *dlgflow, const mgc_dlgnode_t *node_array, size_t node_count, mgc_node_id_t start_id) {
@@ -199,3 +199,9 @@ int32_t dlgflow_get_node_result(const mgc_dlgflow_t *dlgflow) {
     return dlgflow->result;
 }
 
+void dlgflow_clear_state(mgc_dlgflow_t *dlgflow) {
+    if ( dlgflow == NULL ) {
+        MGC_WARN("Invalid handler");
+    }
+    dlgflow->state = MGC_DLG_FLOW_STOP;
+}

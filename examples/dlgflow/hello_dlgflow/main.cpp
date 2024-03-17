@@ -8,8 +8,6 @@
 #include "mgc/mgc.h"
 #include "system/system.h"
 
-#define countof(x)      (sizeof((x))/sizeof((x)[0]))
-
 static const char * item_array_yesno[2] = { "Yes", "No" };
 static const mgc_dlg_items_t items_yesno = { item_array_yesno, countof(item_array_yesno) };
 
