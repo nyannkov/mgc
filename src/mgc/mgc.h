@@ -25,7 +25,7 @@ extern "C" {
 #include "render/camera.h"
 #include "detector/maphit.h"
 #include "detector/sprhit.h"
-#include "sequencer/dlgctrl.h"
+#include "sequencer/dlgflow.h"
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -101,6 +101,14 @@ void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     );
 }
 
+void selectbox_clear_items(mgc_selectbox_t *selectbox) {
+    if ( selectbox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    selectbox->item_count = 0;
+}
+
 void selectbox_set_enabled(mgc_selectbox_t *selectbox, bool enabled) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");

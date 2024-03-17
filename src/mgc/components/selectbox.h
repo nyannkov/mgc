@@ -42,6 +42,7 @@ typedef struct mgc_selectbox {
 
 void selectbox_init(mgc_selectbox_t *selectbox, mgc_id_t id, const mgc_font_t *font, bool fontsize2x);
 void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text);
+void selectbox_clear_items(mgc_selectbox_t *selectbox);
 void selectbox_set_enabled(mgc_selectbox_t *selectbox, bool enabled);
 void selectbox_set_position(mgc_selectbox_t *selectbox, int16_t x, int16_t y);
 void selectbox_set_width(mgc_selectbox_t *selectbox, uint16_t width);
