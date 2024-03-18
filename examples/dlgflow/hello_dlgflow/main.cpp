@@ -24,13 +24,26 @@ static const mgc_dlg_items_t items_purchase_decision_options = {
 };
 
 static char text_buffer[256];
+static bool auto_switch_flag;
 
+/*
+    Define the conversation flow as an array of nodes.
+    Assign a unique ID to each node.
+    Specify the type of each node using 'type'.
+    If a node's type is set to MGC_DLG_TYPE_TEXT, it will display the text stored in the 'text' field of the params union.
+    If the type is MGC_DLG_TYPE_SELECT, it will present the options stored in the 'items' field of the params union.
+    After processing a node, execute the function registered in 'cb_before_switch_node' to determine the ID of the next node to execute.
+    If no function is registered, the next node in sequence will be selected. 'flags' are general-purpose flags that users can utilize freely.
+    In this example, they are utilized to achieve simultaneous display of text and options.
+    Set 'terminal' to true for nodes that are meant to terminate the flow.
+    By reading the ID of the terminal node after completing the flow, you can trigger events or alter processing.
+*/
 static const mgc_dlgnode_t node_array[] = {
-    { .id=0x00, .type=MGC_DLG_TYPE_TEXT, .params={.text="Welcome. Would you like too buy something?" } },
+    { .id=0x00, .type=MGC_DLG_TYPE_TEXT, .params={.text="Welcome. Would you like too buy something?" }, .flags=0x01 },
     { .id=0x10, .type=MGC_DLG_TYPE_SELECT, .params={ .items = &items_yesno },
         .cb_before_switch_node = [](const mgc_dlgflow_t *dlgflow) -> mgc_node_id_t { return ( dlgflow->result == 0 ) ? 0x20 : 0xF0; }
     },
-    { .id=0x20, .type=MGC_DLG_TYPE_TEXT, .params={.text="What would you like to buy?" } },
+    { .id=0x20, .type=MGC_DLG_TYPE_TEXT, .params={.text="What would you like to buy?" }, .flags=0x01 },
     { .id=0x21, .type=MGC_DLG_TYPE_SELECT, .params= { .items = &items_purchase_decision_options },
         .cb_before_switch_node = [](const mgc_dlgflow_t *dlgflow) -> mgc_node_id_t {
             int price;
@@ -51,11 +64,11 @@ static const mgc_dlgnode_t node_array[] = {
             return 0x22;
         }
     },
-    { .id=0x22, .type=MGC_DLG_TYPE_TEXT, .params= {.text=text_buffer} },
+    { .id=0x22, .type=MGC_DLG_TYPE_TEXT, .params= {.text=text_buffer}, .flags=0x01 },
     { .id=0x23, .type=MGC_DLG_TYPE_SELECT, .params= {.items = &items_yesno },
         .cb_before_switch_node = [](const mgc_dlgflow_t *dlgflow) -> mgc_node_id_t { return ( dlgflow->result == 0 ) ? 0x24 : 0x20; }
     },
-    { .id=0x24, .type=MGC_DLG_TYPE_TEXT, .params={.text="Thank you. Would you like to buy something else?" } },
+    { .id=0x24, .type=MGC_DLG_TYPE_TEXT, .params={.text="Thank you. Would you like to buy something else?" }, .flags=0x01 },
     { .id=0x25, .type=MGC_DLG_TYPE_SELECT, .params= {.items = &items_yesno },
         .cb_before_switch_node = [](const mgc_dlgflow_t *dlgflow) -> mgc_node_id_t { return ( dlgflow->result == 0 ) ? 0x20 : 0xF0; }
     },
@@ -90,14 +103,14 @@ int main(void) {
     uint16_t width, height;
     bool loop;
 
-    // Getting the screen size.
+    // Get the screen size.
     width = sys_get_display_width();
     height = sys_get_display_height();
     
-    // Getting display driver.
+    // Get the display driver.
     display = sys_get_display_driver();
 
-    // Initialize display driver.
+    // Initialize the display driver.
     display->init();
 
     // Get the gamepad driver.
@@ -119,21 +132,30 @@ int main(void) {
     // Set the background color of the pixel buffer.
     pixelbuffer_set_back_color(&pixelbuffer, MGC_COLOR_BLACK);
 
+    // Initialize the handler for registering with dlgflow.
     init_handler_components();
 
+    // Initialize the dlgflow.
     dlgflow_init(&dlgflow, &handler);
 
+    // Set the node array to dlgflow with the specified start node ID.
     dlgflow_set_node_array(&dlgflow, node_array, countof(node_array), 0);
 
     loop = true;
     do {
         sys_gamepad_proc();
-        if ( !dlgflow_run_node_proc(&dlgflow) ) {
+
+        // Execute processing of the node. Returns true upon completion.
+        if ( dlgflow_run_node_proc(&dlgflow) ) {
+            // Check if the flow is terminated.
             if ( dlgflow_is_flow_terminated(&dlgflow) ) {
+                // The ID of the reached node enables actions such as modifying processing or triggering events.
                 mgc_node_id_t node_id = dlgflow_get_current_node_id(&dlgflow);
                 loop = false;
+            } else {
+                // Switch to the next node.
+                dlgflow_switch_to_next_node(&dlgflow);
             }
-            dlgflow_switch_to_next_node(&dlgflow);
         } 
         // Draw the entire screen.
         for ( int16_t cell_y = 0; cell_y < height; cell_y += MGC_CELL2PIXEL(1) ) {
@@ -167,13 +189,13 @@ static void init_handler_components(void) {
 
     // Initialize the selectbox.
     selectbox_init(&selectbox, 0, sys_get_font(), false);
-    selectbox_set_position(&selectbox, 8, 40);
+    selectbox_set_position(&selectbox, 8, 60);
     selectbox_set_width(&selectbox, 8*6);
     selectbox_set_enabled(&selectbox, false);
 }
 
 static void show_dialoguebox(const char *text, uint32_t flags) {
-    (void)flags;
+    auto_switch_flag = ((flags&0x01) != 0);
     dialoguebox_set_text(&dialoguebox, text);
     dialoguebox_set_enabled(&dialoguebox, true);
 }
@@ -185,7 +207,7 @@ static bool proc_dialoguebox(int32_t *result) {
     dialoguebox_display_update(&dialoguebox);
     state = dialoguebox_get_display_text_state(&dialoguebox);
     if ( state == MGC_DISPLAY_TEXT_STATE_TEXT_END ) {
-        return sys_get_gamepad_driver()->is_key_on_edge(GP_KEY_0);
+        return (sys_get_gamepad_driver()->is_key_on_edge(GP_KEY_1)||auto_switch_flag);
     } else {
         return false;
     }
@@ -209,10 +231,10 @@ static void show_selectbox(const char **item_array, size_t item_count, uint32_t 
 static bool proc_selectbox(int32_t *result) {
     const mgc_gamepad_if_t *gamepad;
     gamepad = sys_get_gamepad_driver();
-    if ( gamepad->get_firing_state(GP_KEY_1) ) {
+    if ( gamepad->get_firing_state(GP_KEY_0) ) {
         selectbox_change_selected_idx(&selectbox, true);
     }
-    if ( gamepad->is_key_on_edge(GP_KEY_0) ) {
+    if ( gamepad->is_key_on_edge(GP_KEY_1) ) {
         *result = selectbox.selected_idx;
         return true;
     } else {

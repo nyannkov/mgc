@@ -112,7 +112,7 @@ bool dlgflow_run_node_proc(mgc_dlgflow_t *dlgflow) {
     } else {
     }
 
-    return ( dlgflow->state == MGC_DLG_FLOW_NODE_PROGRESSING );
+    return ( dlgflow->state == MGC_DLG_FLOW_NODE_COMPLETED );
 }
 
 bool dlgflow_is_flow_terminated(const mgc_dlgflow_t *dlgflow) {
