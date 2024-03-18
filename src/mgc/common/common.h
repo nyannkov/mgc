@@ -19,6 +19,10 @@ extern "C" {
 
 typedef uint16_t mgc_id_t;
 
+#ifndef countof
+#define countof(x)      (sizeof((x))/sizeof((x)[0]))
+#endif/*countof*/
+
 #ifndef NULL
 #define NULL    ((void *)0)
 #endif/*NULL*/

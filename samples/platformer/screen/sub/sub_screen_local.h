@@ -13,31 +13,20 @@
 extern "C" {
 #endif
 
-enum mgc_sub_screen_ctrl_req {
-    MGC_SUB_SCREEN_CTRL_REQ_NONE = 0,
-    MGC_SUB_SCREEN_CTRL_REQ_SHOW_TEXT_WAIT_CURSOR_END,
-    MGC_SUB_SCREEN_CTRL_REQ_SHOW_TEXT_WAIT_BUTTON_PRESSED,
-    MGC_SUB_SCREEN_CTRL_REQ_SHOW_TEXT_WAIT_RECEIVE_YESNO,
-    MGC_SUB_SCREEN_CTRL_REQ_CLOSE,
-};
+void init_dlgflow_handler(void);
+void set_proc_dialoguebox_result(int32_t result);
+void set_proc_selectbox_result(int32_t result);
 
-enum mgc_sub_screen_ctrl_state {
-    MGC_SUB_SCREEN_CTRL_00_STOP = 0,
-    MGC_SUB_SCREEN_CTRL_10_WAIT_CURSOR_END,
-    MGC_SUB_SCREEN_CTRL_11_FINISHED,
-    MGC_SUB_SCREEN_CTRL_20_WAIT_CURSOR_END,
-    MGC_SUB_SCREEN_CTRL_21_WAIT_BUTTON_PRESSED,
-    MGC_SUB_SCREEN_CTRL_22_FINISHED,
-    MGC_SUB_SCREEN_CTRL_30_WAIT_CURSOR_END,
-    MGC_SUB_SCREEN_CTRL_31_WAIT_RESPONSE,
-    MGC_SUB_SCREEN_CTRL_32_FINISHED_RECEIVED_YES,
-    MGC_SUB_SCREEN_CTRL_33_FINISHED_RECEIVED_NO,
-};
+const char *get_show_dialoguebox_text(void);
+uint32_t get_show_dialoguebox_flags(void);
+const char **get_show_selectbox_item_array(void);
+size_t get_show_selectbox_item_count(void);
+uint32_t get_show_selectbox_flags(void);
 
-void sub_screen_local_set_state(enum mgc_sub_screen_ctrl_state state);
-enum mgc_sub_screen_ctrl_state sub_screen_local_get_state(void);
-bool sub_screen_local_check_request(enum mgc_sub_screen_ctrl_req *out);
-const char *sub_screen_local_get_req_text(void);
+bool check_request_show_dialoguebox(void);
+bool check_request_close_dialoguebox(void);
+bool check_request_show_selectbox(void);
+bool check_request_close_selectbox(void);
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -92,10 +92,6 @@ def gen_fontset_c_file(args):
         f.write('#include "{}"\n'.format(filename+'.h'))
         f.write('\n')
 
-        # Define macro
-        f.write('#define countof(x)    (sizeof((x))/sizeof((x)[0]))\n')
-        f.write('\n')
-        
         # Declare bitmap
         f.write('static const uint8_t bitmap[] = {\n')
         for glyph in bdf_glyph_info_list:

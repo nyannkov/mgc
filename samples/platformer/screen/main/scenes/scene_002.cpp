@@ -9,7 +9,7 @@
 #include "scene_002.hpp"
 #include "system/system.h"
 #include "actor/player.hpp"
-#include "screen/sub/sub_screen_handler.h"
+#include "screen/sub/dlgflow_handler_sub_screen.h"
 #include "resources/generates/tileset/tileset_static_objects.h"
 #include "resources/generates/tileset/tileset_map_elements.h"
 #include "resources/generates/map/map_002.h"
@@ -17,17 +17,16 @@
 
 namespace mgc::main_screen {
 
-const mgc_dlg_node node_array[] = {
-    {0, MGC_DLG_TRUE, "工事中", MGC_DLG_ON_BUTTON_PRESSED, MGC_DLG_EXIT, 0},
-    {10, MGC_DLG_TRUE, "戻りますか？", MGC_DLG_ON_RECEIVE_YESNO, MGC_DLG_STEP, 0},
-    {11, MGC_DLG_IF_YES, "", MGC_DLG_ON_CURSOR_END, MGC_DLG_EXIT, 0},
-    {12, MGC_DLG_IF_NO, "", MGC_DLG_ON_CURSOR_END, MGC_DLG_EXIT, 0},
-};
-
-const mgc_dlg_flow flow_0 = {
-    .flow_id = 0,
-    .node_array = node_array,
-    .node_count = sizeof(node_array)/sizeof(node_array[0]),
+static const char * item_array_yesno[2] = { "はい", "いいえ" };
+static const mgc_dlg_items_t items_yesno = { item_array_yesno, countof(item_array_yesno) };
+static const mgc_dlgnode_t node_array[] = {
+    { .id=0x00, .type=MGC_DLG_TYPE_TEXT, .params={.text="工事中"}, .terminal=true },
+    { .id=0x10, .type=MGC_DLG_TYPE_TEXT, .params={.text="戻りますか？" }, .flags=0x01},
+    { .id=0x11, .type=MGC_DLG_TYPE_SELECT, .params={.items=&items_yesno },
+        .cb_before_switch_node = [](const mgc_dlgflow_t *dlgflow) -> mgc_node_id_t { return ( dlgflow->result == 0 ) ? 0x20 : 0x21; }
+    },
+    { .id=0x20, .type=MGC_DLG_TYPE_TEXT, .params={.text=""}, .terminal=true, .flags=0x01 },
+    { .id=0x21, .type=MGC_DLG_TYPE_TEXT, .params={.text=""}, .terminal=true, .flags=0x01 },
 };
 
 void Scene002::init(SceneId prev_id) {
@@ -38,7 +37,7 @@ void Scene002::init(SceneId prev_id) {
     cell_mask_ = (int16_t)(MGC_CELL_LEN - 1)*-1;
     maphit_init(&maphit_);
     sprhit_init(&sprhit_);
-    dlgctrl_init(&dlgctrl_, &dlghdr_sub_screen);
+    dlgflow_init(&dlgflow_, &dlgflow_handler_sub_screen);
     this->init_components(prev_id);
 
     camera_update(&pixelbuffer_, &camera_, player_.get_ptr_sprite());
@@ -59,36 +58,51 @@ bool Scene002::check_trans() const {
 void Scene002::update() {
     auto gamepad = sys_get_gamepad_driver();
     bool is_key1_on_edge = gamepad->is_key_on_edge(GP_KEY_1);
-    mgc_dlg_flow_state flow_state = dlgctrl_get_flow_state(&dlgctrl_);
+    mgc_dlgflow_state flow_state = dlgflow_get_state(&dlgflow_);
 
-    if ( flow_state == MGC_DLG_FLOW_NOT_SET ) {
+    switch ( flow_state ) {
+    case MGC_DLG_FLOW_STOP:
         if ( scene_state_ == SceneState::Shown ) {
             player_.update();
             check_hit_tilemap(&player_, maphit_, tilemap_);
             if ( check_hit_sprite(&player_, sprhit_, *signboard_.get_ptr_sprite()) ) {
                 if ( is_key1_on_edge == true ) {
-                    dlgctrl_set_flow(&dlgctrl_, &flow_0, 0);
+                    dlgflow_set_node_array(&dlgflow_, node_array, countof(node_array), 0x00);
                 }
             }
             if ( check_hit_sprite(&player_, sprhit_, *gate_.get_ptr_sprite()) ) {
                 if ( is_key1_on_edge == true ) {
-                    dlgctrl_set_flow(&dlgctrl_, &flow_0, 10);
+                    dlgflow_set_node_array(&dlgflow_, node_array, countof(node_array), 0x10);
                 }
             }
             camera_update(&pixelbuffer_, &camera_, player_.get_ptr_sprite());
             player_.update_anim();
         }
-    } else if ( flow_state == MGC_DLG_FLOW_SUSPEND ) {
-        dlgctrl_resume_flow(&dlgctrl_);
-    } else if ( flow_state == MGC_DLG_FLOW_END ) {
-        if ( dlgctrl_get_node_id(&dlgctrl_) == 11 ) {
-            next_id_ = SceneId::ID_001;
-            scene_state_ = SceneState::Closing;
-            cell_mask_ = 0;
+        break;
+
+    case MGC_DLG_FLOW_READY:/*FALLTHROUGH*/
+    case MGC_DLG_FLOW_NODE_PROGRESSING:
+        dlgflow_run_node_proc(&dlgflow_);
+        break;
+
+    case MGC_DLG_FLOW_NODE_COMPLETED:
+        if ( dlgflow_is_flow_terminated(&dlgflow_) ) {
+            mgc_node_id_t node_id = dlgflow_get_current_node_id(&dlgflow_);
+            if ( node_id == 0x20 ) {
+                next_id_ = SceneId::ID_001;
+                scene_state_ = SceneState::Closing;
+                cell_mask_ = 0;
+            }
+            dlgflow_clear_state(&dlgflow_);
+        } else {
+            dlgflow_switch_to_next_node(&dlgflow_);
         }
-        dlgctrl_clear_flow(&dlgctrl_);
-    } else {
-        dlgctrl_update_flow(&dlgctrl_);
+        break;
+
+    case MGC_DLG_FLOW_ERROR:/*FALLTHROUGH*/
+    default:
+        dlgflow_clear_state(&dlgflow_);
+        break;
     }
 }
 

@@ -13,31 +13,18 @@ endif()
 
 pico_sdk_init()
 
-set(MGC_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../src)
-set(MGC_DEVICES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../devices)
+set(MGC_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../src)
+set(MGC_DEVICES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../devices)
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.cpp
     system/system_rp2040.c
-    system/sound_list.c
-    screen/main/scenes/scene_001.cpp
-    screen/main/scenes/scene_002.cpp
-    screen/main/scenes/scenes.cpp
-    screen/sub/dlgflow_handler_sub_screen.c
-    screen/sub/scenes/scene_sub.cpp
-    actor/actor_if.cpp
-    actor/static_object.cpp
-    actor/player.cpp
-    anim/anim_player.cpp
     ${MGC_DEVICES_PATH}/mgc/gamepad/rp2040/gamepad_rp2040.c
     ${MGC_DEVICES_PATH}/mgc/display/ili9341/rp2040/display_ili9341_rp2040.c
-    ${MGC_DEVICES_PATH}/mgc/sound/psg/common/Psgino/src/Psgino.cpp
-    ${MGC_DEVICES_PATH}/mgc/sound/psg/common/Psgino/src/psg_ctrl/psg_ctrl.cpp
-    ${MGC_DEVICES_PATH}/mgc/sound/psg/ymz294/rp2040/sound_ymz294_rp2040.cpp
 )
 
 add_subdirectory(resources)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../ build)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ build)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -48,11 +35,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_link_libraries(${CMAKE_PROJECT_NAME}
     mgc
     pico_stdlib
+    hardware_adc
     hardware_spi
     hardware_gpio
-    hardware_adc
-    hardware_pwm
-    hardware_irq
     resources_gen
 )
 

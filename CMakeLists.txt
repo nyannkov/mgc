@@ -18,7 +18,7 @@ set(MGC_SOURCES
     src/mgc/font/encoding.c
     src/mgc/detector/maphit.c
     src/mgc/detector/sprhit.c
-    src/mgc/sequencer/dlgctrl.c
+    src/mgc/sequencer/dlgflow.c
     src/mgc/utils/jumpctrl/jumpctrl.c
 )
 

@@ -90,10 +90,6 @@ def gen_tileset_c_file(args):
         f.write('#include "{}"\n'.format(filename+'.h'))
         f.write('\n')
         
-        # Define macro
-        f.write('#define countof(x)    (sizeof((x))/sizeof((x)[0]))\n')
-        f.write('\n')
-
         # Declare palette
         index = 0
         formed_palette = get_formed_palette(palette, max_color_index, pixel_format)
