@@ -26,5 +26,5 @@ connect:
 
 .PHONY: debug
 debug: $(ELF_FILE_PATH)
-	gdb-multiarch -x .gdbinit $<
+	gdb-multiarch -x gdbinit $<
 
