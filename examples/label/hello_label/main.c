@@ -15,17 +15,17 @@ int main(void) {
     const mgc_display_if_t *display;
     uint16_t width, height;
 
-    // Getting the screen size.
+    // Get the screen size.
     width = sys_get_display_width();
     height = sys_get_display_height();
     
-    // Getting display driver.
+    // Get the display driver.
     display = sys_get_display_driver();
 
-    // Initialize display driver.
+    // Initialize the display driver.
     display->init();
 
-    // Initialize pixel buffer.
+    // Initialize the pixel buffer.
     pixelbuffer_init(&pixelbuffer);
 
     // Sets the entire screen to black.
@@ -43,14 +43,13 @@ int main(void) {
     label_set_text(&label, "Hello!(通常の大きさ)");
     label_set_fore_color(&label, MGC_COLOR_WHITE);
 
-    // Initialize the label with double the font width and height.
+    // Initialize the label with the font's width and height doubled.
     label_init(&label_big, 0, &k8x12S, true);
     label_set_position(&label_big, MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(10));
     label_set_size(&label_big, 8*2*11, 12*2);
     label_set_text(&label_big, "Hello!(幅・高さが二倍)");
     label_set_fore_color(&label_big, MGC_COLOR_BLACK);
-    // Enable the background color of the label.
-    label_set_enable_back_color(&label_big, true);
+    label_set_enable_back_color(&label_big, true); // Enable the background color of the label.
     label_set_back_color(&label_big, MGC_COLOR_WHITE);
 
     // Set the background color of the pixel buffer.
@@ -65,7 +64,7 @@ int main(void) {
         }
     }
 
-    while (1) {
-    }
+    while (1);
+
     return 0;
 }

@@ -23,6 +23,7 @@ struct ball {
 };
 
 static void init_ball(struct ball *ball, mgc_id_t id, int16_t x, int16_t y) {
+
     // Set up the sprite.
     sprite_init(&ball->sprite, id);
     sprite_set_tileset(&ball->sprite, &tileset_balls_32x32);
@@ -43,6 +44,7 @@ static double rand_norm(void) {
 }
 
 int main(void) {
+
     static struct ball balls[NUM_OF_BALLS];
     mgc_pixelbuffer_t pixelbuffer;
     const mgc_display_if_t *display;
@@ -81,10 +83,11 @@ int main(void) {
     // Enable refresh mode.
     pixelbuffer_set_refresh_mode(&pixelbuffer, true);
 
-    // Initialize sprhit.
+    // Initialize the sprhit.
     sprhit_init(&sprhit);
 
     while (1) {
+
         // Update each ball's information.
         for (size_t idx = 0; idx < NUM_OF_BALLS; idx++) {
             struct ball *ball = &balls[idx];

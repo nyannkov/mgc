@@ -21,17 +21,17 @@ int main(void) {
     const mgc_display_if_t *display;
     uint16_t width, height;
 
-    // Getting the screen size.
+    // Get the screen size.
     width = sys_get_display_width();
     height = sys_get_display_height();
     
-    // Getting display driver.
+    // Get display driver.
     display = sys_get_display_driver();
 
-    // Initialize display driver.
+    // Initialize the display driver.
     display->init();
 
-    // Initialize pixel buffer.
+    // Initialize the pixel buffer.
     pixelbuffer_init(&pixelbuffer);
 
     // Sets the entire screen to black.
@@ -42,11 +42,13 @@ int main(void) {
         }
     }
 
-    // Configuration of each sprite.
+    // Configure each sprite.
     for ( size_t idx = 0; idx < NUM_OF_BALLS; idx++ ) {
+
         mgc_sprite_t *sprite = &balls[idx];
         size_t tile_idx = idx;
-        // Initialize sprite.
+
+        // Initialize the sprite.
         sprite_init(sprite, 0);
 
         // Set a tileset to a sprite. 
@@ -76,12 +78,12 @@ int main(void) {
             // Draw the content of the blended pixel buffer onto the display.
             // If the refresh mode of the pixel buffer is enabled, the content
             // of the pixel buffer is cleared and initialized to the background
-            // color at the end of this function."
+            // color at the end of this function.
             pixelbuffer_draw_cell(&pixelbuffer, display, cell_x, cell_y);
         }
     }
 
-    while (1) {
-    }
+    while (1);
+
     return 0;
 }

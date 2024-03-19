@@ -22,6 +22,7 @@ struct ball {
 };
 
 static void init_ball(struct ball *ball, mgc_id_t id, int16_t x, int16_t y) {
+
     // Set up the sprite.
     sprite_init(&ball->sprite, id);
     sprite_set_tileset(&ball->sprite, &tileset_balls);
@@ -38,6 +39,7 @@ static void init_ball(struct ball *ball, mgc_id_t id, int16_t x, int16_t y) {
 }
 
 int main(void) {
+
     struct ball ball;
     mgc_tilemap_t tilemap;
     mgc_pixelbuffer_t pixelbuffer;
@@ -78,10 +80,11 @@ int main(void) {
     // Enable refresh mode.
     pixelbuffer_set_refresh_mode(&pixelbuffer, true);
 
-    // Initialize maphit.
+    // Initialize the maphit.
     maphit_init(&maphit);
 
     while (1) {
+
         int16_t pushback_x = 0;
         int16_t pushback_y = 0;
 

@@ -27,16 +27,16 @@ static char text_buffer[256];
 static bool auto_switch_flag;
 
 /*
-    Define the conversation flow as an array of nodes.
-    Assign a unique ID to each node.
-    Specify the type of each node using 'type'.
-    If a node's type is set to MGC_DLG_TYPE_TEXT, it will display the text stored in the 'text' field of the params union.
-    If the type is MGC_DLG_TYPE_SELECT, it will present the options stored in the 'items' field of the params union.
-    After processing a node, execute the function registered in 'cb_before_switch_node' to determine the ID of the next node to execute.
-    If no function is registered, the next node in sequence will be selected. 'flags' are general-purpose flags that users can utilize freely.
-    In this example, they are utilized to achieve simultaneous display of text and options.
-    Set 'terminal' to true for nodes that are meant to terminate the flow.
-    By reading the ID of the terminal node after completing the flow, you can trigger events or alter processing.
+  Define the conversation flow as an array of nodes.
+  Assign a unique ID to each node.
+  Specify the type of each node using 'type'.
+  If a node's type is set to MGC_DLG_TYPE_TEXT, it will display the text stored in the 'text' field of the params union.
+  If the type is MGC_DLG_TYPE_SELECT, it will present the options stored in the 'items' field of the params union.
+  After processing a node, execute the function registered in 'cb_before_switch_node' to determine the ID of the next node to execute.
+  If no function is registered, the next node in sequence will be selected. 'flags' are general-purpose flags that users can utilize freely.
+  In this example, they are utilized to achieve simultaneous display of text and options.
+  Set 'terminal' to true for nodes that are meant to terminate the flow.
+  The ID of the terminal node is intended to be used as a condition for triggering events and altering processing.
 */
 static const mgc_dlgnode_t node_array[] = {
     { .id=0x00, .type=MGC_DLG_TYPE_TEXT, .params={.text="Welcome. Would you like too buy something?" }, .flags=0x01 },
@@ -116,6 +116,7 @@ int main(void) {
     // Get the gamepad driver.
     gamepad = sys_get_gamepad_driver();
 
+    // Initialized the gamepad driver.
     gamepad->init();
 
     // Initialize pixel buffer.
@@ -143,13 +144,16 @@ int main(void) {
 
     loop = true;
     do {
+
+        // Update input information from buttons and joysticks.
         sys_gamepad_proc();
 
         // Execute processing of the node. Returns true upon completion.
         if ( dlgflow_run_node_proc(&dlgflow) ) {
             // Check if the flow is terminated.
             if ( dlgflow_is_flow_terminated(&dlgflow) ) {
-                // The ID of the reached node enables actions such as modifying processing or triggering events.
+                // The ID of the terminal node is intended to be used as a condition for triggering events and altering processing.
+                // (In this example, this node_id is not used.)
                 mgc_node_id_t node_id = dlgflow_get_current_node_id(&dlgflow);
                 loop = false;
             } else {
