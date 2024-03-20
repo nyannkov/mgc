@@ -16,17 +16,17 @@ int main(void) {
     const mgc_display_if_t *display;
     uint16_t width, height;
 
-    // Getting the screen size.
+    // Get the screen size.
     width = sys_get_display_width();
     height = sys_get_display_height();
     
-    // Getting display driver.
+    // Get the display driver.
     display = sys_get_display_driver();
 
-    // Initialize display driver.
+    // Initialize the display driver.
     display->init();
 
-    // Initialize pixel buffer.
+    // Initialize the pixel buffer.
     pixelbuffer_init(&pixelbuffer);
 
     // Initialize the tilemap
@@ -43,7 +43,7 @@ int main(void) {
         }
     }
 
-    while (1) {
-    }
+    while (1);
+
     return 0;
 }

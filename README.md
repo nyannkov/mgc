@@ -1,43 +1,40 @@
 # mgc
 
-mgcは、小規模なゲームを作成するためのライブラリです。
-16x16ピクセルのバッファを使用してイメージの重ね合わせやディスプレイへの書き込みを行うことができます。
+mgc is a library under development intended for creating small games or gadgets.
+This library processes images in units of 16x16 pixels.Threfore, the size of the 
+graphic RAM needs to be at least this size.
 
-## デモ
+## Demonstration
 
 <div style="display: flex;">
   <img src="samples/platformer/img/lcd+controller.jpg" style="width: 35%;">
   <img src="samples/platformer/img/platformer.gif" style="width: 100%;">
 </div>
 
-プログラム: [samples/platformer](samples/platformer)
+Source code: [samples/platformer](samples/platformer)
 
-## 仕様
-### イメージ
- - カラーフォーマット: RGB565
- - カラーモード: インデックスカラー
+## Specification
+### Image format
+ - Color format: RGB565
+ - Color mode: indexed color
 
-### フォント
- - フォントサイズ: 16ピクセル以下
- - フォントファイルフォーマット: bdf形式
+### Font
+ - Font size: maximum 16 pixels
+ - Font file format: BDF
 
-## セットアップ
+## How to use
 
-### samplesおよびexamplesで使用するフォントについて
-samplesおよびexamplesでは、門真なむ さんの[k8x12S](https://littlelimit.net/k8x12.htm)フォントを使用します。
-これらのプログラムを実行する場合は、[ダウンロードサイト](https://littlelimit.net/k8x12.htm)からX11 BDF形式のk8x12を入手し、
-その中の"k8x12S.bdf"を以下のディレクトリに保存する必要があります。
-
+There is currently no manual for this library, but samples and examples are gradually being created.
+These samples and examples use the k8x12S font. Therefore, when building, the font files must be in the following path
 ```
 mgc/fonts/k8x12_bdf/k8x12S.bdf
 ```
+This font can be downloaded from [the creator's website](https://littlelimit.net/k8x12.htm).
+See [SETUP.md](SETUP.md) for information on setting up the development environment.
 
-### 開発環境構築メモ
-[SETUP.md](SETUP.md)をご参照ください。
+## License
 
-## ライセンス
-
-mgcはMITライセンスです。ライセンスの詳細は[LICENSE](LICENSE)ファイルをご確認ください。
-ただし、tools以下のスクリプトで自動生成したコード（フォント、マップ、タイルセットなど）の取り扱いについては、
-生成元データのライセンスをご確認ください。
+mgc is released under the MIT licence. For more information, see the LICENSE file.
+However, for automatically generated code such as fonts, maps and tilesets, 
+follow the licence of the original data.
 

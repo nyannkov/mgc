@@ -1,17 +1,17 @@
 # font_gen.py
 
-このスクリプトは、mgcでフォントデータを取り扱うためのユーティリティです。
-BDF形式のフォントファイルをmgc_font_t構造体定数に変換し、C言語のソースコードとして生成します。
-また、指定したテキストファイルに記述された文字列を使用して、フォントデータをサブセット化することもできます。
+This script is a utility for handling font data in mgc.
+It converts font files in BDF format into mgc_font_t structure constants and generates C source code.
+It can also subset font data using strings described in a given text file.
 
-## 使用例
+## Example usage
 
 ```bash
 python3 font_gen.py k8x12S.bdf --dir ./font --subsettext subset.txt
 ```
 
-この例では、フォントデータk8x12S.bdfをsubset.txtに記述した文字列でサブセット化し、生成されたmgc_font_t構造体定数をディレクトリ./fontにC言語のソースコードとして保存します。
+In this example, the font data k8x12S.bdf is subset with the string described in subset.txt, and the generated mgc_font_t structure constant is placed in the directory ./font as C source code.
 
-## 注意
+## Caution
 
-フォントデータのエンコーディング及びsubset.txtに記述した文字列は、現状UTF-8のみサポートしています。
+The encoding of the font data and strings described in subset.txt currently supports only UTF-8.

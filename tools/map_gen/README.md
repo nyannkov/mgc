@@ -1,12 +1,13 @@
 # map_gen.py
 
-このスクリプトは、CSVファイルで作成したマップ情報をmgcで取り扱うためのユーティリティです。
-CSVファイルで作成したマップ情報をmgc_map_t構造体定数に変換し、C言語のソースコードとして生成します。
+This script is a utility for handling map information created in CSV files in mgc.
+It converts the map information created in the CSV file into mgc_map_t structure constants and generates them as C source code.
 
-## マップ情報ファイル
+## Map information file
 
-CSVファイルの最初の行には、フォーマットバージョンを記述します。現在のバージョンは固定で「1」です。
-二行目以降のセルには、具体的なマップ情報を記述します。
+The first line of the CSV file describes the format version. The current version is fixed and is '1'.
+The cells after the second line describe the specific map information.
+
 
 | VERSION | 1 |   |   |   |
 |---------|---|---|---|---|
@@ -15,36 +16,37 @@ CSVファイルの最初の行には、フォーマットバージョンを記�
 | 0x81    |     |     |     | 0x03 |
 | 0x81    |     | 0x81 |     | 0x03 |
 
-各セルには1バイトのデータを指定します。データの内容は以下のビットフィールドに従います。
+Each cell specifies one byte of data. The data content follows the following bit fields.
 
-| ビット | 説明                       |
+| Bit | Description |
 |--------|----------------------------|
-| 0-6    | 描画するタイル番号（0x00〜0x7F） |
-| 7      | 衝突判定の有効無効（0:無効、1:有効） |
+| 0-6 | Tile number to be drawn (0x00-0x7F) |
+| 7 | Collision detection enabled/disabled (0: disabled, 1: enabled) |
 
 
-描画するタイル番号はタイルセットのインデックスに対応します。また、衝突判定を有効にすると、
-そのセルとスプライトの衝突をmaphitモジュールで検出できるようになります。
+The tile number to be drawn corresponds to the tileset index. Also, when collision detection is enabled,
+collision between that cell and the sprite can be detected by the maphit module.
 
-## 使用例
+## Examples of use
 
 ```bash
 python3 map_gen.py ./map/map_example.csv --dir ./generates --compression none
 ```
 
-この例では、map_example.csvに記述したマップ情報をmgc_map_t構造体定数に変換し、C言語のソースコードとして./generates
-フォルダに保存しています。compressionオプションは生成するマップ配列の圧縮方式を表します。noneを設定すると、CSVファイルに記述した
-内容を単純に配列化します。一方、compressionにrunlengthを指定した場合は、マップ情報をrun-lengthで圧縮して配列化します。
-同じタイル番号が連続するようなマップ情報の場合、後者のほうがデータサイズが小さくなります。
-ただし、解凍処理が発生するため、描画速度は前者と比べて遅くなります。
+This example converts the map information described in map_example.csv into mgc_map_t structure constants, which are then stored in ./generates as C source code.
+The compression option specifies the compression method of the generated map array.
+In the case of this example, the contents of the CSV file are simply converted to an array. On the other hand, if runlength is specified for compression, the map information is compressed into a run-length array.
+In the case of map information with the same consecutive tile number, the latter will reduce the data size.
+However, the drawing speed will be slower than the former due to the decompression process.
 
 ```bash
 python3 map_gen.py ./map/map_example.csv --dir ./generates --compression runlength
 ```
 
-## 注意事項
+## Notes
 
- - 空欄セルの値は0とみなされます。
- - タイル番号0は透明タイルとして扱われます。
- - 各セルは大きさが16x16ピクセルのタイルとして扱われます。そのため、タイルセットも16x16ピクセルで作成したものを使用する必要があります。
+ - The value of a blank cell is assumed to be 0.
+ - Tile number 0 is treated as a transparent tile.
+ - Each cell is treated as a tile with a size of 16x16 pixels. Therefore, tilesets must also be created with 16x16 pixels.
+ 
  
