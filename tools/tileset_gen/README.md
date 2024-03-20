@@ -1,13 +1,13 @@
 # tileset_gen.py
 
-このスクリプトは、mgcでビットマップ画像を取り扱うためのユーティリティです。
-インデックスカラー形式のビットマップ画像をmgc_tileset_t構造体定数に変換し、C言語のソースコードとして生成します。
+This script is a utility for handling bitmap images in mgc.
+It converts bitmap images in index colour format into mgc_tileset_t structure constants and generates them as C source code.
 
-## タイルセットの作り方について
+## How to create a tileset
 
-タイルセットは次の画像のように左上からタイルを並べるようにして作成します。
-タイルがビットマップ画像の幅を超える場合は、一段下げて左から並べるようにします。
-なお、ビットマップ画像の幅に制限はありません。作成しやすい幅・高さでビットマップ画像を作成できます。
+Tilesets are created by arranging tiles from the top left as shown in the following image.
+If the tiles exceed the width of the bitmap image, move the tiles down one level and arrange them from the left.
+Note that there is no limit to the width of a bitmap image. A bitmap image can be created with any width and height that is convenient for you.
 
 
 
@@ -17,31 +17,31 @@
 </div>
 
 
-## 使用例
+## Examples of use.
 
 ```bash
 python3 tileset_gen.py ./img/ex_tile_count.bmp --dir ./generates --width 16 --height 16 --count 11
 ```
 
-この例では、ビットマップ画像ex_tile_count.bmpから、幅が16px、高さが16pxである11個のタイルを
-mgc_tileset_t構造体定数に変換し、./generatesにC言語のソースコードとして保存します。
+In this example, from the bitmap image ex_tile_count.bmp, 11 tiles with a width of 16px and a height of 16px are
+Converted to mgc_tileset_t structure constants and stored in ./generates as C source code.
 
 
-width, heightオプションにはそれぞれタイルの幅、高さを指定します。これらのデフォルト値はいずれも16pxです。
-countオプションには、ビットマップ画像内のタイル数を指定します。countを省略すると、以下の計算式でタイル数が算出されます。
+The width and height options specify the width and height of the tiles respectively. The default value for both of these is 16px.
+The count option specifies the number of tiles in the bitmap image; if count is omitted, the number of tiles is calculated using the following formula.
 
 ```python
 count = (bitmap_width//tile_width)*(bitmap_height//tile_height)
 ```
 
-また、countオプションに1を指定した場合、タイルの幅および高さは、それぞれ強制的にビットマップ画像の幅、高さに変換されます。
-以下の例では、タイルの幅および高さは、それぞれ、ビットマップ画像の幅および高さになります。
+If the count option is set to 1, the width and height of the tile are forced to be converted to the width and height of the bitmap image, respectively.
+In the following example, the width and height of the tile are the width and height of the bitmap image, respectively.
 
 ```bash
 python3 tileset_gen.py ./img/ex_count_1.bmp --dir ./generates --count 1
 ```
 
-## 注意
+## Notes
 
- - スクリプトで読み込み可能なビットマップ画像は、インデックスカラー形式のみとなります。
- - インデックス番号0の色は、透明色として取り扱われます。
+ - Bitmap images that can be loaded by scripts are only available in index colour format.
+ - Colours with index number 0 are treated as transparent colours.
