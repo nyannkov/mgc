@@ -29,7 +29,7 @@ These samples and examples use the k8x12S font. Therefore, when building, the fo
 ```
 mgc/fonts/k8x12_bdf/k8x12S.bdf
 ```
-This font can be downloaded from [the creator's website] (https://littlelimit.net/k8x12.htm).
+This font can be downloaded from [the creator's website](https://littlelimit.net/k8x12.htm).
 See [SETUP.md](SETUP.md) for information on setting up the development environment.
 
 ## License

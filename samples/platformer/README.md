@@ -1,32 +1,31 @@
 # samples/platformer
 
-## 使用モジュール
+## Modules used
 
-| モジュール名                        | 説明                              |
+| Module name | Description |
 |-----------------------------------|-----------------------------------|
-| Raspberry Pi Pico                 | マイコン                           |
-| MSP2807                           | LCDモジュール                       |
-| YMZ294                            | 音源IC(SSG)                       |
-| Mini 2-Axis Analog Thumbstick     | Adafruit社製、アナログジョイスティック |
+| Raspberry Pi Pico | Microcontroller |
+MSP2807 | LCD module | YMZ294 | Sound source IC(SSG)
+| YMZ294 | Sound Source IC (SSG)
+| Mini 2-Axis Analog Thumbstick | Adafruit, Analog Joystick |
 
-## ピンアサイン
+## Pin assignments
 
-Raspberry Pi Picoのピンアサインに関する詳細は、以下の各ソースコードをご参照ください。
+For more information on Raspberry Pi Pico pin assignments, please refer to the respective source code below.
 
- - LCDモジュール:
+ - LCD module:.
    [display_ili9341_rp2040.c](https://github.com/nyannkov/mgc/blob/main/devices/mgc/display/ili9341/rp2040/display_ili9341_rp2040.c)
 
- - ゲームパッド:
+ - Gamepad:.
    [gamepad_rp2040.c](https://github.com/nyannkov/mgc/blob/main/devices/mgc/gamepad/rp2040/gamepad_rp2040.c)
    
-   補足: ゲームパッドのKEY0, KEY1にはタクトスイッチを使用しています。Raspberry Pi Pico側でプルアップを行い、スイッチがONの場合に入力ピンをGNDに接続するように配線しています。
+   Tip: Tact switches are used for KEY0 and KEY1 on the gamepad, with a pull-up on the Raspberry Pi Pico side so that the input pin is connected to GND when the switch is ON.
 
- - 音源IC:
+ - Sound source IC:.
    [sound_ymz294_rp2040.cpp](https://github.com/nyannkov/mgc/blob/main/devices/mgc/sound/psg/ymz294/rp2040/sound_ymz294_rp2040.cpp)
    
-   補足: 音源が不要の場合は、省略可能です。注意: YMZ294は5V系のICです。Raspberry Pi Picoの出力ピンとYMZ294の入力ピンを直結して制御することができますが、Raspberry Pi Picoが損傷する恐れがあります。そのため、必要に応じて適切な電圧レベルシフターの使用をご検討ください。
+   Tip: If the sound source is not required, it can be omitted. Note: The YMZ294 is a 5V IC; it can be controlled by directly connecting the output pins of the Raspberry Pi Pico to the input pins of the YMZ294, but this may damage the Raspberry Pi Pico. Therefore, please consider using a suitable voltage level shifter if necessary.
 
-## 注意事項
+## Notes.
 
-このサンプルは未完成です。今後サンプルの内容を追加しながらライブラリ自体の機能の追加や修正、削除を行っていく予定です。その点につきましてご注意いただけますと幸いです。
-
+This sample is incomplete. Features will be added, modified, and removed from the library itself as more content is added to the sample in the future.
