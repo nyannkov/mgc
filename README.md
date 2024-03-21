@@ -6,6 +6,8 @@ graphic RAM needs to be at least this size.
 
 ## Demonstration
 
+This is a demo using Raspberry Pi Pico (rp2040) and an LCD module equipped with ILI9341.
+
 <div style="display: flex;">
   <img src="samples/platformer/img/lcd+controller.jpg" style="width: 35%;">
   <img src="samples/platformer/img/platformer.gif" style="width: 100%;">
