@@ -4,8 +4,8 @@
  *
  * Copyright (c) 2024 nyannkov
  */
-#ifndef MGC_SOUND_YMZ294_H
-#define MGC_SOUND_YMZ294_H
+#ifndef MGC_SOUND_PSG_YMZ294_H
+#define MGC_SOUND_PSG_YMZ294_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,4 +22,4 @@ void sound_psg_ymz294_set_se_list(const mgc_mml_record_t *records, size_t count)
 }/* extern "C" */
 #endif
 
-#endif/*MGC_SOUND_YMZ294_H*/
+#endif/*MGC_SOUND_PSG_YMZ294_H*/
