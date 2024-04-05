@@ -4,7 +4,7 @@
 #include <hardware/gpio.h>
 #include <hardware/timer.h>
 #include "system.h"
-#include "mgc/sound/psg/ymz294/sound_psg_ymz294.h"
+#include "mgc/sound/psg/sound_psg.h"
 #include "mgc/display/ili9341/rp2040/display_ili9341_rp2040.h"
 #include "mgc/gamepad/rp2040/gamepad_rp2040.h"
 #include "resources/generates/font/k8x12S.h"
@@ -93,7 +93,7 @@ void sys_gamepad_proc(void) {
 }
 
 const mgc_sound_if_t *sys_get_sound_driver(void) {
-    return sound_psg_ymz294_get_instance();
+    return sound_psg_get_instance();
 }
 
 const mgc_font_t *sys_get_default_font(void) {

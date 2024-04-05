@@ -36,7 +36,10 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 add_subdirectory(resources)
 add_subdirectory(${MGC_PATH} mgc)
-add_subdirectory(${MGC_DEVICES_PATH}/mgc/sound/psg/ymz294 sound_psg_ymz294)
+
+set(MGC_SOUND_PSG_TYPE ymz294)
+#set(MGC_SOUND_PSG_TYPE emulator)
+add_subdirectory(${MGC_DEVICES_PATH}/mgc/sound/psg sound_psg)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -46,7 +49,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     mgc
-    sound_psg_ymz294
+    sound_psg
     pico_stdlib
     hardware_spi
     hardware_gpio
