@@ -11,6 +11,7 @@ typedef uint16_t mgc_sound_id_t;
 
 typedef struct mgc_sound_if {
     int  (*init)(void);
+    int  (*deinit)(void);
     int  (*play_bgm)(mgc_sound_id_t bgm_id);
     void (*stop_bgm)(void);
     int  (*play_se)(mgc_sound_id_t se_id);

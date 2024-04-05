@@ -1,3 +1,6 @@
 [submodule "devices/mgc/sound/psg/common/Psgino"]
 	path = devices/mgc/sound/psg/common/Psgino
 	url = https://github.com/nyannkov/Psgino.git
+[submodule "devices/mgc/sound/psg/emulator/emu2149"]
+	path = devices/mgc/sound/psg/emulator/emu2149
+	url = https://github.com/nyannkov/emu2149.git

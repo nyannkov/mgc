@@ -4,11 +4,12 @@
  *
  * Copyright (c) 2024 nyannkov
  */
+#include <pico/stdlib.h>
 #include <hardware/gpio.h>
 #include <hardware/pwm.h>
 #include <hardware/irq.h>
 #include "mgc/sound/psg/common/Psgino/src/Psgino.h"
-#include "sound_ymz294_rp2040.h"
+#include "mgc/sound/psg/ymz294/sound_psg_ymz294.h"
 
 #ifndef MGC_PIN_YMZ294_PHI_M
 #define MGC_PIN_YMZ294_PHI_M        (13)
@@ -54,10 +55,6 @@
 #define MGC_PIN_YMZ294_D7           (20)
 #endif/*MGC_PIN_YMZ294_D7*/
 
-#ifndef MGC_PIN_PWM_TIMER_IRQ
-#define MGC_PIN_PWM_TIMER_IRQ       PICO_DEFAULT_LED_PIN
-#endif/*MGC_PIN_PWM_TIMER_IRQ*/
-
 #define PIN_YMZ294_PHI_M            MGC_PIN_YMZ294_PHI_M
 #define PIN_YMZ294_AO               MGC_PIN_YMZ294_AO
 #define PIN_YMZ294_WRCS_N           MGC_PIN_YMZ294_WRCS_N
@@ -69,14 +66,10 @@
 #define PIN_YMZ294_D5               MGC_PIN_YMZ294_D5
 #define PIN_YMZ294_D6               MGC_PIN_YMZ294_D6
 #define PIN_YMZ294_D7               MGC_PIN_YMZ294_D7
-#define PIN_PWM_TIMER_IRQ           MGC_PIN_PWM_TIMER_IRQ
 
-struct sound_table {
-    const struct mml_sound_record *records;
-    size_t record_count;
-};
+static mgc_mml_list_t bgm_list, se_list;
 
-static struct sound_table bgm_table, se_table;
+static struct repeating_timer timer;
 
 static void psg_write(uint8_t addr, uint8_t data);
 PsginoZ psgino_z = PsginoZ(psg_write, 125000000.0F/31/2, 100);
@@ -124,7 +117,6 @@ static void psg_init(void) {
     pwm_set_wrap(slice_num, 30);
     pwm_set_gpio_level(PIN_YMZ294_PHI_M, 15);
     pwm_set_enabled(slice_num, true);
-
 }
 
 static void psg_reset(void) {
@@ -157,48 +149,33 @@ static void psg_write(uint8_t addr, uint8_t data) {
     gpio_put(PIN_YMZ294_WRCS_N, true);
 }
 
-static void timer_irq_handler(void) {
+static bool repeating_timer_callback(struct repeating_timer *t) {
+    (void)t;
     psgino_z.Proc();
-    pwm_clear_irq(pwm_gpio_to_slice_num(PIN_PWM_TIMER_IRQ));
-}
-
-static void start_timer_irq(void) {
-    const uint LED_PIN = PIN_PWM_TIMER_IRQ;
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-
-    uint slice_num = pwm_gpio_to_slice_num(PIN_PWM_TIMER_IRQ);
-    pwm_clear_irq(slice_num);
-    pwm_set_irq_enabled(slice_num, true);
-    irq_set_exclusive_handler(PWM_IRQ_WRAP, timer_irq_handler);
-    irq_set_enabled(PWM_IRQ_WRAP, true);
-
-    pwm_config config = pwm_get_default_config();
-    /* 125MHz/125/(9999+1)-> 100 Hz */
-    pwm_config_set_clkdiv(&config, 125.f);
-    pwm_config_set_wrap(&config, 9999);
-    pwm_init(slice_num, &config, true);
-}
-
-static void stop_timer_irq(void) {
-    uint slice_num = pwm_gpio_to_slice_num(PIN_PWM_TIMER_IRQ);
-    pwm_set_irq_enabled(slice_num, false);
+    return true;
 }
 
 static int init(void) {
-    bgm_table.records = NULL;
-    bgm_table.record_count = 0;
-    se_table.records = NULL;
-    se_table.record_count = 0;
+    bgm_list.records = NULL;
+    bgm_list.record_count = 0;
+    se_list.records = NULL;
+    se_list.record_count = 0;
     psg_init();
     psgino_z.Reset();
-    start_timer_irq();
+    add_repeating_timer_ms(-10, repeating_timer_callback, NULL, &timer);
+    return 0;
+}
+
+static int deinit(void) {
+    cancel_repeating_timer(&timer);
+    uint slice_num = pwm_gpio_to_slice_num(PIN_YMZ294_PHI_M);
+    pwm_set_enabled(slice_num, false);
     return 0;
 }
 
 static int play_bgm(mgc_sound_id_t bgm_id) {
-    for ( size_t i = 0; i < bgm_table.record_count; i++ ) {
-        const struct mml_sound_record *record = &bgm_table.records[i];
+    for ( size_t i = 0; i < bgm_list.record_count; i++ ) {
+        const mgc_mml_record_t *record = &bgm_list.records[i];
         if ( record->id == bgm_id ) {
             psgino_z.SetMML(record->mml);
             psgino_z.Play();
@@ -213,8 +190,8 @@ static void stop_bgm(void) {
 }
 
 static int play_se(mgc_sound_id_t se_id) {
-    for ( size_t i = 0; i < se_table.record_count; i++ ) {
-        const struct mml_sound_record *record = &se_table.records[i];
+    for ( size_t i = 0; i < se_list.record_count; i++ ) {
+        const mgc_mml_record_t *record = &se_list.records[i];
         if ( record->id == se_id ) {
             psgino_z.SetSeMML(record->mml);
             psgino_z.PlaySe();
@@ -228,21 +205,26 @@ static void stop_se(void) {
     psgino_z.StopSe();
 }
 
-const struct mgc_sound_if sound_driver_ymz294_rp2040 = {
+static const mgc_sound_if_t sound_psg_ymz294_rp2040 = {
     .init = init,
+    .deinit = deinit,
     .play_bgm = play_bgm,
     .stop_bgm = stop_bgm,
     .play_se = play_se,
     .stop_se = stop_se,
 };
 
-void sound_driver_ymz294_rp2040_set_bgm_table(const mml_sound_record_t *records, size_t count) {
-    bgm_table.records = records;
-    bgm_table.record_count = count;
+const mgc_sound_if_t *sound_psg_ymz294_get_instance(void) {
+    return &sound_psg_ymz294_rp2040;
 }
 
-void sound_driver_ymz294_rp2040_set_se_table(const  mml_sound_record_t *records, size_t count) {
-    se_table.records = records;
-    se_table.record_count = count;
+void sound_psg_ymz294_set_bgm_list(const mgc_mml_record_t *records, size_t count) {
+    bgm_list.records = records;
+    bgm_list.record_count = count;
+}
+
+void sound_psg_ymz294_set_se_list(const mgc_mml_record_t *records, size_t count) {
+    se_list.records = records;
+    se_list.record_count = count;
 }
 

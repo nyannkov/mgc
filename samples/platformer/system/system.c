@@ -4,10 +4,12 @@
 #include <hardware/gpio.h>
 #include <hardware/timer.h>
 #include "system.h"
-#include "mgc/sound/psg/ymz294/rp2040/sound_ymz294_rp2040.h"
+#include "mgc/sound/psg/sound_psg.h"
 #include "mgc/display/ili9341/rp2040/display_ili9341_rp2040.h"
 #include "mgc/gamepad/rp2040/gamepad_rp2040.h"
 #include "resources/generates/font/k8x12S.h"
+
+//TODO Remove rp2040 dependencies from this source file.
 
 #define USE_UART            uart0
 #define UART_BAUD_RATE      115200
@@ -91,7 +93,7 @@ void sys_gamepad_proc(void) {
 }
 
 const mgc_sound_if_t *sys_get_sound_driver(void) {
-    return &sound_driver_ymz294_rp2040;
+    return sound_psg_get_instance();
 }
 
 const mgc_font_t *sys_get_default_font(void) {
