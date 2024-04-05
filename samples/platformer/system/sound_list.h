@@ -11,8 +11,6 @@
 extern "C" {
 #endif
 
-#include "mgc/sound/psg/ymz294/rp2040/sound_ymz294_rp2040.h"
-
 enum bgm_id {
     BGM_ID_000 = 0,
     NUM_OF_BGM
