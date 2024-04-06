@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(resources_gen C)
-set(CMAKE_C_STANDARD 11)
-
+file(GLOB FONT_SRC generates/font/*.c)
 file(GLOB TILESET_SRC generates/tileset/*.c)
 file(GLOB MAP_SRC generates/map/*.c)
-file(GLOB FONT_SRC generates/font/*.c)
 
-add_library(resources_gen STATIC 
+add_library(sys_resources_gen STATIC
     ${TILESET_SRC}
     ${MAP_SRC}
     ${FONT_SRC}
 )
 
-target_include_directories(resources_gen PRIVATE
+target_include_directories(sys_resources_gen PRIVATE
     ${MGC_SRC_PATH}
 )
 

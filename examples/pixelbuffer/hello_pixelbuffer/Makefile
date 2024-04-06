@@ -4,8 +4,8 @@ PROJ_NAME := $(shell basename "$(MAKEFILE_PATH)")
 OUTPUT_DIR := build
 ELF_FILE_PATH := $(MAKEFILE_PATH)/$(OUTPUT_DIR)/$(PROJ_NAME).elf
 
-#BUILD_CONF := Debug
-BUILD_CONF := Release
+BUILD_CONF := Debug
+#BUILD_CONF := Release
 OPENOCD_PATH := $(PICO_SDK_PATH)/../openocd
 
 $(ELF_FILE_PATH): build
@@ -26,5 +26,5 @@ connect:
 
 .PHONY: debug
 debug: $(ELF_FILE_PATH)
-	gdb-multiarch -x gdbinit $<
+	gdb-multiarch -x $(MAKEFILE_PATH)/../../common/gdbinit $<
 

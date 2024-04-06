@@ -13,29 +13,29 @@ endif()
 
 pico_sdk_init()
 
-set(MGC_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../src)
-set(MGC_DEVICES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../devices)
+set(MGC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../)
+set(MGC_SRC_PATH ${MGC_PATH}/src)
+set(MGC_DEVICES_PATH ${MGC_PATH}/devices)
+set(MGC_EXAMPLES_COMMON_PATH ${MGC_PATH}/examples/common)
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.c
-    system/system_rp2040.c
-    ${MGC_DEVICES_PATH}/mgc/display/ili9341/rp2040/display_ili9341_rp2040.c
 )
 
 add_subdirectory(resources)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../../ build)
+add_subdirectory(${MGC_PATH} mgc)
+add_subdirectory(${MGC_EXAMPLES_COMMON_PATH}/system system)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${MGC_SRC_PATH}
     ${MGC_DEVICES_PATH}
+    ${MGC_EXAMPLES_COMMON_PATH}
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     mgc
-    pico_stdlib
-    hardware_spi
-    hardware_gpio
+    system
     resources_gen
 )
 

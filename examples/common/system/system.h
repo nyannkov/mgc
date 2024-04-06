@@ -15,8 +15,6 @@ extern "C" {
 #include "mgc/gamepad/interface/gamepad_if.h"
 #include "mgc/font/font.h"
 
-const uint16_t sys_get_display_width(void);
-const uint16_t sys_get_display_height(void);
 const mgc_display_if_t *sys_get_display_driver(void);
 const mgc_gamepad_if_t *sys_get_gamepad_driver(void);
 void sys_gamepad_proc(void);

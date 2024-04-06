@@ -6,7 +6,6 @@
  */
 #include "mgc/mgc.h"
 #include "system/system.h"
-#include "resources/generates/font/k8x12S.h"
 
 int main(void) {
 
@@ -14,13 +13,13 @@ int main(void) {
     mgc_label_t label, label_big;
     const mgc_display_if_t *display;
     uint16_t width, height;
-
-    // Get the screen size.
-    width = sys_get_display_width();
-    height = sys_get_display_height();
     
     // Get the display driver.
     display = sys_get_display_driver();
+
+    // Get the screen size.
+    width = display->get_width();
+    height = display->get_height();
 
     // Initialize the display driver.
     display->init();
@@ -37,14 +36,14 @@ int main(void) {
     }
 
     // Initialize the label.
-    label_init(&label, 0, &k8x12S, false);
+    label_init(&label, 0, sys_get_font(), false);
     label_set_position(&label, MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(8));
     label_set_size(&label, 8*10, 12);
     label_set_text(&label, "Hello!(通常の大きさ)");
     label_set_fore_color(&label, MGC_COLOR_WHITE);
 
     // Initialize the label with the font's width and height doubled.
-    label_init(&label_big, 0, &k8x12S, true);
+    label_init(&label_big, 0, sys_get_font(), true);
     label_set_position(&label_big, MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(10));
     label_set_size(&label_big, 8*2*11, 12*2);
     label_set_text(&label_big, "Hello!(幅・高さが二倍)");

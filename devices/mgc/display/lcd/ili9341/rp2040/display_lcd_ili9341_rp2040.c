@@ -15,7 +15,10 @@
 #include <hardware/clocks.h>
 #include <hardware/gpio.h>
 #include <hardware/spi.h>
-#include "display_ili9341_rp2040.h"
+#include "mgc/display/lcd/ili9341/display_lcd_ili9341.h"
+
+#define DISPLAY_WIDTH_PIXEL         (240)
+#define DISPLAY_HEIGHT_PIXEL        (320)
 
 #ifndef MGC_LCD_SPI
 #define MGC_LCD_SPI              spi1
@@ -99,6 +102,10 @@ static int display_init(void) {
     return 0;
 }
 
+static int display_deinit(void) {
+    return 0;
+}
+
 static void display_reset(void) {
     gpio_put(PIN_RESET, 1);
     sleep_ms(5);
@@ -106,6 +113,14 @@ static void display_reset(void) {
     sleep_ms(15);
     gpio_put(PIN_RESET, 1);
     sleep_ms(15);
+}
+
+static uint16_t display_get_width(void) {
+    return DISPLAY_WIDTH_PIXEL;
+}
+
+static uint16_t display_get_height(void) {
+    return DISPLAY_HEIGHT_PIXEL;
 }
 
 static int display_draw_rect(uint8_t *buf, size_t len, int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
@@ -260,12 +275,18 @@ static void ili9341_init(void) {
     DISABLE_LCD_WRITE();
 }
 
-
-const mgc_display_if_t  display_driver_ili9341_rp2040 = {
+static const mgc_display_if_t  display_lcd_ili9341_rp2040 = {
     .init = display_init,
+    .deinit = display_deinit,
     .reset = display_reset,
-    .draw_rect = display_draw_rect
+    .draw_rect = display_draw_rect,
+    .get_width = display_get_width,
+    .get_height = display_get_height,
 };
+
+const mgc_display_if_t *display_lcd_ili9341_get_instance(void) {
+    return &display_lcd_ili9341_rp2040;
+}
 
 static void init_spi(void) {
     spi_init(USE_SPI, MGC_LCD_SPI_CLK_SPEED);

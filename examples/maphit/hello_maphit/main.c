@@ -47,12 +47,12 @@ int main(void) {
     uint16_t width, height;
     mgc_maphit_t maphit;
 
-    // Get the screen size.
-    width = sys_get_display_width();
-    height = sys_get_display_height();
-    
     // Get the display driver.
     display = sys_get_display_driver();
+
+    // Get the screen size.
+    width = display->get_width();
+    height = display->get_height();
 
     // Initialize the display driver.
     display->init();
