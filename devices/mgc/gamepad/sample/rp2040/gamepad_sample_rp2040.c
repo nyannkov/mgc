@@ -161,6 +161,10 @@ static int init(void) {
     return 0;
 }
 
+static int deinit(void) {
+    return 0;
+}
+
 static int16_t get_x_axis(void) {
     return joystick_info.axis_value[AXIS_X];
 }
@@ -222,6 +226,7 @@ static enum gp_firing_state get_firing_state(enum gp_key key) {
 
 static const mgc_gamepad_if_t gamepad_sample_rp2040 = {
     .init = init,
+    .deinit = deinit,
     .get_x_axis = get_x_axis,
     .get_y_axis = get_y_axis,
     .get_key_state = get_key_state,

@@ -42,6 +42,7 @@ enum gp_firing_state {
 
 typedef struct mgc_gamepad_if {
     int (*init)(void);
+    int (*deinit)(void);
     int16_t (*get_x_axis)(void);
     int16_t (*get_y_axis)(void);
     enum gp_key_state (*get_key_state)(enum gp_key key);
