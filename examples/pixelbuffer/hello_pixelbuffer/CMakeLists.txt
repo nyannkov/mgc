@@ -16,26 +16,25 @@ pico_sdk_init()
 set(MGC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../)
 set(MGC_SRC_PATH ${MGC_PATH}/src)
 set(MGC_DEVICES_PATH ${MGC_PATH}/devices)
+set(MGC_EXAMPLES_COMMON_PATH ${MGC_PATH}/examples/common)
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.c
-    system/system.c
 )
 
 add_subdirectory(${MGC_PATH} mgc)
-
-set(MGC_DISPLAY_LCD_TYPE ili9341)
-add_subdirectory(${MGC_DEVICES_PATH}/mgc/display/lcd display_lcd)
+add_subdirectory(${MGC_EXAMPLES_COMMON_PATH}/system system)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${MGC_SRC_PATH}
     ${MGC_DEVICES_PATH}
+    ${MGC_EXAMPLES_COMMON_PATH}
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
     mgc
-    display_lcd
+    system
 )
 
 add_compile_options(-Wall

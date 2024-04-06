@@ -9,17 +9,6 @@
 #include "mgc/gamepad/sample/gamepad_sample.h"
 #include "resources/generates/font/k8x12S.h"
 
-#define DISPLAY_WIDTH_PIXEL         (240)
-#define DISPLAY_HEIGHT_PIXEL        (320)
-
-const uint16_t sys_get_display_width(void) {
-    return DISPLAY_WIDTH_PIXEL;
-}
-
-const uint16_t sys_get_display_height(void) {
-    return DISPLAY_HEIGHT_PIXEL;
-}
-
 const mgc_display_if_t *sys_get_display_driver(void) {
     return display_lcd_get_instance();
 }
