@@ -26,7 +26,8 @@ For more information on Raspberry Pi Pico pin assignments, please refer to the r
    
    **Note (1):** The YMZ294 is a 5V IC; it can be controlled by directly connecting the output pins of the Raspberry Pi Pico to the input pins of the YMZ294, but this may damage the Raspberry Pi Pico. Therefore, please consider using a suitable voltage level shifter if necessary.
 
-   **Note (2):** Due to the difficulty in obtaining the YMZ294, we have implemented emulation of PSG output using emu2149 (https://github.com/digital-sound-antiques/emu2149.git). With the emulation, the GPIO used is reduced to one PWM output pin, and there are also advantages such as eliminating the 3.3V-5V compatibility issue mentioned in NOTE (1). Therefore, if there are no particular preferences, it may be better to use this emulator.
+   **Note (2):** Due to the difficulty in obtaining the YMZ294, we have implemented emulation of PSG output using emu2149 (https://github.com/digital-sound-antiques/emu2149.git). 
+In the case of emulation, there is an increase in processing load, but there are advantages such as reducing the GPIO to just one PWM output pin and resolving the 3.3V-5V compatibility issue mentioned in NOTE (1). Therefore, if there are no particular preferences, it may be better to use this emulator.
 When using the emulator, please change the value of MGC_SOUND_PSG_TYPE from ymz294 to emulator in the CMakeLists.txt file located in the same directory as main.cpp as shown below:
    ```cmake
     # sound driver
