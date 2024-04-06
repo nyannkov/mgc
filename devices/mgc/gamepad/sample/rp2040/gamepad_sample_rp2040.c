@@ -6,7 +6,7 @@
  */
 #include <hardware/gpio.h>
 #include <hardware/adc.h>
-#include "gamepad_rp2040.h"
+#include "mgc/gamepad/sample/gamepad_sample.h"
 
 #define NUM_OF_KEY_TABLE        (6)
 
@@ -220,7 +220,7 @@ static enum gp_firing_state get_firing_state(enum gp_key key) {
     return GP_FIRING_OFF;
 }
 
-const struct mgc_gamepad_if  game_pad_rp2040 = {
+static const mgc_gamepad_if_t gamepad_sample_rp2040 = {
     .init = init,
     .get_x_axis = get_x_axis,
     .get_y_axis = get_y_axis,
@@ -231,7 +231,11 @@ const struct mgc_gamepad_if  game_pad_rp2040 = {
     .get_firing_state = get_firing_state,
 };
 
-void game_pad_rp2040_proc(void) {
+const mgc_gamepad_if_t *gamepad_sample_get_instance(void) {
+    return &gamepad_sample_rp2040;
+}
+
+void gamepad_sample_proc(void) {
     struct key_table *tbl;
     // Update previous key state.
     for ( size_t i = 0; i < NUM_OF_KEY_TABLE; i++ ) {

@@ -6,7 +6,7 @@
 #include "system.h"
 #include "mgc/sound/psg/sound_psg.h"
 #include "mgc/display/ili9341/rp2040/display_ili9341_rp2040.h"
-#include "mgc/gamepad/rp2040/gamepad_rp2040.h"
+#include "mgc/gamepad/sample/gamepad_sample.h"
 #include "resources/generates/font/k8x12S.h"
 
 //TODO Remove rp2040 dependencies from this source file.
@@ -85,11 +85,11 @@ const mgc_display_if_t *sys_get_display_driver(void) {
 }
 
 const mgc_gamepad_if_t *sys_get_gamepad_driver(void) {
-    return &game_pad_rp2040;
+    return gamepad_sample_get_instance();
 }
 
 void sys_gamepad_proc(void) {
-    game_pad_rp2040_proc();
+    gamepad_sample_proc();
 }
 
 const mgc_sound_if_t *sys_get_sound_driver(void) {
