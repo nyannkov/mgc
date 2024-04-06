@@ -15,7 +15,7 @@
 #include <hardware/clocks.h>
 #include <hardware/gpio.h>
 #include <hardware/spi.h>
-#include "display_ili9341_rp2040.h"
+#include "mgc/display/lcd/ili9341/display_lcd_ili9341.h"
 
 #ifndef MGC_LCD_SPI
 #define MGC_LCD_SPI              spi1
@@ -261,11 +261,15 @@ static void ili9341_init(void) {
 }
 
 
-const mgc_display_if_t  display_driver_ili9341_rp2040 = {
+static const mgc_display_if_t  display_lcd_ili9341_rp2040 = {
     .init = display_init,
     .reset = display_reset,
     .draw_rect = display_draw_rect
 };
+
+const mgc_display_if_t *display_lcd_ili9341_get_instance(void) {
+    return &display_lcd_ili9341_rp2040;
+}
 
 static void init_spi(void) {
     spi_init(USE_SPI, MGC_LCD_SPI_CLK_SPEED);

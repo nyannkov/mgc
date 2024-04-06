@@ -5,7 +5,7 @@
 #include <hardware/timer.h>
 #include "system.h"
 #include "mgc/sound/psg/sound_psg.h"
-#include "mgc/display/ili9341/rp2040/display_ili9341_rp2040.h"
+#include "mgc/display/lcd/display_lcd.h"
 #include "mgc/gamepad/sample/gamepad_sample.h"
 #include "resources/generates/font/k8x12S.h"
 
@@ -81,7 +81,7 @@ void sys_printf(const char *format, ...) {
 }
 
 const mgc_display_if_t *sys_get_display_driver(void) {
-    return &display_driver_ili9341_rp2040;
+    return display_lcd_get_instance();
 }
 
 const mgc_gamepad_if_t *sys_get_gamepad_driver(void) {

@@ -30,17 +30,22 @@ add_executable(${CMAKE_PROJECT_NAME}
     actor/static_object.cpp
     actor/player.cpp
     anim/anim_player.cpp
-    ${MGC_DEVICES_PATH}/mgc/display/ili9341/rp2040/display_ili9341_rp2040.c
 )
 
 add_subdirectory(resources)
 add_subdirectory(${MGC_PATH} mgc)
 
+# sound driver
 set(MGC_SOUND_PSG_TYPE ymz294)
 #set(MGC_SOUND_PSG_TYPE emulator)
 add_subdirectory(${MGC_DEVICES_PATH}/mgc/sound/psg sound_psg)
 
+# gamepad driver
 add_subdirectory(${MGC_DEVICES_PATH}/mgc/gamepad/sample gamepad_sample)
+
+# display driver
+set(MGC_DISPLAY_LCD_TYPE ili9341)
+add_subdirectory(${MGC_DEVICES_PATH}/mgc/display/lcd display_lcd)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -49,13 +54,11 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}
+    pico_stdlib
     mgc
     sound_psg
     gamepad_sample
-    pico_stdlib
-    hardware_spi
-    hardware_gpio
-    hardware_adc
+    display_lcd
     resources_gen
 )
 
