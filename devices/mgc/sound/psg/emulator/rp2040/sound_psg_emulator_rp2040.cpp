@@ -16,12 +16,14 @@
 #define MGC_PIN_PSG_EMU_OUTPUT          (28)
 #endif/*MGC_PIN_PSG_EMU_OUTPUT*/
 
-static PSG *psg;
-static mgc_mml_list_t bgm_list, se_list;
-static struct repeating_timer timer;
+#ifndef MGC_EMU2149_CLOCK
+#define MGC_EMU2149_CLOCK               (2000000)
+#endif/*MGC_EMU2149_CLOCK*/
 
-static void psg_write(uint8_t addr, uint8_t data);
-static PsginoZ psgino_z = PsginoZ(psg_write, 2000000);
+static PSG *psg;
+static PsginoZ psgino_z;
+static struct repeating_timer timer;
+static mgc_mml_list_t bgm_list, se_list;
 
 static void pwm_irq_wrap_handler(void) {
     if ( psg ) {
@@ -81,7 +83,8 @@ static void psg_write(uint8_t addr, uint8_t data) {
 
 static int init(void) {
     if ( !psg ) {
-        psg = PSG_new(2000000, 40000);
+        psg = PSG_new(MGC_EMU2149_CLOCK, 40000);
+        psgino_z.Initialize(psg_write, MGC_EMU2149_CLOCK);
         init_hw();
         return 0;
     }
