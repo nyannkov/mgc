@@ -31,7 +31,7 @@ static const mgc_dlgnode_t node_array[] = {
 };
 
 void Scene001::init(SceneId prev_id) {
-    auto sound = sys_get_sound_driver();
+    const auto sound = sys_get_sound_driver()->common_if;
     next_id_ = SceneId::ID_001;
     scene_trans_ = false;
     scene_state_ = SceneState::Showing;

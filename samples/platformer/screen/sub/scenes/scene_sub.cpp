@@ -18,8 +18,8 @@ void SceneSub::init() {
 }
 
 void SceneSub::update() {
-    auto gamepad = sys_get_gamepad_driver();
-    auto sound = sys_get_sound_driver();
+    const auto gamepad = sys_get_gamepad_driver();
+    const auto sound = sys_get_sound_driver()->common_if;
 
     if ( check_request_show_dialoguebox() ) {
         dialoguebox_set_text(&dialoguebox_, get_show_dialoguebox_text());

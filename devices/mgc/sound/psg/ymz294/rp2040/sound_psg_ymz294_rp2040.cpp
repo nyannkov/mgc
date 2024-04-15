@@ -67,12 +67,9 @@
 #define PIN_YMZ294_D6               MGC_PIN_YMZ294_D6
 #define PIN_YMZ294_D7               MGC_PIN_YMZ294_D7
 
-static mgc_mml_list_t bgm_list, se_list;
-
+PsginoZ psgino_z;
 static struct repeating_timer timer;
-
-static void psg_write(uint8_t addr, uint8_t data);
-PsginoZ psgino_z = PsginoZ(psg_write, 125000000.0F/31/2, 100);
+static mgc_mml_list_t bgm_list, se_list;
 
 static void psg_init(void) {
     gpio_init(PIN_YMZ294_AO);
@@ -156,11 +153,8 @@ static bool repeating_timer_callback(struct repeating_timer *t) {
 }
 
 static int init(void) {
-    bgm_list.records = NULL;
-    bgm_list.record_count = 0;
-    se_list.records = NULL;
-    se_list.record_count = 0;
     psg_init();
+    psgino_z.Initialize(psg_write, 125000000.0F/31/2, 100);
     psgino_z.Reset();
     add_repeating_timer_ms(-10, repeating_timer_callback, NULL, &timer);
     return 0;
@@ -205,7 +199,7 @@ static void stop_se(void) {
     psgino_z.StopSe();
 }
 
-static const mgc_sound_if_t sound_psg_ymz294_rp2040 = {
+static const mgc_sound_if_t common_if = {
     .init = init,
     .deinit = deinit,
     .play_bgm = play_bgm,
@@ -214,17 +208,38 @@ static const mgc_sound_if_t sound_psg_ymz294_rp2040 = {
     .stop_se = stop_se,
 };
 
-const mgc_sound_if_t *sound_psg_ymz294_get_instance(void) {
-    return &sound_psg_ymz294_rp2040;
-}
-
-void sound_psg_ymz294_set_bgm_list(const mgc_mml_record_t *records, size_t count) {
+static void set_bgm_list(const mgc_mml_record_t *records, size_t count) {
     bgm_list.records = records;
     bgm_list.record_count = count;
 }
 
-void sound_psg_ymz294_set_se_list(const mgc_mml_record_t *records, size_t count) {
+static void set_se_list(const  mgc_mml_record_t *records, size_t count) {
     se_list.records = records;
     se_list.record_count = count;
+}
+
+static void set_bgm_callback(void (*cb)(uint8_t ch, int32_t param)) {
+    psgino_z.SetUserCallback(cb);
+}
+
+static void set_se_callback(void (*cb)(uint8_t ch, int32_t param)) {
+    psgino_z.SetSeUserCallback(cb);
+}
+
+static void finish_primary_loop(void) {
+    psgino_z.FinishPrimaryLoop();
+}
+
+static const mgc_sound_psg_if_t sound_psg_ymz294_rp2040 = {
+    .common_if = &common_if,
+    .set_bgm_list = set_bgm_list,
+    .set_se_list = set_se_list,
+    .set_bgm_callback = set_bgm_callback,
+    .set_se_callback = set_se_callback,
+    .finish_primary_loop = finish_primary_loop,
+};
+
+const mgc_sound_psg_if_t *sound_psg_ymz294_get_instance(void) {
+    return &sound_psg_ymz294_rp2040;
 }
 

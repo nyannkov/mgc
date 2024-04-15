@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "mgc/sound/interface/sound_if.h"
+#include "mgc/sound/psg/common/sound_psg_if.h"
 #include "mgc/display/interface/display_if.h"
 #include "mgc/gamepad/interface/gamepad_if.h"
 #include "mgc/font/font.h"
@@ -25,7 +25,7 @@ float sys_get_frame_rate(void);
 
 void sys_printf(const char *format, ...);
 const mgc_display_if_t *sys_get_display_driver(void);
-const mgc_sound_if_t *sys_get_sound_driver(void);
+const mgc_sound_psg_if_t *sys_get_sound_driver(void);
 const mgc_gamepad_if_t *sys_get_gamepad_driver(void);
 void sys_gamepad_proc(void);
 const mgc_font_t *sys_get_default_font(void);
