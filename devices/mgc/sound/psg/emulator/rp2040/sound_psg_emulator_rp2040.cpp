@@ -140,7 +140,7 @@ static void stop_se(void) {
     psgino_z.StopSe();
 }
 
-static const mgc_sound_if_t sound_psg_emulator_rp2040 = {
+static const mgc_sound_if_t common_if = {
     .init = init,
     .deinit = deinit,
     .play_bgm = play_bgm,
@@ -149,17 +149,38 @@ static const mgc_sound_if_t sound_psg_emulator_rp2040 = {
     .stop_se = stop_se,
 };
 
-const mgc_sound_if_t *sound_psg_emulator_get_instance(void) {
-    return &sound_psg_emulator_rp2040;
-}
-
-void sound_psg_emulator_set_bgm_list(const mgc_mml_record_t *records, size_t count) {
+static void set_bgm_list(const mgc_mml_record_t *records, size_t count) {
     bgm_list.records = records;
     bgm_list.record_count = count;
 }
 
-void sound_psg_emulator_set_se_list(const  mgc_mml_record_t *records, size_t count) {
+static void set_se_list(const  mgc_mml_record_t *records, size_t count) {
     se_list.records = records;
     se_list.record_count = count;
+}
+
+static void set_bgm_callback(void (*cb)(uint8_t ch, int32_t param)) {
+    psgino_z.SetUserCallback(cb);
+}
+
+static void set_se_callback(void (*cb)(uint8_t ch, int32_t param)) {
+    psgino_z.SetSeUserCallback(cb);
+}
+
+static void finish_primary_loop(void) {
+    psgino_z.FinishPrimaryLoop();
+}
+
+static const mgc_sound_psg_if_t sound_psg_emulator_rp2040 = {
+    .common_if = &common_if,
+    .set_bgm_list = set_bgm_list,
+    .set_se_list = set_se_list,
+    .set_bgm_callback = set_bgm_callback,
+    .set_se_callback = set_se_callback,
+    .finish_primary_loop = finish_primary_loop,
+};
+
+const mgc_sound_psg_if_t *sound_psg_emulator_get_instance(void) {
+    return &sound_psg_emulator_rp2040;
 }
 

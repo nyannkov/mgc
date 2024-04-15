@@ -11,12 +11,9 @@
 extern "C" {
 #endif
 
-#include "mgc/sound/interface/sound_if.h"
-#include "mgc/sound/psg/common/mml_record.h"
+#include "mgc/sound/psg/common/sound_psg_if.h"
 
-const mgc_sound_if_t *sound_psg_ymz294_get_instance(void);
-void sound_psg_ymz294_set_bgm_list(const mgc_mml_record_t *records, size_t count);
-void sound_psg_ymz294_set_se_list(const mgc_mml_record_t *records, size_t count);
+const mgc_sound_psg_if_t *sound_psg_ymz294_get_instance(void);
 
 #ifdef __cplusplus
 }/* extern "C" */

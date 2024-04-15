@@ -15,6 +15,8 @@ static const mgc_mml_record_t se_record[NUM_OF_SE] = {
 };
 
 void init_sound_lst(void) {
-    sound_psg_set_bgm_list(bgm_record, NUM_OF_BGM);
-    sound_psg_set_se_list(se_record, NUM_OF_SE);
+    const mgc_sound_psg_if_t *sound_psg = sound_psg_get_instance();
+
+    sound_psg->set_bgm_list(bgm_record, NUM_OF_BGM);
+    sound_psg->set_se_list(se_record, NUM_OF_SE);
 }

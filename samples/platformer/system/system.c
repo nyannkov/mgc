@@ -32,7 +32,7 @@ void sys_init_hw(void) {
 
     sys_get_display_driver()->init();
     sys_get_gamepad_driver()->init();
-    sys_get_sound_driver()->init();
+    sys_get_sound_driver()->common_if->init();
 
     init_sound_lst();
 }
@@ -92,7 +92,7 @@ void sys_gamepad_proc(void) {
     gamepad_sample_proc();
 }
 
-const mgc_sound_if_t *sys_get_sound_driver(void) {
+const mgc_sound_psg_if_t *sys_get_sound_driver(void) {
     return sound_psg_get_instance();
 }
 
