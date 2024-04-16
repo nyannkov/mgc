@@ -30,7 +30,7 @@ void sys_init_hw(void) {
     gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
-    sys_get_display_driver()->init();
+    sys_get_display_driver()->common_if->init();
     sys_get_gamepad_driver()->init();
     sys_get_sound_driver()->common_if->init();
 
@@ -80,7 +80,7 @@ void sys_printf(const char *format, ...) {
     uart_puts(USE_UART, buf);
 }
 
-const mgc_display_if_t *sys_get_display_driver(void) {
+const mgc_display_lcd_if_t *sys_get_display_driver(void) {
     return display_lcd_get_instance();
 }
 
