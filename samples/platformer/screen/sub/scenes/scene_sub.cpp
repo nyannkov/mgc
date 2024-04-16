@@ -88,6 +88,8 @@ void SceneSub::update() {
 }
 
 void SceneSub::draw(uint16_t panel_x0, uint16_t panel_y0, uint16_t width, uint16_t height) {
+    const auto display = sys_get_display_driver()->common_if;
+
     for ( int16_t y = 0; y < height; y += MGC_CELL2PIXEL(1)) {
         for ( int16_t x = 0; x < width; x += MGC_CELL2PIXEL(1)) {
             bool is_blending = false;
@@ -101,7 +103,7 @@ void SceneSub::draw(uint16_t panel_x0, uint16_t panel_y0, uint16_t width, uint16
                 is_blending = true;
             }
             if ( is_blending || all_draw_flag_ ) {
-                pixelbuffer_draw_cell(&pixelbuffer_, sys_get_display_driver(), panel_x0+x, panel_y0+y);
+                pixelbuffer_draw_cell(&pixelbuffer_, display, panel_x0+x, panel_y0+y);
             }
         }
     }

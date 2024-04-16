@@ -11,9 +11,9 @@
 extern "C" {
 #endif
 
-#include "mgc/display/interface/display_if.h"
+#include "mgc/display/lcd/common/display_lcd_if.h"
 
-const mgc_display_if_t *display_lcd_ili9341_get_instance(void);
+const mgc_display_lcd_if_t *display_lcd_ili9341_get_instance(void);
 
 #ifdef __cplusplus
 }/* extern "C" */

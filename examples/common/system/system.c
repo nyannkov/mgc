@@ -10,15 +10,11 @@
 #include "resources/generates/font/k8x12S.h"
 
 const mgc_display_if_t *sys_get_display_driver(void) {
-    return display_lcd_get_instance();
+    return display_lcd_get_instance()->common_if;
 }
 
 const mgc_gamepad_if_t *sys_get_gamepad_driver(void) {
     return gamepad_sample_get_instance();
-}
-
-void sys_gamepad_proc(void) {
-    gamepad_sample_proc();
 }
 
 const mgc_font_t *sys_get_font(void) {

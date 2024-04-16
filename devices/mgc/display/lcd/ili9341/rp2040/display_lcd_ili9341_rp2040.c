@@ -275,19 +275,6 @@ static void ili9341_init(void) {
     DISABLE_LCD_WRITE();
 }
 
-static const mgc_display_if_t  display_lcd_ili9341_rp2040 = {
-    .init = display_init,
-    .deinit = display_deinit,
-    .reset = display_reset,
-    .draw_rect = display_draw_rect,
-    .get_width = display_get_width,
-    .get_height = display_get_height,
-};
-
-const mgc_display_if_t *display_lcd_ili9341_get_instance(void) {
-    return &display_lcd_ili9341_rp2040;
-}
-
 static void init_spi(void) {
     spi_init(USE_SPI, MGC_LCD_SPI_CLK_SPEED);
     gpio_set_function(PIN_SPI_CLK, GPIO_FUNC_SPI); // SCK
@@ -312,4 +299,21 @@ static void pin_config(void) {
     gpio_init(PIN_CS);
     gpio_set_dir(PIN_CS, GPIO_OUT);
     gpio_put(PIN_CS, 1);
+}
+
+static const mgc_display_if_t common_if = {
+    .init = display_init,
+    .deinit = display_deinit,
+    .reset = display_reset,
+    .draw_rect = display_draw_rect,
+    .get_width = display_get_width,
+    .get_height = display_get_height,
+};
+
+static const mgc_display_lcd_if_t display_lcd_ili9341_rp2040 = {
+    .common_if = &common_if,
+};
+
+const mgc_display_lcd_if_t *display_lcd_ili9341_get_instance(void) {
+    return &display_lcd_ili9341_rp2040;
 }

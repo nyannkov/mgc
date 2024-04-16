@@ -50,6 +50,7 @@ typedef struct mgc_gamepad_if {
     bool (*is_key_on_edge)(enum gp_key key);
     bool (*is_key_off_edge)(enum gp_key key);
     enum gp_firing_state (*get_firing_state)(enum gp_key key);
+    void (*proc)(void);
 } mgc_gamepad_if_t;
 
 #ifdef __cplusplus

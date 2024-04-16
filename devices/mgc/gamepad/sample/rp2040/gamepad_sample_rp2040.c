@@ -224,23 +224,7 @@ static enum gp_firing_state get_firing_state(enum gp_key key) {
     return GP_FIRING_OFF;
 }
 
-static const mgc_gamepad_if_t gamepad_sample_rp2040 = {
-    .init = init,
-    .deinit = deinit,
-    .get_x_axis = get_x_axis,
-    .get_y_axis = get_y_axis,
-    .get_key_state = get_key_state,
-    .is_key_state_changed = is_key_state_changed,
-    .is_key_on_edge = is_key_on_edge,
-    .is_key_off_edge = is_key_off_edge,
-    .get_firing_state = get_firing_state,
-};
-
-const mgc_gamepad_if_t *gamepad_sample_get_instance(void) {
-    return &gamepad_sample_rp2040;
-}
-
-void gamepad_sample_proc(void) {
+static void proc(void) {
     struct key_table *tbl;
     // Update previous key state.
     for ( size_t i = 0; i < NUM_OF_KEY_TABLE; i++ ) {
@@ -322,4 +306,20 @@ void gamepad_sample_proc(void) {
     }
 }
 
+static const mgc_gamepad_if_t gamepad_sample_rp2040 = {
+    .init = init,
+    .deinit = deinit,
+    .get_x_axis = get_x_axis,
+    .get_y_axis = get_y_axis,
+    .get_key_state = get_key_state,
+    .is_key_state_changed = is_key_state_changed,
+    .is_key_on_edge = is_key_on_edge,
+    .is_key_off_edge = is_key_off_edge,
+    .get_firing_state = get_firing_state,
+    .proc = proc,
+};
+
+const mgc_gamepad_if_t *gamepad_sample_get_instance(void) {
+    return &gamepad_sample_rp2040;
+}
 

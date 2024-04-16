@@ -39,7 +39,7 @@ static bool auto_switch_flag;
   The ID of the terminal node is intended to be used as a condition for triggering events and altering processing.
 */
 static const mgc_dlgnode_t node_array[] = {
-    { .id=0x00, .type=MGC_DLG_TYPE_TEXT, .params={.text="Welcome. Would you like too buy something?" }, .flags=0x01 },
+    { .id=0x00, .type=MGC_DLG_TYPE_TEXT, .params={.text="Welcome. Would you like to buy something?" }, .flags=0x01 },
     { .id=0x10, .type=MGC_DLG_TYPE_SELECT, .params={ .items = &items_yesno },
         .cb_before_switch_node = [](const mgc_dlgflow_t *dlgflow) -> mgc_node_id_t { return ( dlgflow->result == 0 ) ? 0x20 : 0xF0; }
     },
@@ -98,23 +98,17 @@ static const mgc_dlgflow_if_t handler = {
 int main(void) {
     mgc_pixelbuffer_t pixelbuffer;
     mgc_dlgflow_t dlgflow;
-    const mgc_display_if_t *display;
-    const mgc_gamepad_if_t *gamepad;
+    const auto display = sys_get_display_driver();
+    const auto gamepad = sys_get_gamepad_driver();
     uint16_t width, height;
     bool loop;
-
-    // Get the display driver.
-    display = sys_get_display_driver();
-
-    // Get the screen size.
-    width = display->get_width();
-    height = display->get_height();
 
     // Initialize the display driver.
     display->init();
 
-    // Get the gamepad driver.
-    gamepad = sys_get_gamepad_driver();
+    // Get the screen size.
+    width = display->get_width();
+    height = display->get_height();
 
     // Initialized the gamepad driver.
     gamepad->init();
@@ -146,7 +140,7 @@ int main(void) {
     do {
 
         // Update input information from buttons and joysticks.
-        sys_gamepad_proc();
+        gamepad->proc();
 
         // Execute processing of the node. Returns true upon completion.
         if ( dlgflow_run_node_proc(&dlgflow) ) {

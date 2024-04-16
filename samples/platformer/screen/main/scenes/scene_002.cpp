@@ -107,6 +107,8 @@ void Scene002::update() {
 }
 
 void Scene002::draw(uint16_t screen_x0, uint16_t screen_y0, uint16_t width, uint16_t height) {
+    const auto display = sys_get_display_driver()->common_if;
+
     for ( int16_t y = 0; y < height; y += MGC_CELL2PIXEL(1)) {
         for ( int16_t x = 0; x < width; x += MGC_CELL2PIXEL(1)) {
             tilemap_apply_cell_blending(&tilemap_bg_, &pixelbuffer_, x, y);
@@ -117,7 +119,7 @@ void Scene002::draw(uint16_t screen_x0, uint16_t screen_y0, uint16_t width, uint
             if ( scene_state_ != SceneState::Shown ) {
                 pixelbuffer_fill_partial_with_color(&pixelbuffer_, 0, cell_mask_, cell_mask_);
             }
-            pixelbuffer_draw_cell(&pixelbuffer_, sys_get_display_driver(), screen_x0+x, screen_y0+y);
+            pixelbuffer_draw_cell(&pixelbuffer_, display, screen_x0+x, screen_y0+y);
         }
     }
     switch (scene_state_) {

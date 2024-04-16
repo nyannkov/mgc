@@ -12,6 +12,7 @@ auto main_scn = mgc::main_screen::Screen(MGC_CELL2PIXEL(0), MGC_CELL2PIXEL(0), 1
 auto sub_scn  = mgc::sub_screen::Screen(MGC_CELL2PIXEL(0), MGC_CELL2PIXEL(12), 15, 8);
 
 int main(void) {
+    const auto gamepad = sys_get_gamepad_driver();
 
     sys_init_hw();
 
@@ -20,7 +21,7 @@ int main(void) {
 
     while (true) {
         sys_update_frame_rate();
-        sys_gamepad_proc();
+        gamepad->proc();
         main_scn.update();
         sub_scn.update();
     }
