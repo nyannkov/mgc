@@ -16,6 +16,8 @@ typedef struct mgc_sound_if {
     void (*stop_bgm)(void);
     int  (*play_se)(mgc_sound_id_t se_id);
     void (*stop_se)(void);
+    bool (*is_bgm_playing_end)(void);
+    bool (*is_se_playing_end)(void);
 } mgc_sound_if_t;
 
 #ifdef __cplusplus

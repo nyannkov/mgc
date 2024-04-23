@@ -199,6 +199,14 @@ static void stop_se(void) {
     psgino_z.StopSe();
 }
 
+static bool is_bgm_playing_end(void) {
+    return psgino_z.GetStatus() == Psgino::PlayEnd;
+}
+
+static bool is_se_playing_end(void) {
+    return psgino_z.GetSeStatus() == Psgino::PlayEnd;
+}
+
 static const mgc_sound_if_t common_if = {
     .init = init,
     .deinit = deinit,
@@ -206,6 +214,8 @@ static const mgc_sound_if_t common_if = {
     .stop_bgm = stop_bgm,
     .play_se = play_se,
     .stop_se = stop_se,
+    .is_bgm_playing_end = is_bgm_playing_end,
+    .is_se_playing_end = is_se_playing_end,
 };
 
 static void set_bgm_list(const mgc_mml_record_t *records, size_t count) {
