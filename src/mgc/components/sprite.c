@@ -21,6 +21,10 @@ void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     sprite->tile_idx = 0;
     sprite->hitbox_array = NULL;
     sprite->hitbox_count = 0;
+    sprite->trim_left = 0;
+    sprite->trim_right = 0;
+    sprite->trim_top = 0;
+    sprite->trim_bottom = 0;
 }
 
 void sprite_set_enabled(mgc_sprite_t *sprite, bool enabled) {
@@ -81,6 +85,17 @@ void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_
     sprite->r_cell_y_ofs = r_cell_y_ofs;
 }
 
+void sprite_set_trim(mgc_sprite_t *sprite, uint16_t left, uint16_t right, uint16_t top, uint16_t bottom) {
+    if ( sprite == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    sprite->trim_left = left;
+    sprite->trim_right = right;
+    sprite->trim_top = top;
+    sprite->trim_bottom = bottom;
+}
+
 bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
     int16_t l0, l1;
     int16_t r0, r1;
@@ -105,6 +120,14 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
     t0 = sprite->y;
     b0 = t0 + sprite->tileset->tile_height - 1;
 
+    l0 += sprite->trim_left;
+    r0 -= sprite->trim_right;
+    t0 += sprite->trim_top;
+    b0 -= sprite->trim_bottom;
+    if ( (r0 <= l0) || (b0 <= t0) ) {
+        return false;
+    }
+
     l1 = cell_x;
     t1 = cell_y;
     if ( sprite->r_cell_x_ofs != 0 ) {
@@ -116,8 +139,7 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
     r1 = l1 + MGC_CELL_LEN - 1;
     b1 = t1 + MGC_CELL_LEN - 1;
 
-    if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) )
-    {
+    if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
         int16_t x, y;
         int32_t wy;
         int16_t x_s, y_s, x_e, y_e;
@@ -128,8 +150,9 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
         const mgc_color_t *palette_array;
         int16_t tile_width;
 
-        tile = sprite->tileset->tile_array[sprite->tile_idx];
         tile_width = sprite->tileset->tile_width;
+        tile = sprite->tileset->tile_array[sprite->tile_idx];
+        tile = &tile[sprite->trim_left + sprite->trim_top * tile_width];
         palette_array = sprite->tileset->palette_array;
 
         x_s = (( l1 < l0 ) ? l0 : l1) - l0;
