@@ -47,16 +47,21 @@ void pixelbuffer_fill_partial_with_color(mgc_pixelbuffer_t *pixelbuffer, mgc_col
         MGC_WARN("Invalid handler");
         return;
     }
-    if ( fill_dx >= 0 ) {
+    if ( (fill_dx == 0) || (fill_dy == 0) ) {
+        MGC_INFO("fill_dx or fill_dy is 0.");
+        return;
+    }
+
+    if ( fill_dx > 0 ) {
         x0 = 0;
-        x1 = MGC_MOD_CELL_LEN(fill_dx);
+        x1 = MGC_MOD_CELL_LEN(fill_dx-1);
     } else {
         x0 = MGC_MOD_CELL_LEN(fill_dx);
         x1 = MGC_CELL_LEN-1;
     }
-    if ( fill_dy >= 0 ) {
+    if ( fill_dy > 0 ) {
         wy0 = 0;
-        wy1 = MGC_MOD_CELL_LEN(fill_dy)<<MGC_CELL_LEN_LOG2;
+        wy1 = MGC_MOD_CELL_LEN(fill_dy-1)<<MGC_CELL_LEN_LOG2;
     } else {
         wy0 = MGC_MOD_CELL_LEN(fill_dy)<<MGC_CELL_LEN_LOG2;
         wy1 = (MGC_CELL_LEN-1)<<MGC_CELL_LEN_LOG2;
