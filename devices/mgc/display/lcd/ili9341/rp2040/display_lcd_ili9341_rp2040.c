@@ -113,6 +113,7 @@ static void display_reset(void) {
     sleep_ms(15);
     gpio_put(PIN_RESET, 1);
     sleep_ms(15);
+
 }
 
 static uint16_t display_get_width(void) {
@@ -152,6 +153,15 @@ static int display_draw_rect(uint8_t *buf, size_t len, int16_t x0, int16_t y0, i
     DISABLE_LCD_WRITE();
 
     return 0;
+}
+
+static void display_clear_screen(void) {
+    uint8_t buf[(4*4)*2] = {0};
+    for ( int x = 0; x < (DISPLAY_WIDTH_PIXEL-3); x += 4 ) {
+        for ( int y = 0; y < (DISPLAY_HEIGHT_PIXEL-3); y += 4 ) {
+            display_draw_rect(buf, sizeof(buf), x, y, x+3, y+3);
+        }
+    }
 }
 
 static void ili9341_init(void) {
@@ -308,6 +318,7 @@ static const mgc_display_if_t common_if = {
     .draw_rect = display_draw_rect,
     .get_width = display_get_width,
     .get_height = display_get_height,
+    .clear_screen = display_clear_screen,
 };
 
 static const mgc_display_lcd_if_t display_lcd_ili9341_rp2040 = {

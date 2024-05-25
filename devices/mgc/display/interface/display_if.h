@@ -20,6 +20,7 @@ typedef struct mgc_display_if {
     int (*draw_rect)(uint8_t *buf, size_t len, int16_t x0, int16_t y0, int16_t x1, int16_t y1);
     uint16_t (*get_width)(void);
     uint16_t (*get_height)(void);
+    void (*clear_screen)(void);
 } mgc_display_if_t;
 
 #ifdef __cplusplus
