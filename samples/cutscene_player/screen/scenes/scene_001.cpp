@@ -89,10 +89,11 @@ static const mgc_mml_record_t mml_records[] = {
             "V15O3L2"
             "R4"
             "A.>C.<G.G. F.E.A.A."
-            "[2"
-                "[2 A.>C.<G.G.|F.D.E.E.]F.E.A.A."
-                "[2 >C.C.<G.G.|F.D.E.E.]F.E.A.A."
-            "]"
+            "[2 A.>C.<G.G.|F.D.E.E.]F.E.A.A."
+            "[2 >C.C.<G.G.|F.D.E.E.]F.E.A.A."
+            "A.>C.<G.G. F.D.E.E."
+            "A.>C.<G.G. F.E.A.AA4"
+            "[2 >C.C.<G.G.|F.D.E.E.]F.E.A.A."
             "$E1$A20$H100$D100$S80$F800"
             "L4O5"
             "<A>EA" "CE>C<" "<B>DG" "<DB>G"
@@ -240,8 +241,8 @@ void Scene001::update() {
             sprite_actor_.y -= 1;
         }
 
-        if ( sprite_actor_.x > MGC_CELL2PIXEL(94) ) {
-            sprite_actor_.x = MGC_CELL2PIXEL(94);
+        if ( sprite_actor_.x > MGC_CELL2PIXEL(93) ) {
+            sprite_actor_.x = MGC_CELL2PIXEL(93);
             show_main_ = false;
             show_title_ = false;
             show_subtitle_ = false;
