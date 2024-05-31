@@ -122,7 +122,6 @@ static const mgc_mml_record_t mml_records[] = {
             "<BGDGBG BG<B>DGD"
             "AFCFAF E<BG#B>E<B>EC<A>EDEE2"
             "$B146V13O5L4"
-            "R64"
             "$E1$A20$H100$D100$S80$F800"
             "A>C2DE.F8ED2<BG.A8B >C.<B8AG#.F#8G#A2.A2&A8..."
         },
