@@ -94,7 +94,7 @@ static const mgc_mml_record_t mml_records[] = {
             "A.>C.<G.G. F.D.E.E."
             "A.>C.<G.G. F.E.A.AA4"
             "[2 >C.C.<G.G.|F.D.E.E.]F.E.A.A."
-            "$E1$A20$H100$D100$S80$F800"
+            "$E1$A20$H100$D100$S80$F500"
             "L4O5"
             "<A>EA" "CE>C<" "<B>DG" "<DB>G"
             "<A>CF" "<B>DB" "<A>CEE2."
@@ -121,7 +121,7 @@ static const mgc_mml_record_t mml_records[] = {
             ">EC<G>CE CEC<G>CEC"
             "<BGDGBG BG<B>DGD"
             "AFCFAF E<BG#B>E<B>EC<A>EDEE2"
-            "$B146V13O5L4"
+            "$B147V13O5L4"
             "$E1$A20$H100$D100$S80$F800"
             "A>C2DE.F8ED2<BG.A8B >C.<B8AG#.F#8G#A2.A2&A8..."
         },
