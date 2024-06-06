@@ -74,7 +74,7 @@ static const mgc_mml_record_t mml_records[] = {
             "@C106" ">C2<AA.G#8AB2G#E2."
 
             "@C107" ">G2GG.F8ED2<BG.A8B"
-            "@C108" ">C.<B8AG#.F#8G#A2.&A64" "A4&A8&A16&A32&A64"
+            "@C108" ">C.<B8AG#.F#8G#A2.A2"
             "@C100"
 
             "$B122O5"
@@ -97,7 +97,8 @@ static const mgc_mml_record_t mml_records[] = {
             "$E1$A20$H100$D100$S70$F600"
             "L4O5"
             "<A>EA" "CE>C<" "<B>DG" "<DB>G"
-            "<A>CF" "<B>DB" "<A>CEE2."
+            "<A>CF" "<B>DB"
+            "<A>CE8&E16&E32&E64""E2.&E64"
             ","
             // Channel C (ch = 2)
             "T120"
@@ -121,9 +122,7 @@ static const mgc_mml_record_t mml_records[] = {
             ">EC<G>CEC" "EC<G>CEC"
             "<BGDGBG" "BG<B>DG<B>"
             "AFCFAF" "E<BG#B>E<B"
-            ">EC<EA>C"
-            "E16&E32&E64"
-            "C2&C64"
+            ">EC<EA>CEC2"
             "$B117V13O5L4"
             "$E1$A20$H100$D100$S70$F600"
             "A>C2DE.F8ED2<BG.A8B"
