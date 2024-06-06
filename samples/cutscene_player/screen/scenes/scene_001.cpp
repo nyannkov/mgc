@@ -47,11 +47,11 @@ static const mgc_mml_record_t mml_records[] = {
             ":V1M1;"
             // Channel A (ch = 0)
             "T120"
-            "$B150"
+            "$B120"
             "$E1$A0$H100$D100$S90$F2000"
             "V15O4L4"
             "@C1" "A>C2D"
-            "@C2" "E.F8E" 
+            "@C2" "E.F8E"
             "@C3" "D2<BG.A8B>C.<B8AG#.F#8G#"
             "@C4" "A2.A2"
 
@@ -74,17 +74,17 @@ static const mgc_mml_record_t mml_records[] = {
             "@C106" ">C2<AA.G#8AB2G#E2."
 
             "@C107" ">G2GG.F8ED2<BG.A8B"
-            "@C108" ">C.<B8AG#.F#8G#A2.A2"
+            "@C108" ">C.<B8AG#.F#8G#A2.&A64" "A4&A8&A16&A32&A64"
             "@C100"
 
-            "$B152O5"
+            "$B122O5"
             "V15"
             "$E1$A20$H100$D100$S80$F800"
             "A>C2DE.F8ED2<BG.A8B >C.<B8AG#.F#8G#A2.A2."
             ","
             // Channel B (ch = 1)
             "T120"
-            "$B150"
+            "$B120"
             "$E1$A0$H100$D100$S90$F2000"
             "V15O3L2"
             "R4"
@@ -94,14 +94,14 @@ static const mgc_mml_record_t mml_records[] = {
             "A.>C.<G.G. F.D.E.E."
             "A.>C.<G.G. F.E.A.AA4"
             "[2 >C.C.<G.G.|F.D.E.E.]F.E.A.A."
-            "$E1$A20$H100$D100$S80$F500"
+            "$E1$A20$H100$D100$S70$F600"
             "L4O5"
             "<A>EA" "CE>C<" "<B>DG" "<DB>G"
             "<A>CF" "<B>DB" "<A>CEE2."
             ","
             // Channel C (ch = 2)
             "T120"
-            "$B150"
+            "$B120"
             "$E1$A0$H100$D100$S90$F2000"
             "V15O4L4"
             "R4"
@@ -114,16 +114,20 @@ static const mgc_mml_record_t mml_records[] = {
             "ACF<B>D<BA>CEE2."
             "$E1$A0$H100$D100$S90$F2000"
             "V14O4L8"
-            ">EC<G>CE CEC<G>CEC"
-            "<BGDGBG BG<B>DGD"
-            "AFCFAF FD<A>DFD"
-            "G#E<B>EG#E  G#E<G#B>E<B>"
-            ">EC<G>CE CEC<G>CEC"
-            "<BGDGBG BG<B>DGD"
-            "AFCFAF E<BG#B>E<B>EC<A>EDEE2"
-            "$B147V13O5L4"
-            "$E1$A20$H100$D100$S80$F800"
-            "A>C2DE.F8ED2<BG.A8B >C.<B8AG#.F#8G#A2.A2&A8..."
+            ">EC<G>CEC" "EC<G>CEC"
+            "<BGDGBG" "BG<B>DG<B>"
+            "AFCFAF" "FD<A>DF<A>"
+            "G#E<B>EG#E" "G#E<EG#B>E"
+            ">EC<G>CEC" "EC<G>CEC"
+            "<BGDGBG" "BG<B>DG<B>"
+            "AFCFAF" "E<BG#B>E<B"
+            ">EC<EA>C"
+            "E16&E32&E64"
+            "C2&C64"
+            "$B117V13O5L4"
+            "$E1$A20$H100$D100$S70$F600"
+            "A>C2DE.F8ED2<BG.A8B"
+            ">C.<B8AG#.F#8G#A2.A2."
         },
     },
 };
@@ -221,7 +225,7 @@ void Scene001::update() {
     if ( show_main_ ) {
         if ( cell_mask_ > 0 ) {
             cell_mask_--;
-        } 
+        }
     }
 
     if ( show_actor_ ) {
