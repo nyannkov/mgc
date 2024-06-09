@@ -1,5 +1,9 @@
 # samples/cutscene_player
 
+When you start this sample, a short animation will play along with music from the PSG sound source.
+The PSG sound source uses an emulator. The emulator's output is produced through PWM.
+When connecting to a speaker, please attach appropriate capacitors and resistors as needed.
+
 ## Modules in use
 
 | Module name | Description | Notes |
