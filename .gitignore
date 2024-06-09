@@ -3,6 +3,8 @@
 !/fonts/.gitkeep
 /samples/platformer/build/
 /samples/platformer/resources/generates/
+/samples/cutscene_player/build/
+/samples/cutscene_player/resources/generates/
 /examples/**/resources/generates/
 /examples/**/build/
 
