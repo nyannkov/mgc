@@ -4,16 +4,31 @@ mgc is a library under development intended for creating small games or gadgets.
 This library processes images in units of 16x16 pixels.Threfore, the size of the 
 graphic RAM needs to be at least this size.
 
-## Demonstration
+## Cloning the Repository
 
-This is a demo using Raspberry Pi Pico (rp2040) and an LCD module equipped with ILI9341.
+This repository includes submodules. To clone it properly, please use the `--recursive` option:
 
+```bash
+git clone --recursive <repository_url>
+```
+
+## Demonstrations
+
+There are demonstrations using a Raspberry Pi Pico (RP2040) and an LCD module equipped with an ILI9341.
+
+### samples/platformer
 <div style="display: flex;">
   <img src="samples/platformer/img/lcd+controller.jpg" style="width: 35%;">
   <img src="samples/platformer/img/platformer.gif" style="width: 100%;">
 </div>
 
-Source code: [samples/platformer](samples/platformer)
+ - Source code: [samples/platformer](samples/platformer)
+
+### samples/cutscene_player
+
+https://www.youtube.com/watch?v=uYc1KSSySi8
+
+ - Source code: [samples/cutscene_player](samples/cutscene_player)
 
 ## Specification
 ### Image format
