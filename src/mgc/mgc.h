@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#define MGC_VERSION     "0.3.1"
+#define MGC_VERSION     "0.4.0"
 
 #include "components/dialoguebox.h"
 #include "components/hitbox.h"
