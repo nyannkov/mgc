@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #include "mgc/common/common.h"
-#include "mgc/display/interface/display_if.h"
+#include "display.h"
 
 #define PIXELBUF_LEN           (MGC_CELL_LEN*MGC_CELL_LEN)
 
