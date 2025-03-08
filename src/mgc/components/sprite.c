@@ -161,13 +161,12 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
         y_e = (( b1 < b0 ) ? b1 : b0) - t0;
 
         for ( x = x_s; x <= x_e; x++ ) {
-            size_t idx, idx_ofs;
-            idx_ofs = MGC_MOD_CELL_LEN(x+l0-l1) << MGC_CELL_LEN_LOG2;
             for ( y = y_s, wy = y_s*tile_width; y <= y_e; y++, wy+=tile_width ) {
-                idx =  idx_ofs + MGC_MOD_CELL_LEN(y+t0-t1);
                 color_index = tile[(int32_t)x+wy];
                 if ( color_index != 0 ) {
+                    size_t idx;
                     color = palette_array[color_index];
+                    idx = MGC_GET_PIXELBUF_INDEX(x+l0-l1, y+t0-t1);
                     pixelbuffer->pixelbuf[idx] = MGC_COLOR_SWAP(color);
                 }
             }

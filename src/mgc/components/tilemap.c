@@ -95,7 +95,6 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
         const mgc_color_t *palette_array; 
         int16_t x, y, wy;
         int16_t x_s, x_e, y_s, y_e;
-        size_t idx, idx_ofs;
         int16_t color_index;
         mgc_color_t *pixelbuf;
 
@@ -185,11 +184,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_lt != 0 ) {
                 tile = tileset->tile_array[tile_lt];
                 for ( x = x_s; x < MGC_CELL_LEN; x++ ) {
-                    idx_ofs = (x-x_s) << MGC_CELL_LEN_LOG2;
                     for ( y = y_s, wy = y_s*MGC_CELL_LEN; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y-y_s);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x-x_s, y-y_s);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -198,11 +197,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_rt != 0 ) {
                 tile = tileset->tile_array[tile_rt];
                 for ( x = 0; x <= x_e; x++ ) {
-                    idx_ofs = (x-x_e+MGC_CELL_LEN-1) << MGC_CELL_LEN_LOG2;
                     for ( y = y_s, wy = y_s*MGC_CELL_LEN; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y-y_s);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x-x_e+MGC_CELL_LEN-1, y-y_s);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -211,11 +210,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_lb != 0 ) {
                 tile = tileset->tile_array[tile_lb];
                 for ( x = x_s; x < MGC_CELL_LEN; x++ ) {
-                    idx_ofs = (x-x_s) << MGC_CELL_LEN_LOG2;
                     for ( y = 0, wy = 0; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y-y_e+MGC_CELL_LEN-1);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x-x_s, y-y_e+MGC_CELL_LEN-1);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -224,11 +223,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_rb != 0 ) {
                 tile = tileset->tile_array[tile_rb];
                 for ( x = 0; x <= x_e; x++ ) {
-                    idx_ofs = (x-x_e+MGC_CELL_LEN-1) << MGC_CELL_LEN_LOG2;
                     for ( y = 0, wy = 0; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y-y_e+MGC_CELL_LEN-1);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x-x_e+MGC_CELL_LEN-1, y-y_e+MGC_CELL_LEN-1);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -238,11 +237,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_lt != 0 ) {
                 tile = tileset->tile_array[tile_lt];
                 for ( x = x_s; x < MGC_CELL_LEN; x++ ) {
-                    idx_ofs = (x-x_s) << MGC_CELL_LEN_LOG2;
                     for ( y = 0, wy = 0; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x-x_s, y);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -251,11 +250,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_rt != 0 ) {
                 tile = tileset->tile_array[tile_rt];
                 for ( x = 0; x <= x_e; x++ ) {
-                    idx_ofs = (x-x_e+MGC_CELL_LEN-1) << MGC_CELL_LEN_LOG2;
                     for ( y = 0, wy = 0; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x-x_e+MGC_CELL_LEN-1, y);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -265,11 +264,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_lt != 0 ) {
                 tile = tileset->tile_array[tile_lt];
                 for ( x = 0; x < MGC_CELL_LEN; x++ ) {
-                    idx_ofs = x << MGC_CELL_LEN_LOG2;
                     for ( y = y_s, wy = y_s*MGC_CELL_LEN; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y-y_s);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x, y-y_s);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -278,11 +277,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_lb != 0 ) {
                 tile = tileset->tile_array[tile_lb];
                 for ( x = 0; x < MGC_CELL_LEN; x++ ) {
-                    idx_ofs = x << MGC_CELL_LEN_LOG2;
                     for ( y = 0, wy = 0; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y-y_e+MGC_CELL_LEN-1);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x, y-y_e+MGC_CELL_LEN-1);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
@@ -292,11 +291,11 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
             if ( tile_lt != 0 ) {
                 tile = tileset->tile_array[tile_lt];
                 for ( x = 0; x < MGC_CELL_LEN; x++ ) {
-                    idx_ofs = x << MGC_CELL_LEN_LOG2;
                     for ( y = 0, wy = 0; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
-                        idx =  idx_ofs + MGC_MOD_CELL_LEN(y);
                         color_index = tile[x+wy];
                         if ( color_index != 0 ) {
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(x, y);
                             pixelbuf[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
                         }
                     }
