@@ -172,21 +172,21 @@ bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixe
                 y_s = (( t1 < t0 ) ? t0 : t1) - t0;
                 y_e = (( b1 < b0 ) ? b1 : b0) - t0;
                 for ( int16_t X = x_s; X <= x_e; X++ ) {
-                    size_t idx, idx_ofs;
                     uint32_t mask_x;
                     if (glyph->bb_w <= 8 ) {
                         mask_x = 0x00010000>>(X>>shift);
                     } else {
                         mask_x = 0x01000000>>(X>>shift);
                     }
-                    idx_ofs = MGC_MOD_CELL_LEN(X+l0-l1) << MGC_CELL_LEN_LOG2;
                     for ( int16_t Y = y_s; Y <= y_e; Y++ ) {
                         if ( (bitmap[Y>>shift] & mask_x ) != 0 ) {
-                            idx =  idx_ofs + MGC_MOD_CELL_LEN(Y+t0-t1);
+                            size_t idx;
+                            idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1);
                             pixelbuffer->pixelbuf[idx] = label->fore_color;
                         } else {
                             if ( label->enable_back_color ) {
-                                idx =  idx_ofs + MGC_MOD_CELL_LEN(Y+t0-t1);
+                                size_t idx;
+                                idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1);
                                 pixelbuffer->pixelbuf[idx] = label->back_color;
                             }
                         }

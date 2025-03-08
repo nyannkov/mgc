@@ -18,6 +18,9 @@ extern "C" {
 #include <stdlib.h>
 #include <assert.h>
 
+//#define MGC_PIXELBUF_NOSWAP
+//#define MGC_PIXELBUF_ORDER 1U
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif

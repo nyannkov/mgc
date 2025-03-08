@@ -73,6 +73,20 @@ typedef mgc_color_rgb565_t mgc_color_t;
 #endif
 #endif
 
+#ifndef MGC_PIXELBUF_ORDER
+#define MGC_PIXELBUF_ORDER     (0U)
+#endif
+
+#ifndef MGC_GET_PIXELBUF_INDEX
+#if MGC_PIXELBUF_ORDER==0U
+#define MGC_GET_PIXELBUF_INDEX(x, y) \
+    ((MGC_MOD_CELL_LEN((x))<<MGC_CELL_LEN_LOG2) + MGC_MOD_CELL_LEN((y)))
+#else
+#define MGC_GET_PIXELBUF_INDEX(x, y) \
+    ((MGC_MOD_CELL_LEN((y))<<MGC_CELL_LEN_LOG2) + MGC_MOD_CELL_LEN((x)))
+#endif
+#endif
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif

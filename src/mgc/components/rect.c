@@ -22,10 +22,9 @@ static inline bool apply_cell_blending(mgc_color_t *pixelbuf, const draw_box_t *
         y_s = (( cell->top    < target->top    ) ? target->top  : cell->top      ) - target->top;
         y_e = (( cell->bottom < target->bottom ) ? cell->bottom : target->bottom ) - target->top;
         for ( x = x_s; x <= x_e; x++ ) {
-            size_t idx, idx_ofs;
-            idx_ofs = MGC_MOD_CELL_LEN(x+target->left-cell->left) << MGC_CELL_LEN_LOG2;
             for ( y = y_s; y <= y_e; y++ ) {
-                idx =  idx_ofs + MGC_MOD_CELL_LEN(y+target->top-cell->top);
+                size_t idx;
+                idx = MGC_GET_PIXELBUF_INDEX(x+target->left-cell->left, y+target->top-cell->top);
                 pixelbuf[idx] = color;
             }
         }
