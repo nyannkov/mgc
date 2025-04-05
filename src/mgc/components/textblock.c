@@ -138,20 +138,24 @@ void textblock_set_text(mgc_textblock_t *textblock, const char *text) {
         }
         total_dwx0 = 0;
         while (*p) {
-            unicode = encoding_utf8_to_unicode(p, &p);
+            unicode = encoding_utf8_to_unicode(p, &tmp_p);
             if ( unicode == 0x0D ) {
+                p = tmp_p;
                 unicode = encoding_utf8_to_unicode(p, &tmp_p);
                 if ( unicode == 0x0A ) {
                     p = tmp_p;
                 }
                 break;
             } else if ( (unicode == 0x00) || (unicode == 0x0A) ) {
+                p = tmp_p;
                 break;
             } else {
                 const mgc_glyph_t *glyph;
                 glyph = font_get_glyph_info(textblock->font, unicode);
-                total_dwx0 += (glyph->dwx0*scale);
-                if ( textblock->width <= total_dwx0 ) {
+                if ( (total_dwx0 + (glyph->dwx0*scale)) <= textblock->width ) {
+                    total_dwx0 += (glyph->dwx0*scale);
+                    p = tmp_p;
+                } else {
                     break;
                 }
             }
