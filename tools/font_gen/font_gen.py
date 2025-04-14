@@ -85,6 +85,11 @@ def gen_fontset_c_file(args):
                 for char in line:
                     subset_unicode_list.append(ord(char))
 
+        # Add U+0020 (space character) if it is not included in the subset
+        # If a glyph from the subset is not found in the font data, the space character will be returned as a fallback
+        if 0x20 not in subset_unicode_list:
+            subset_unicode_list.append(0x20)
+
         bdf_glyph_info_list = [glyph for glyph in bdf_glyph_info_list if int(glyph['ENCODING'][0]) in subset_unicode_list]
 
     with open(output_path, mode='w') as f:
