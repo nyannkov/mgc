@@ -4,7 +4,6 @@
  *
  * Copyright (c) 2025 nyannkov
  */
-#include <string.h>
 #include "framebuffer.h"
 
 
