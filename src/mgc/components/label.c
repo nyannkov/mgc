@@ -98,7 +98,16 @@ void label_set_enable_back_color(mgc_label_t *label, bool enable) {
     label->enable_back_color = enable;
 }
 
-bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+static inline bool draw_buffer(
+        const mgc_label_t *label,
+        mgc_color_t *draw_buf,
+        uint16_t buf_width,
+        uint16_t buf_height,
+        const mgc_point_t *cam_pos,
+        const mgc_point_t *fov_ofs,
+        const mgc_draw_options_t *options
+) {
+    // 0: label, 1:camera
     int16_t l0, l1;
     int16_t r0, r1, r0_w;
     int16_t t0, t1;
@@ -111,7 +120,7 @@ bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixe
 
     if ( ( label == NULL )       ||
          ( label->font == NULL ) ||
-         ( pixelbuffer == NULL )
+         ( draw_buf == NULL )
     ) {
         MGC_WARN("Invalid handler");
         return false;
@@ -120,8 +129,12 @@ bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixe
         MGC_INFO("Handler is disabled");
         return false;
     }
+
+    (void)options;
+
     scale = label->fontsize2x ? 2 : 1;
     shift = scale-1;
+
     l0 = label->x;
     t0 = label->y;
     b0 = t0 + label->font->fbb_y*scale - 1;
@@ -130,16 +143,24 @@ bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixe
     }
     r0_w = l0 + label->width;
 
-    l1 = cell_x;
-    t1 = cell_y;
-    if ( label->r_cell_x_ofs != 0 ) {
-        l1 += pixelbuffer->cell_x_ofs / label->r_cell_x_ofs;
+
+    if ( fov_ofs != NULL ) {
+        l1 = fov_ofs->x;
+        t1 = fov_ofs->y;
+    } else {
+        l1 = 0;
+        t1 = 0;
     }
-    if ( label->r_cell_y_ofs != 0 ) {
-        t1 += pixelbuffer->cell_y_ofs / label->r_cell_y_ofs;
+    if ( cam_pos != NULL ) {
+        if ( label->r_cell_x_ofs != 0 ) {
+            l1 += cam_pos->x / label->r_cell_x_ofs;
+        }
+        if ( label->r_cell_y_ofs != 0 ) {
+            t1 += cam_pos->y / label->r_cell_y_ofs;
+        }
     }
-    r1 = l1 + MGC_CELL_LEN - 1;
-    b1 = t1 + MGC_CELL_LEN - 1;
+    r1 = l1 + buf_width - 1;
+    b1 = t1 + buf_height - 1;
 
     if ( (r0_w < l1) || (r1 < l0) || (b0 < t1) || (b1 < t0) ) {
         /* Blending not required */
@@ -181,13 +202,13 @@ bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixe
                     for ( int16_t Y = y_s; Y <= y_e; Y++ ) {
                         if ( (bitmap[Y>>shift] & mask_x ) != 0 ) {
                             size_t idx;
-                            idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1);
-                            pixelbuffer->pixelbuf[idx] = label->fore_color;
+                            idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
+                            draw_buf[idx] = label->fore_color;
                         } else {
                             if ( label->enable_back_color ) {
                                 size_t idx;
-                                idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1);
-                                pixelbuffer->pixelbuf[idx] = label->back_color;
+                                idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
+                                draw_buf[idx] = label->back_color;
                             }
                         }
                     }
@@ -197,5 +218,30 @@ bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixe
         }
     }
     return true;
+}
+
+bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+    mgc_point_t fov_ofs = {cell_x, cell_y};
+
+    return draw_buffer(label, pixelbuffer->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, &cam_pos, &fov_ofs, NULL);
+}
+
+bool label_draw(const mgc_label_t *label, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
+
+    if ( (fb == NULL) || (fb->buffer == NULL) ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {0, 0};
+
+    return draw_buffer(label, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
 }
 

@@ -13,6 +13,7 @@ extern "C" {
 
 #include "mgc/common/common.h"
 #include "mgc/render/pixelbuffer.h"
+#include "mgc/render/framebuffer.h"
 
 typedef struct mgc_rect {
     mgc_id_t id;
@@ -38,6 +39,7 @@ void rect_set_inner_color(mgc_rect_t *rect, mgc_color_t inner_color);
 void rect_set_border_color(mgc_rect_t *rect, mgc_color_t border_color);
 void rect_set_r_cell_offset(mgc_rect_t *rect, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+bool rect_draw(const mgc_rect_t *rect, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 
 #ifdef __cplusplus
 }/* extern "C" */

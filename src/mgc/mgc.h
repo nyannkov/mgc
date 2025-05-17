@@ -22,6 +22,7 @@ extern "C" {
 #include "components/textblock.h"
 #include "components/tilemap.h"
 #include "render/pixelbuffer.h"
+#include "render/framebuffer.h"
 #include "render/camera.h"
 #include "detector/maphit.h"
 #include "detector/sprhit.h"

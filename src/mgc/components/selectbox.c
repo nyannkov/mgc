@@ -295,3 +295,36 @@ bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbu
     return is_blending;
 }
 
+bool selectbox_draw(const mgc_selectbox_t *selectbox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
+
+    bool is_blending = false;
+    if ( ( selectbox == NULL ) ||
+         ( fb == NULL ) ||
+         ( fb->buffer == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+    if ( selectbox->enabled == false ) {
+        MGC_INFO("Handler is disabled");
+        return false;
+    }
+    if ( selectbox->item_count == 0 ) {
+        MGC_WARN("Empty items");
+        return false;
+    }
+    if ( rect_draw(&selectbox->bg_box, fb, cam_pos, options) == true ) {
+        is_blending = true;
+    }
+    for ( size_t i = 0; i < selectbox->item_count; i++ ) {
+        if ( label_draw(&selectbox->item[i], fb, cam_pos, options) == true ) {
+            is_blending = true;
+        }
+    }
+    if ( label_draw(&selectbox->cursor, fb, cam_pos, options) == true ) {
+        is_blending = true;
+    }
+
+    return is_blending;
+}
+

@@ -15,6 +15,7 @@ extern "C" {
 #include "mgc/font/font.h"
 #include "mgc/font/encoding.h"
 #include "mgc/render/pixelbuffer.h"
+#include "mgc/render/framebuffer.h"
 
 #ifndef MGC_TEXTBLOCK_MAX_LINES
 #define MGC_TEXTBLOCK_MAX_LINES         (16)
@@ -73,6 +74,7 @@ void textblock_display_update(mgc_textblock_t *textblock);
 void textblock_display_clear(mgc_textblock_t *textblock);
 enum mgc_display_text_state textblock_get_display_text_state(const mgc_textblock_t *textblock);
 bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+bool textblock_draw(const mgc_textblock_t *textblock, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 
 #ifdef __cplusplus
 }/* extern "C" */

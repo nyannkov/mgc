@@ -58,6 +58,7 @@ void selectbox_set_box_border_color(mgc_selectbox_t *selectbox, mgc_color_t colo
 void selectbox_set_fore_color(mgc_selectbox_t *selectbox, mgc_color_t color);
 void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+bool selectbox_draw(const mgc_selectbox_t *selectbox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 
 #ifdef __cplusplus
 }/* extern "C" */

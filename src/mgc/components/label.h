@@ -15,6 +15,7 @@ extern "C" {
 #include "mgc/font/font.h"
 #include "mgc/font/encoding.h"
 #include "mgc/render/pixelbuffer.h"
+#include "mgc/render/framebuffer.h"
 
 typedef struct mgc_label {
     mgc_id_t id;
@@ -43,6 +44,7 @@ void label_set_fore_color(mgc_label_t *label, mgc_color_t fore_color);
 void label_set_back_color(mgc_label_t *label, mgc_color_t back_color);
 void label_set_enable_back_color(mgc_label_t *label, bool enable);
 bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+bool label_draw(const mgc_label_t *label, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 
 #ifdef __cplusplus
 }/* extern "C" */
