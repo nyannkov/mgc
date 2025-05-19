@@ -20,8 +20,8 @@ typedef struct mgc_pixelbuffer {
     mgc_color_t pixelbuf[PIXELBUF_LEN];
     mgc_color_t back_color;
     bool refresh_mode;
-    int16_t cell_x_ofs;
-    int16_t cell_y_ofs;
+    int16_t cell_x_ofs; // Legacy
+    int16_t cell_y_ofs; // Legacy
 } mgc_pixelbuffer_t;
 
 void pixelbuffer_init(mgc_pixelbuffer_t *pixelbuffer);
@@ -30,6 +30,8 @@ void pixelbuffer_fill_with_color(mgc_pixelbuffer_t *pixelbuffer, mgc_color_t col
 void pixelbuffer_fill_partial_with_color(mgc_pixelbuffer_t *pixelbuffer, mgc_color_t color, int16_t fill_dx, int16_t fill_dy);
 void pixelbuffer_set_refresh_mode(mgc_pixelbuffer_t *pixelbuffer, bool refresh_mode);
 void pixelbuffer_set_back_color(mgc_pixelbuffer_t *pixelbuffer, mgc_color_t back_color);
+
+//////////////////////////////// Legacy ////////////////////////////////
 void pixelbuffer_set_cell_offset(mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x_ofs, int16_t cell_y_ofs);
 void pixelbuffer_add_cell_offset(mgc_pixelbuffer_t *pixelbuffer, int16_t dx, int16_t dy);
 void pixelbuffer_draw_cell(mgc_pixelbuffer_t *pixelbuffer, const mgc_display_if_t *driver, int16_t cell_x, int16_t cell_y);

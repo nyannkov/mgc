@@ -130,7 +130,7 @@ bool camera_get_position(const mgc_camera_t *camera, mgc_point_t *cam_pos) {
     return true;
 }
 
-// legacy
+//////////////////////////////// Legacy ////////////////////////////////
 void camera_update(mgc_pixelbuffer_t *pixelbuffer, mgc_camera_t *camera, const mgc_sprite_t *target) {
 
     if ( ( pixelbuffer == NULL ) ||

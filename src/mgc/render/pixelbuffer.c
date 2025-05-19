@@ -90,6 +90,7 @@ void pixelbuffer_set_refresh_mode(mgc_pixelbuffer_t *pixelbuffer, bool refresh_m
     pixelbuffer->refresh_mode = refresh_mode;
 }
 
+//////////////////////////////// Legacy ////////////////////////////////
 void pixelbuffer_set_cell_offset(mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x_ofs, int16_t cell_y_ofs) {
     if ( pixelbuffer == NULL ) {
         MGC_WARN("Invalid handler");

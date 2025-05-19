@@ -41,7 +41,7 @@ void camera_set_y_follow_enabled(mgc_camera_t *camera, bool enabled);
 void camera_follow_target(mgc_camera_t *camera, const mgc_sprite_t *target);
 bool camera_get_position(const mgc_camera_t *camera, mgc_point_t *cam_pos);
 
-// legacy
+//////////////////////////////// Legacy ////////////////////////////////
 void camera_update(mgc_pixelbuffer_t *pixelbuffer, mgc_camera_t *camera, const mgc_sprite_t *target);
 
 #ifdef __cplusplus
