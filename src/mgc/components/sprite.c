@@ -14,8 +14,8 @@ void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     sprite->id = id;
     sprite->x = 0;
     sprite->y = 0;
-    sprite->r_cell_x_ofs = 1;
-    sprite->r_cell_y_ofs = 1;
+    sprite->parallax_factor_x = 1.0F;
+    sprite->parallax_factor_y = 1.0F;
     sprite->enabled = MGC_DEFAULT_ENABLED;
     sprite->tileset = NULL;
     sprite->tile_idx = 0;
@@ -76,13 +76,13 @@ void sprite_set_hitbox_array(mgc_sprite_t *sprite, const mgc_hitbox_t *hitbox_ar
     sprite->hitbox_count = hitbox_count;
 }
 
-void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void sprite_set_parallax_factor(mgc_sprite_t *sprite, float factor_x, float factor_y) {
     if ( sprite == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    sprite->r_cell_x_ofs = r_cell_x_ofs;
-    sprite->r_cell_y_ofs = r_cell_y_ofs;
+    sprite->parallax_factor_x = factor_x;
+    sprite->parallax_factor_y = factor_y;
 }
 
 void sprite_set_trim(mgc_sprite_t *sprite, uint16_t left, uint16_t right, uint16_t top, uint16_t bottom) {
@@ -96,7 +96,16 @@ void sprite_set_trim(mgc_sprite_t *sprite, uint16_t left, uint16_t right, uint16
     sprite->trim_bottom = bottom;
 }
 
-bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+static inline bool draw_buffer(
+        const mgc_sprite_t *sprite,
+        mgc_color_t *draw_buf,
+        uint16_t buf_width,
+        uint16_t buf_height,
+        const mgc_point_t *cam_pos,
+        const mgc_point_t *fov_ofs,
+        const mgc_draw_options_t *options
+) {
+    // 0: sprite, 1: camera
     int16_t l0, l1;
     int16_t r0, r1;
     int16_t t0, t1;
@@ -105,7 +114,7 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
     if ( ( sprite == NULL ) ||
          ( sprite->tileset == NULL ) ||
          ( sprite->tileset->tile_count == 0 ) ||
-         ( pixelbuffer == NULL )
+         ( draw_buf == NULL )
     ) {
         MGC_WARN("Invalid handler")
         return false;
@@ -114,6 +123,8 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
         MGC_INFO("Handler is disabled")
         return false;
     }
+
+    (void)options;
 
     l0 = sprite->x;
     r0 = l0 + sprite->tileset->tile_width - 1;
@@ -128,16 +139,20 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
         return false;
     }
 
-    l1 = cell_x;
-    t1 = cell_y;
-    if ( sprite->r_cell_x_ofs != 0 ) {
-        l1 += pixelbuffer->cell_x_ofs / sprite->r_cell_x_ofs;
+    if ( fov_ofs != NULL ) {
+        l1 = fov_ofs->x;
+        t1 = fov_ofs->y;
+    } else {
+        l1 = 0;
+        t1 = 0;
     }
-    if ( sprite->r_cell_y_ofs != 0 ) {
-        t1 += pixelbuffer->cell_y_ofs / sprite->r_cell_y_ofs;
+
+    if ( cam_pos != NULL ) {
+        l1 += MGC_PARALLAX_SHIFT(cam_pos->x, sprite->parallax_factor_x);
+        t1 += MGC_PARALLAX_SHIFT(cam_pos->y, sprite->parallax_factor_y);
     }
-    r1 = l1 + MGC_CELL_LEN - 1;
-    b1 = t1 + MGC_CELL_LEN - 1;
+    r1 = l1 + buf_width - 1;
+    b1 = t1 + buf_height - 1;
 
     if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
         int16_t x, y;
@@ -164,10 +179,9 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
             for ( y = y_s, wy = y_s*tile_width; y <= y_e; y++, wy+=tile_width ) {
                 color_index = tile[(int32_t)x+wy];
                 if ( color_index != 0 ) {
-                    size_t idx;
+                    size_t idx = MGC_GET_PIXELBUF_INDEX(x+l0-l1, y+t0-t1, buf_width, buf_height);
                     color = palette_array[color_index];
-                    idx = MGC_GET_PIXELBUF_INDEX(x+l0-l1, y+t0-t1);
-                    pixelbuffer->pixelbuf[idx] = MGC_COLOR_SWAP(color);
+                    draw_buf[idx] = MGC_COLOR_SWAP(color);
                 }
             }
         }
@@ -175,5 +189,58 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
     } else {
         return false;
     }
+}
+
+bool sprite_draw(const mgc_sprite_t *sprite, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
+
+    if ( (fb == NULL) || (fb->buffer == NULL) ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {0, 0};
+
+    return draw_buffer(sprite, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
+}
+
+bool sprite_draw_cell(
+        const mgc_sprite_t *sprite,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {cell_x, cell_y};
+
+    return draw_buffer(sprite, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+}
+
+//////////////////////////////// Legacy ////////////////////////////////
+bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return sprite_draw_cell(sprite, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+
+void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( sprite == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    sprite->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
+    sprite->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
 }
 

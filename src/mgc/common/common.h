@@ -79,13 +79,34 @@ typedef mgc_color_rgb565_t mgc_color_t;
 
 #ifndef MGC_GET_PIXELBUF_INDEX
 #if MGC_PIXELBUF_ORDER==0U
-#define MGC_GET_PIXELBUF_INDEX(x, y) \
-    ((MGC_MOD_CELL_LEN((x))<<MGC_CELL_LEN_LOG2) + MGC_MOD_CELL_LEN((y)))
+#define MGC_GET_PIXELBUF_INDEX(x, y, w, h) \
+    (size_t)(h) * (size_t)(x) + (size_t)(y);
 #else
-#define MGC_GET_PIXELBUF_INDEX(x, y) \
-    ((MGC_MOD_CELL_LEN((y))<<MGC_CELL_LEN_LOG2) + MGC_MOD_CELL_LEN((x)))
+#define MGC_GET_PIXELBUF_INDEX(x, y, w, h) \
+    (size_t)(w) * (size_t)(y) + (size_t)(x);
 #endif
 #endif
+
+#ifndef MGC_GET_PIXELBUF_INDEX_OPTIMIZED_16X16
+#if MGC_PIXELBUF_ORDER==0U
+#define MGC_GET_PIXELBUF_INDEX_OPTIMIZED_16X16(x, y) \
+    ((size_t)(x)<<MGC_CELL_LEN_LOG2) + (size_t)(y);
+#else
+#define MGC_GET_PIXELBUF_INDEX_OPTIMIZED_16X16(x, y) \
+    ((size_t)(y)<<MGC_CELL_LEN_LOG2) + (size_t)(x);
+#endif
+#endif
+
+typedef struct mgc_point {
+    int16_t x;
+    int16_t y;
+} mgc_point_t;
+
+typedef struct mgc_draw_options {
+    uint32_t reserved;
+} mgc_draw_options_t;
+
+#define MGC_PARALLAX_SHIFT(coord, factor) (int16_t)((coord) * (factor))
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -36,8 +36,8 @@ typedef struct mgc_selectbox {
     uint8_t left_margin;
     uint8_t left_cursor_margin;
     uint8_t line_spacing;
-    uint8_t r_cell_x_ofs;
-    uint8_t r_cell_y_ofs;
+    float parallax_factor_x;
+    float parallax_factor_y;
 } mgc_selectbox_t;
 
 void selectbox_init(mgc_selectbox_t *selectbox, mgc_id_t id, const mgc_font_t *font, bool fontsize2x);
@@ -56,8 +56,20 @@ void selectbox_change_selected_idx(mgc_selectbox_t *selectbox, bool increment);
 void selectbox_set_box_inner_color(mgc_selectbox_t *selectbox, mgc_color_t color);
 void selectbox_set_box_border_color(mgc_selectbox_t *selectbox, mgc_color_t color);
 void selectbox_set_fore_color(mgc_selectbox_t *selectbox, mgc_color_t color);
-void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
+void selectbox_set_parallax_factor(mgc_selectbox_t *selectbox, float factor_x, float factor_y);
+bool selectbox_draw(const mgc_selectbox_t *selectbox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
+bool selectbox_draw_cell(
+        const mgc_selectbox_t *selectbox,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+//////////////////////////////// Legacy ////////////////////////////////
 bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 
 #ifdef __cplusplus
 }/* extern "C" */

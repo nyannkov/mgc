@@ -54,6 +54,7 @@ static inline enum mgc_display_text_state display_update(mgc_textblock_t *textbl
     return textblock->state;
 }
 
+
 void textblock_init(mgc_textblock_t *textblock, mgc_id_t id, const mgc_font_t *font, bool fontsize2x) {
     if ( ( textblock == NULL ) ||
          ( font == NULL ) ||
@@ -66,8 +67,8 @@ void textblock_init(mgc_textblock_t *textblock, mgc_id_t id, const mgc_font_t *f
     textblock->id = id;
     textblock->x = 0;
     textblock->y = 0;
-    textblock->r_cell_x_ofs = 1;
-    textblock->r_cell_y_ofs = 1;
+    textblock->parallax_factor_x = 0.0F;
+    textblock->parallax_factor_y = 0.0F;
     textblock->width = MGC_CELL_LEN;
     textblock->height = MGC_CELL_LEN;
     textblock->text = NULL;
@@ -237,13 +238,13 @@ void textblock_set_line_spacing(mgc_textblock_t *textblock, uint8_t line_spacing
     textblock->line_spacing = line_spacing;
 }
 
-void textblock_set_r_cell_offset(mgc_textblock_t *textblock, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void textblock_set_parallax_factor(mgc_textblock_t *textblock, float factor_x, float factor_y) {
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    textblock->r_cell_x_ofs = r_cell_x_ofs;
-    textblock->r_cell_y_ofs = r_cell_y_ofs;
+    textblock->parallax_factor_x = factor_x;
+    textblock->parallax_factor_y = factor_y;
 }
 
 void textblock_display_update(mgc_textblock_t *textblock) {
@@ -277,7 +278,17 @@ enum mgc_display_text_state textblock_get_display_text_state(const mgc_textblock
     return textblock->state;
 }
 
-bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+static inline bool draw_buffer(
+        const mgc_textblock_t *textblock,
+        mgc_color_t *draw_buf,
+        uint16_t buf_width,
+        uint16_t buf_height,
+        const mgc_point_t *cam_pos,
+        const mgc_point_t *fov_ofs,
+        const mgc_draw_options_t *options
+) {
+
+    // 0: textblock, 1:camera
     int16_t l0, l1;
     int16_t r0, r1;
     int16_t t0, t1;
@@ -291,7 +302,7 @@ bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbu
     if ( ( textblock == NULL )         ||
          ( textblock->font == NULL )   ||
          ( textblock->cursor == NULL ) ||
-         ( pixelbuffer == NULL )
+         ( draw_buf == NULL )
     ) {
         MGC_WARN("Invalid handler");
         return false;
@@ -305,17 +316,21 @@ bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbu
         return false;
     }
 
-    l1 = cell_x;
-    t1 = cell_y;
-    if ( textblock->r_cell_x_ofs != 0 ) {
-        l1 += pixelbuffer->cell_x_ofs / textblock->r_cell_x_ofs;
-    }
-    if ( textblock->r_cell_y_ofs != 0 ) {
-        t1 += pixelbuffer->cell_y_ofs / textblock->r_cell_y_ofs;
-    }
-    r1 = l1 + MGC_CELL_LEN - 1;
-    b1 = t1 + MGC_CELL_LEN - 1;
+    (void)options;
 
+    if ( fov_ofs != NULL ) {
+        l1 = fov_ofs->x;
+        t1 = fov_ofs->y;
+    } else {
+        l1 = 0;
+        t1 = 0;
+    }
+    if ( cam_pos != NULL ) {
+        l1 += MGC_PARALLAX_SHIFT(cam_pos->x, textblock->parallax_factor_x);
+        t1 += MGC_PARALLAX_SHIFT(cam_pos->y, textblock->parallax_factor_y);
+    }
+    r1 = l1 + buf_width - 1;
+    b1 = t1 + buf_height - 1;
 
     if ( (r1 <= textblock->x) ||
          (b1 <= textblock->y) ||
@@ -365,7 +380,6 @@ bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbu
                     break;
                 }
                 if ( (l1<=r0) && (l0<=r1) ) {
-                    int16_t x, y, wy;
                     int16_t x_s, y_s, x_e, y_e;
                     uint32_t bitmap[MGC_FONT_MAX_FONT_SIZE] = {0};
                     font_load_bitmap(textblock->font, glyph, bitmap, MGC_FONT_MAX_FONT_SIZE);
@@ -382,15 +396,13 @@ bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbu
                         }
                         for ( int16_t Y = y_s; Y <= y_e; Y++ ) {
                             if ( (bitmap[Y>>shift] & mask_x ) != 0 ) {
-                                size_t idx;
-                                idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1);
-                                pixelbuffer->pixelbuf[idx] = textblock->fore_color;
+                                size_t idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
+                                draw_buf[idx] = textblock->fore_color;
+
+                            } else if ( textblock->enable_back_color ) {
+                                size_t idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
+                                draw_buf[idx] = textblock->back_color;
                             } else {
-                                if ( textblock->enable_back_color ) {
-                                    size_t idx;
-                                    idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1);
-                                    pixelbuffer->pixelbuf[idx] = textblock->back_color;
-                                }
                             }
                         }
                     }
@@ -404,3 +416,55 @@ bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbu
     return true;
 }
 
+bool textblock_draw(const mgc_textblock_t *textblock, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
+
+    if ( (fb == NULL) || (fb->buffer == NULL) ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {0, 0};
+
+    return draw_buffer(textblock, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
+}
+
+bool textblock_draw_cell(
+        const mgc_textblock_t *textblock,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {cell_x, cell_y};
+
+    return draw_buffer(textblock, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+}
+
+//////////////////////////////// Legacy ////////////////////////////////
+bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return textblock_draw_cell(textblock, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+
+void textblock_set_r_cell_offset(mgc_textblock_t *textblock, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( textblock == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    textblock->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
+    textblock->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
+}

@@ -155,13 +155,13 @@ void dialoguebox_set_text(mgc_dialoguebox_t *dialoguebox, const char *text) {
     textblock_set_text(&dialoguebox->textblock, text);
 }
 
-void dialoguebox_set_r_cell_offset(mgc_dialoguebox_t *dialoguebox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void dialoguebox_set_parallax_factor(mgc_dialoguebox_t *dialoguebox, float factor_x, float factor_y) {
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    rect_set_r_cell_offset(&dialoguebox->bg_box, r_cell_x_ofs, r_cell_y_ofs);
-    textblock_set_r_cell_offset(&dialoguebox->textblock, r_cell_x_ofs, r_cell_y_ofs);
+    rect_set_parallax_factor(&dialoguebox->bg_box, factor_x, factor_y);
+    textblock_set_parallax_factor(&dialoguebox->textblock, factor_x, factor_y);
 }
 
 void dialoguebox_set_scroll_line(mgc_dialoguebox_t *dialoguebox, uint8_t scroll_line) {
@@ -222,15 +222,16 @@ enum mgc_display_text_state dialoguebox_get_display_text_state(const mgc_dialogu
     return dialoguebox->textblock.state;
 }
 
-bool dialoguebox_apply_cell_blending(
+bool dialoguebox_draw(
     const mgc_dialoguebox_t *dialoguebox,
-    mgc_pixelbuffer_t *pixelbuffer,
-    int16_t cell_x,
-    int16_t cell_y
+    mgc_framebuffer_t *fb,
+    const mgc_point_t *cam_pos,
+    const mgc_draw_options_t *options
 ) {
     bool is_blending = false;
     if ( ( dialoguebox == NULL ) ||
-         ( pixelbuffer == NULL )
+         ( fb == NULL ) ||
+         ( fb->buffer == NULL )
     ) {
         MGC_WARN("Invalid handler");
         return false;
@@ -239,12 +240,66 @@ bool dialoguebox_apply_cell_blending(
         MGC_INFO("Handler is disabled");
         return false;
     }
-    if ( rect_apply_cell_blending(&dialoguebox->bg_box, pixelbuffer, cell_x, cell_y) == true ) {
+    if ( rect_draw(&dialoguebox->bg_box, fb, cam_pos, options) == true ) {
         is_blending = true;
     }
-    if ( textblock_apply_cell_blending(&dialoguebox->textblock, pixelbuffer, cell_x, cell_y) == true ) {
+    if ( textblock_draw(&dialoguebox->textblock, fb, cam_pos, options) == true ) {
         is_blending = true;
     }
     return is_blending;
 }
+
+bool dialoguebox_draw_cell(
+        const mgc_dialoguebox_t *dialoguebox,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( ( dialoguebox == NULL ) ||
+         ( pb == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+    if ( dialoguebox->enabled == false ) {
+        MGC_INFO("Handler is disabled");
+        return false;
+    }
+
+    if ( rect_draw_cell(&dialoguebox->bg_box, pb, cell_x, cell_y, cam_pos, options) == true ) {
+        textblock_draw_cell(&dialoguebox->textblock, pb, cell_x, cell_y, cam_pos, options);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//////////////////////////////// Legacy ////////////////////////////////
+bool dialoguebox_apply_cell_blending(
+    const mgc_dialoguebox_t *dialoguebox,
+    mgc_pixelbuffer_t *pixelbuffer,
+    int16_t cell_x,
+    int16_t cell_y
+) {
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return dialoguebox_draw_cell(dialoguebox, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+
+void dialoguebox_set_r_cell_offset(mgc_dialoguebox_t *dialoguebox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( dialoguebox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    rect_set_r_cell_offset(&dialoguebox->bg_box, r_cell_x_ofs, r_cell_y_ofs);
+    textblock_set_r_cell_offset(&dialoguebox->textblock, r_cell_x_ofs, r_cell_y_ofs);
+}
+
 

@@ -37,14 +37,26 @@ void dialoguebox_set_back_color(mgc_dialoguebox_t *dialoguebox, mgc_color_t back
 void dialoguebox_set_cursor_speed(mgc_dialoguebox_t *dialoguebox, uint8_t cursor_speed);
 void dialoguebox_set_scroll_speed(mgc_dialoguebox_t *dialoguebox, uint8_t scroll_speed);
 void dialoguebox_set_line_spacing(mgc_dialoguebox_t *dialoguebox, uint8_t line_spacing);
-void dialoguebox_set_r_cell_offset(mgc_dialoguebox_t *dialoguebox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
+void dialoguebox_set_parallax_factor(mgc_dialoguebox_t *dialoguebox, float factor_x, float factor_y);
 void dialoguebox_set_text(mgc_dialoguebox_t *dialoguebox, const char *text);
 void dialoguebox_set_scroll_line(mgc_dialoguebox_t *dialoguebox, uint8_t scroll_line);
 void dialoguebox_adjust_height(mgc_dialoguebox_t *dialoguebox);
 void dialoguebox_display_update(mgc_dialoguebox_t *dialoguebox);
 void dialoguebox_display_clear(mgc_dialoguebox_t *dialoguebox);
 enum mgc_display_text_state dialoguebox_get_display_text_state(const mgc_dialoguebox_t *dialoguebox);
+bool dialoguebox_draw(const mgc_dialoguebox_t *dialoguebox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
+bool dialoguebox_draw_cell(
+        const mgc_dialoguebox_t *dialoguebox,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+//////////////////////////////// Legacy ////////////////////////////////
 bool dialoguebox_apply_cell_blending(const mgc_dialoguebox_t *dialoguebox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+void dialoguebox_set_r_cell_offset(mgc_dialoguebox_t *dialoguebox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 
 #ifdef __cplusplus
 }/* extern "C" */
