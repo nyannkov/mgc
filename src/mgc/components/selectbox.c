@@ -264,37 +264,6 @@ void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_of
     }
 }
 
-bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
-    bool is_blending = false;
-    if ( ( selectbox == NULL ) ||
-         ( pixelbuffer == NULL )
-    ) {
-        MGC_WARN("Invalid handler");
-        return false;
-    }
-    if ( selectbox->enabled == false ) {
-        MGC_INFO("Handler is disabled");
-        return false;
-    }
-    if ( selectbox->item_count == 0 ) {
-        MGC_WARN("Empty items");
-        return false;
-    }
-    if ( rect_apply_cell_blending(&selectbox->bg_box, pixelbuffer, cell_x, cell_y) == true ) {
-        is_blending = true;
-    }
-    for ( size_t i = 0; i < selectbox->item_count; i++ ) {
-        if ( label_apply_cell_blending(&selectbox->item[i], pixelbuffer, cell_x, cell_y) == true ) {
-            is_blending = true;
-        }
-    }
-    if ( label_apply_cell_blending(&selectbox->cursor, pixelbuffer, cell_x, cell_y) == true ) {
-        is_blending = true;
-    }
-
-    return is_blending;
-}
-
 bool selectbox_draw(const mgc_selectbox_t *selectbox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
 
     bool is_blending = false;
@@ -326,5 +295,51 @@ bool selectbox_draw(const mgc_selectbox_t *selectbox, mgc_framebuffer_t *fb, con
     }
 
     return is_blending;
+}
+
+bool selectbox_draw_cell(
+        const mgc_selectbox_t *selectbox,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( ( selectbox == NULL ) ||
+         ( pb == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+    if ( selectbox->enabled == false ) {
+        MGC_INFO("Handler is disabled");
+        return false;
+    }
+    if ( selectbox->item_count == 0 ) {
+        MGC_WARN("Empty items");
+        return false;
+    }
+
+    if ( rect_draw_cell(&selectbox->bg_box, pb, cell_x, cell_y, cam_pos, options) == true ) {
+        for ( size_t i = 0; i < selectbox->item_count; i++ ) {
+            label_draw_cell(&selectbox->item[i], pb, cell_x, cell_y, cam_pos, options);
+        }
+        label_draw_cell(&selectbox->cursor, pb, cell_x, cell_y, cam_pos, options);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Legacy
+bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return selectbox_draw_cell(selectbox, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
 }
 

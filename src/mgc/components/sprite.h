@@ -43,8 +43,18 @@ void sprite_set_tile_idx(mgc_sprite_t *sprite, size_t tile_idx);
 void sprite_set_hitbox_array(mgc_sprite_t *sprite, const mgc_hitbox_t *hitbox_array, size_t hitbox_count);
 void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 void sprite_set_trim(mgc_sprite_t *sprite, uint16_t left, uint16_t right, uint16_t top, uint16_t bottom);
-bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 bool sprite_draw(const mgc_sprite_t *sprite, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
+bool sprite_draw_cell(
+        const mgc_sprite_t *sprite,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+// Legacy
+bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 
 #ifdef __cplusplus
 }/* extern "C" */

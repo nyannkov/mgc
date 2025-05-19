@@ -73,8 +73,18 @@ void textblock_set_scroll_line( mgc_textblock_t *textblock, uint8_t scroll_line)
 void textblock_display_update(mgc_textblock_t *textblock);
 void textblock_display_clear(mgc_textblock_t *textblock);
 enum mgc_display_text_state textblock_get_display_text_state(const mgc_textblock_t *textblock);
-bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 bool textblock_draw(const mgc_textblock_t *textblock, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
+bool textblock_draw_cell(
+        const mgc_textblock_t *textblock,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+// Legacy
+bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 
 #ifdef __cplusplus
 }/* extern "C" */

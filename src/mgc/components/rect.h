@@ -38,8 +38,18 @@ void rect_set_border_width(mgc_rect_t *rect, uint16_t border_width);
 void rect_set_inner_color(mgc_rect_t *rect, mgc_color_t inner_color);
 void rect_set_border_color(mgc_rect_t *rect, mgc_color_t border_color);
 void rect_set_r_cell_offset(mgc_rect_t *rect, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
-bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 bool rect_draw(const mgc_rect_t *rect, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
+bool rect_draw_cell(
+        const mgc_rect_t *rect,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+// Legacy
+bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 
 #ifdef __cplusplus
 }/* extern "C" */

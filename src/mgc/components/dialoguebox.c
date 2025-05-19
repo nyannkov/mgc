@@ -222,32 +222,6 @@ enum mgc_display_text_state dialoguebox_get_display_text_state(const mgc_dialogu
     return dialoguebox->textblock.state;
 }
 
-bool dialoguebox_apply_cell_blending(
-    const mgc_dialoguebox_t *dialoguebox,
-    mgc_pixelbuffer_t *pixelbuffer,
-    int16_t cell_x,
-    int16_t cell_y
-) {
-    bool is_blending = false;
-    if ( ( dialoguebox == NULL ) ||
-         ( pixelbuffer == NULL )
-    ) {
-        MGC_WARN("Invalid handler");
-        return false;
-    }
-    if ( dialoguebox->enabled == false ) {
-        MGC_INFO("Handler is disabled");
-        return false;
-    }
-    if ( rect_apply_cell_blending(&dialoguebox->bg_box, pixelbuffer, cell_x, cell_y) == true ) {
-        is_blending = true;
-    }
-    if ( textblock_apply_cell_blending(&dialoguebox->textblock, pixelbuffer, cell_x, cell_y) == true ) {
-        is_blending = true;
-    }
-    return is_blending;
-}
-
 bool dialoguebox_draw(
     const mgc_dialoguebox_t *dialoguebox,
     mgc_framebuffer_t *fb,
@@ -274,3 +248,48 @@ bool dialoguebox_draw(
     }
     return is_blending;
 }
+
+bool dialoguebox_draw_cell(
+        const mgc_dialoguebox_t *dialoguebox,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( ( dialoguebox == NULL ) ||
+         ( pb == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+    if ( dialoguebox->enabled == false ) {
+        MGC_INFO("Handler is disabled");
+        return false;
+    }
+
+    if ( rect_draw_cell(&dialoguebox->bg_box, pb, cell_x, cell_y, cam_pos, options) == true ) {
+        textblock_draw_cell(&dialoguebox->textblock, pb, cell_x, cell_y, cam_pos, options);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Legacy
+bool dialoguebox_apply_cell_blending(
+    const mgc_dialoguebox_t *dialoguebox,
+    mgc_pixelbuffer_t *pixelbuffer,
+    int16_t cell_x,
+    int16_t cell_y
+) {
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return dialoguebox_draw_cell(dialoguebox, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+

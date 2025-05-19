@@ -195,20 +195,6 @@ static inline bool draw_buffer(
     }
 }
 
-
-bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
-
-    if ( pixelbuffer == NULL ) {
-        MGC_WARN("Invalid handler");
-        return false;
-    }
-
-    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
-    mgc_point_t fov_ofs = {cell_x, cell_y};
-
-    return draw_buffer(sprite, pixelbuffer->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, &cam_pos, &fov_ofs, NULL);
-}
-
 bool sprite_draw(const mgc_sprite_t *sprite, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
 
     if ( (fb == NULL) || (fb->buffer == NULL) ) {
@@ -219,5 +205,36 @@ bool sprite_draw(const mgc_sprite_t *sprite, mgc_framebuffer_t *fb, const mgc_po
     mgc_point_t fov_ofs = {0, 0};
 
     return draw_buffer(sprite, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
+}
+
+bool sprite_draw_cell(
+        const mgc_sprite_t *sprite,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {cell_x, cell_y};
+
+    return draw_buffer(sprite, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+}
+
+// Legacy
+bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return sprite_draw_cell(sprite, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
 }
 

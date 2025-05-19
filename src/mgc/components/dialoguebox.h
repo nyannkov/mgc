@@ -44,8 +44,18 @@ void dialoguebox_adjust_height(mgc_dialoguebox_t *dialoguebox);
 void dialoguebox_display_update(mgc_dialoguebox_t *dialoguebox);
 void dialoguebox_display_clear(mgc_dialoguebox_t *dialoguebox);
 enum mgc_display_text_state dialoguebox_get_display_text_state(const mgc_dialoguebox_t *dialoguebox);
-bool dialoguebox_apply_cell_blending(const mgc_dialoguebox_t *dialoguebox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 bool dialoguebox_draw(const mgc_dialoguebox_t *dialoguebox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
+bool dialoguebox_draw_cell(
+        const mgc_dialoguebox_t *dialoguebox,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+// Legacy
+bool dialoguebox_apply_cell_blending(const mgc_dialoguebox_t *dialoguebox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 
 #ifdef __cplusplus
 }/* extern "C" */

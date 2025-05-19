@@ -184,19 +184,6 @@ static inline bool draw_buffer(
     }
 }
 
-bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
-
-    if ( pixelbuffer == NULL ) {
-        MGC_WARN("Invalid handler");
-        return false;
-    }
-
-    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
-    mgc_point_t fov_ofs = {cell_x, cell_y};
-
-    return draw_buffer(rect, pixelbuffer->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, &cam_pos, &fov_ofs, NULL);
-}
-
 bool rect_draw(const mgc_rect_t *rect, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
 
     if ( (fb == NULL) || (fb->buffer == NULL) ) {
@@ -209,3 +196,33 @@ bool rect_draw(const mgc_rect_t *rect, mgc_framebuffer_t *fb, const mgc_point_t 
     return draw_buffer(rect, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
 }
 
+bool rect_draw_cell(
+        const mgc_rect_t *rect,
+        mgc_pixelbuffer_t *pb,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t fov_ofs = {cell_x, cell_y};
+
+    return draw_buffer(rect, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+}
+
+// Legacy
+bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
+
+    if ( pixelbuffer == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
+
+    return rect_draw_cell(rect, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
