@@ -155,13 +155,13 @@ void dialoguebox_set_text(mgc_dialoguebox_t *dialoguebox, const char *text) {
     textblock_set_text(&dialoguebox->textblock, text);
 }
 
-void dialoguebox_set_r_cell_offset(mgc_dialoguebox_t *dialoguebox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void dialoguebox_set_parallax_factor(mgc_dialoguebox_t *dialoguebox, float factor_x, float factor_y) {
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    rect_set_r_cell_offset(&dialoguebox->bg_box, r_cell_x_ofs, r_cell_y_ofs);
-    textblock_set_r_cell_offset(&dialoguebox->textblock, r_cell_x_ofs, r_cell_y_ofs);
+    rect_set_parallax_factor(&dialoguebox->bg_box, factor_x, factor_y);
+    textblock_set_parallax_factor(&dialoguebox->textblock, factor_x, factor_y);
 }
 
 void dialoguebox_set_scroll_line(mgc_dialoguebox_t *dialoguebox, uint8_t scroll_line) {
@@ -276,7 +276,7 @@ bool dialoguebox_draw_cell(
     }
 }
 
-// Legacy
+//////////////////////////////// Legacy ////////////////////////////////
 bool dialoguebox_apply_cell_blending(
     const mgc_dialoguebox_t *dialoguebox,
     mgc_pixelbuffer_t *pixelbuffer,
@@ -292,4 +292,14 @@ bool dialoguebox_apply_cell_blending(
 
     return dialoguebox_draw_cell(dialoguebox, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
 }
+
+void dialoguebox_set_r_cell_offset(mgc_dialoguebox_t *dialoguebox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( dialoguebox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    rect_set_r_cell_offset(&dialoguebox->bg_box, r_cell_x_ofs, r_cell_y_ofs);
+    textblock_set_r_cell_offset(&dialoguebox->textblock, r_cell_x_ofs, r_cell_y_ofs);
+}
+
 

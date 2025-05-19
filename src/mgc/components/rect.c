@@ -15,8 +15,8 @@ void rect_init(mgc_rect_t *rect, mgc_id_t id) {
     rect->enabled = MGC_DEFAULT_ENABLED;
     rect->x = 0;
     rect->y = 0;
-    rect->r_cell_x_ofs = 1;
-    rect->r_cell_y_ofs = 1;
+    rect->parallax_factor_x = 1.0F;
+    rect->parallax_factor_y = 1.0F;
     rect->width = MGC_CELL_LEN;
     rect->height = MGC_CELL_LEN;
     rect->border_width = 0;
@@ -81,13 +81,13 @@ void rect_set_border_color(mgc_rect_t *rect, mgc_color_t border_color) {
     rect->border_color = MGC_COLOR_SWAP(border_color);
 }
 
-void rect_set_r_cell_offset(mgc_rect_t *rect, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void rect_set_parallax_factor(mgc_rect_t *rect, float factor_x, float factor_y) {
     if ( rect == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    rect->r_cell_x_ofs = r_cell_x_ofs;
-    rect->r_cell_y_ofs = r_cell_y_ofs;
+    rect->parallax_factor_x = factor_x;
+    rect->parallax_factor_y = factor_y;
 }
 
 static inline bool draw_buffer(
@@ -131,12 +131,8 @@ static inline bool draw_buffer(
         t1 = 0;
     }
     if ( cam_pos != NULL ) {
-        if ( rect->r_cell_x_ofs != 0 ) {
-            l1 += cam_pos->x / rect->r_cell_x_ofs;
-        }
-        if ( rect->r_cell_y_ofs != 0 ) {
-            t1 += cam_pos->y / rect->r_cell_y_ofs;
-        }
+        l1 += MGC_PARALLAX_SHIFT(cam_pos->x, rect->parallax_factor_x);
+        t1 += MGC_PARALLAX_SHIFT(cam_pos->y, rect->parallax_factor_y);
     }
     r1 = l1 + buf_width - 1;
     b1 = t1 + buf_height - 1;
@@ -214,7 +210,7 @@ bool rect_draw_cell(
     return draw_buffer(rect, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
 }
 
-// Legacy
+//////////////////////////////// Legacy ////////////////////////////////
 bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
 
     if ( pixelbuffer == NULL ) {
@@ -226,3 +222,14 @@ bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbu
 
     return rect_draw_cell(rect, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
 }
+
+void rect_set_r_cell_offset(mgc_rect_t *rect, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( rect == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    rect->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
+    rect->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
+}
+

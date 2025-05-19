@@ -49,8 +49,8 @@ void selectbox_init(mgc_selectbox_t *selectbox, mgc_id_t id, const mgc_font_t *f
     selectbox->left_margin = 16;
     selectbox->left_cursor_margin = 4;
     selectbox->line_spacing = 4;
-    selectbox->r_cell_x_ofs = 1;
-    selectbox->r_cell_y_ofs = 1;
+    selectbox->parallax_factor_x = 0.0F;
+    selectbox->parallax_factor_y = 0.0F;
 
     rect_init(&selectbox->bg_box, 0);
     rect_set_enabled(&selectbox->bg_box, true);
@@ -85,10 +85,10 @@ void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     }
     item = &selectbox->item[selectbox->item_count];
     label_set_text(item, text);
-    label_set_r_cell_offset(
+    label_set_parallax_factor(
         item,
-        selectbox->r_cell_x_ofs,
-        selectbox->r_cell_y_ofs
+        selectbox->parallax_factor_x,
+        selectbox->parallax_factor_y
     );
     selectbox->item_count++;
 
@@ -250,17 +250,17 @@ void selectbox_set_fore_color(mgc_selectbox_t *selectbox, mgc_color_t color) {
     }
 }
 
-void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void selectbox_set_parallax_factor(mgc_selectbox_t *selectbox, float factor_x, float factor_y) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    selectbox->r_cell_x_ofs = r_cell_x_ofs;
-    selectbox->r_cell_y_ofs = r_cell_y_ofs;
-    rect_set_r_cell_offset(&selectbox->bg_box, r_cell_x_ofs, r_cell_y_ofs);
-    label_set_r_cell_offset(&selectbox->cursor, r_cell_x_ofs, r_cell_y_ofs);
+    selectbox->parallax_factor_x = factor_x;
+    selectbox->parallax_factor_y = factor_y;
+    rect_set_parallax_factor(&selectbox->bg_box, factor_x, factor_y);
+    label_set_parallax_factor(&selectbox->cursor, factor_x, factor_y);
     for ( size_t i = 0; i < selectbox->item_count; i++ ) {
-        label_set_r_cell_offset(&selectbox->item[i], r_cell_x_ofs, r_cell_y_ofs);
+        label_set_parallax_factor(&selectbox->item[i], factor_x, factor_y);
     }
 }
 
@@ -331,7 +331,7 @@ bool selectbox_draw_cell(
     }
 }
 
-// Legacy
+//////////////////////////////// Legacy ////////////////////////////////
 bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
     if ( pixelbuffer == NULL ) {
         MGC_WARN("Invalid handler");
@@ -341,5 +341,19 @@ bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbu
     mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
 
     return selectbox_draw_cell(selectbox, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+
+void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( selectbox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    selectbox->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
+    selectbox->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
+    rect_set_r_cell_offset(&selectbox->bg_box, r_cell_x_ofs, r_cell_y_ofs);
+    label_set_r_cell_offset(&selectbox->cursor, r_cell_x_ofs, r_cell_y_ofs);
+    for ( size_t i = 0; i < selectbox->item_count; i++ ) {
+        label_set_r_cell_offset(&selectbox->item[i], r_cell_x_ofs, r_cell_y_ofs);
+    }
 }
 

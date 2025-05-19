@@ -106,6 +106,8 @@ typedef struct mgc_draw_options {
     uint32_t reserved;
 } mgc_draw_options_t;
 
+#define MGC_PARALLAX_SHIFT(coord, factor) (int16_t)((coord) * (factor))
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif

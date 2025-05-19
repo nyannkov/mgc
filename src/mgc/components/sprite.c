@@ -14,8 +14,8 @@ void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     sprite->id = id;
     sprite->x = 0;
     sprite->y = 0;
-    sprite->r_cell_x_ofs = 1;
-    sprite->r_cell_y_ofs = 1;
+    sprite->parallax_factor_x = 1.0F;
+    sprite->parallax_factor_y = 1.0F;
     sprite->enabled = MGC_DEFAULT_ENABLED;
     sprite->tileset = NULL;
     sprite->tile_idx = 0;
@@ -76,13 +76,13 @@ void sprite_set_hitbox_array(mgc_sprite_t *sprite, const mgc_hitbox_t *hitbox_ar
     sprite->hitbox_count = hitbox_count;
 }
 
-void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void sprite_set_parallax_factor(mgc_sprite_t *sprite, float factor_x, float factor_y) {
     if ( sprite == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    sprite->r_cell_x_ofs = r_cell_x_ofs;
-    sprite->r_cell_y_ofs = r_cell_y_ofs;
+    sprite->parallax_factor_x = factor_x;
+    sprite->parallax_factor_y = factor_y;
 }
 
 void sprite_set_trim(mgc_sprite_t *sprite, uint16_t left, uint16_t right, uint16_t top, uint16_t bottom) {
@@ -148,12 +148,8 @@ static inline bool draw_buffer(
     }
 
     if ( cam_pos != NULL ) {
-        if ( sprite->r_cell_x_ofs != 0 ) {
-            l1 += cam_pos->x / sprite->r_cell_x_ofs;
-        }
-        if ( sprite->r_cell_y_ofs != 0 ) {
-            t1 += cam_pos->y / sprite->r_cell_y_ofs;
-        }
+        l1 += MGC_PARALLAX_SHIFT(cam_pos->x, sprite->parallax_factor_x);
+        t1 += MGC_PARALLAX_SHIFT(cam_pos->y, sprite->parallax_factor_y);
     }
     r1 = l1 + buf_width - 1;
     b1 = t1 + buf_height - 1;
@@ -225,7 +221,7 @@ bool sprite_draw_cell(
     return draw_buffer(sprite, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
 }
 
-// Legacy
+//////////////////////////////// Legacy ////////////////////////////////
 bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
 
     if ( pixelbuffer == NULL ) {
@@ -236,5 +232,15 @@ bool sprite_apply_cell_blending(const mgc_sprite_t *sprite, mgc_pixelbuffer_t *p
     mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
 
     return sprite_draw_cell(sprite, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+
+void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( sprite == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    sprite->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
+    sprite->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
 }
 

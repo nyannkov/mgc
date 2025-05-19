@@ -32,8 +32,8 @@ typedef struct mgc_textblock {
     mgc_id_t id;
     int16_t x;
     int16_t y;
-    uint8_t r_cell_x_ofs;
-    uint8_t r_cell_y_ofs;
+    float parallax_factor_x;
+    float parallax_factor_y;
     int16_t width;
     int16_t height;
     const char *text;
@@ -68,7 +68,7 @@ void textblock_set_enable_back_color(mgc_textblock_t *textblock, bool enable);
 void textblock_set_cursor_speed(mgc_textblock_t *textblock, uint8_t cursor_speed);
 void textblock_set_scroll_speed(mgc_textblock_t *textblock, uint8_t scroll_speed);
 void textblock_set_line_spacing(mgc_textblock_t *textblock, uint8_t line_spacing);
-void textblock_set_r_cell_offset(mgc_textblock_t *textblock, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
+void textblock_set_parallax_factor(mgc_textblock_t *textblock, float factor_x, float factor_y);
 void textblock_set_scroll_line( mgc_textblock_t *textblock, uint8_t scroll_line);
 void textblock_display_update(mgc_textblock_t *textblock);
 void textblock_display_clear(mgc_textblock_t *textblock);
@@ -83,8 +83,9 @@ bool textblock_draw_cell(
         const mgc_draw_options_t *options
 );
 
-// Legacy
+//////////////////////////////// Legacy ////////////////////////////////
 bool textblock_apply_cell_blending(const mgc_textblock_t *textblock, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+void textblock_set_r_cell_offset(mgc_textblock_t *textblock, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 
 #ifdef __cplusplus
 }/* extern "C" */

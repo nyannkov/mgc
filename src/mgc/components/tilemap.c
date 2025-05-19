@@ -17,8 +17,8 @@ void tilemap_init(mgc_tilemap_t *tilemap, mgc_id_t id, const mgc_map_t *map, con
     tilemap->id = id;
     tilemap->x = 0;
     tilemap->y = 0;
-    tilemap->r_cell_x_ofs = 1;
-    tilemap->r_cell_y_ofs = 1;
+    tilemap->parallax_factor_x = 1.0F;
+    tilemap->parallax_factor_y = 1.0F;
     tilemap->enabled = MGC_DEFAULT_ENABLED;
     tilemap->map = map;
     tilemap->tileset = tileset;
@@ -41,13 +41,13 @@ void tilemap_set_position(mgc_tilemap_t *tilemap, int16_t x, int16_t y) {
     tilemap->y = y;
 }
 
-void tilemap_set_r_cell_offset(mgc_tilemap_t *tilemap, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+void tilemap_set_parallax_factor(mgc_tilemap_t *tilemap, float factor_x, float factor_y) {
     if ( tilemap == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    tilemap->r_cell_x_ofs = r_cell_x_ofs;
-    tilemap->r_cell_y_ofs = r_cell_y_ofs;
+    tilemap->parallax_factor_x = factor_x;
+    tilemap->parallax_factor_y = factor_y;
 }
 
 bool tilemap_draw(const mgc_tilemap_t *tilemap, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
@@ -79,12 +79,8 @@ bool tilemap_draw(const mgc_tilemap_t *tilemap, mgc_framebuffer_t *fb, const mgc
     t1 = 0;
 
     if ( cam_pos != NULL ) {
-        if ( tilemap->r_cell_x_ofs != 0 ) {
-            l1 += cam_pos->x / tilemap->r_cell_x_ofs;
-        }
-        if ( tilemap->r_cell_y_ofs != 0 ) {
-            t1 += cam_pos->y / tilemap->r_cell_y_ofs;
-        }
+        l1 += MGC_PARALLAX_SHIFT(cam_pos->x, tilemap->parallax_factor_x);
+        t1 += MGC_PARALLAX_SHIFT(cam_pos->y, tilemap->parallax_factor_y);
     }
     r1 = l1 + fb->width - 1;
     b1 = t1 + fb->height - 1;
@@ -174,12 +170,8 @@ bool tilemap_draw_cell(
     l1 = cell_x;
     t1 = cell_y;
     if ( cam_pos != NULL ) {
-        if ( tilemap->r_cell_x_ofs != 0 ) {
-            l1 += cam_pos->x / tilemap->r_cell_x_ofs;
-        }
-        if ( tilemap->r_cell_y_ofs != 0 ) {
-            t1 += cam_pos->y / tilemap->r_cell_y_ofs;
-        }
+        l1 += MGC_PARALLAX_SHIFT(cam_pos->x, tilemap->parallax_factor_x);
+        t1 += MGC_PARALLAX_SHIFT(cam_pos->y, tilemap->parallax_factor_y);
     }
     r1 = l1 + MGC_CELL_LEN - 1;
     b1 = t1 + MGC_CELL_LEN - 1;
@@ -406,6 +398,7 @@ bool tilemap_draw_cell(
     }
 }
 
+//////////////////////////////// Legacy ////////////////////////////////
 bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y) {
 
     if ( pixelbuffer == NULL ) {
@@ -416,5 +409,15 @@ bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t
     mgc_point_t cam_pos = {pixelbuffer->cell_x_ofs, pixelbuffer->cell_y_ofs};
 
     return tilemap_draw_cell(tilemap, pixelbuffer, cell_x, cell_y, &cam_pos, NULL);
+}
+
+void tilemap_set_r_cell_offset(mgc_tilemap_t *tilemap, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs) {
+    if ( tilemap == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    tilemap->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
+    tilemap->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
 }
 

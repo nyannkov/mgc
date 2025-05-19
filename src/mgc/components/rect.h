@@ -20,8 +20,8 @@ typedef struct mgc_rect {
     bool enabled;
     int16_t x;
     int16_t y;
-    uint8_t r_cell_x_ofs;
-    uint8_t r_cell_y_ofs;
+    uint8_t parallax_factor_x;
+    uint8_t parallax_factor_y;
     uint16_t width;
     uint16_t height;
     uint16_t border_width;
@@ -37,7 +37,7 @@ void rect_set_height(mgc_rect_t *rect, uint16_t height);
 void rect_set_border_width(mgc_rect_t *rect, uint16_t border_width);
 void rect_set_inner_color(mgc_rect_t *rect, mgc_color_t inner_color);
 void rect_set_border_color(mgc_rect_t *rect, mgc_color_t border_color);
-void rect_set_r_cell_offset(mgc_rect_t *rect, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
+void rect_set_parallax_factor(mgc_rect_t *rect, float factor_x, float factor_y);
 bool rect_draw(const mgc_rect_t *rect, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 bool rect_draw_cell(
         const mgc_rect_t *rect,
@@ -48,8 +48,9 @@ bool rect_draw_cell(
         const mgc_draw_options_t *options
 );
 
-// Legacy
+//////////////////////////////// Legacy ////////////////////////////////
 bool rect_apply_cell_blending(const mgc_rect_t *rect, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
+void rect_set_r_cell_offset(mgc_rect_t *rect, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 
 #ifdef __cplusplus
 }/* extern "C" */
