@@ -122,3 +122,21 @@ void pixelbuffer_draw_cell(mgc_pixelbuffer_t *pixelbuffer, const mgc_display_if_
     }
 }
 
+mgc_color_t *pixelbuffer_get_buffer(const mgc_pixelbuffer_t *pb) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return NULL;
+    }
+    return pb->pixelbuf;
+}
+
+uint16_t pixelbuffer_get_width(const mgc_pixelbuffer_t *pb) {
+    (void)pb;
+    return MGC_CELL_LEN;
+}
+
+uint16_t pixelbuffer_get_height(const mgc_pixelbuffer_t *pb) {
+    (void)pb;
+    return MGC_CELL_LEN;
+}
+

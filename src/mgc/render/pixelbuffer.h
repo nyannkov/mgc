@@ -31,6 +31,10 @@ void pixelbuffer_fill_partial_with_color(mgc_pixelbuffer_t *pixelbuffer, mgc_col
 void pixelbuffer_set_refresh_mode(mgc_pixelbuffer_t *pixelbuffer, bool refresh_mode);
 void pixelbuffer_set_back_color(mgc_pixelbuffer_t *pixelbuffer, mgc_color_t back_color);
 
+mgc_color_t *pixelbuffer_get_buffer(const mgc_pixelbuffer_t *pb);
+uint16_t pixelbuffer_get_width(const mgc_pixelbuffer_t *pb);
+uint16_t pixelbuffer_get_height(const mgc_pixelbuffer_t *pb);
+
 //////////////////////////////// Legacy ////////////////////////////////
 void pixelbuffer_set_cell_offset(mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x_ofs, int16_t cell_y_ofs);
 void pixelbuffer_add_cell_offset(mgc_pixelbuffer_t *pixelbuffer, int16_t dx, int16_t dy);

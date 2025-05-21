@@ -45,4 +45,27 @@ void framebuffer_clear(mgc_framebuffer_t *fb, mgc_color_t color) {
     }
 }
 
+mgc_color_t *framebuffer_get_buffer(const mgc_framebuffer_t *fb) {
+    if ( fb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return NULL;
+    }
+    return fb->buffer;
+}
+
+uint16_t framebuffer_get_width(const mgc_framebuffer_t *fb) {
+    if ( fb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return 0;
+    }
+    return fb->width;
+}
+
+uint16_t framebuffer_get_height(const mgc_framebuffer_t *fb) {
+    if ( fb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return 0;
+    }
+    return fb->height;
+}
 
