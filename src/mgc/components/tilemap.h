@@ -26,12 +26,18 @@ typedef struct mgc_tilemap {
     bool enabled;
     const mgc_map_t *map;
     const mgc_tileset_t *tileset;
+    struct {
+        uint8_t (*cb)(uint8_t tile_id, void *context);
+        void *context;
+    } on_get_tile_id;
 } mgc_tilemap_t;
+
 
 void tilemap_init(mgc_tilemap_t *tilemap, mgc_id_t id, const struct mgc_map *map, const mgc_tileset_t *tileset);
 void tilemap_set_enabled(mgc_tilemap_t *tilemap, bool enabled);
 void tilemap_set_position(mgc_tilemap_t *tilemap, int16_t x, int16_t y);
 void tilemap_set_parallax_factor(mgc_tilemap_t *tilemap, float factor_x, float factor_y);
+void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, void *context), void *context);
 bool tilemap_draw(const mgc_tilemap_t *tilemap, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 bool tilemap_draw_cell(
         const mgc_tilemap_t *tilemap,
