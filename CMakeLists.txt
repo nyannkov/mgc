@@ -14,11 +14,13 @@ set(MGC_SOURCES
     src/mgc/components/selectbox.c
     src/mgc/render/camera.c
     src/mgc/render/pixelbuffer.c
+    src/mgc/render/framebuffer.c
     src/mgc/font/font.c
     src/mgc/font/encoding.c
     src/mgc/detector/maphit.c
     src/mgc/detector/sprhit.c
     src/mgc/sequencer/dlgflow.c
+    src/mgc/sequencer/talkflow.c
     src/mgc/utils/jumpctrl/jumpctrl.c
 )
 
