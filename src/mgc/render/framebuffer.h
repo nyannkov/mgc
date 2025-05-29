@@ -22,7 +22,7 @@ typedef struct mgc_framebuffer {
 void framebuffer_init(mgc_framebuffer_t *fb, mgc_color_t *buffer, uint16_t width, uint16_t height);
 void framebuffer_clear(mgc_framebuffer_t *fb, mgc_color_t color);
 
-mgc_color_t *framebuffer_get_buffer(const mgc_framebuffer_t *fb);
+const mgc_color_t *framebuffer_get_buffer(const mgc_framebuffer_t *fb);
 uint16_t framebuffer_get_width(const mgc_framebuffer_t *fb);
 uint16_t framebuffer_get_height(const mgc_framebuffer_t *fb);
 

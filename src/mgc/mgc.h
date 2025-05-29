@@ -26,6 +26,9 @@ extern "C" {
 #include "render/camera.h"
 #include "detector/maphit.h"
 #include "detector/sprhit.h"
+#include "sequencer/talkflow.h"
+
+//////////////////////////////// Legacy ////////////////////////////////
 #include "sequencer/dlgflow.h"
 
 #ifdef __cplusplus
