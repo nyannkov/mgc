@@ -7,36 +7,40 @@
 #include "label.h"
 
 void label_init(mgc_label_t *label, mgc_id_t id, const mgc_font_t *font, bool fontsize2x) {
-    if ( ( label == NULL ) ||
-         ( font == NULL ) ||
-         ( font->fbb_x > MGC_FONT_MAX_FONT_SIZE ) ||
-         ( font->fbb_y > MGC_FONT_MAX_FONT_SIZE )
-    ) {
+    if ( label == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
     label->id = id;
     label->x = 0;
     label->y = 0;
-    label->enabled = MGC_DEFAULT_ENABLED;
+    label->visible = MGC_DEFAULT_VISIBLE;
     label->parallax_factor_x = 0.0F;
     label->parallax_factor_y = 0.0F;
     label->text = "";
-    label->font = font;
-    label->width = font->fbb_x * 10;
-    label->height = font->fbb_y;
-    label->fore_color = MGC_COLOR_SWAP(MGC_COLOR_WHITE);
-    label->back_color = MGC_COLOR_SWAP(MGC_COLOR_BLACK);
+    label->fore_color = MGC_COLOR_WHITE;
+    label->back_color = MGC_COLOR_BLACK;
     label->fontsize2x = fontsize2x;
     label->enable_back_color = false;
+
+    label->font = NULL;
+    label_set_font(label, font);
 }
 
-void label_set_enabled(mgc_label_t *label, bool enabled) {
+void label_set_id(mgc_label_t *label, mgc_id_t id) {
     if ( label == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    label->enabled = enabled;
+    label->id = id;
+}
+
+void label_set_visible(mgc_label_t *label, bool v) {
+    if ( label == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    label->visible = v;
 }
 
 void label_set_position(mgc_label_t *label, int16_t x, int16_t y) {
@@ -54,6 +58,22 @@ void label_set_size(mgc_label_t *label, uint16_t width, uint16_t height) {
         return;
     }
     label->width = width;
+    label->height = height;
+}
+
+void label_set_width(mgc_label_t *label, uint16_t width) {
+    if ( label == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    label->width = width;
+}
+
+void label_set_height(mgc_label_t *label, uint16_t height) {
+    if ( label == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
     label->height = height;
 }
 
@@ -79,7 +99,7 @@ void label_set_fore_color(mgc_label_t *label, mgc_color_t fore_color) {
         MGC_WARN("Invalid handler");
         return;
     }
-    label->fore_color = MGC_COLOR_SWAP(fore_color);
+    label->fore_color = fore_color;
 }
 
 void label_set_back_color(mgc_label_t *label, mgc_color_t back_color) {
@@ -87,7 +107,7 @@ void label_set_back_color(mgc_label_t *label, mgc_color_t back_color) {
         MGC_WARN("Invalid handler");
         return;
     }
-    label->back_color = MGC_COLOR_SWAP(back_color);
+    label->back_color = back_color;
 }
 
 void label_set_enable_back_color(mgc_label_t *label, bool enable) {
@@ -96,6 +116,68 @@ void label_set_enable_back_color(mgc_label_t *label, bool enable) {
         return;
     }
     label->enable_back_color = enable;
+}
+
+void label_set_font(mgc_label_t *label, const mgc_font_t *font) {
+    if ( ( label == NULL ) ||
+         ( font == NULL ) ||
+         ( font->fbb_x > MGC_FONT_MAX_FONT_SIZE ) ||
+         ( font->fbb_y > MGC_FONT_MAX_FONT_SIZE )
+    ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    label->font = font;
+}
+
+void label_set_fontsize2x(mgc_label_t *label, bool fontsize2x) {
+    if ( label == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    label->fontsize2x = fontsize2x;
+}
+
+void label_resize_to_fit(mgc_label_t *label) {
+    const char * p;
+    int16_t total_dwx0;
+    int16_t scale;
+
+    if ( ( label == NULL ) ||
+         ( label->font == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    scale = label->fontsize2x ? 2 : 1;
+    total_dwx0 = 0;
+    p = label->text;
+
+    while (*p) {
+        const char * tmp_p;
+        uint32_t unicode;
+        unicode = encoding_utf8_to_unicode(p, &tmp_p);
+        if ( unicode == 0x0D ) {
+            p = tmp_p;
+            unicode = encoding_utf8_to_unicode(p, &tmp_p);
+            if ( unicode == 0x0A ) {
+                p = tmp_p;
+            }
+            break;
+        } else if ( (unicode == 0x00) || (unicode == 0x0A) ) {
+            p = tmp_p;
+            break;
+        } else {
+            const mgc_glyph_t *glyph;
+            glyph = font_get_glyph_info(label->font, unicode);
+            total_dwx0 += (glyph->dwx0*scale);
+            p = tmp_p;
+        }
+    }
+
+    label->width = total_dwx0;
+    label->height = label->font->fbb_y * scale;
 }
 
 static inline bool draw_buffer(
@@ -117,6 +199,8 @@ static inline bool draw_buffer(
     int16_t dx;
     int16_t scale;
     int16_t shift;
+    mgc_color_t fore_color;
+    mgc_color_t back_color;
 
     if ( ( label == NULL )       ||
          ( label->font == NULL ) ||
@@ -125,8 +209,8 @@ static inline bool draw_buffer(
         MGC_WARN("Invalid handler");
         return false;
     }
-    if ( label->enabled == false ) {
-        MGC_INFO("Handler is disabled");
+    if ( label->visible == false ) {
+        MGC_INFO("Handler is not visible");
         return false;
     }
 
@@ -134,6 +218,8 @@ static inline bool draw_buffer(
 
     scale = label->fontsize2x ? 2 : 1;
     shift = scale-1;
+    fore_color = MGC_COLOR_SWAP(label->fore_color);
+    back_color = MGC_COLOR_SWAP(label->back_color);
 
     l0 = label->x;
     t0 = label->y;
@@ -199,12 +285,12 @@ static inline bool draw_buffer(
                         if ( (bitmap[Y>>shift] & mask_x ) != 0 ) {
                             size_t idx;
                             idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
-                            draw_buf[idx] = label->fore_color;
+                            draw_buf[idx] = fore_color;
                         } else {
                             if ( label->enable_back_color ) {
                                 size_t idx;
                                 idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
-                                draw_buf[idx] = label->back_color;
+                                draw_buf[idx] = back_color;
                             }
                         }
                     }
@@ -223,9 +309,7 @@ bool label_draw(const mgc_label_t *label, mgc_framebuffer_t *fb, const mgc_point
         return false;
     }
 
-    mgc_point_t fov_ofs = {0, 0};
-
-    return draw_buffer(label, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
+    return label_draw_raw(label, fb->buffer, fb->width, fb->height, cam_pos, options);
 }
 
 bool label_draw_cell(
@@ -241,9 +325,33 @@ bool label_draw_cell(
         return false;
     }
 
+    return label_draw_cell_raw(label, pb->pixelbuf, cell_x, cell_y, cam_pos, options);
+}
+
+bool label_draw_raw(
+        const mgc_label_t *label,
+        mgc_color_t *buffer,
+        uint16_t width,
+        uint16_t height,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    mgc_point_t fov_ofs = {0, 0};
+
+    return draw_buffer(label, buffer, width, height, cam_pos, &fov_ofs, options);
+}
+
+bool label_draw_cell_raw(
+        const mgc_label_t *label,
+        mgc_color_t *cell_buffer,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
     mgc_point_t fov_ofs = {cell_x, cell_y};
 
-    return draw_buffer(label, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+    return draw_buffer(label, cell_buffer, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
 }
 
 //////////////////////////////// Legacy ////////////////////////////////

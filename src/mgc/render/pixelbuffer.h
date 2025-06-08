@@ -32,6 +32,7 @@ void pixelbuffer_set_refresh_mode(mgc_pixelbuffer_t *pixelbuffer, bool refresh_m
 void pixelbuffer_set_back_color(mgc_pixelbuffer_t *pixelbuffer, mgc_color_t back_color);
 
 const mgc_color_t *pixelbuffer_get_buffer(const mgc_pixelbuffer_t *pb);
+mgc_color_t *pixelbuffer_get_buffer_mut(mgc_pixelbuffer_t *pb);
 uint16_t pixelbuffer_get_width(const mgc_pixelbuffer_t *pb);
 uint16_t pixelbuffer_get_height(const mgc_pixelbuffer_t *pb);
 

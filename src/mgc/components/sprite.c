@@ -16,7 +16,7 @@ void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     sprite->y = 0;
     sprite->parallax_factor_x = 1.0F;
     sprite->parallax_factor_y = 1.0F;
-    sprite->enabled = MGC_DEFAULT_ENABLED;
+    sprite->visible = MGC_DEFAULT_VISIBLE;
     sprite->tileset = NULL;
     sprite->tile_idx = 0;
     sprite->hitbox_array = NULL;
@@ -27,12 +27,20 @@ void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     sprite->trim_bottom = 0;
 }
 
-void sprite_set_enabled(mgc_sprite_t *sprite, bool enabled) {
+void sprite_set_id(mgc_sprite_t *sprite, mgc_id_t id) {
     if ( sprite == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    sprite->enabled = enabled;
+    sprite->id = id;
+}
+
+void sprite_set_visible(mgc_sprite_t *sprite, bool v) {
+    if ( sprite == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    sprite->visible = v;
 }
 
 void sprite_set_position(mgc_sprite_t *sprite, int16_t x, int16_t y) {
@@ -119,8 +127,8 @@ static inline bool draw_buffer(
         MGC_WARN("Invalid handler")
         return false;
     }
-    if ( sprite->enabled == false ) {
-        MGC_INFO("Handler is disabled")
+    if ( sprite->visible == false ) {
+        MGC_INFO("Handler is not visible")
         return false;
     }
 
@@ -198,9 +206,7 @@ bool sprite_draw(const mgc_sprite_t *sprite, mgc_framebuffer_t *fb, const mgc_po
         return false;
     }
 
-    mgc_point_t fov_ofs = {0, 0};
-
-    return draw_buffer(sprite, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
+    return sprite_draw_raw(sprite, fb->buffer, fb->width, fb->height, cam_pos, options);
 }
 
 bool sprite_draw_cell(
@@ -216,9 +222,33 @@ bool sprite_draw_cell(
         return false;
     }
 
+    return sprite_draw_cell_raw(sprite, pb->pixelbuf, cell_x, cell_y, cam_pos, options);
+}
+
+bool sprite_draw_raw(
+        const mgc_sprite_t *sprite,
+        mgc_color_t *buffer,
+        uint16_t width,
+        uint16_t height,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    mgc_point_t fov_ofs = {0, 0};
+
+    return draw_buffer(sprite, buffer, width, height, cam_pos, &fov_ofs, options);
+}
+
+bool sprite_draw_cell_raw(
+        const mgc_sprite_t *sprite,
+        mgc_color_t *cell_buffer,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
     mgc_point_t fov_ofs = {cell_x, cell_y};
 
-    return draw_buffer(sprite, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+    return draw_buffer(sprite, cell_buffer, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
 }
 
 //////////////////////////////// Legacy ////////////////////////////////

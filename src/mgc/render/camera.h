@@ -38,6 +38,7 @@ void camera_set_x_follow_settings(mgc_camera_t *camera, int16_t start_line, int1
 void camera_set_y_follow_settings(mgc_camera_t *camera, int16_t start_line, int16_t end_line, uint16_t deadzone);
 void camera_set_x_follow_enabled(mgc_camera_t *camera, bool enabled);
 void camera_set_y_follow_enabled(mgc_camera_t *camera, bool enabled);
+void camera_follow_target_position(mgc_camera_t *camera, mgc_point_t target_pos);
 void camera_follow_target(mgc_camera_t *camera, const mgc_sprite_t *target);
 bool camera_get_position(const mgc_camera_t *camera, mgc_point_t *cam_pos);
 

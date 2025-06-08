@@ -1,0 +1,92 @@
+/*
+ * MIT License
+ * (https://opensource.org/license/mit/)
+ *
+ * Copyright (c) 2025 nyannkov
+ */
+#ifndef MGC_PARTS_BASIC_SPRITE_HPP
+#define MGC_PARTS_BASIC_SPRITE_HPP
+
+#include "mgc/components/sprite.h"
+#include "mgc_cpp/internal/common.hpp"
+#include "mgc_cpp/parts/interfaces/isprite.hpp"
+#include "mgc_cpp/features/has_id.hpp"
+#include "mgc_cpp/features/positionable.hpp"
+#include "mgc_cpp/features/has_parallax_factor.hpp"
+#include "mgc_cpp/features/has_hitbox.hpp"
+#include "mgc_cpp/features/visible.hpp"
+#include "mgc_cpp/features/drawable.hpp"
+#include "mgc_cpp/features/cell_drawable.hpp"
+
+namespace mgc {
+namespace parts {
+
+template <size_t MaxHitboxCount>
+struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite<MaxHitboxCount>>,
+                     mgc::features::HasId,
+                     mgc::features::Positionable,
+                     mgc::features::HasParallaxFactor,
+                     mgc::features::HasHitbox,
+                     mgc::features::Visible,
+                     mgc::features::Drawable,
+                     mgc::features::CellDrawable {
+
+    BasicSprite() { reset(); }
+    ~BasicSprite() = default;
+    void reset();
+
+    // [feature] HasId
+    void set_id(mgc_id_t id) override;
+    mgc_id_t get_id() const override;
+
+    // [feature] Positionable
+    using mgc::features::Positionable::set_position;
+    mgc::geometry::Point get_position() const override;
+    void set_position(int16_t x, int16_t y) override;
+
+    // [feature] HasParallaxFactor
+    void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
+    mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
+
+    // [feature] HasHitbox
+    const mgc::collision::Hitbox* get_hitbox(size_t index) const override;
+    const mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) const override;
+    size_t hitbox_count() const override;
+    
+    // [feature] Visible
+    bool is_visible() const override;
+    void set_visible(bool v) override;
+
+    // [feature] Drawable
+    using mgc::features::Drawable::draw;
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+
+    // [feature] CellDrawable
+    using mgc::features::CellDrawable::draw;
+    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+
+    // [impl] WithTileset
+    void set_tileset_impl(const mgc::parts::assets::Tileset &tileset);
+    const mgc::parts::assets::Tileset *get_tileset_impl() const;
+
+    // [impl] WithTileIndexing
+    void set_tile_index_impl(size_t idx);
+    size_t get_tile_index_impl() const;
+
+    // [impl] WithTrimRegion
+    void set_trim_region_impl(mgc::parts::types::TrimRegion region);
+    mgc::parts::types::TrimRegion get_trim_region_impl() const;
+    void clear_trim_region_impl();
+    bool has_trim_region_impl() const;
+
+private:
+    mgc_sprite_t sprite_;
+    mgc::collision::HitboxArray<MaxHitboxCount> hitbox_array_;
+};
+
+#include "basic_sprite.tpp"
+
+}// namespace parts
+}// namespace mgc
+
+#endif/*MGC_PARTS_BASIC_SPRITE_HPP*/

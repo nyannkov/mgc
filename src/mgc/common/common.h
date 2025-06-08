@@ -35,9 +35,13 @@ typedef uint16_t mgc_id_t;
 #define MGC_WARN(str)
 #endif/*MGC_WARN*/
 
-#ifndef MGC_DEFAULT_ENABLED
-#define MGC_DEFAULT_ENABLED     true
-#endif/*MGC_DEFAULT_ENABLED*/
+#ifndef MGC_ASSERT
+#define MGC_ASSERT(cond, str)
+#endif/*MGC_ASSERT*/
+
+#ifndef MGC_DEFAULT_VISIBLE
+#define MGC_DEFAULT_VISIBLE     true
+#endif/*MGC_DEFAULT_VISIBLE*/
 
 #ifndef MGC_ABS
 #define MGC_ABS(x)              (((x) >= 0) ? (x) : ((x)*-1))
@@ -105,6 +109,37 @@ typedef struct mgc_point {
 typedef struct mgc_draw_options {
     uint32_t reserved;
 } mgc_draw_options_t;
+
+typedef struct mgc_parallax_factor {
+    float f_x;
+    float f_y;
+} mgc_parallax_factor_t;
+
+typedef struct mgc_trim_region {
+    uint16_t left;
+    uint16_t right;
+    uint16_t top;
+    uint16_t bottom;
+} mgc_trim_region_t;
+
+typedef struct mgc_margin_region {
+    uint16_t left;
+    uint16_t right;
+    uint16_t top;
+    uint16_t bottom;
+} mgc_margin_region_t;
+
+typedef struct mgc_padding_region {
+    uint8_t left;
+    uint8_t right;
+    uint8_t top;
+    uint8_t bottom;
+} mgc_padding_region_t;
+
+typedef struct mgc_size {
+    uint16_t width;
+    uint16_t height;
+} mgc_size_t;
 
 #define MGC_PARALLAX_SHIFT(coord, factor) (int16_t)((coord) * (factor))
 

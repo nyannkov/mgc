@@ -34,13 +34,6 @@ void sprhit_setup_detection(mgc_sprhit_t *sprhit, const mgc_sprite_t *target, mg
         sprhit->state = MGC_SPRHIT_STATE_ERROR;
         return;
     }
-    if ( ( target->enabled == false ) ||
-         ( opponent->enabled == false )
-    ) {
-        MGC_INFO("Handler is disabled");
-        sprhit->state = MGC_SPRHIT_STATE_END;
-        return;
-    }
 
     for ( size_t idx = 0; idx < target->hitbox_count; idx++ ) {
         hitbox = &target->hitbox_array[idx];
@@ -52,6 +45,16 @@ void sprhit_setup_detection(mgc_sprhit_t *sprhit, const mgc_sprite_t *target, mg
     if ( hitbox_id_found == false ) {
         MGC_WARN("target_hitbox_id is not found");
         sprhit->state = MGC_SPRHIT_STATE_ERROR;
+        return;
+    }
+    if ( ( hitbox->width == 0 ) || ( hitbox->height == 0 ) ) {
+        MGC_WARN("Invalid hitbox");
+        sprhit->state = MGC_SPRHIT_STATE_ERROR;
+        return;
+    }
+    if ( hitbox->enabled == false ) {
+        MGC_INFO("target_hitbox_id is disabled");
+        sprhit->state = MGC_SPRHIT_STATE_END;
         return;
     }
 
@@ -80,17 +83,19 @@ bool sprhit_detect(mgc_sprhit_t *sprhit) {
     opponent = sprhit->opponent;
 
     for ( ; sprhit->opp_hitbox_idx < opponent->hitbox_count; sprhit->opp_hitbox_idx++ ) {
-        int16_t l1, r1, t1, b1;
         const mgc_hitbox_t *hitbox = &opponent->hitbox_array[sprhit->opp_hitbox_idx];
-        l1 = opponent->x + hitbox->x0_ofs;
-        r1 = opponent->x + hitbox->x0_ofs + hitbox->width - 1;
-        t1 = opponent->y + hitbox->y0_ofs;
-        b1 = opponent->y + hitbox->y0_ofs + hitbox->height - 1;
-        if ( (sprhit->l0<r1) && (l1<sprhit->r0) && (sprhit->t0<b1) && (t1<sprhit->b0) ) {
-            sprhit->state = MGC_SPRHIT_STATE_IN_PROGRESS;
-            sprhit->hit_opp_hitbox_id = hitbox->id;
-            sprhit->opp_hitbox_idx++;
-            return true;
+        if ( hitbox->enabled ) {
+            int16_t l1, r1, t1, b1;
+            l1 = opponent->x + hitbox->x0_ofs;
+            r1 = opponent->x + hitbox->x0_ofs + hitbox->width - 1;
+            t1 = opponent->y + hitbox->y0_ofs;
+            b1 = opponent->y + hitbox->y0_ofs + hitbox->height - 1;
+            if ( (sprhit->l0<r1) && (l1<sprhit->r0) && (sprhit->t0<b1) && (t1<sprhit->b0) ) {
+                sprhit->state = MGC_SPRHIT_STATE_IN_PROGRESS;
+                sprhit->hit_opp_hitbox_id = hitbox->id;
+                sprhit->opp_hitbox_idx++;
+                return true;
+            }
         }
     }
     sprhit->state = MGC_SPRHIT_STATE_END;

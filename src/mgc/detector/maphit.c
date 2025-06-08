@@ -129,9 +129,7 @@ void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *target, mg
         maphit->state = MGC_MAPHIT_STATE_ERROR;
         return;
     }
-    if ( ( target->enabled == false ) ||
-         ( tilemap->enabled == false )
-    ) {
+    if ( tilemap->hit_enabled == false ) {
         MGC_INFO("Handler is disabled");
         maphit->state = MGC_MAPHIT_STATE_END;
         return;
@@ -152,6 +150,11 @@ void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *target, mg
     if ( ( hitbox->width == 0 ) || ( hitbox->height == 0 ) ) {
         MGC_WARN("Invalid hitbox");
         maphit->state = MGC_MAPHIT_STATE_ERROR;
+        return;
+    }
+    if ( hitbox->enabled == false ) {
+        MGC_INFO("target_hitbox_id is disabled");
+        maphit->state = MGC_MAPHIT_STATE_END;
         return;
     }
 

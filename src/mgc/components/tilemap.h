@@ -17,24 +17,32 @@ extern "C" {
 #include "map.h"
 #include "tileset.h"
 
+typedef struct mgc_tilemap_on_get_tile_id_cb {
+    uint8_t (*cb)(uint8_t tile_id, void *context);
+    void *context;
+} mgc_tilemap_on_get_tile_id_cb_t;
+
 typedef struct mgc_tilemap {
     mgc_id_t id;
     int16_t x;
     int16_t y;
     float parallax_factor_x;
     float parallax_factor_y;
-    bool enabled;
+    bool hit_enabled;
+    bool visible;
     const mgc_map_t *map;
     const mgc_tileset_t *tileset;
-    struct {
-        uint8_t (*cb)(uint8_t tile_id, void *context);
-        void *context;
-    } on_get_tile_id;
+    mgc_tilemap_on_get_tile_id_cb_t on_get_tile_id;
 } mgc_tilemap_t;
 
 
-void tilemap_init(mgc_tilemap_t *tilemap, mgc_id_t id, const struct mgc_map *map, const mgc_tileset_t *tileset);
-void tilemap_set_enabled(mgc_tilemap_t *tilemap, bool enabled);
+void tilemap_init(mgc_tilemap_t *tilemap, mgc_id_t id, const mgc_map_t *map, const mgc_tileset_t *tileset);
+void tilemap_set_id(mgc_tilemap_t *tilemap, mgc_id_t id);
+void tilemap_set_map(mgc_tilemap_t *tilemap,const mgc_map_t *map);
+void tilemap_set_tileset(mgc_tilemap_t *tilemap,const mgc_tileset_t *tileset);
+
+void tilemap_set_hit_enabled(mgc_tilemap_t *tilemap, bool enabled);
+void tilemap_set_visible(mgc_tilemap_t *tilemap, bool v);
 void tilemap_set_position(mgc_tilemap_t *tilemap, int16_t x, int16_t y);
 void tilemap_set_parallax_factor(mgc_tilemap_t *tilemap, float factor_x, float factor_y);
 void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, void *context), void *context);
@@ -47,10 +55,81 @@ bool tilemap_draw_cell(
         const mgc_point_t *cam_pos,
         const mgc_draw_options_t *options
 );
+bool tilemap_draw_raw(
+        const mgc_tilemap_t *tilemap,
+        mgc_color_t *buffer,
+        uint16_t width,
+        uint16_t height,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+bool tilemap_draw_cell_raw(
+        const mgc_tilemap_t *tilemap,
+        mgc_color_t *cell_buffer,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+);
+
+static inline
+mgc_id_t tilemap_get_id(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    return tilemap->id;
+}
+
+static inline
+const mgc_map_t* tilemap_get_map(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    return tilemap->map;
+}
+
+static inline
+const mgc_tileset_t* tilemap_get_tileset(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    return tilemap->tileset;
+}
+
+static inline
+bool tilemap_get_visible(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    return tilemap->visible;
+}
+
+static inline
+mgc_point_t tilemap_get_position(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    mgc_point_t point = {tilemap->x, tilemap->y};
+    return point;
+}
+
+static inline
+mgc_parallax_factor_t tilemap_get_parallax_factor(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    mgc_parallax_factor_t factor = {
+        tilemap->parallax_factor_x,
+        tilemap->parallax_factor_y
+    };
+    return factor;
+}
+
+static inline
+bool tilemap_get_hit_enabled(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    return tilemap->hit_enabled;
+}
+
+static inline
+const mgc_tilemap_on_get_tile_id_cb_t * 
+tilemap_get_tilemap_on_get_tile_id_cb(const mgc_tilemap_t *tilemap) {
+    MGC_ASSERT(tilemap != NULL, "Invalid handler");
+    return &tilemap->on_get_tile_id;
+}
 
 //////////////////////////////// Legacy ////////////////////////////////
 bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 void tilemap_set_r_cell_offset(mgc_tilemap_t *tilemap, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
+#define tilemap_set_enabled    tilemap_set_visible
 
 #ifdef __cplusplus
 }/* extern "C" */
