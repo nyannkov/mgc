@@ -151,7 +151,7 @@ bool label_get_enable_back_color(const mgc_label_t *label) {
 //////////////////////////////// Legacy ////////////////////////////////
 bool label_apply_cell_blending(const mgc_label_t *label, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 void label_set_r_cell_offset(mgc_label_t *label, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
-#define label_set_enable    label_set_visible
+#define label_set_enabled    label_set_visible
 
 
 #ifdef __cplusplus
