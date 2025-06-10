@@ -16,8 +16,12 @@ namespace display {
 template <typename Derived>
 struct DisplayDriver {
 
-    void init() {
-        static_cast<Derived*>(this)->init_impl();
+    void init(uint32_t clock_rate = 0) {
+        static_cast<Derived*>(this)->init_impl(clock_rate);
+    }
+
+    void reset() {
+        static_cast<Derived*>(this)->reset_impl();
     }
 
     uint16_t width() const {
@@ -36,7 +40,7 @@ protected:
     DisplayDriver() = default;
 };
 
-}// namespace input
+}// namespace display
 }// namespace platform
 }// namespace mgc
 

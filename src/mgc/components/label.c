@@ -14,6 +14,8 @@ void label_init(mgc_label_t *label, mgc_id_t id, const mgc_font_t *font, bool fo
     label->id = id;
     label->x = 0;
     label->y = 0;
+    label->width = 20*20;
+    label->height = 20;
     label->visible = MGC_DEFAULT_VISIBLE;
     label->parallax_factor_x = 0.0F;
     label->parallax_factor_y = 0.0F;

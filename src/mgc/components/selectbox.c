@@ -242,7 +242,6 @@ void selectbox_set_cursor_text(mgc_selectbox_t *selectbox, const char *text) {
         return;
     }
     label_set_text(&selectbox->cursor, text);
-    label_resize_to_fit(&selectbox->cursor);
 }
 
 void selectbox_set_selected_idx(mgc_selectbox_t *selectbox, size_t selected_idx) {
