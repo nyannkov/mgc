@@ -30,7 +30,15 @@ struct BasicTilemap : mgc::parts::interfaces::ITilemap<BasicTilemap>,
                       mgc::features::Drawable,
                       mgc::features::CellDrawable {
 
-    BasicTilemap() { reset(); }
+    BasicTilemap() { 
+        callbacks_ = mgc_tilemap_callbacks_t {
+            this,
+            on_request_tile_id_wrapper
+        };
+        tilemap_set_callbacks(&tilemap_, &callbacks_);
+
+        reset();
+    }
     ~BasicTilemap() = default;
     void reset();
 
@@ -73,6 +81,7 @@ struct BasicTilemap : mgc::parts::interfaces::ITilemap<BasicTilemap>,
 
 private:
     mgc_tilemap_t tilemap_;
+    mgc_tilemap_callbacks_t callbacks_;
     static uint8_t on_request_tile_id_wrapper(uint8_t tile_id, void *context) {
         auto obj = static_cast<mgc::parts::BasicTilemap *>(context);
         return obj->on_request_tile_id(tile_id);

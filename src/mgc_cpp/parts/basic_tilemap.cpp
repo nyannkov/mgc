@@ -19,8 +19,6 @@ using mgc::graphics::CellBuffer;
 
 void mgc::parts::BasicTilemap::reset() {
     tilemap_init(&tilemap_, 0, nullptr, nullptr);
-
-    tilemap_set_on_get_tile_id_cb(&tilemap_, mgc::parts::BasicTilemap::on_request_tile_id_wrapper, this);
 }
 
 // [feature] HasId
