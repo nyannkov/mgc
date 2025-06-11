@@ -20,6 +20,8 @@ struct IButton {
 
     virtual bool is_pressed(mgc::platform::input::Key key) const = 0;
     virtual bool was_pressed(mgc::platform::input::Key key) const = 0;
+    virtual uint16_t hold_counter(mgc::platform::input::Key key) const = 0;
+
     bool just_pressed(mgc::platform::input::Key key) const {
         return ( is_pressed(key) && !was_pressed(key) );
     }

@@ -24,6 +24,7 @@ enum class Key {
     End,
     Next,
     Previous,
+    Control
 };
 
 }// namespace input

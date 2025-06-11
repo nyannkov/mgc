@@ -25,7 +25,7 @@ static inline uint16_t ST7789_get_width(void) {
     return MGC_DRIVERS_ST7789_WIDTH;
 }
 
-static uint16_t ST7789_get_height(void) {
+static inline uint16_t ST7789_get_height(void) {
     return MGC_DRIVERS_ST7789_HEIGHT;
 }
 
