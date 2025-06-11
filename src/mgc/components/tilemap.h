@@ -17,10 +17,10 @@ extern "C" {
 #include "map.h"
 #include "tileset.h"
 
-typedef struct mgc_tilemap_on_get_tile_id_cb {
-    uint8_t (*cb)(uint8_t tile_id, void *context);
+typedef struct mgc_tilemap_callbacks {
     void *context;
-} mgc_tilemap_on_get_tile_id_cb_t;
+    uint8_t (*on_get_tile_id)(uint8_t tile_id, void *context);
+} mgc_tilemap_callbacks_t;
 
 typedef struct mgc_tilemap {
     mgc_id_t id;
@@ -32,7 +32,7 @@ typedef struct mgc_tilemap {
     bool visible;
     const mgc_map_t *map;
     const mgc_tileset_t *tileset;
-    mgc_tilemap_on_get_tile_id_cb_t on_get_tile_id;
+    mgc_tilemap_callbacks_t callbacks;
 } mgc_tilemap_t;
 
 
@@ -45,7 +45,7 @@ void tilemap_set_hit_enabled(mgc_tilemap_t *tilemap, bool enabled);
 void tilemap_set_visible(mgc_tilemap_t *tilemap, bool v);
 void tilemap_set_position(mgc_tilemap_t *tilemap, int16_t x, int16_t y);
 void tilemap_set_parallax_factor(mgc_tilemap_t *tilemap, float factor_x, float factor_y);
-void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, void *context), void *context);
+void tilemap_set_callbacks(mgc_tilemap_t *tilemap, const mgc_tilemap_callbacks_t *callbacks);
 bool tilemap_draw(const mgc_tilemap_t *tilemap, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options);
 bool tilemap_draw_cell(
         const mgc_tilemap_t *tilemap,
@@ -120,16 +120,18 @@ bool tilemap_get_hit_enabled(const mgc_tilemap_t *tilemap) {
 }
 
 static inline
-const mgc_tilemap_on_get_tile_id_cb_t * 
-tilemap_get_tilemap_on_get_tile_id_cb(const mgc_tilemap_t *tilemap) {
+const mgc_tilemap_callbacks_t * 
+tilemap_get_tilemap_callbacks(const mgc_tilemap_t *tilemap) {
     MGC_ASSERT(tilemap != NULL, "Invalid handler");
-    return &tilemap->on_get_tile_id;
+    return &tilemap->callbacks;
 }
 
 //////////////////////////////// Legacy ////////////////////////////////
 bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 void tilemap_set_r_cell_offset(mgc_tilemap_t *tilemap, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
+void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, void *context), void *context);
 #define tilemap_set_enabled    tilemap_set_visible
+#define tilemap_get_tilemap_on_get_tile_id_cb(tilemap)    tilemap_get_tilemap_callbacks((tilemap))->on_get_tile_id
 
 #ifdef __cplusplus
 }/* extern "C" */
