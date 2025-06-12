@@ -19,7 +19,7 @@ extern "C" {
 
 typedef struct mgc_tilemap_callbacks {
     void *context;
-    uint8_t (*on_get_tile_id)(uint8_t tile_id, void *context);
+    uint8_t (*on_get_tile_id)(uint8_t tile_id, uint16_t row, uint16_t col, void *context);
 } mgc_tilemap_callbacks_t;
 
 typedef struct mgc_tilemap {
@@ -129,7 +129,7 @@ tilemap_get_tilemap_callbacks(const mgc_tilemap_t *tilemap) {
 //////////////////////////////// Legacy ////////////////////////////////
 bool tilemap_apply_cell_blending(const mgc_tilemap_t *tilemap, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 void tilemap_set_r_cell_offset(mgc_tilemap_t *tilemap, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
-void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, void *context), void *context);
+void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, uint16_t row, uint16_t col, void *context), void *context);
 #define tilemap_set_enabled    tilemap_set_visible
 #define tilemap_get_tilemap_on_get_tile_id_cb(tilemap)    tilemap_get_tilemap_callbacks((tilemap))->on_get_tile_id
 

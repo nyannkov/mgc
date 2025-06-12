@@ -31,18 +31,19 @@ struct BasicTilemap : mgc::parts::interfaces::ITilemap<BasicTilemap>,
                       mgc::features::CellDrawable {
 
     BasicTilemap() { 
+
+        reset();
+
         callbacks_ = mgc_tilemap_callbacks_t {
             this,
             on_request_tile_id_wrapper
         };
         tilemap_set_callbacks(&tilemap_, &callbacks_);
-
-        reset();
     }
     ~BasicTilemap() = default;
     void reset();
 
-    virtual uint8_t on_request_tile_id(uint8_t tile_id) { return tile_id; }
+    virtual uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) { return tile_id; }
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
@@ -82,9 +83,9 @@ struct BasicTilemap : mgc::parts::interfaces::ITilemap<BasicTilemap>,
 private:
     mgc_tilemap_t tilemap_;
     mgc_tilemap_callbacks_t callbacks_;
-    static uint8_t on_request_tile_id_wrapper(uint8_t tile_id, void *context) {
+    static uint8_t on_request_tile_id_wrapper(uint8_t tile_id, uint16_t row, uint16_t col, void *context) {
         auto obj = static_cast<mgc::parts::BasicTilemap *>(context);
-        return obj->on_request_tile_id(tile_id);
+        return obj->on_request_tile_id(tile_id, row, col);
     }
 };
 
