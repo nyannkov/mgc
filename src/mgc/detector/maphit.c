@@ -161,10 +161,10 @@ void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *target, mg
     maphit->target = target;
     maphit->target_hitbox = hitbox;
     maphit->tilemap = tilemap;
-    maphit->ql = MGC_DIV_CELL_LEN(target->x + hitbox->x0_ofs - tilemap->x);
-    maphit->qr = MGC_DIV_CELL_LEN(target->x + hitbox->x0_ofs + hitbox->width - 1 - tilemap->x);
-    maphit->qt = MGC_DIV_CELL_LEN(target->y + hitbox->y0_ofs - tilemap->y);
-    maphit->qb = MGC_DIV_CELL_LEN(target->y + hitbox->y0_ofs + hitbox->height - 1 - tilemap->y);
+    maphit->ql = MGC_DIV_CELL_LEN((int32_t)target->x + hitbox->x0_ofs - tilemap->x);
+    maphit->qr = MGC_DIV_CELL_LEN((int32_t)target->x + hitbox->x0_ofs + hitbox->width - 1 - tilemap->x);
+    maphit->qt = MGC_DIV_CELL_LEN((int32_t)target->y + hitbox->y0_ofs - tilemap->y);
+    maphit->qb = MGC_DIV_CELL_LEN((int32_t)target->y + hitbox->y0_ofs + hitbox->height - 1 - tilemap->y);
     if ( maphit->ql < 0 ) maphit->ql = 0;
     if ( maphit->qt < 0 ) maphit->qt = 0;
     if ( tilemap->map->map_width <= maphit->qr ) maphit->qr = tilemap->map->map_width - 1;

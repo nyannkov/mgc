@@ -85,11 +85,11 @@ bool sprhit_detect(mgc_sprhit_t *sprhit) {
     for ( ; sprhit->opp_hitbox_idx < opponent->hitbox_count; sprhit->opp_hitbox_idx++ ) {
         const mgc_hitbox_t *hitbox = &opponent->hitbox_array[sprhit->opp_hitbox_idx];
         if ( hitbox->enabled ) {
-            int16_t l1, r1, t1, b1;
-            l1 = opponent->x + hitbox->x0_ofs;
-            r1 = opponent->x + hitbox->x0_ofs + hitbox->width - 1;
-            t1 = opponent->y + hitbox->y0_ofs;
-            b1 = opponent->y + hitbox->y0_ofs + hitbox->height - 1;
+            int32_t l1, r1, t1, b1;
+            l1 = (int32_t)opponent->x + hitbox->x0_ofs;
+            r1 = (int32_t)opponent->x + hitbox->x0_ofs + hitbox->width - 1;
+            t1 = (int32_t)opponent->y + hitbox->y0_ofs;
+            b1 = (int32_t)opponent->y + hitbox->y0_ofs + hitbox->height - 1;
             if ( (sprhit->l0<r1) && (l1<sprhit->r0) && (sprhit->t0<b1) && (t1<sprhit->b0) ) {
                 sprhit->state = MGC_SPRHIT_STATE_IN_PROGRESS;
                 sprhit->hit_opp_hitbox_id = hitbox->id;
