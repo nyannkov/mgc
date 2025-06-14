@@ -10,6 +10,7 @@
 #include "mgc/components/label.h"
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/parts/interfaces/ilabel.hpp"
+#include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/has_id.hpp"
 #include "mgc_cpp/features/positionable.hpp"
 #include "mgc_cpp/features/has_parallax_factor.hpp"
@@ -21,6 +22,7 @@ namespace mgc {
 namespace parts {
 
 struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
+                    mgc::features::Resettable,
                     mgc::features::HasId,
                     mgc::features::Positionable,
                     mgc::features::HasParallaxFactor,

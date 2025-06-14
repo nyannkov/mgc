@@ -10,10 +10,10 @@
 #include "mgc/components/sprite.h"
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/parts/interfaces/isprite.hpp"
+#include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/has_id.hpp"
 #include "mgc_cpp/features/positionable.hpp"
 #include "mgc_cpp/features/has_parallax_factor.hpp"
-#include "mgc_cpp/features/has_hitbox.hpp"
 #include "mgc_cpp/features/visible.hpp"
 #include "mgc_cpp/features/drawable.hpp"
 #include "mgc_cpp/features/cell_drawable.hpp"
@@ -21,19 +21,20 @@
 namespace mgc {
 namespace parts {
 
-template <size_t MaxHitboxCount>
-struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite<MaxHitboxCount>>,
+struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite>,
+                     mgc::features::Resettable,
                      mgc::features::HasId,
                      mgc::features::Positionable,
                      mgc::features::HasParallaxFactor,
-                     mgc::features::HasHitbox,
                      mgc::features::Visible,
                      mgc::features::Drawable,
                      mgc::features::CellDrawable {
 
     BasicSprite() { reset(); }
     ~BasicSprite() = default;
-    void reset();
+
+    // [feature] Resettable
+    void reset() override;
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
@@ -48,11 +49,6 @@ struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite<MaxHitboxCount>
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
     mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
 
-    // [feature] HasHitbox
-    const mgc::collision::Hitbox* get_hitbox(size_t index) const override;
-    const mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) const override;
-    size_t hitbox_count() const override;
-    
     // [feature] Visible
     bool is_visible() const override;
     void set_visible(bool v) override;
@@ -81,10 +77,7 @@ struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite<MaxHitboxCount>
 
 private:
     mgc_sprite_t sprite_;
-    mgc::collision::HitboxArray<MaxHitboxCount> hitbox_array_;
 };
-
-#include "basic_sprite.tpp"
 
 }// namespace parts
 }// namespace mgc

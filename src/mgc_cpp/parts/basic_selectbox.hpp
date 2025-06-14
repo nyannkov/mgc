@@ -10,6 +10,7 @@
 #include "mgc/components/selectbox.h"
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/parts/interfaces/iselectbox.hpp"
+#include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/has_id.hpp"
 #include "mgc_cpp/features/positionable.hpp"
 #include "mgc_cpp/features/has_parallax_factor.hpp"
@@ -22,6 +23,7 @@ namespace mgc {
 namespace parts {
 
 struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const char*>,
+                        mgc::features::Resettable,
                         mgc::features::HasId,
                         mgc::features::Positionable,
                         mgc::features::HasParallaxFactor,
@@ -32,7 +34,9 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
 
     BasicSelectbox() { reset(); }
     ~BasicSelectbox() = default;
-    void reset();
+
+    // [feature] Resettable
+    void reset() override;
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;

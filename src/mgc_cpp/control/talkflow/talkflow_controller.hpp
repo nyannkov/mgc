@@ -10,6 +10,7 @@
 #include <type_traits>
 #include "talkflow_listener.hpp"
 #include "mgc_cpp/internal/common.hpp"
+#include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/drawable.hpp"
 #include "mgc_cpp/features/cell_drawable.hpp"
 #include "mgc_cpp/parts/assets/font.hpp"
@@ -23,7 +24,8 @@ namespace control {
 namespace talkflow {
 
 template<typename SelectboxT, typename DialogueboxT>
-struct TalkflowController : mgc::features::Drawable,
+struct TalkflowController : mgc::features::Resettable,
+                            mgc::features::Drawable,
                             mgc::features::CellDrawable {
 
     static_assert(std::is_base_of<mgc::parts::interfaces::ISelectbox<SelectboxT, const char*>, SelectboxT>::value,
@@ -34,17 +36,6 @@ struct TalkflowController : mgc::features::Drawable,
 
     explicit TalkflowController(mgc::platform::input::IButton &button) : button_(button) { reset(); }
     ~TalkflowController() = default;
-
-    void reset() {
-        selectbox_.reset();
-        selectbox_.set_visible(false);
-        dialoguebox_.reset();
-        dialoguebox_.set_visible(false);
-
-        talkflow_init(&talkflow_);
-        bind_callbacks();
-        listener_ = nullptr;
-    }
 
     void bind_listener(ITalkflowListener& listener) {
         listener_ = &listener;
@@ -104,6 +95,19 @@ struct TalkflowController : mgc::features::Drawable,
 
     const SelectboxT& selectbox() const {return selectbox_; }
     const DialogueboxT& dialoguebox() const {return dialoguebox_; }
+
+    // [feature] Resettable
+    void reset() {
+        selectbox_.reset();
+        selectbox_.set_visible(false);
+
+        dialoguebox_.reset();
+        dialoguebox_.set_visible(false);
+
+        talkflow_init(&talkflow_);
+        bind_callbacks();
+        listener_ = nullptr;
+    }
 
     // [feature] Drawable
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override {

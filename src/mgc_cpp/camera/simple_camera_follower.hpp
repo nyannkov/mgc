@@ -8,6 +8,7 @@
 #define MGC_CAMERA_SIMPLE_CAMERA_FOLLOWER_HPP
 
 #include "mgc/render/camera.h"
+#include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/geometry/point.hpp"
 #include "icamera_follower.hpp"
@@ -15,17 +16,11 @@
 namespace mgc {
 namespace camera {
 
-struct SimpleCameraFollower : mgc::camera::ICameraFollower {
+struct SimpleCameraFollower : mgc::camera::ICameraFollower,
+                              mgc::features::Resettable {
 
-    SimpleCameraFollower() {
-        reset(); 
-    }
-
+    SimpleCameraFollower() { reset(); }
     ~SimpleCameraFollower() = default;
-
-    void reset() {
-        camera_init(&camera_);
-    }
 
     void set_target(const mgc::features::Positionable& target) {
         target_ = &target;
@@ -61,6 +56,12 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower {
             return mgc::geometry::Point(0, 0);
         }
     }
+
+    // [features] Resettable
+    void reset() {
+        camera_init(&camera_);
+    }
+
 
 private:
     mgc_camera_t camera_;

@@ -18,6 +18,7 @@ using mgc::graphics::Color;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
 
+// [features] Resettable
 void mgc::parts::BasicLabel::reset() {
     label_init(&label_, 0, nullptr, false);
 }

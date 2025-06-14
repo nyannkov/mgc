@@ -20,6 +20,7 @@ using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
 
 
+// [feature] Resettable
 void mgc::parts::BasicSelectbox::reset() {
     selectbox_init(&selectbox_, 0, nullptr, false);
 }

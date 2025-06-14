@@ -9,11 +9,14 @@
 
 
 #include "mgc_cpp/parts/basic_dialoguebox.hpp"
-#include "mgc_cpp/parts/basic_image.hpp"
 #include "mgc_cpp/parts/basic_label.hpp"
 #include "mgc_cpp/parts/basic_selectbox.hpp"
 #include "mgc_cpp/parts/basic_sprite.hpp"
-#include "mgc_cpp/parts/basic_tilemap.hpp"
+#include "mgc_cpp/parts/basic_tilegrid.hpp"
+
+#include "mgc_cpp/entities/actor_impl.hpp"
+
+#include "mgc_cpp/collision/collision_detector.hpp"
 
 #include "mgc_cpp/features/positionable.hpp"
 #include "mgc_cpp/features/has_parallax_factor.hpp"
@@ -23,8 +26,6 @@
 #include "mgc_cpp/features/tickable.hpp"
 #include "mgc_cpp/features/item_selectable.hpp"
 #include "mgc_cpp/features/has_id.hpp"
-#include "mgc_cpp/features/has_hitbox.hpp"
-#include "mgc_cpp/features/has_tile_collision_map.hpp"
 #include "mgc_cpp/features/has_parallax_factor.hpp"
 
 #include "mgc_cpp/camera/simple_camera_follower.hpp"

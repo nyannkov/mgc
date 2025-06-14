@@ -19,6 +19,7 @@ using mgc::graphics::Color;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
 
+// [feature] Hitbox
 void mgc::parts::BasicDialoguebox::reset() {
     dialoguebox_init(&dialoguebox_, 0, nullptr, false);
 }
