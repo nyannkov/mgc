@@ -7,9 +7,12 @@
 #ifndef MGC_ENTITIES_ACTOR_IMPL_HPP
 #define MGC_ENTITIES_ACTOR_IMPL_HPP
 
+#include <array>
 #include "mgc_cpp/collision/hitbox.hpp"
 #include "mgc_cpp/entities/mixins/with_hitboxes.hpp"
-#include "mgc_cpp/entities/mixins/with_on_hit_hitbox_response.hpp"
+#include "mgc_cpp/entities/mixins/with_on_hit_box_to_box_response.hpp"
+#include "mgc_cpp/entities/mixins/with_on_hit_box_to_map_response.hpp"
+#include "mgc_cpp/entities/mixins/with_handle_map_pushback_result.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/positionable.hpp"
 
@@ -20,7 +23,9 @@ namespace entities {
 template <typename Derived, size_t MaxHitboxCount>
 struct ActorImpl
     : mgc::entities::mixins::WithHitboxes<Derived, MaxHitboxCount>,
-      mgc::entities::mixins::WithOnHitHitboxResponse<Derived>,
+      mgc::entities::mixins::WithOnHitBoxToBoxResponse<Derived>,
+      mgc::entities::mixins::WithOnHitBoxToMapResponse<Derived>,
+      mgc::entities::mixins::WithHandleMapPushbackResult<Derived>,
       mgc::features::Resettable,
       mgc::features::Positionable {
 
@@ -76,31 +81,63 @@ struct ActorImpl
         return HitboxCount;
     }
 
-    // [impl] WithOnHitHitboxResponse
-    // Users can override `on_hit_hitbox_impl<Other>` in a derived class
-    // to customize behavior based on the type of the collided object.
-    // You can use `if constexpr` and `std::is_same_v` to dispatch behavior
-    // depending on the type statically.
+    // [impl] WithOnHitBoxToBoxResponse
+    // Users can override this template method `on_hit_box_to_box_impl<Other>`
+    // in their derived class to customize behavior depending on the type `Other`
+    // that the object collided with.
+    //
+    // You can use `if constexpr` along with `std::is_same_v` to implement
+    // static dispatch based on the type.
     //
     // Example:
     //
     // template <typename Other>
-    // void on_hit_hitbox_impl(const Other& other) {
+    // void on_hit_box_to_box_impl(
+    //     const Other& other,
+    //     const mgc::collision::BoxCollisionInfo& info
+    // ) {
     //     if constexpr (std::is_same_v<Other, Player>) {
     //         // Handle collision with Player
     //     } else if constexpr (std::is_same_v<Other, Enemy>) {
     //         // Handle collision with Enemy
     //     } else {
-    //         // Handle unknown or unsupported type
+    //         // Fallback for unknown or unsupported types
     //     }
     // }
     //
-    // This default implementation does nothing.
-    // Users are encouraged to override it.
+    // The default implementation does nothing.
+    // Override as needed.
     template <typename Other>
-    void on_hit_hitbox_impl(const Other& other) {
-        // No-op by default
-    }
+    void on_hit_box_to_box_impl(
+            const Other& other,
+            const mgc::collision::BoxCollisionInfo& info
+    ) { }
+
+
+    // [impl] WithOnHitBoxToMapResponse
+    // Called when a collision occurs between an object and the map.
+    // Receives the object `obj`, the map `map`, and collision info `info`.
+    // The default implementation does nothing.
+    // Override this method to handle object-map collisions.
+    template <typename ObjT, typename MapT>
+    void on_hit_box_to_map_impl(
+            const ObjT& obj,
+            const MapT& map,
+            const mgc::collision::MapCollisionInfo& info
+    ) { }
+
+
+    // [impl] WithPostHitBoxToMapResponse
+    // Called after a pushback correction has been applied due to map collision.
+    // Receives the object `obj`, the map `map`, and the pushback result `info`.
+    // Override this method to perform post-processing after position adjustment.
+    // The default implementation does nothing.
+    template <typename ObjT, typename MapT>
+    void handle_map_pushback_result_impl(
+            const ObjT& obj,
+            const MapT& map,
+            const mgc::collision::MapPushbackInfo& info
+    ) { }
 
 protected:
     SpriteT sprite_;

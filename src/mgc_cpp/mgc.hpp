@@ -15,6 +15,7 @@
 #include "mgc_cpp/parts/basic_tilegrid.hpp"
 
 #include "mgc_cpp/entities/actor_impl.hpp"
+#include "mgc_cpp/entities/tilemap_impl.hpp"
 
 #include "mgc_cpp/collision/collision_detector.hpp"
 

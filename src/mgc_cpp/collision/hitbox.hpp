@@ -7,7 +7,6 @@
 #ifndef MGC_COLLISION_HITBOX_HPP
 #define MGC_COLLISION_HITBOX_HPP
 
-#include <array>
 #include "mgc/components/hitbox.h"
 #include "mgc_cpp/internal/common.hpp"
 
