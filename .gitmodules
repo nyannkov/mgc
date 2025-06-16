@@ -1,0 +1,6 @@
+[submodule "external/sound/Psgino"]
+	path = external/sound/Psgino
+	url = https://github.com/nyannkov/Psgino.git
+[submodule "external/sound/emu2149"]
+	path = external/sound/emu2149
+	url = https://github.com/digital-sound-antiques/emu2149.git
