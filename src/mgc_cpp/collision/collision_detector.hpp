@@ -77,6 +77,24 @@ struct CollisionDetectorBoxToMap {
 
     template <typename ObjT, typename MapT>
     void detect(ObjT& obj, MapT& map, CornerPushDirection push_dir = CornerPushDirection::None) {
+        static_assert(std::is_base_of<mgc::entities::mixins::WithHitboxes<ObjT, ObjT::HitboxCount>, ObjT>::value,
+                      "ObjT must inherit from WithHitboxes<ObjT, N>");
+
+        static_assert(std::is_base_of<mgc::entities::mixins::WithOnHitBoxToMapResponse<ObjT>, ObjT>::value,
+                      "ObjT must inherit from WithOnHitBoxToMapResponse<ObjT>");
+
+        static_assert(std::is_base_of<mgc::entities::mixins::WithHandleMapPushbackResult<ObjT>, ObjT>::value,
+                      "ObjT must inherit from WithHandleMapPushbackResult<ObjT>");
+
+        static_assert(std::is_base_of<mgc::entities::mixins::WithCollisionMap<MapT>, MapT>::value,
+                      "MapT must inherit from WithCollisionMap<MapT>");
+
+        static_assert(std::is_base_of<mgc::entities::mixins::WithOnHitBoxToMapResponse<MapT>, MapT>::value,
+                      "MapT must inherit from WithOnHitBoxToMapResponse<MapT>");
+
+        static_assert(std::is_base_of<mgc::entities::mixins::WithHandleMapPushbackResult<MapT>, MapT>::value,
+                      "MapT must inherit from WithHandleMapPushbackResult<MapT>");
+
         if ( !map.get_collision_enabled() ) {
             return;
         }
