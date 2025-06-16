@@ -29,13 +29,13 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
     ~MmlPsgSoundController() = default;
 
     void on_background_music_callback(uint8_t ch, int32_t param) {
-        if (!listener_) {
+        if (listener_) {
             listener_->on_background_music_user_command(ch, param);
         }
     }
 
     void on_sound_effect_callback(uint8_t ch, int32_t param) {
-        if (!listener_) {
+        if (listener_) {
             listener_->on_sound_effect_user_command(ch, param);
         }
     }
