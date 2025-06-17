@@ -25,7 +25,7 @@
 #endif/*MGC_DRIVERS_MML_PSG_RP2040_PWM_IRQ_PRI*/
 
 #ifndef MGC_DRIVERS_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT
-#define MGC_DRIVERS_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT       28
+#define MGC_DRIVERS_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT       26
 #endif/*MGC_DRIVERS_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT*/
 
 
@@ -42,7 +42,6 @@ static uint64_t mml_proc_interval;
 
 
 static void pwm_irq_wrap_handler(void) {
-
     uint16_t level = mml_psg_local__proc_psg_emu();
     pwm_set_gpio_level(PWM_PIN_OUTPUT, level);
 
@@ -64,13 +63,10 @@ void mml_psg_port__init(float psg_emu_rate, float mml_proc_rate) {
     {
         if ( psg_emu_rate <= 1000.0F ) {
             psg_emu_rate = 1000.0F;
-        } else if ( psg_emu_rate >= 50000.0F ) {
-            psg_emu_rate = 50000.0F;
-        } else {
         }
 
-        uint slice_num = pwm_gpio_to_slice_num(PWM_PIN_OUTPUT);
         gpio_set_function(PWM_PIN_OUTPUT, GPIO_FUNC_PWM);
+        uint slice_num = pwm_gpio_to_slice_num(PWM_PIN_OUTPUT);
 
         uint32_t pwm_clk_hz = clock_get_hz(clk_sys);
         float clkdiv = 1.0f;
@@ -86,7 +82,7 @@ void mml_psg_port__init(float psg_emu_rate, float mml_proc_rate) {
         }
 
         pwm_set_clkdiv(slice_num, clkdiv);
-        pwm_set_wrap(slice_num, wrap);
+        pwm_set_wrap(slice_num, wrap-1);
         pwm_set_gpio_level(PWM_PIN_OUTPUT, 0);
 
         pwm_clear_irq(slice_num);
