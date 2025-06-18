@@ -70,12 +70,12 @@ static uint slice_num;
 
 #define LCD_SPI_PORT  MGC_DRIVERS_ST7789_RP2040_SPI_PORT
 
-const unsigned int LCD_RST_PIN =  MGC_DRIVERS_ST7789_RP2040_LCD_RST_PIN;
-const unsigned int LCD_DC_PIN =   MGC_DRIVERS_ST7789_RP2040_LCD_DC_PIN;
-const unsigned int LCD_BL_PIN =   MGC_DRIVERS_ST7789_RP2040_LCD_BL_PIN;
-const unsigned int LCD_CS_PIN =   MGC_DRIVERS_ST7789_RP2040_LCD_CS_PIN;
-const unsigned int LCD_CLK_PIN =  MGC_DRIVERS_ST7789_RP2040_LCD_CLK_PIN;
-const unsigned int LCD_MOSI_PIN = MGC_DRIVERS_ST7789_RP2040_LCD_MOSI_PIN;
+const unsigned int ST7789_PORT_LCD_RST_PIN =  MGC_DRIVERS_ST7789_RP2040_LCD_RST_PIN;
+const unsigned int ST7789_PORT_LCD_DC_PIN =   MGC_DRIVERS_ST7789_RP2040_LCD_DC_PIN;
+const unsigned int ST7789_PORT_LCD_BL_PIN =   MGC_DRIVERS_ST7789_RP2040_LCD_BL_PIN;
+const unsigned int ST7789_PORT_LCD_CS_PIN =   MGC_DRIVERS_ST7789_RP2040_LCD_CS_PIN;
+const unsigned int ST7789_PORT_LCD_CLK_PIN =  MGC_DRIVERS_ST7789_RP2040_LCD_CLK_PIN;
+const unsigned int ST7789_PORT_LCD_MOSI_PIN = MGC_DRIVERS_ST7789_RP2040_LCD_MOSI_PIN;
 
 #define LCD_SPI_DEFAULT_CLOCK_RATE      (10*1000*1000)
 
@@ -87,21 +87,21 @@ void ST7789_PORT__Init(uint32_t spi_clock_rate) {
 
     // SPI Config
     spi_init(LCD_SPI_PORT, spi_clock_rate);
-    gpio_set_function(LCD_CLK_PIN, GPIO_FUNC_SPI);
-    gpio_set_function(LCD_MOSI_PIN, GPIO_FUNC_SPI);
+    gpio_set_function(ST7789_PORT_LCD_CLK_PIN, GPIO_FUNC_SPI);
+    gpio_set_function(ST7789_PORT_LCD_MOSI_PIN, GPIO_FUNC_SPI);
     
     // GPIO Config
-    ST7789_PORT__GPIO_Mode(LCD_RST_PIN, 1);
-    ST7789_PORT__GPIO_Mode(LCD_DC_PIN, 1);
-    ST7789_PORT__GPIO_Mode(LCD_CS_PIN, 1);
-    ST7789_PORT__GPIO_Mode(LCD_BL_PIN, 1);
-    ST7789_PORT__Digital_Write(LCD_CS_PIN, 1);
-    ST7789_PORT__Digital_Write(LCD_DC_PIN, 0);
-    ST7789_PORT__Digital_Write(LCD_BL_PIN, 1);
+    ST7789_PORT__GPIO_Mode(ST7789_PORT_LCD_RST_PIN, 1);
+    ST7789_PORT__GPIO_Mode(ST7789_PORT_LCD_DC_PIN, 1);
+    ST7789_PORT__GPIO_Mode(ST7789_PORT_LCD_CS_PIN, 1);
+    ST7789_PORT__GPIO_Mode(ST7789_PORT_LCD_BL_PIN, 1);
+    ST7789_PORT__Digital_Write(ST7789_PORT_LCD_CS_PIN, 1);
+    ST7789_PORT__Digital_Write(ST7789_PORT_LCD_DC_PIN, 0);
+    ST7789_PORT__Digital_Write(ST7789_PORT_LCD_BL_PIN, 1);
     
     // PWM Config
-    gpio_set_function(LCD_BL_PIN, GPIO_FUNC_PWM);
-    slice_num = pwm_gpio_to_slice_num(LCD_BL_PIN);
+    gpio_set_function(ST7789_PORT_LCD_BL_PIN, GPIO_FUNC_PWM);
+    slice_num = pwm_gpio_to_slice_num(ST7789_PORT_LCD_BL_PIN);
     pwm_set_wrap(slice_num, 100);
     pwm_set_chan_level(slice_num, PWM_CHAN_B, 1);
     pwm_set_clkdiv(slice_num,50);

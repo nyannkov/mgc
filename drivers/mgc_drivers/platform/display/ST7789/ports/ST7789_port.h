@@ -17,12 +17,12 @@ extern "C" {
 #define UWORD   uint16_t
 #define UDOUBLE uint32_t
 
-extern const unsigned int LCD_RST_PIN;
-extern const unsigned int LCD_DC_PIN;
-extern const unsigned int LCD_BL_PIN;
-extern const unsigned int LCD_CS_PIN;
-extern const unsigned int LCD_CLK_PIN;
-extern const unsigned int LCD_MOSI_PIN;
+extern const unsigned int ST7789_PORT_LCD_RST_PIN;
+extern const unsigned int ST7789_PORT_LCD_DC_PIN;
+extern const unsigned int ST7789_PORT_LCD_BL_PIN;
+extern const unsigned int ST7789_PORT_LCD_CS_PIN;
+extern const unsigned int ST7789_PORT_LCD_CLK_PIN;
+extern const unsigned int ST7789_PORT_LCD_MOSI_PIN;
 
 void ST7789_PORT__Init(uint32_t spi_clock_rate);
 void ST7789_PORT__Delay_ms(UDOUBLE xms);
