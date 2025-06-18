@@ -35,22 +35,22 @@ struct CollisionDetectorBoxToBox {
         const auto& obj2_hitboxes = obj2.hitboxes();
 
         for ( auto& h1 : obj1_hitboxes ) {
-            if ( !hitbox_is_enabled(&h1) ) {
+            if ( !h1.enabled ) {
                 continue;
             }
             for ( auto& h2 : obj2_hitboxes ) {
-                if ( !hitbox_is_enabled(&h2) ) {
+                if ( !h2.enabled ) {
                     continue;
                 }
-                int32_t l1 = obj1.position().x + h1.x0_ofs;
-                int32_t r1 = l1 + h1.width - 1;
-                int32_t t1 = obj1.position().y + h1.y0_ofs;
-                int32_t b1 = t1 + h1.height - 1;
+                int32_t l1 = obj1.position().x + h1.offset.x;
+                int32_t r1 = l1 + h1.size.width() - 1;
+                int32_t t1 = obj1.position().y + h1.offset.y;
+                int32_t b1 = t1 + h1.size.height() - 1;
 
-                int32_t l2 = obj2.position().x + h2.x0_ofs;
-                int32_t r2 = l2 + h2.width - 1;
-                int32_t t2 = obj2.position().y + h2.y0_ofs;
-                int32_t b2 = t2 + h2.height - 1;
+                int32_t l2 = obj2.position().x + h2.offset.x;
+                int32_t r2 = l2 + h2.size.width() - 1;
+                int32_t t2 = obj2.position().y + h2.offset.y;
+                int32_t b2 = t2 + h2.size.height() - 1;
 
                 if ((l1 <= r2) && (l2 <= r1) && (t1 <= b2) && (t2 <= b1)) {
                     const mgc::collision::BoxCollisionInfo info1 = {h1, h2};
@@ -107,14 +107,14 @@ struct CollisionDetectorBoxToMap {
         this->init();
 
         for ( auto& h : obj_hitboxes ) {
-            if ( !hitbox_is_enabled(&h) ) {
+            if ( !h.enabled ) {
                 continue;
             }
 
-            ql_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.x0_ofs - map.position().x);
-            qr_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.x0_ofs + h.width  - 1 - map.position().x);
-            qt_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.y0_ofs - map.position().y);
-            qb_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.y0_ofs + h.height - 1 - map.position().y);
+            ql_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.offset.x - map.position().x);
+            qr_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.offset.x + h.size.width() - 1 - map.position().x);
+            qt_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.offset.y - map.position().y);
+            qb_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.offset.y + h.size.height() - 1 - map.position().y);
             if ( ql_ < 0 ) ql_ = 0;
             if ( qt_ < 0 ) qt_ = 0;
             if ( collision_map->map_width <= qr_ ) qr_ = collision_map->map_width - 1;
@@ -252,8 +252,8 @@ private:
         int8_t n_x, n_y;
         int16_t p_x, p_y;
 
-        dx = MGC_MOD_CELL_LEN(obj.position().x + obj_hitbox.x0_ofs - map.position().x);
-        dy = MGC_MOD_CELL_LEN(obj.position().y + obj_hitbox.y0_ofs - map.position().y);
+        dx = MGC_MOD_CELL_LEN(obj.position().x + obj_hitbox.offset.x - map.position().x);
+        dy = MGC_MOD_CELL_LEN(obj.position().y + obj_hitbox.offset.y - map.position().y);
 
 
         n_x = (is_hit_l_ ?    1 : 0) + (is_hit_tl_ ?    1 : 0) + (is_hit_bl_ ?    1 : 0)
@@ -264,7 +264,7 @@ private:
         if ( n_x > 0 ) {
             p_x = MGC_CELL_LEN - dx;
         } else if ( n_x < 0 ) {
-            p_x = MGC_MOD_CELL_LEN(dx + obj_hitbox.width)*-1;
+            p_x = MGC_MOD_CELL_LEN(dx + obj_hitbox.size.width())*-1;
         } else {
             p_x = 0;
         }
@@ -272,7 +272,7 @@ private:
         if ( n_y > 0 ) {
             p_y = MGC_CELL_LEN - dy;
         } else if ( n_y < 0 ) {
-            p_y = MGC_MOD_CELL_LEN(dy + obj_hitbox.height)*-1;
+            p_y = MGC_MOD_CELL_LEN(dy + obj_hitbox.size.height())*-1;
         } else {
             p_y = 0;
         }
