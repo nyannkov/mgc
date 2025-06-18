@@ -7,12 +7,13 @@
 #ifndef MGC_ENTITIES_TILEMAP_IMPL_HPP
 #define MGC_ENTITIES_TILEMAP_IMPL_HPP
 
+#include "mgc_cpp/math/vec2.hpp"
 #include "mgc_cpp/collision/collision_map.hpp"
 #include "mgc_cpp/entities/mixins/with_collision_map.hpp"
 #include "mgc_cpp/entities/mixins/with_on_hit_box_to_map_response.hpp"
 #include "mgc_cpp/entities/mixins/with_handle_map_pushback_result.hpp"
 #include "mgc_cpp/features/resettable.hpp"
-#include "mgc_cpp/features/positionable.hpp"
+#include "mgc_cpp/features/has_position.hpp"
 
 namespace mgc {
 namespace entities {
@@ -22,7 +23,7 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
                      mgc::entities::mixins::WithOnHitBoxToMapResponse<Derived>,
                      mgc::entities::mixins::WithHandleMapPushbackResult<Derived>,
                      mgc::features::Resettable,
-                     mgc::features::Positionable {
+                     mgc::features::HasPosition<mgc::math::Vec2i> {
                       
     using TilegridT = mgc::parts::BasicTilegrid;
 
@@ -40,14 +41,13 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
         hit_enabled_ = true;
     }
 
-    // [feature] Positionable
-    using mgc::features::Positionable::set_position;
-    mgc::geometry::Point get_position() const override {
-        return tilegrid_.get_position();
+    // [features] HasPosition
+    mgc::math::Vec2i position() const override {
+        return tilegrid_.position();
     }
 
-    void set_position(int16_t x, int16_t y) override {
-        tilegrid_.set_position(x, y);
+    void set_position(const mgc::math::Vec2i& position) override {
+        tilegrid_.set_position(position);
     }
     
     // [impl] WithCollisionMap

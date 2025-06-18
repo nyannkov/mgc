@@ -9,7 +9,7 @@
 namespace mgc {
 namespace parts {
 
-using mgc::geometry::Point;
+using mgc::math::Vec2i;
 using mgc::parts::types::Size;
 using mgc::parts::types::ParallaxFactor;
 using mgc::parts::types::DrawOptions;
@@ -32,13 +32,14 @@ mgc_id_t mgc::parts::BasicLabel::get_id() const {
     return label_get_id(&label_);
 }
 
-// [features] Positionable
-Point mgc::parts::BasicLabel::get_position() const {
-    return Point::from_c(label_get_position(&label_));
+// [features] HasPosition
+Vec2i mgc::parts::BasicLabel::position() const {
+    mgc_point_t point = label_get_position(&label_);
+    return Vec2i(point.x, point.y);
 }
 
-void mgc::parts::BasicLabel::set_position(int16_t x, int16_t y) {
-    label_set_position(&label_, x, y);
+void mgc::parts::BasicLabel::set_position(const Vec2i& position) {
+    label_set_position(&label_, position.x, position.y);
 }
 
 // [features] HasParallaxFactor
@@ -60,14 +61,14 @@ void mgc::parts::BasicLabel::set_visible(bool v) {
 }
 
 // [features] Drawable
-bool mgc::parts::BasicLabel::draw(Framebuffer &fb, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicLabel::draw(Framebuffer &fb, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return label_draw_raw(&label_, fb.data(), fb.width(), fb.height(), &c_pos, options);
 }
 
 // [features] CellDrawable
-bool mgc::parts::BasicLabel::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicLabel::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return label_draw_cell_raw(&label_, cb.data(), cell_x, cell_y, &c_pos, options);
 }
 

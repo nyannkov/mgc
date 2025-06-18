@@ -55,21 +55,21 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     void set_selectbox_config(const SelectboxConfig& config) {
-        selectbox_.set_position(config.point);
+        selectbox_.set_position(config.position);
         selectbox_.set_size(config.size);
         selectbox_.set_cursor_symbol(config.cursor_symbol);
         selectbox_.set_cursor_offset(config.cursor_offset);
     }
 
     void get_selectbox_config(SelectboxConfig& out) const {
-        out.point = selectbox_.get_position();
+        out.position = selectbox_.position();
         out.size = selectbox_.get_size();
         out.cursor_symbol = selectbox_.get_cursor_symbol();
         out.cursor_offset = selectbox_.get_cursor_offset();
     }
 
     void set_dialoguebox_config(const DialogueboxConfig& config) {
-        dialoguebox_.set_position(config.point);
+        dialoguebox_.set_position(config.position);
         dialoguebox_.set_size(config.size);
         dialoguebox_.set_scroll_speed(config.scroll_speed);
         dialoguebox_.set_scroll_threshold_line(config.scroll_threshold_line);
@@ -78,7 +78,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     void get_dialoguebox_config(DialogueboxConfig& out) const {
-        out.point = dialoguebox_.get_position();
+        out.position = dialoguebox_.position();
         out.size = dialoguebox_.get_size();
         out.scroll_speed = dialoguebox_.get_scroll_speed();
         out.scroll_threshold_line = dialoguebox_.get_scroll_threshold_line();
@@ -110,7 +110,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] Drawable
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override {
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.draw(fb, cam_pos, options);
         result |= selectbox_.draw(fb, cam_pos, options);
@@ -118,7 +118,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] CellDrawable
-    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override {
+    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.draw(cb, cell_x, cell_y, cam_pos, options);
         result |= selectbox_.draw(cb, cell_x, cell_y, cam_pos, options);

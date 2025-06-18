@@ -9,7 +9,7 @@
 namespace mgc {
 namespace parts {
 
-using mgc::geometry::Point;
+using mgc::math::Vec2i;
 using mgc::parts::types::ParallaxFactor;
 using mgc::parts::types::DrawOptions;
 using mgc::parts::types::Padding;
@@ -34,14 +34,14 @@ mgc_id_t mgc::parts::BasicSelectbox::get_id() const {
     return selectbox_get_id(&selectbox_);
 }
 
-// [feature] Positionable
-Point mgc::parts::BasicSelectbox::get_position() const {
+// [features] HasPosition
+Vec2i mgc::parts::BasicSelectbox::position() const {
     mgc_point_t point = selectbox_get_position(&selectbox_);
-    return Point::from_c(point);
+    return Vec2i(point.x, point.y);
 }
 
-void mgc::parts::BasicSelectbox::set_position(int16_t x, int16_t y) {
-    selectbox_set_position(&selectbox_, x, y);
+void mgc::parts::BasicSelectbox::set_position(const Vec2i& position) {
+    selectbox_set_position(&selectbox_, position.x, position.y);
 }
 
 // [feature] HasParallaxFactor
@@ -92,14 +92,14 @@ void mgc::parts::BasicSelectbox::set_cursor_offset(int16_t x, int16_t y) {
     selectbox_set_cursor_margin(&selectbox_, left_margin);
 }
 
-void mgc::parts::BasicSelectbox::set_cursor_offset(Point offset) {
+void mgc::parts::BasicSelectbox::set_cursor_offset(Vec2i offset) {
     set_cursor_offset(offset.x, offset.y);
 }
 
-Point mgc::parts::BasicSelectbox::get_cursor_offset() const {
+Vec2i mgc::parts::BasicSelectbox::get_cursor_offset() const {
     uint8_t left_margin;
     left_margin = selectbox_.left_cursor_margin;
-    return Point(left_margin, 0);
+    return Vec2i(left_margin, 0);
 }
 
 // [feature] Visible
@@ -112,14 +112,14 @@ void mgc::parts::BasicSelectbox::set_visible(bool v) {
 }
 
 // [feature] Drawable
-bool mgc::parts::BasicSelectbox::draw(Framebuffer &fb, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicSelectbox::draw(Framebuffer &fb, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return selectbox_draw_raw(&selectbox_, fb.data(), fb.width(), fb.height(), &c_pos, options);
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicSelectbox::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicSelectbox::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return selectbox_draw_cell_raw(&selectbox_, cb.data(), cell_x, cell_y, &c_pos, options);
 }
 

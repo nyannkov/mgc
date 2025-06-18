@@ -9,7 +9,7 @@
 namespace mgc {
 namespace parts {
 
-using mgc::geometry::Point;
+using mgc::math::Vec2i;
 using mgc::parts::types::ParallaxFactor;
 using mgc::parts::types::DrawOptions;
 using mgc::parts::types::Margin;
@@ -33,14 +33,14 @@ mgc_id_t mgc::parts::BasicDialoguebox::get_id() const {
     return dialoguebox_get_id(&dialoguebox_);
 }
 
-// [feature] Positionable
-Point mgc::parts::BasicDialoguebox::get_position() const {
+// [feature] HasPosition
+Vec2i mgc::parts::BasicDialoguebox::position() const {
     mgc_point_t point = dialoguebox_get_position(&dialoguebox_);
-    return Point::from_c(point);
+    return Vec2i(point.x, point.y);
 }
 
-void mgc::parts::BasicDialoguebox::set_position(int16_t x, int16_t y) {
-    dialoguebox_set_position(&dialoguebox_, x, y);
+void mgc::parts::BasicDialoguebox::set_position(const Vec2i& position) {
+    dialoguebox_set_position(&dialoguebox_, position.x, position.y);
 }
 
 // [feature] HasParallaxFactor
@@ -62,14 +62,14 @@ void mgc::parts::BasicDialoguebox::set_visible(bool v) {
 }
 
 // [feature] Drawable
-bool mgc::parts::BasicDialoguebox::draw(Framebuffer &fb, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicDialoguebox::draw(Framebuffer &fb, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return dialoguebox_draw_raw(&dialoguebox_, fb.data(), fb.width(), fb.height(), &c_pos, options);
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicDialoguebox::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicDialoguebox::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return dialoguebox_draw_cell_raw(&dialoguebox_, cb.data(), cell_x, cell_y, &c_pos, options);
 }
 

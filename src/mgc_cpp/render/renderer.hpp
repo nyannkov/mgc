@@ -11,7 +11,7 @@
 #include "mgc_cpp/platform/display/display_driver.hpp"
 #include "mgc_cpp/graphics/framebuffer.hpp"
 #include "mgc_cpp/camera/icamera_follower.hpp"
-#include "mgc_cpp/features/positionable.hpp"
+#include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/drawable.hpp"
 #include "mgc_cpp/features/cell_drawable.hpp"
 
@@ -42,7 +42,7 @@ struct Renderer {
             return;
         }
 
-        mgc::geometry::Point cam_pos = this->camera_position();
+        auto cam_pos = this->camera_position();
         for ( size_t index = 0; index < drawable_count; index++ ) {
             if ( drawables[index] ) {
                 drawables[index]->draw(fb, cam_pos, nullptr);
@@ -85,7 +85,7 @@ struct Renderer {
 
         uint16_t width = driver_.width();
         uint16_t height = driver_.height();
-        mgc::geometry::Point cam_pos = this->camera_position();
+        auto cam_pos = this->camera_position();
         cb.set_back_color(back_color_);
 
         for ( uint16_t y = 0; y < height; y += MGC_CELL2PIXEL(1)) {
@@ -113,11 +113,11 @@ private:
     const mgc::camera::ICameraFollower* follower_;
     mgc::graphics::Color back_color_;
 
-    mgc::geometry::Point camera_position() {
+    mgc::math::Vec2i camera_position() {
         if ( follower_ ) {
-            return follower_->get_follow_position();
+            return follower_->follow_position();
         } else {
-            return mgc::geometry::Point(0, 0);
+            return mgc::math::Vec2i(0, 0);
         }
     }
 };

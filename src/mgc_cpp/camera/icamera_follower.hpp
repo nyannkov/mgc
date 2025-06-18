@@ -8,7 +8,7 @@
 #define MGC_CAMERA_ICAMERA_FOLLOWER_HPP
 
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/geometry/point.hpp"
+#include "mgc_cpp/math/vec2.hpp"
 
 namespace mgc {
 namespace camera {
@@ -17,7 +17,7 @@ struct ICameraFollower {
 
     virtual ~ICameraFollower() = default;
 
-    virtual mgc::geometry::Point get_follow_position() const = 0;
+    virtual mgc::math::Vec2i follow_position() const = 0;
 
 };
 

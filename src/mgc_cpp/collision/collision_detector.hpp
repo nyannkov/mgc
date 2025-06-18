@@ -8,7 +8,7 @@
 #define MGC_COLLISION_COLLISION_DETECTOR_HPP
 
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/physics/vec2.hpp"
+#include "mgc_cpp/math/vec2.hpp"
 #include "mgc_cpp/collision/hitbox.hpp"
 #include "mgc_cpp/collision/collision_map.hpp"
 #include "mgc_cpp/collision/map_collision_info.hpp"
@@ -42,14 +42,14 @@ struct CollisionDetectorBoxToBox {
                 if ( !hitbox_is_enabled(&h2) ) {
                     continue;
                 }
-                int32_t l1 = obj1.get_position().x + h1.x0_ofs;
+                int32_t l1 = obj1.position().x + h1.x0_ofs;
                 int32_t r1 = l1 + h1.width - 1;
-                int32_t t1 = obj1.get_position().y + h1.y0_ofs;
+                int32_t t1 = obj1.position().y + h1.y0_ofs;
                 int32_t b1 = t1 + h1.height - 1;
 
-                int32_t l2 = obj2.get_position().x + h2.x0_ofs;
+                int32_t l2 = obj2.position().x + h2.x0_ofs;
                 int32_t r2 = l2 + h2.width - 1;
-                int32_t t2 = obj2.get_position().y + h2.y0_ofs;
+                int32_t t2 = obj2.position().y + h2.y0_ofs;
                 int32_t b2 = t2 + h2.height - 1;
 
                 if ((l1 <= r2) && (l2 <= r1) && (t1 <= b2) && (t2 <= b1)) {
@@ -111,10 +111,10 @@ struct CollisionDetectorBoxToMap {
                 continue;
             }
 
-            ql_ = MGC_DIV_CELL_LEN((int32_t)obj.get_position().x + h.x0_ofs - map.get_position().x);
-            qr_ = MGC_DIV_CELL_LEN((int32_t)obj.get_position().x + h.x0_ofs + h.width  - 1 - map.get_position().x);
-            qt_ = MGC_DIV_CELL_LEN((int32_t)obj.get_position().y + h.y0_ofs - map.get_position().y);
-            qb_ = MGC_DIV_CELL_LEN((int32_t)obj.get_position().y + h.y0_ofs + h.height - 1 - map.get_position().y);
+            ql_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.x0_ofs - map.position().x);
+            qr_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.x0_ofs + h.width  - 1 - map.position().x);
+            qt_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.y0_ofs - map.position().y);
+            qb_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.y0_ofs + h.height - 1 - map.position().y);
             if ( ql_ < 0 ) ql_ = 0;
             if ( qt_ < 0 ) qt_ = 0;
             if ( collision_map->map_width <= qr_ ) qr_ = collision_map->map_width - 1;
@@ -133,7 +133,7 @@ struct CollisionDetectorBoxToMap {
                 }
             }
 
-            mgc::physics::Vec2 pushback = calc_wall_pushback(obj, h, map, push_dir);
+            mgc::math::Vec2i pushback = calc_wall_pushback(obj, h, map, push_dir);
             const mgc::collision::MapPushbackInfo info = { h, pushback };
             obj.handle_map_pushback_result(obj, map, info);
             map.handle_map_pushback_result(obj, map, info);
@@ -242,7 +242,7 @@ private:
     }
 
     template <typename ObjT, typename MapT>
-    mgc::physics::Vec2 calc_wall_pushback(
+    mgc::math::Vec2i calc_wall_pushback(
             const ObjT& obj,
             const mgc::collision::Hitbox& obj_hitbox,
             const MapT& map,
@@ -252,8 +252,8 @@ private:
         int8_t n_x, n_y;
         int16_t p_x, p_y;
 
-        dx = MGC_MOD_CELL_LEN(obj.get_position().x + obj_hitbox.x0_ofs - map.get_position().x);
-        dy = MGC_MOD_CELL_LEN(obj.get_position().y + obj_hitbox.y0_ofs - map.get_position().y);
+        dx = MGC_MOD_CELL_LEN(obj.position().x + obj_hitbox.x0_ofs - map.position().x);
+        dy = MGC_MOD_CELL_LEN(obj.position().y + obj_hitbox.y0_ofs - map.position().y);
 
 
         n_x = (is_hit_l_ ?    1 : 0) + (is_hit_tl_ ?    1 : 0) + (is_hit_bl_ ?    1 : 0)
@@ -296,7 +296,7 @@ private:
             }
         }
 
-        return mgc::physics::Vec2{ p_x, p_y };
+        return mgc::math::Vec2i(p_x, p_y);
     }
 
 };

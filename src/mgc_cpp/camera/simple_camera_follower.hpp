@@ -8,9 +8,10 @@
 #define MGC_CAMERA_SIMPLE_CAMERA_FOLLOWER_HPP
 
 #include "mgc/render/camera.h"
+#include "mgc_cpp/math/vec2.hpp"
+#include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/geometry/point.hpp"
 #include "icamera_follower.hpp"
 
 namespace mgc {
@@ -22,7 +23,7 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
     SimpleCameraFollower() { reset(); }
     ~SimpleCameraFollower() = default;
 
-    void set_target(const mgc::features::Positionable& target) {
+    void set_target(const mgc::features::HasPosition<mgc::math::Vec2i>& target) {
         target_ = &target;
     }
 
@@ -44,16 +45,17 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
 
     void update_follow_position() {
         if ( target_ ) {
-            camera_follow_target_position(&camera_, target_->get_position().to_c());
+            auto position = target_->position();
+            camera_follow_target_position(&camera_, mgc_point_t{position.x, position.y});
         }
     }
 
-    mgc::geometry::Point get_follow_position() const override {
+    mgc::math::Vec2i follow_position() const override {
         mgc_point_t follow_point;
         if ( camera_get_position(&camera_, &follow_point) ) {
-            return mgc::geometry::Point::from_c(follow_point);
+            return mgc::math::Vec2i(follow_point.x, follow_point.y);
         } else {
-            return mgc::geometry::Point(0, 0);
+            return mgc::math::Vec2i(0, 0);
         }
     }
 
@@ -65,7 +67,7 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
 
 private:
     mgc_camera_t camera_;
-    const mgc::features::Positionable* target_;
+    const mgc::features::HasPosition<mgc::math::Vec2i>* target_;
 };
 
 }// namespace camera

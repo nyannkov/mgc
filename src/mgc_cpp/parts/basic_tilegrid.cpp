@@ -9,7 +9,7 @@
 namespace mgc {
 namespace parts {
 
-using mgc::geometry::Point;
+using mgc::math::Vec2i;
 using mgc::parts::assets::TileIdMap;
 using mgc::parts::assets::Tileset;
 using mgc::parts::assets::TileIdMap;
@@ -46,13 +46,14 @@ mgc_id_t mgc::parts::BasicTilegrid::get_id() const {
     return tilemap_get_id(&tilemap_);
 }
 
-// [feature] Positionable
-Point mgc::parts::BasicTilegrid::get_position() const {
-    return Point::from_c(tilemap_get_position(&tilemap_));
+// [features] HasPosition
+Vec2i mgc::parts::BasicTilegrid::position() const {
+    mgc_point_t point = tilemap_get_position(&tilemap_);
+    return Vec2i(point.x, point.y);
 }
 
-void mgc::parts::BasicTilegrid::set_position(int16_t x, int16_t y) {
-    tilemap_set_position(&tilemap_, x, y);
+void mgc::parts::BasicTilegrid::set_position(const Vec2i& position) {
+    tilemap_set_position(&tilemap_, position.x, position.y);
 }
 
 // [feature] HasParallaxFactor
@@ -74,14 +75,14 @@ void mgc::parts::BasicTilegrid::set_visible(bool v) {
 }
 
 // [feature] Drawable
-bool mgc::parts::BasicTilegrid::draw(Framebuffer &fb, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicTilegrid::draw(Framebuffer &fb, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return tilemap_draw_raw(&tilemap_, fb.data(), fb.width(), fb.height(), &c_pos, options);
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicTilegrid::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicTilegrid::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return tilemap_draw_cell_raw(&tilemap_, cb.data(), cell_x, cell_y, &c_pos, options);
 }
 

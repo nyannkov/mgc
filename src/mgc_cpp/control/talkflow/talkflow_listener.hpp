@@ -9,21 +9,21 @@
 
 #include "mgc/sequencer/talkflow.h"
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/geometry/point.hpp"
+#include "mgc_cpp/math/vec2.hpp"
 
 namespace mgc {
 namespace control {
 namespace talkflow {
 
 struct SelectboxConfig {
-    mgc::geometry::Point point;
+    mgc::math::Vec2i position;
     mgc::parts::types::Size size;
     const char *cursor_symbol;
-    mgc::geometry::Point cursor_offset;
+    mgc::math::Vec2i cursor_offset;
 };
 
 struct DialogueboxConfig {
-    mgc::geometry::Point point;
+    mgc::math::Vec2i position;
     mgc::parts::types::Size size;
     uint32_t scroll_speed;
     uint32_t scroll_threshold_line;

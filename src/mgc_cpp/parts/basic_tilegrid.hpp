@@ -10,8 +10,9 @@
 #include "mgc/components/tilemap.h"
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/parts/interfaces/itilegrid.hpp"
+#include "mgc_cpp/math/vec2.hpp"
 #include "mgc_cpp/features/has_id.hpp"
-#include "mgc_cpp/features/positionable.hpp"
+#include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/has_parallax_factor.hpp"
 #include "mgc_cpp/features/visible.hpp"
 #include "mgc_cpp/features/drawable.hpp"
@@ -27,7 +28,7 @@ struct IBasicTilegridListener {
 
 struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
                        mgc::features::HasId,
-                       mgc::features::Positionable,
+                       mgc::features::HasPosition<mgc::math::Vec2i>,
                        mgc::features::HasParallaxFactor,
                        mgc::features::Visible,
                        mgc::features::Drawable,
@@ -47,10 +48,9 @@ struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
     void set_id(mgc_id_t id) override;
     mgc_id_t get_id() const override;
 
-    // [feature] Positionable
-    using mgc::features::Positionable::set_position;
-    mgc::geometry::Point get_position() const override;
-    void set_position(int16_t x, int16_t y) override;
+    // [feature] HasPosition
+    mgc::math::Vec2i position() const override;
+    void set_position(const mgc::math::Vec2i& position) override;
 
     // [feature] HasParallaxFactor
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
@@ -62,11 +62,11 @@ struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
 
     // [feature] Drawable
     using mgc::features::Drawable::draw;
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [feature] CellDrawable
     using mgc::features::CellDrawable::cell_draw;
-    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [impl] WithTileset
     void set_tileset_impl(const mgc::parts::assets::Tileset &tileset);

@@ -10,7 +10,7 @@
 namespace mgc {
 namespace parts {
 
-using mgc::geometry::Point;
+using mgc::math::Vec2i;
 using mgc::parts::types::ParallaxFactor;
 using mgc::parts::types::DrawOptions;
 using mgc::parts::assets::Tileset;
@@ -31,14 +31,14 @@ mgc_id_t mgc::parts::BasicSprite::get_id() const {
     return sprite_get_id(&sprite_);
 }
 
-// [feature] Positionable
-Point mgc::parts::BasicSprite::get_position() const {
+// [features] HasPosition
+Vec2i mgc::parts::BasicSprite::position() const {
     mgc_point_t point = sprite_get_position(&sprite_);
-    return Point::from_c(point);
+    return Vec2i(point.x, point.y);
 }
 
-void mgc::parts::BasicSprite::set_position(int16_t x, int16_t y) {
-    sprite_set_position(&sprite_, x, y);
+void mgc::parts::BasicSprite::set_position(const Vec2i& position) {
+    sprite_set_position(&sprite_, position.x, position.y);
 }
 
 // [feature] HasParallaxFactor
@@ -60,14 +60,14 @@ void mgc::parts::BasicSprite::set_visible(bool v) {
 }
 
 // [feature] Drawable
-bool mgc::parts::BasicSprite::draw(Framebuffer &fb, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicSprite::draw(Framebuffer &fb, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return sprite_draw_raw(&sprite_, fb.data(), fb.width(), fb.height(), &c_pos, options);
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicSprite::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
-    mgc_point_t c_pos = cam_pos.to_c();
+bool mgc::parts::BasicSprite::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Vec2i &cam_pos, const DrawOptions *options) const {
+    mgc_point_t c_pos = mgc_point_t{cam_pos.x, cam_pos.y};
     return sprite_draw_cell_raw(&sprite_, cb.data(), cell_x, cell_y, &c_pos, options);
 }
 

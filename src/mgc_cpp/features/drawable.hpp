@@ -9,7 +9,7 @@
 
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/graphics/framebuffer.hpp"
-#include "mgc_cpp/geometry/point.hpp"
+#include "mgc_cpp/math/vec2.hpp"
 #include "mgc_cpp/parts/types/types.hpp"
 
 namespace mgc {
@@ -19,14 +19,14 @@ struct Drawable {
 
     virtual ~Drawable() = default;
 
-    virtual bool draw(mgc::graphics::Framebuffer &fb, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
+    virtual bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
 
     bool draw(mgc::graphics::Framebuffer &fb) const {
-        return draw(fb, mgc::geometry::Point{0, 0}, nullptr);
+        return draw(fb, mgc::math::Vec2i(0, 0), nullptr);
     }
 
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::parts::types::DrawOptions &options) const {
-        return draw(fb, mgc::geometry::Point{0, 0}, &options);
+        return draw(fb, mgc::math::Vec2i(0, 0), &options);
     }
 };
 

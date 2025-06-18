@@ -9,7 +9,7 @@
 
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/graphics/cell_buffer.hpp"
-#include "mgc_cpp/geometry/point.hpp"
+#include "mgc_cpp/math/vec2.hpp"
 #include "mgc_cpp/parts/types/types.hpp"
 
 namespace mgc {
@@ -19,16 +19,16 @@ struct CellDrawable {
 
     virtual ~CellDrawable() = default;
 
-    virtual bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
+    virtual bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
 
     bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y) const {
 
-        return cell_draw(cb, cell_x, cell_y, mgc::geometry::Point{0, 0}, nullptr);
+        return cell_draw(cb, cell_x, cell_y, mgc::math::Vec2i(0, 0), nullptr);
     }
 
     bool cell_draw(graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::parts::types::DrawOptions &options) const {
 
-        return cell_draw(cb, cell_x, cell_y, mgc::geometry::Point{0, 0}, &options);
+        return cell_draw(cb, cell_x, cell_y, mgc::math::Vec2i(0, 0), &options);
     }
 };
 
