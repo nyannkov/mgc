@@ -214,7 +214,7 @@ private:
         }
     }
 
-    bool is_corner_hit() {
+    bool is_corner_hit() const {
         if ( hit_count_ == 1 ) {
             return ( 
                 is_hit_tl_ ||
@@ -247,7 +247,7 @@ private:
             const mgc::collision::Hitbox& obj_hitbox,
             const MapT& map,
             CornerPushDirection push_dir
-    ) {
+    ) const {
         int32_t dx, dy;
         int8_t n_x, n_y;
         int16_t p_x, p_y;
