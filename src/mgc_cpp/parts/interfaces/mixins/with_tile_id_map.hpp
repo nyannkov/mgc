@@ -23,8 +23,8 @@ struct WithTileIdMap {
         static_cast<Derived*>(this)->set_tile_id_map_impl(map);
     }
 
-    const mgc::parts::assets::TileIdMap * get_tile_id_map() const {
-        return static_cast<const Derived*>(this)->get_tile_id_map_impl();
+    const mgc::parts::assets::TileIdMap * tile_id_map() const {
+        return static_cast<const Derived*>(this)->tile_id_map_impl();
     }
 };
 

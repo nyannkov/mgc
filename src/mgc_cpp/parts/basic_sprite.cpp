@@ -27,7 +27,7 @@ void mgc::parts::BasicSprite::set_id(mgc_id_t id) {
     sprite_set_id(&sprite_, id);
 }
 
-mgc_id_t mgc::parts::BasicSprite::get_id() const {
+mgc_id_t mgc::parts::BasicSprite::id() const {
     return sprite_get_id(&sprite_);
 }
 
@@ -46,7 +46,7 @@ void mgc::parts::BasicSprite::set_parallax_factor(const ParallaxFactor &factor) 
     sprite_set_parallax_factor(&sprite_, factor.f_x, factor.f_y);
 }
 
-ParallaxFactor mgc::parts::BasicSprite::get_parallax_factor() const {
+ParallaxFactor mgc::parts::BasicSprite::parallax_factor() const {
     return sprite_get_parallax_factor(&sprite_);
 }
 
@@ -77,7 +77,7 @@ void mgc::parts::BasicSprite::set_tileset_impl(const Tileset &tileset) {
     sprite_set_tile_idx(&sprite_, 0);
 }
 
-const Tileset* mgc::parts::BasicSprite::get_tileset_impl() const {
+const Tileset* mgc::parts::BasicSprite::tileset_impl() const {
     return sprite_get_tileset(&sprite_);
 }
 
@@ -86,7 +86,7 @@ void mgc::parts::BasicSprite::set_tile_index_impl(size_t idx) {
     sprite_set_tile_idx(&sprite_, idx);
 }
 
-size_t mgc::parts::BasicSprite::get_tile_index_impl() const {
+size_t mgc::parts::BasicSprite::tile_index_impl() const {
     return sprite_get_tile_index(&sprite_);
 }
 
@@ -95,7 +95,7 @@ void mgc::parts::BasicSprite::set_trim_region_impl(mgc::parts::types::TrimRegion
     sprite_set_trim(&sprite_, region.left, region.right, region.top, region.bottom);
 }
 
-mgc::parts::types::TrimRegion mgc::parts::BasicSprite::get_trim_region_impl() const {
+mgc::parts::types::TrimRegion mgc::parts::BasicSprite::trim_region_impl() const {
     return sprite_get_trim_region(&sprite_);
 }
 

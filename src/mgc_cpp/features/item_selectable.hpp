@@ -17,7 +17,7 @@ struct ItemSelectable {
     virtual ~ItemSelectable() = default;
 
     virtual void set_selected_index(int32_t index) = 0;
-    virtual int32_t get_selected_index() const = 0;
+    virtual int32_t selected_index() const = 0;
     virtual void select_next() = 0;
     virtual void select_previous() = 0;
 };

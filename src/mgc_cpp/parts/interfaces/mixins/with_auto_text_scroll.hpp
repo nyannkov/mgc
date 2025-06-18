@@ -21,24 +21,24 @@ struct WithAutoTextScroll {
         static_cast<Derived*>(this)->set_scroll_speed_impl(speed);
     }
 
-    uint32_t get_scroll_speed() const {
-        return static_cast<const Derived*>(this)->get_scroll_speed_impl();
+    uint32_t scroll_speed() const {
+        return static_cast<const Derived*>(this)->scroll_speed_impl();
     }
 
     void set_scroll_threshold_line(uint32_t line) {
         static_cast<Derived*>(this)->set_scroll_threshold_line_impl(line);
     }
 
-    uint32_t get_scroll_threshold_line() const {
-        return static_cast<const Derived*>(this)->get_scroll_threshold_line_impl();
+    uint32_t scroll_threshold_line() const {
+        return static_cast<const Derived*>(this)->scroll_threshold_line_impl();
     }
 
     void set_line_spacing(uint32_t line_spacing) {
         static_cast<Derived*>(this)->set_line_spacing_impl(line_spacing);
     }
 
-    uint32_t get_line_spacing() const {
-        return static_cast<const Derived*>(this)->get_line_spacing_impl();
+    uint32_t line_spacing() const {
+        return static_cast<const Derived*>(this)->line_spacing_impl();
     }
 };
 

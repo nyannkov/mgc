@@ -28,7 +28,7 @@ void mgc::parts::BasicLabel::set_id(mgc_id_t id) {
     label_set_id(&label_, id);
 }
 
-mgc_id_t mgc::parts::BasicLabel::get_id() const {
+mgc_id_t mgc::parts::BasicLabel::id() const {
     return label_get_id(&label_);
 }
 
@@ -47,7 +47,7 @@ void mgc::parts::BasicLabel::set_parallax_factor(const ParallaxFactor &factor) {
     label_set_parallax_factor(&label_, factor.f_x, factor.f_y);
 }
 
-ParallaxFactor mgc::parts::BasicLabel::get_parallax_factor() const {
+ParallaxFactor mgc::parts::BasicLabel::parallax_factor() const {
     return label_get_parallax_factor(&label_);
 }
 
@@ -73,7 +73,7 @@ bool mgc::parts::BasicLabel::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t c
 }
 
 // [impl] WithSize
-Size mgc::parts::BasicLabel::get_size_impl() const {
+Size mgc::parts::BasicLabel::size_impl() const {
     return label_get_size(&label_);
 }
 
@@ -92,15 +92,15 @@ void mgc::parts::BasicLabel::set_font_impl(const Font& font) {
     label_set_font(&label_, &font);
 }
 
-const Font* mgc::parts::BasicLabel::get_font_impl() const {
+const Font* mgc::parts::BasicLabel::font_impl() const {
     return label_get_font(&label_);
 }
 
-void mgc::parts::BasicLabel::set_fore_color_impl(Color color) {
+void mgc::parts::BasicLabel::set_font_fore_color_impl(Color color) {
     label_set_fore_color(&label_, color);
 }
 
-Color mgc::parts::BasicLabel::get_fore_color_impl() const {
+Color mgc::parts::BasicLabel::font_fore_color_impl() const {
     return label_get_fore_color(&label_);
 }
 
@@ -109,7 +109,7 @@ void mgc::parts::BasicLabel::set_fontsize2x(bool fontsize2x) {
     label_set_fontsize2x(&label_, fontsize2x);
 }
 
-Color mgc::parts::BasicLabel::get_back_color() const {
+Color mgc::parts::BasicLabel::back_color() const {
     return label_get_back_color(&label_);
 }
 
@@ -126,7 +126,7 @@ void mgc::parts::BasicLabel::set_text_impl(const char *text) {
     label_set_text(&label_, text);
 }
 
-const char* mgc::parts::BasicLabel::get_text_impl() const {
+const char* mgc::parts::BasicLabel::text_impl() const {
     return label_get_text(&label_);
 }
 

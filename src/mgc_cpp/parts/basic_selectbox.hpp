@@ -41,7 +41,7 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
-    mgc_id_t get_id() const override;
+    mgc_id_t id() const override;
 
     // [feature] HasPosition
     mgc::math::Vec2i position() const override;
@@ -49,20 +49,20 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
 
     // [feature] HasParallaxFactor
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
+    mgc::parts::types::ParallaxFactor parallax_factor() const override;
 
     // [feature] ItemSelectable
     void set_selected_index(int32_t index) override;
-    int32_t get_selected_index() const override;
+    int32_t selected_index() const override;
     void select_next() override;
     void select_previous() override;
 
     //// ItemSelectable-related
     void set_cursor_symbol(const char *symbol);
-    const char * get_cursor_symbol() const;
+    const char * cursor_symbol() const;
     void set_cursor_offset(int16_t x, int16_t y);
     void set_cursor_offset(mgc::math::Vec2i offset);
-    mgc::math::Vec2i get_cursor_offset() const;
+    mgc::math::Vec2i cursor_offset() const;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -77,7 +77,7 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
     bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [impl] WithSize
-    mgc::parts::types::Size get_size_impl() const;
+    mgc::parts::types::Size size_impl() const;
     void set_size_impl(uint16_t width, uint16_t height);
 
     //// WithSize-related 
@@ -85,13 +85,13 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
 
     // [impl] WithPadding
     void set_padding_impl(mgc::parts::types::Padding padding);
-    mgc::parts::types::Padding get_padding_impl() const;
+    mgc::parts::types::Padding padding_impl() const;
 
     // [impl] WithFont
     void set_font_impl(const mgc::parts::assets::Font& font);
-    const mgc::parts::assets::Font *get_font_impl() const;
-    void set_fore_color_impl(mgc::graphics::Color color);
-    mgc::graphics::Color get_fore_color_impl() const;
+    const mgc::parts::assets::Font *font_impl() const;
+    void set_font_fore_color_impl(mgc::graphics::Color color);
+    mgc::graphics::Color font_fore_color_impl() const;
 
     //// WithFont-related
     void set_fontsize2x(bool fontsize2x);
@@ -100,7 +100,7 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
     void add_item_impl(const char* item);
     void remove_item_by_index_impl(int32_t index);
     void clear_items_impl();
-    size_t get_item_count_impl() const;
+    size_t item_count_impl() const;
 
 private:
     mgc_selectbox_t selectbox_;

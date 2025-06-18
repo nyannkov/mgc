@@ -22,8 +22,8 @@ struct WithPadding {
         static_cast<Derived*>(this)->set_padding_impl(padding);
     }
 
-    mgc::parts::types::Padding get_padding() const {
-        return static_cast<const Derived*>(this)->get_padding_impl();
+    mgc::parts::types::Padding padding() const {
+        return static_cast<const Derived*>(this)->padding_impl();
     }
 };
 

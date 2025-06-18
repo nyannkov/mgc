@@ -39,7 +39,7 @@ struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite>,
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
-    mgc_id_t get_id() const override;
+    mgc_id_t id() const override;
 
     // [feature] HasPosition
     mgc::math::Vec2i position() const override;
@@ -47,7 +47,7 @@ struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite>,
 
     // [feature] HasParallaxFactor
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
+    mgc::parts::types::ParallaxFactor parallax_factor() const override;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -63,15 +63,15 @@ struct BasicSprite : mgc::parts::interfaces::ISprite<BasicSprite>,
 
     // [impl] WithTileset
     void set_tileset_impl(const mgc::parts::assets::Tileset &tileset);
-    const mgc::parts::assets::Tileset *get_tileset_impl() const;
+    const mgc::parts::assets::Tileset *tileset_impl() const;
 
     // [impl] WithTileIndexing
     void set_tile_index_impl(size_t idx);
-    size_t get_tile_index_impl() const;
+    size_t tile_index_impl() const;
 
     // [impl] WithTrimRegion
     void set_trim_region_impl(mgc::parts::types::TrimRegion region);
-    mgc::parts::types::TrimRegion get_trim_region_impl() const;
+    mgc::parts::types::TrimRegion trim_region_impl() const;
     void clear_trim_region_impl();
     bool has_trim_region_impl() const;
 

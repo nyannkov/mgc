@@ -21,16 +21,16 @@ struct WithCollisionMap {
         static_cast<Derived*>(this)->set_collision_map_impl();
     }
 
-    const mgc::collision::CollisionMap * get_collision_map() const {
-        return static_cast<const Derived*>(this)->get_collision_map_impl();
+    const mgc::collision::CollisionMap * collision_map() const {
+        return static_cast<const Derived*>(this)->collision_map_impl();
     }
 
     void set_collision_enabled(bool enabled) {
         static_cast<Derived*>(this)->set_collision_enabled_impl(enabled);
     }
 
-    bool get_collision_enabled() const {
-        return static_cast<const Derived*>(this)->get_collision_enabled_impl();
+    bool collision_enabled() const {
+        return static_cast<const Derived*>(this)->collision_enabled_impl();
     }
 };
 

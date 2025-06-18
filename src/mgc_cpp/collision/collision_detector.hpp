@@ -95,10 +95,10 @@ struct CollisionDetectorBoxToMap {
         static_assert(std::is_base_of<mgc::entities::mixins::WithHandleMapPushbackResult<MapT>, MapT>::value,
                       "MapT must inherit from WithHandleMapPushbackResult<MapT>");
 
-        if ( !map.get_collision_enabled() ) {
+        if ( !map.collision_enabled() ) {
             return;
         }
-        auto* collision_map = map.get_collision_map();
+        auto* collision_map = map.collision_map();
         if ( !collision_map ) {
             return;
         }

@@ -21,8 +21,8 @@ struct WithTileIndexing {
         static_cast<Derived*>(this)->set_tile_index_impl(index);
     }
 
-    size_t get_tile_index() const {
-        return static_cast<const Derived*>(this)->get_tile_index_impl();
+    size_t tile_index() const {
+        return static_cast<const Derived*>(this)->tile_index_impl();
     }
 };
 

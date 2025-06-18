@@ -22,8 +22,8 @@ struct WithTileset {
         static_cast<Derived*>(this)->set_tileset_impl(tileset);
     }
 
-    const assets::Tileset *get_tileset() const {
-        return static_cast<const Derived*>(this)->get_tileset_impl();
+    const assets::Tileset *tileset() const {
+        return static_cast<const Derived*>(this)->tileset_impl();
     }
 };
 

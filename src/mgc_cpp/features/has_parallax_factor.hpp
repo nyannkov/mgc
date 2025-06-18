@@ -18,7 +18,7 @@ struct HasParallaxFactor {
     virtual ~HasParallaxFactor() = default;
 
     virtual void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) = 0;
-    virtual mgc::parts::types::ParallaxFactor get_parallax_factor() const;
+    virtual mgc::parts::types::ParallaxFactor parallax_factor() const;
 };
 
 }// namespace features

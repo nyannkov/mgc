@@ -26,8 +26,8 @@ struct WithSize {
         set_size(size.width, size.height);
     }
 
-    mgc::parts::types::Size get_size() const {
-        return static_cast<const Derived*>(this)->get_size_impl();
+    mgc::parts::types::Size size() const {
+        return static_cast<const Derived*>(this)->size_impl();
     }
 
 };

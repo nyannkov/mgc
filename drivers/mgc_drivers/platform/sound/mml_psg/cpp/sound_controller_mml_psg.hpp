@@ -132,15 +132,15 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
         mml_psg_set_sound_effect_volume(volume);
     }
 
-    float get_master_volume() const override {
+    float master_volume() const override {
         return mml_psg_get_master_volume();
     }
 
-    float get_background_music_volume() const override {
+    float background_music_volume() const override {
         return mml_psg_get_background_music_volume();
     }
 
-    float get_sound_effect_volume() const override {
+    float sound_effect_volume() const override {
         return mml_psg_get_sound_effect_volume();
     }
 

@@ -39,7 +39,7 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
-    mgc_id_t get_id() const override;
+    mgc_id_t id() const override;
 
     // [feature] HasPosition
     mgc::math::Vec2i position() const override;
@@ -47,7 +47,7 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
 
     // [feature] HasParallaxFactor
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
+    mgc::parts::types::ParallaxFactor parallax_factor() const override;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -62,7 +62,7 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
     bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [impl] WithSize
-    mgc::parts::types::Size get_size_impl() const;
+    mgc::parts::types::Size size_impl() const;
     void set_size_impl(uint16_t width, uint16_t height);
 
     //// WithSize-related
@@ -70,35 +70,35 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
 
     // [impl] WithMargin
     void set_margin_impl(mgc::parts::types::Margin margin);
-    mgc::parts::types::Margin get_margin_impl() const;
+    mgc::parts::types::Margin margin_impl() const;
 
     // [impl] WithFont
     void set_font_impl(const mgc::parts::assets::Font& font);
-    const mgc::parts::assets::Font *get_font_impl() const;
-    void set_fore_color_impl(mgc::graphics::Color color);
-    mgc::graphics::Color get_fore_color_impl() const;
+    const mgc::parts::assets::Font *font_impl() const;
+    void set_font_fore_color_impl(mgc::graphics::Color color);
+    mgc::graphics::Color font_fore_color_impl() const;
 
     //// WithFont-related
     void set_fontsize2x(bool fontsize2x);
-    mgc::graphics::Color get_back_color() const;
+    mgc::graphics::Color back_color() const;
     bool is_back_enabled() const;
 
     // [impl] WithText
     void set_text_impl(const char *text);
-    const char *get_text_impl() const;
+    const char *text_impl() const;
     void clear_text_impl();
 
     // [impl] WithAutoTextScroll
     void set_scroll_speed_impl(uint32_t speed);
-    uint32_t get_scroll_speed_impl() const;
+    uint32_t scroll_speed_impl() const;
     void set_scroll_threshold_line_impl(uint32_t threshold_line);
-    uint32_t get_scroll_threshold_line_impl() const;
+    uint32_t scroll_threshold_line_impl() const;
     void set_line_spacing_impl(uint32_t line_spacing);
-    uint32_t get_line_spacing_impl() const;
+    uint32_t line_spacing_impl() const;
 
     // [impl] WithTypingEffect
     void set_typing_speed_impl(uint32_t chars_per_frame);
-    uint32_t get_typing_speed_impl() const;
+    uint32_t typing_speed_impl() const;
     void advance_typing_impl();
     bool is_typing_complete_impl() const;
 

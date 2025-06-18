@@ -37,7 +37,7 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
-    mgc_id_t get_id() const override;
+    mgc_id_t id() const override;
 
     // [feature] HasPosition
     mgc::math::Vec2i position() const override;
@@ -45,7 +45,7 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
 
     // [feature] HasParallaxFactor
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
+    mgc::parts::types::ParallaxFactor parallax_factor() const override;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -60,7 +60,7 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
     bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [impl] WithSize
-    mgc::parts::types::Size get_size_impl() const;
+    mgc::parts::types::Size size_impl() const;
     void set_size_impl(uint16_t width, uint16_t height);
 
     //// WithSize-related
@@ -68,19 +68,19 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
 
     // [impl] WithFont
     void set_font_impl(const mgc::parts::assets::Font& font);
-    const mgc::parts::assets::Font *get_font_impl() const;
-    void set_fore_color_impl(mgc::graphics::Color color);
-    mgc::graphics::Color get_fore_color_impl() const;
+    const mgc::parts::assets::Font *font_impl() const;
+    void set_font_fore_color_impl(mgc::graphics::Color color);
+    mgc::graphics::Color font_fore_color_impl() const;
 
     //// WithFont-related
     void set_fontsize2x(bool fontsize2x);
-    mgc::graphics::Color get_back_color() const;
+    mgc::graphics::Color back_color() const;
     void set_enabled_back_color(bool enabled);
     bool is_back_enabled() const;
 
     // [impl] WithText
     void set_text_impl(const char *text);
-    const char *get_text_impl() const;
+    const char *text_impl() const;
     void clear_text_impl();
 
 private:

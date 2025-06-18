@@ -21,8 +21,8 @@ struct WithTypingEffect {
         static_cast<Derived*>(this)->set_typing_speed_impl(chars_per_frame);
     }
 
-    uint32_t get_typing_speed() const {
-        return static_cast<const Derived*>(this)->get_typing_speed_impl();
+    uint32_t typing_speed() const {
+        return static_cast<const Derived*>(this)->typing_speed_impl();
     }
 
     void advance_typing() {

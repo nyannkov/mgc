@@ -55,7 +55,7 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
         collision_map_ = &map;
     }
 
-    const mgc::collision::CollisionMap * get_collision_map_impl() const {
+    const mgc::collision::CollisionMap * collision_map_impl() const {
         return collision_map_;
     }
 
@@ -63,7 +63,7 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
         hit_enabled_ = enabled;
     }
 
-    bool get_collision_enabled_impl() const {
+    bool collision_enabled_impl() const {
         return hit_enabled_;
     }
 

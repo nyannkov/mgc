@@ -29,8 +29,8 @@ struct WithItems {
         static_cast<Derived*>(this)->clear_items_impl();
     }
 
-    size_t get_item_count() const {
-        return static_cast<const Derived*>(this)->get_item_count_impl();
+    size_t item_count() const {
+        return static_cast<const Derived*>(this)->item_count_impl();
     }
 };
 

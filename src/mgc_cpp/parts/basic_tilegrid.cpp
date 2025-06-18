@@ -42,7 +42,7 @@ void mgc::parts::BasicTilegrid::set_id(mgc_id_t id) {
     tilemap_set_id(&tilemap_, id);
 }
 
-mgc_id_t mgc::parts::BasicTilegrid::get_id() const {
+mgc_id_t mgc::parts::BasicTilegrid::id() const {
     return tilemap_get_id(&tilemap_);
 }
 
@@ -61,7 +61,7 @@ void mgc::parts::BasicTilegrid::set_parallax_factor(const ParallaxFactor &factor
     tilemap_set_parallax_factor(&tilemap_, factor.f_x, factor.f_y);
 }
 
-ParallaxFactor mgc::parts::BasicTilegrid::get_parallax_factor() const {
+ParallaxFactor mgc::parts::BasicTilegrid::parallax_factor() const {
     return tilemap_get_parallax_factor(&tilemap_);
 }
 
@@ -91,7 +91,7 @@ void mgc::parts::BasicTilegrid::set_tileset_impl(const Tileset& tileset) {
     tilemap_set_tileset(&tilemap_, &tileset);
 }
 
-const Tileset* mgc::parts::BasicTilegrid::get_tileset_impl() const {
+const Tileset* mgc::parts::BasicTilegrid::tileset_impl() const {
     return tilemap_get_tileset(&tilemap_);
 }
 
@@ -100,7 +100,7 @@ void mgc::parts::BasicTilegrid::set_tile_id_map_impl(const TileIdMap& tile_id_ma
     tilemap_set_map(&tilemap_, &tile_id_map);
 }
 
-const TileIdMap* mgc::parts::BasicTilegrid::get_tile_id_map_impl() const {
+const TileIdMap* mgc::parts::BasicTilegrid::tile_id_map_impl() const {
     return tilemap_get_map(&tilemap_);
 }
 

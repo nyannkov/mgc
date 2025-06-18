@@ -30,7 +30,7 @@ void mgc::parts::BasicSelectbox::set_id(mgc_id_t id) {
     selectbox_get_id(&selectbox_);
 }
 
-mgc_id_t mgc::parts::BasicSelectbox::get_id() const {
+mgc_id_t mgc::parts::BasicSelectbox::id() const {
     return selectbox_get_id(&selectbox_);
 }
 
@@ -49,7 +49,7 @@ void mgc::parts::BasicSelectbox::set_parallax_factor(const ParallaxFactor &facto
     selectbox_set_parallax_factor(&selectbox_, factor.f_x, factor.f_y);
 }
 
-ParallaxFactor mgc::parts::BasicSelectbox::get_parallax_factor() const {
+ParallaxFactor mgc::parts::BasicSelectbox::parallax_factor() const {
     return selectbox_get_parallax_factor(&selectbox_);
 }
 
@@ -58,7 +58,7 @@ void mgc::parts::BasicSelectbox::set_selected_index(int32_t index) {
     selectbox_set_selected_idx(&selectbox_, static_cast<size_t>(index));
 }
 
-int32_t mgc::parts::BasicSelectbox::get_selected_index() const {
+int32_t mgc::parts::BasicSelectbox::selected_index() const {
     return selectbox_get_selected_idx(&selectbox_);
 }
 
@@ -75,7 +75,7 @@ void mgc::parts::BasicSelectbox::set_cursor_symbol(const char *symbol) {
     selectbox_set_cursor_text(&selectbox_, symbol);
 }
 
-const char * mgc::parts::BasicSelectbox::get_cursor_symbol() const {
+const char * mgc::parts::BasicSelectbox::cursor_symbol() const {
     return selectbox_get_cursor_text(&selectbox_);
 }
 
@@ -96,7 +96,7 @@ void mgc::parts::BasicSelectbox::set_cursor_offset(Vec2i offset) {
     set_cursor_offset(offset.x, offset.y);
 }
 
-Vec2i mgc::parts::BasicSelectbox::get_cursor_offset() const {
+Vec2i mgc::parts::BasicSelectbox::cursor_offset() const {
     uint8_t left_margin;
     left_margin = selectbox_.left_cursor_margin;
     return Vec2i(left_margin, 0);
@@ -124,7 +124,7 @@ bool mgc::parts::BasicSelectbox::cell_draw(CellBuffer &cb, int16_t cell_x, int16
 }
 
 // [impl] WithSize
-Size mgc::parts::BasicSelectbox::get_size_impl() const {
+Size mgc::parts::BasicSelectbox::size_impl() const {
     return selectbox_get_size(&selectbox_);
 }
 
@@ -149,7 +149,7 @@ void mgc::parts::BasicSelectbox::set_padding_impl(Padding padding) {
     );
 }
 
-Padding mgc::parts::BasicSelectbox::get_padding_impl() const {
+Padding mgc::parts::BasicSelectbox::padding_impl() const {
     return selectbox_get_padding(&selectbox_);
 }
 
@@ -158,15 +158,15 @@ void mgc::parts::BasicSelectbox::set_font_impl(const Font& font) {
     selectbox_set_font(&selectbox_, &font);
 }
 
-const Font* mgc::parts::BasicSelectbox::get_font_impl() const {
+const Font* mgc::parts::BasicSelectbox::font_impl() const {
     return selectbox_get_font(&selectbox_);
 }
 
-void mgc::parts::BasicSelectbox::set_fore_color_impl(Color color) {
+void mgc::parts::BasicSelectbox::set_font_fore_color_impl(Color color) {
     selectbox_set_fore_color(&selectbox_, color);
 }
 
-Color mgc::parts::BasicSelectbox::get_fore_color_impl() const {
+Color mgc::parts::BasicSelectbox::font_fore_color_impl() const {
     return selectbox_get_fore_color(&selectbox_);
 }
 
@@ -188,7 +188,7 @@ void mgc::parts::BasicSelectbox::clear_items_impl() {
     selectbox_clear_items(&selectbox_);
 }
 
-size_t mgc::parts::BasicSelectbox::get_item_count_impl() const {
+size_t mgc::parts::BasicSelectbox::item_count_impl() const {
     return selectbox_get_item_count(&selectbox_);
 }
 

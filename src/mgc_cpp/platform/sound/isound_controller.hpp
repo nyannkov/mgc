@@ -32,9 +32,9 @@ struct ISoundController {
     virtual void set_background_music_volume(float volume) = 0;
     virtual void set_sound_effect_volume(float volume) = 0;
 
-    virtual float get_master_volume() const = 0;
-    virtual float get_background_music_volume() const = 0;
-    virtual float get_sound_effect_volume() const = 0;
+    virtual float master_volume() const = 0;
+    virtual float background_music_volume() const = 0;
+    virtual float sound_effect_volume() const = 0;
 
     virtual void proc() {}
 };

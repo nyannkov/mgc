@@ -46,7 +46,7 @@ struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
 
     // [feature] HasId
     void set_id(mgc_id_t id) override;
-    mgc_id_t get_id() const override;
+    mgc_id_t id() const override;
 
     // [feature] HasPosition
     mgc::math::Vec2i position() const override;
@@ -54,7 +54,7 @@ struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
 
     // [feature] HasParallaxFactor
     void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor get_parallax_factor() const override;
+    mgc::parts::types::ParallaxFactor parallax_factor() const override;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -70,11 +70,11 @@ struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
 
     // [impl] WithTileset
     void set_tileset_impl(const mgc::parts::assets::Tileset &tileset);
-    const mgc::parts::assets::Tileset *get_tileset_impl() const;
+    const mgc::parts::assets::Tileset *tileset_impl() const;
 
     // [impl] WithTileIdMap
     void set_tile_id_map_impl(const mgc::parts::assets::TileIdMap &tile_id_map);
-    const mgc::parts::assets::TileIdMap *get_tile_id_map_impl() const;
+    const mgc::parts::assets::TileIdMap *tile_id_map_impl() const;
 
 private:
     mgc_tilemap_t tilemap_;

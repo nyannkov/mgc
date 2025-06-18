@@ -22,8 +22,8 @@ struct WithTrimRegion {
         static_cast<Derived*>(this)->set_trim_region_impl(region);
     }
 
-    mgc::parts::types::TrimRegion get_trim_region() const {
-        return static_cast<const Derived*>(this)->get_trim_region_impl();
+    mgc::parts::types::TrimRegion trim_region() const {
+        return static_cast<const Derived*>(this)->trim_region_impl();
     }
 
     void clear_trim_region() {

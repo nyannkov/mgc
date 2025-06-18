@@ -61,11 +61,11 @@ struct TalkflowController : mgc::features::Resettable,
         selectbox_.set_cursor_offset(config.cursor_offset);
     }
 
-    void get_selectbox_config(SelectboxConfig& out) const {
+    void selectbox_config(SelectboxConfig& out) const {
         out.position = selectbox_.position();
-        out.size = selectbox_.get_size();
-        out.cursor_symbol = selectbox_.get_cursor_symbol();
-        out.cursor_offset = selectbox_.get_cursor_offset();
+        out.size = selectbox_.size();
+        out.cursor_symbol = selectbox_.cursor_symbol();
+        out.cursor_offset = selectbox_.cursor_offset();
     }
 
     void set_dialoguebox_config(const DialogueboxConfig& config) {
@@ -77,12 +77,12 @@ struct TalkflowController : mgc::features::Resettable,
         dialoguebox_.set_typing_speed(config.typing_speed);
     }
 
-    void get_dialoguebox_config(DialogueboxConfig& out) const {
+    void dialoguebox_config(DialogueboxConfig& out) const {
         out.position = dialoguebox_.position();
-        out.size = dialoguebox_.get_size();
-        out.scroll_speed = dialoguebox_.get_scroll_speed();
-        out.scroll_threshold_line = dialoguebox_.get_scroll_threshold_line();
-        out.typing_speed = dialoguebox_.get_typing_speed();
+        out.size = dialoguebox_.size();
+        out.scroll_speed = dialoguebox_.scroll_speed();
+        out.scroll_threshold_line = dialoguebox_.scroll_threshold_line();
+        out.typing_speed = dialoguebox_.typing_speed();
     }
 
     void begin(mgc_node_idx_t entry_label = 0) {
@@ -181,7 +181,7 @@ private:
         }
         mgc::control::talkflow::DialogueboxConfig config;
 
-        this->get_dialoguebox_config(config);
+        this->dialoguebox_config(config);
         if ( listener_->on_start_message(tag, config) ) {
             this->set_dialoguebox_config(config);
         }
@@ -196,7 +196,7 @@ private:
         }
 
         mgc::control::talkflow::DialogueboxConfig config;
-        this->get_dialoguebox_config(config);
+        this->dialoguebox_config(config);
         if ( listener_->on_start_message(tag, config) ) {
             this->set_dialoguebox_config(config);
         }
@@ -221,7 +221,7 @@ private:
         selectbox_.adjust_size_to_fit();
 
         mgc::control::talkflow::SelectboxConfig config;
-        this->get_selectbox_config(config);
+        this->selectbox_config(config);
         if ( listener_->on_start_choice(tag, config) ) {
             this->set_selectbox_config(config);
         }
@@ -254,9 +254,9 @@ private:
             selectbox_.select_next();
 
         } else if ( button_.just_pressed(mgc::platform::input::Key::Enter) ) {
-            int32_t value = talkscript_get_item_value(choice, selectbox_.get_selected_index());
-            listener_->on_choice_done(tag, selectbox_.get_selected_index(), value);
-            talkflow_decide_choice(talkflow, selectbox_.get_selected_index());
+            int32_t value = talkscript_get_item_value(choice, selectbox_.selected_index());
+            listener_->on_choice_done(tag, selectbox_.selected_index(), value);
+            talkflow_decide_choice(talkflow, selectbox_.selected_index());
             selectbox_.set_visible(false);
             return MGC_TALKFLOW_UI_STATE_FINISHED;
 

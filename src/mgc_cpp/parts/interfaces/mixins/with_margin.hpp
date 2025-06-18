@@ -22,8 +22,8 @@ struct WithMargin {
         static_cast<Derived*>(this)->set_margin_impl(margin);
     }
 
-    mgc::parts::types::Margin get_margin() const {
-        return static_cast<const Derived*>(this)->get_margin_impl();
+    mgc::parts::types::Margin margin() const {
+        return static_cast<const Derived*>(this)->margin_impl();
     }
 };
 

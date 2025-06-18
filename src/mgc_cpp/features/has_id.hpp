@@ -17,7 +17,7 @@ struct HasId {
     virtual ~HasId() = default;
 
     virtual void set_id(mgc_id_t id) = 0;
-    virtual mgc_id_t get_id() const = 0;
+    virtual mgc_id_t id() const = 0;
 };
 
 }// namespace features

@@ -21,8 +21,8 @@ struct WithText {
         static_cast<Derived*>(this)->set_text_impl(text);
     }
 
-    const char *get_text() const {
-        return static_cast<const Derived*>(this)->get_text_impl();
+    const char *text() const {
+        return static_cast<const Derived*>(this)->text_impl();
     }
 
     void clear_text() {
