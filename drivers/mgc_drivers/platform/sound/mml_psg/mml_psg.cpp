@@ -10,6 +10,11 @@
 #include "emu2149.h"
 #include "Psgino.h"
 
+typedef struct mgc_mml_record_list {
+    const mgc_mml_record_t *records;
+    size_t record_count;
+} mgc_mml_record_list_t;
+
 static PsginoZ psgino_z;
 static PSG* psg;
 static float prev_psg_output;

@@ -18,12 +18,6 @@ typedef struct mgc_mml_record {
     const char *mml;
 } mgc_mml_record_t;
 
-typedef struct mgc_mml_record_list {
-    const mgc_mml_record_t *records;
-    size_t record_count;
-} mgc_mml_record_list_t;
-
-
 void mml_psg_init(float mml_proc_rate, void *ctx);
 void mml_psg_deinit(void);
 
