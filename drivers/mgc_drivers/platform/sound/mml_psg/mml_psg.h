@@ -47,6 +47,8 @@ void mml_psg_set_background_music_list(const mgc_mml_record_t *records, size_t c
 void mml_psg_set_sound_effect_list(const  mgc_mml_record_t *records, size_t count);
 void mml_psg_set_callback_background_music(void (*cb)(uint8_t ch, int32_t param, void * ctx));
 void mml_psg_set_callback_sound_effect(void (*cb)(uint8_t ch, int32_t param, void * ctx));
+void mml_psg_set_speed_factor(float factor);
+void mml_psg_shift_pitch_by_degree(int16_t degree);
 
 #ifdef __cplusplus
 }/* extern "C" */

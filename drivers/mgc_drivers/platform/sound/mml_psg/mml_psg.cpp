@@ -228,6 +228,14 @@ void mml_psg_set_psg_lpf_alpha(float alpha) {
     }
 }
 
+void mml_psg_set_speed_factor(float factor) {
+    psgino_z.SetSpeedFactor(factor);
+}
+
+void mml_psg_shift_pitch_by_degree(int16_t degree) {
+    psgino_z.ShiftFrequency(degree);
+}
+
 uint16_t mml_psg_local__proc_psg_emu(void) {
 
     if( psg != nullptr ) {

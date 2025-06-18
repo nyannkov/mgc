@@ -71,6 +71,15 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
         mml_psg_set_sound_effect_list(records, count);
     }
 
+    void set_speed_factor(float factor) {
+        
+        mml_psg_set_speed_factor(static_cast<uint16_t>(factor)*100);
+    }
+
+    void shift_pitch_by_degree(int16_t degree) {
+        mml_psg_shift_pitch_by_degree(degree);
+    }
+
     void bind_listener(IMmlPsgSoundControllerListener& listener) {
         listener_ = &listener;
     }
