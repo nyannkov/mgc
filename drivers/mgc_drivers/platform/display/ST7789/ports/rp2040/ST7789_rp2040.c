@@ -19,6 +19,13 @@
 * https://www.waveshare.com/wiki/Pico-LCD-1.3
 ******************************************************************************/
 
+/*
+ * Sample Implementation Notice
+ *
+ * This file is a sample.
+ * Please rewrite or replace it according to your project's requirements.
+ */
+
 #include "mgc_drivers/platform/display/ST7789/ports/ST7789_port.h"
 #include "pico/stdlib.h"
 #include "hardware/spi.h"

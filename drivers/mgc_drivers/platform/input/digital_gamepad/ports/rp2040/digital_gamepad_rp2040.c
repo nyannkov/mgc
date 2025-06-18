@@ -4,6 +4,13 @@
  *
  * Copyright (c) 2025 nyannkov
  */
+/*
+ * Sample Implementation Notice
+ *
+ * This file is a sample.
+ * Please rewrite or replace it according to your project's requirements.
+ */
+
 #include "hardware/gpio.h"
 
 void digital_gamepad_port__gpio_init(int pin) {
