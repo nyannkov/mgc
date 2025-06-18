@@ -66,7 +66,7 @@ bool mgc::parts::BasicLabel::draw(Framebuffer &fb, const Point &cam_pos, const D
 }
 
 // [features] CellDrawable
-bool mgc::parts::BasicLabel::draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
+bool mgc::parts::BasicLabel::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
     mgc_point_t c_pos = cam_pos.to_c();
     return label_draw_cell_raw(&label_, cb.data(), cell_x, cell_y, &c_pos, options);
 }

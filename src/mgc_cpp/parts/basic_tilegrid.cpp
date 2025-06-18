@@ -80,7 +80,7 @@ bool mgc::parts::BasicTilegrid::draw(Framebuffer &fb, const Point &cam_pos, cons
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicTilegrid::draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
+bool mgc::parts::BasicTilegrid::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
     mgc_point_t c_pos = cam_pos.to_c();
     return tilemap_draw_cell_raw(&tilemap_, cb.data(), cell_x, cell_y, &c_pos, options);
 }

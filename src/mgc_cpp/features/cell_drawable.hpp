@@ -19,16 +19,16 @@ struct CellDrawable {
 
     virtual ~CellDrawable() = default;
 
-    virtual bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
+    virtual bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
 
-    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y) const {
+    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y) const {
 
-        return draw(cb, cell_x, cell_y, mgc::geometry::Point{0, 0}, nullptr);
+        return cell_draw(cb, cell_x, cell_y, mgc::geometry::Point{0, 0}, nullptr);
     }
 
-    bool draw(graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::parts::types::DrawOptions &options) const {
+    bool cell_draw(graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::parts::types::DrawOptions &options) const {
 
-        return draw(cb, cell_x, cell_y, mgc::geometry::Point{0, 0}, &options);
+        return cell_draw(cb, cell_x, cell_y, mgc::geometry::Point{0, 0}, &options);
     }
 };
 

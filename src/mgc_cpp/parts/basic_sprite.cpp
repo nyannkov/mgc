@@ -66,7 +66,7 @@ bool mgc::parts::BasicSprite::draw(Framebuffer &fb, const Point &cam_pos, const 
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicSprite::draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
+bool mgc::parts::BasicSprite::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
     mgc_point_t c_pos = cam_pos.to_c();
     return sprite_draw_cell_raw(&sprite_, cb.data(), cell_x, cell_y, &c_pos, options);
 }

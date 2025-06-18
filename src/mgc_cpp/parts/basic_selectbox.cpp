@@ -118,7 +118,7 @@ bool mgc::parts::BasicSelectbox::draw(Framebuffer &fb, const Point &cam_pos, con
 }
 
 // [feature] CellDrawable
-bool mgc::parts::BasicSelectbox::draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
+bool mgc::parts::BasicSelectbox::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t cell_y, const Point &cam_pos, const DrawOptions *options) const {
     mgc_point_t c_pos = cam_pos.to_c();
     return selectbox_draw_cell_raw(&selectbox_, cb.data(), cell_x, cell_y, &c_pos, options);
 }

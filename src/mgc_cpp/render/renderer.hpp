@@ -92,7 +92,7 @@ struct Renderer {
             for ( uint16_t x = 0; x < width; x += MGC_CELL2PIXEL(1)) {
                 for ( size_t index = 0; index < drawable_count; index++ ) {
                     if ( drawables[index] ) {
-                        drawables[index]->draw(cb, x, y, cam_pos, nullptr);
+                        drawables[index]->cell_draw(cb, x, y, cam_pos, nullptr);
                     }
                 }
                 driver_.transfer_region(

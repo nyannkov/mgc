@@ -73,8 +73,8 @@ struct BasicSelectbox : mgc::parts::interfaces::ISelectbox<BasicSelectbox, const
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [feature] CellDrawable
-    using mgc::features::CellDrawable::draw;
-    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    using mgc::features::CellDrawable::cell_draw;
+    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::geometry::Point &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
 
     // [impl] WithSize
     mgc::parts::types::Size get_size_impl() const;
