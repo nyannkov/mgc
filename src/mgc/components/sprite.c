@@ -167,7 +167,6 @@ static inline bool draw_buffer(
         int32_t wy;
         int16_t x_s, y_s, x_e, y_e;
         mgc_color_t color;
-        int16_t index, index_ofs;
         int16_t color_index;
         const uint8_t *tile;
         const mgc_color_t *palette_array;

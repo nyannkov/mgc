@@ -245,6 +245,8 @@ bool tilemap_draw_cell_raw(
     int16_t t0, t1;
     int16_t b0, b1;
 
+    (void)options;
+
     if ( ( tilemap == NULL ) ||
          ( cell_buffer == NULL ) ||
          ( tilemap->map == NULL ) ||

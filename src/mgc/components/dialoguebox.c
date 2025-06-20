@@ -100,7 +100,6 @@ void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, int16_t x, int16_t
 }
 
 void dialoguebox_set_margin(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right) {
-    int16_t text_x, text_y;
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;

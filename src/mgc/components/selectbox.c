@@ -137,8 +137,6 @@ void selectbox_resize_to_fit(mgc_selectbox_t *selectbox) {
 
 void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     struct mgc_label *item;
-    uint16_t box_width;
-    size_t m;
     int16_t item_height;
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");

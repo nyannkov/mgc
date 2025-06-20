@@ -23,7 +23,11 @@ namespace parts {
 
 struct IBasicTilegridListener {
     virtual ~IBasicTilegridListener() = default;
-    virtual uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) { return tile_id; }
+    virtual uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) {
+        (void)row;
+        (void)col;
+        return tile_id;
+    }
 };
 
 struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,

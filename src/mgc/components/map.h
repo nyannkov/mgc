@@ -41,19 +41,19 @@ static inline uint8_t map_decompress_and_get_tile_id(const mgc_map_t *map, uint1
         size_t total_len = (size_t)(map->map_width)*map->map_height;
         if ( target_len < (total_len/2) ) {
             sum_len = 0;
-            for ( size_t idx = 1; idx < map->cell_count; idx+=2 ) {
-                sum_len += map->map[idx];
+            for ( size_t idx = 0; idx < map->cell_count; idx+=2 ) {
+                sum_len += map->map[idx+1];
                 if ( sum_len >= target_len ) {
-                    return map->map[idx-1];
+                    return map->map[idx];
                 }
             }
         } else {
             sum_len = total_len;
-            for ( size_t idx = (map->cell_count-1); idx >= 0; idx-=2 ) {
+            for ( size_t idx = (map->cell_count-2); idx > 0; idx-=2 ) {
+                sum_len -= map->map[idx+1];
                 if ( sum_len < target_len ) {
-                    return map->map[idx+1];
+                    return map->map[idx];
                 }
-                sum_len -= map->map[idx];
             }
         }
         MGC_WARN("Unexpected index");

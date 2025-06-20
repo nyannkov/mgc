@@ -27,7 +27,7 @@ void mgc::parts::BasicSelectbox::reset() {
 
 // [feature] HasId
 void mgc::parts::BasicSelectbox::set_id(mgc_id_t id) {
-    selectbox_get_id(&selectbox_);
+    selectbox_set_id(&selectbox_, id);
 }
 
 mgc_id_t mgc::parts::BasicSelectbox::id() const {
@@ -182,6 +182,7 @@ void mgc::parts::BasicSelectbox::add_item_impl(const char* item) {
 
 void mgc::parts::BasicSelectbox::remove_item_by_index_impl(int32_t index) {
     //TODO
+    (void)index;
 }
 
 void mgc::parts::BasicSelectbox::clear_items_impl() {

@@ -278,7 +278,6 @@ void textblock_set_parallax_factor(mgc_textblock_t *textblock, float factor_x, f
 }
 
 void textblock_display_update(mgc_textblock_t *textblock) {
-    uint8_t cursor_move_count = textblock->cursor_speed;
     enum mgc_display_text_state state;
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
