@@ -4,3 +4,6 @@
 [submodule "external/sound/emu2149"]
 	path = external/sound/emu2149
 	url = https://github.com/digital-sound-antiques/emu2149.git
+[submodule "external/test/catch2"]
+	path = external/test/catch2
+	url = https://github.com/catchorg/Catch2.git
