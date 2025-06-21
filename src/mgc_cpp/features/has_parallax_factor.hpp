@@ -8,7 +8,7 @@
 #define MGC_FEATURES_HAS_PARALLAX_FACTOR_HPP
 
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/parts/types/types.hpp"
+#include "mgc_cpp/graphics/parallax_factor.hpp"
 
 namespace mgc {
 namespace features {
@@ -17,8 +17,8 @@ struct HasParallaxFactor {
 
     virtual ~HasParallaxFactor() = default;
 
-    virtual void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) = 0;
-    virtual mgc::parts::types::ParallaxFactor parallax_factor() const;
+    virtual void set_parallax_factor(const mgc::graphics::ParallaxFactor &factor) = 0;
+    virtual mgc::graphics::ParallaxFactor parallax_factor() const;
 };
 
 }// namespace features

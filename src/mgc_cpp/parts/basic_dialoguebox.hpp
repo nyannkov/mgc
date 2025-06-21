@@ -33,6 +33,10 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
 
     BasicDialoguebox() { reset(); }
     ~BasicDialoguebox() = default;
+    BasicDialoguebox(const BasicDialoguebox&) = delete;
+    BasicDialoguebox& operator=(const BasicDialoguebox&) = delete;
+    BasicDialoguebox(BasicDialoguebox&&) = default;
+    BasicDialoguebox& operator=(BasicDialoguebox&&) = default;
 
     // [feature] Resettable
     void reset() override;
@@ -46,8 +50,8 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
     void set_position(const mgc::math::Vec2i& position) override;
 
     // [feature] HasParallaxFactor
-    void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor parallax_factor() const override;
+    void set_parallax_factor(const mgc::graphics::ParallaxFactor &factor) override;
+    mgc::graphics::ParallaxFactor parallax_factor() const override;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -55,11 +59,11 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
 
     // [feature] Drawable
     using mgc::features::Drawable::draw;
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override;
 
     // [feature] CellDrawable
     using mgc::features::CellDrawable::cell_draw;
-    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override;
 
     // [impl] WithSize
     mgc::parts::types::Size size_impl() const;
@@ -68,9 +72,9 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
     //// WithSize-related
     void adjust_size_to_fit();
 
-    // [impl] WithMargin
-    void set_margin_impl(mgc::parts::types::Margin margin);
-    mgc::parts::types::Margin margin_impl() const;
+    // [impl] WithPadding
+    void set_padding_impl(mgc::parts::types::Padding margin);
+    mgc::parts::types::Padding padding_impl() const;
 
     // [impl] WithFont
     void set_font_impl(const mgc::parts::assets::Font& font);

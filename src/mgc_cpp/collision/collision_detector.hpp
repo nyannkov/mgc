@@ -74,6 +74,10 @@ struct CollisionDetectorBoxToMap {
 
     CollisionDetectorBoxToMap() { this->init(); }
     ~CollisionDetectorBoxToMap() = default;
+    CollisionDetectorBoxToMap(const CollisionDetectorBoxToMap&) = delete;
+    CollisionDetectorBoxToMap& operator=(const CollisionDetectorBoxToMap&) = delete;
+    CollisionDetectorBoxToMap(CollisionDetectorBoxToMap&&) = default;
+    CollisionDetectorBoxToMap& operator=(CollisionDetectorBoxToMap&&) = default;
 
     template <typename ObjT, typename MapT>
     void detect(ObjT& obj, MapT& map, CornerPushDirection push_dir = CornerPushDirection::None) {

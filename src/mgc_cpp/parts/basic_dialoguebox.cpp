@@ -10,14 +10,14 @@ namespace mgc {
 namespace parts {
 
 using mgc::math::Vec2i;
-using mgc::parts::types::ParallaxFactor;
-using mgc::parts::types::DrawOptions;
-using mgc::parts::types::Margin;
+using mgc::parts::types::Padding;
 using mgc::parts::types::Size;
 using mgc::parts::assets::Font;
 using mgc::graphics::Color;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
+using mgc::graphics::DrawOptions;
+using mgc::graphics::ParallaxFactor;
 
 // [feature] Hitbox
 void mgc::parts::BasicDialoguebox::reset() {
@@ -45,11 +45,12 @@ void mgc::parts::BasicDialoguebox::set_position(const Vec2i& position) {
 
 // [feature] HasParallaxFactor
 void mgc::parts::BasicDialoguebox::set_parallax_factor(const ParallaxFactor &factor) {
-    dialoguebox_set_parallax_factor(&dialoguebox_, factor.f_x, factor.f_y);
+    auto f = factor.to_c();
+    dialoguebox_set_parallax_factor(&dialoguebox_, f.f_x, f.f_y);
 }
 
 ParallaxFactor mgc::parts::BasicDialoguebox::parallax_factor() const {
-    return dialoguebox_get_parallax_factor(&dialoguebox_);
+    return ParallaxFactor(dialoguebox_get_parallax_factor(&dialoguebox_));
 }
 
 // [feature] Visible
@@ -75,31 +76,33 @@ bool mgc::parts::BasicDialoguebox::cell_draw(CellBuffer &cb, int16_t cell_x, int
 
 // [impl] WithSize
 Size mgc::parts::BasicDialoguebox::size_impl() const {
-    return dialoguebox_get_size(&dialoguebox_);
+    return Size(dialoguebox_get_size(&dialoguebox_));
 }
 
 void mgc::parts::BasicDialoguebox::set_size_impl(uint16_t width, uint16_t height) {
     dialoguebox_set_width(&dialoguebox_, width);
     dialoguebox_set_height(&dialoguebox_, height);
 }
+
 //// WithSize-related
 void mgc::parts::BasicDialoguebox::adjust_size_to_fit() {
     dialoguebox_adjust_height(&dialoguebox_);
 }
 
-// [impl] WithMargin
-void mgc::parts::BasicDialoguebox::set_margin_impl(Margin margin) {
-    dialoguebox_set_margin(
+// [impl] WithPadding
+void mgc::parts::BasicDialoguebox::set_padding_impl(Padding padding) {
+    auto pad = padding.to_c();
+    dialoguebox_set_padding(
             &dialoguebox_,
-            margin.top,
-            margin.bottom,
-            margin.left,
-            margin.right
+            pad.top,
+            pad.bottom,
+            pad.left,
+            pad.right
     );
 }
 
-Margin mgc::parts::BasicDialoguebox::margin_impl() const {
-    return dialoguebox_get_margin(&dialoguebox_);
+Padding mgc::parts::BasicDialoguebox::padding_impl() const {
+    return Padding(dialoguebox_get_padding(&dialoguebox_));
 }
 
 // [impl] WithFont

@@ -36,6 +36,10 @@ struct TalkflowController : mgc::features::Resettable,
 
     explicit TalkflowController(mgc::platform::input::IButton &button) : button_(button) { reset(); }
     ~TalkflowController() = default;
+    TalkflowController(const TalkflowController&) = delete;
+    TalkflowController& operator=(const TalkflowController&) = delete;
+    TalkflowController(TalkflowController&&) = default;
+    TalkflowController& operator=(TalkflowController&&) = default;
 
     void bind_listener(ITalkflowListener& listener) {
         listener_ = &listener;
@@ -110,7 +114,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] Drawable
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override {
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.draw(fb, cam_pos, options);
         result |= selectbox_.draw(fb, cam_pos, options);
@@ -118,7 +122,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] CellDrawable
-    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override {
+    bool draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.draw(cb, cell_x, cell_y, cam_pos, options);
         result |= selectbox_.draw(cb, cell_x, cell_y, cam_pos, options);

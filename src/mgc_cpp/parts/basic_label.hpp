@@ -33,6 +33,12 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
 
     BasicLabel() { reset(); }
     ~BasicLabel() = default;
+    BasicLabel(const BasicLabel&) = delete;
+    BasicLabel& operator=(const BasicLabel&) = delete;
+    BasicLabel(BasicLabel&&) = default;
+    BasicLabel& operator=(BasicLabel&&) = default;
+
+    // [feature] Resettable
     void reset();
 
     // [feature] HasId
@@ -44,8 +50,8 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
     void set_position(const mgc::math::Vec2i& position) override;
 
     // [feature] HasParallaxFactor
-    void set_parallax_factor(const mgc::parts::types::ParallaxFactor &factor) override;
-    mgc::parts::types::ParallaxFactor parallax_factor() const override;
+    void set_parallax_factor(const mgc::graphics::ParallaxFactor &factor) override;
+    mgc::graphics::ParallaxFactor parallax_factor() const override;
 
     // [feature] Visible
     bool is_visible() const override;
@@ -53,11 +59,11 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
 
     // [feature] Drawable
     using mgc::features::Drawable::draw;
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override;
 
     // [feature] CellDrawable
     using mgc::features::CellDrawable::cell_draw;
-    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const override;
+    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override;
 
     // [impl] WithSize
     mgc::parts::types::Size size_impl() const;

@@ -13,10 +13,10 @@ using mgc::math::Vec2i;
 using mgc::parts::assets::TileIdMap;
 using mgc::parts::assets::Tileset;
 using mgc::parts::assets::TileIdMap;
-using mgc::parts::types::ParallaxFactor;
-using mgc::parts::types::DrawOptions;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
+using mgc::graphics::DrawOptions;
+using mgc::graphics::ParallaxFactor;
 
 // [feature] Resettable
 void mgc::parts::BasicTilegrid::reset() {
@@ -58,11 +58,12 @@ void mgc::parts::BasicTilegrid::set_position(const Vec2i& position) {
 
 // [feature] HasParallaxFactor
 void mgc::parts::BasicTilegrid::set_parallax_factor(const ParallaxFactor &factor) {
-    tilemap_set_parallax_factor(&tilemap_, factor.f_x, factor.f_y);
+    auto f = factor.to_c();
+    tilemap_set_parallax_factor(&tilemap_, f.f_x, f.f_y);
 }
 
 ParallaxFactor mgc::parts::BasicTilegrid::parallax_factor() const {
-    return tilemap_get_parallax_factor(&tilemap_);
+    return ParallaxFactor(tilemap_get_parallax_factor(&tilemap_));
 }
 
 // [feature] Visible

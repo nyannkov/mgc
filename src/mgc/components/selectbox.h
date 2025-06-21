@@ -32,9 +32,9 @@ typedef struct mgc_selectbox {
     const mgc_font_t *font;
     size_t selected_idx;
     size_t item_count;
-    mgc_padding_region_t padding;
+    mgc_padding_t padding;
     uint8_t left_cursor_margin;
-    uint8_t line_spacing;
+    uint8_t item_spacing;
     float parallax_factor_x;
     float parallax_factor_y;
 } mgc_selectbox_t;
@@ -52,7 +52,7 @@ void selectbox_set_width(mgc_selectbox_t *selectbox, uint16_t width);
 void selectbox_set_border_width(mgc_selectbox_t *selectbox, uint16_t width);
 void selectbox_set_padding(mgc_selectbox_t *selectbox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right);
 void selectbox_set_cursor_margin(mgc_selectbox_t *selectbox, uint8_t left);
-void selectbox_set_line_spacing(mgc_selectbox_t *selectbox, uint8_t line_spacing);
+void selectbox_set_item_spacing(mgc_selectbox_t *selectbox, uint8_t item_spacing);
 void selectbox_set_cursor_text(mgc_selectbox_t *selectbox, const char *text);
 void selectbox_set_selected_idx(mgc_selectbox_t *selectbox, size_t selected_idx);
 void selectbox_change_selected_idx(mgc_selectbox_t *selectbox, bool increment);
@@ -124,7 +124,7 @@ mgc_size_t selectbox_get_size(const mgc_selectbox_t *selectbox) {
 }
 
 static inline
-mgc_padding_region_t selectbox_get_padding(const mgc_selectbox_t *selectbox) {
+mgc_padding_t selectbox_get_padding(const mgc_selectbox_t *selectbox) {
     MGC_ASSERT(selectbox != NULL, "Invalid handler");
     return selectbox->padding;
 }
@@ -187,11 +187,18 @@ const char *selectbox_get_selected_item_text(const mgc_selectbox_t *selectbox) {
     return label_get_text(&selectbox->item[selectbox->selected_idx]);
 }
 
+static inline
+uint8_t selectbox_get_item_spacing(const mgc_selectbox_t *selectbox) {
+    MGC_ASSERT(selectbox != NULL, "Invalid handler");
+    return selectbox->item_spacing;
+}
+
 //////////////////////////////// Legacy ////////////////////////////////
 bool selectbox_apply_cell_blending(const mgc_selectbox_t *selectbox, mgc_pixelbuffer_t *pixelbuffer, int16_t cell_x, int16_t cell_y);
 void selectbox_set_r_cell_offset(mgc_selectbox_t *selectbox, uint8_t r_cell_x_ofs, uint8_t r_cell_y_ofs);
 #define selectbox_set_enabled    selectbox_set_visible
 #define selectbox_set_margin(handler, top, bottom, left)    selectbox_set_padding((handler), (top), (bottom), (left), 0)
+#define selectbox_set_line_spacing     selectbox_set_item_spacing
 
 #ifdef __cplusplus
 }/* extern "C" */

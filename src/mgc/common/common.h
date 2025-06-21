@@ -122,19 +122,12 @@ typedef struct mgc_trim_region {
     uint16_t bottom;
 } mgc_trim_region_t;
 
-typedef struct mgc_margin_region {
-    uint16_t left;
-    uint16_t right;
-    uint16_t top;
-    uint16_t bottom;
-} mgc_margin_region_t;
-
-typedef struct mgc_padding_region {
+typedef struct mgc_padding {
     uint8_t left;
     uint8_t right;
     uint8_t top;
     uint8_t bottom;
-} mgc_padding_region_t;
+} mgc_padding_t;
 
 typedef struct mgc_size {
     uint16_t width;

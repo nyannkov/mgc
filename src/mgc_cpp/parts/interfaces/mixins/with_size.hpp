@@ -8,7 +8,7 @@
 #define MGC_PARTS_INTERFACES_MIXINS_WITH_SIZE_HPP
 
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/parts/types/types.hpp"
+#include "mgc_cpp/parts/types/size.hpp"
 
 namespace mgc {
 namespace parts {
@@ -23,7 +23,8 @@ struct WithSize {
     }
 
     void set_size(mgc::parts::types::Size size) {
-        set_size(size.width, size.height);
+        auto s = size.to_c();
+        set_size(s.width, s.height);
     }
 
     mgc::parts::types::Size size() const {

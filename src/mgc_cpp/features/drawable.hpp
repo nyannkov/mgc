@@ -9,8 +9,8 @@
 
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/graphics/framebuffer.hpp"
+#include "mgc_cpp/graphics/draw_options.hpp"
 #include "mgc_cpp/math/vec2.hpp"
-#include "mgc_cpp/parts/types/types.hpp"
 
 namespace mgc {
 namespace features {
@@ -19,13 +19,13 @@ struct Drawable {
 
     virtual ~Drawable() = default;
 
-    virtual bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::parts::types::DrawOptions *options) const = 0;
+    virtual bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const = 0;
 
     bool draw(mgc::graphics::Framebuffer &fb) const {
         return draw(fb, mgc::math::Vec2i(0, 0), nullptr);
     }
 
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::parts::types::DrawOptions &options) const {
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::graphics::DrawOptions &options) const {
         return draw(fb, mgc::math::Vec2i(0, 0), &options);
     }
 };

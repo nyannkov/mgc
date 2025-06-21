@@ -29,6 +29,11 @@ struct Renderer {
 
     ~Renderer() = default;
 
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
+    Renderer(Renderer&&) = default;
+    Renderer& operator=(Renderer&&) = default;
+
     void set_follower(const mgc::camera::ICameraFollower* follower) {
         follower_ = follower;
     }

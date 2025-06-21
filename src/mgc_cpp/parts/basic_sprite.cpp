@@ -11,11 +11,12 @@ namespace mgc {
 namespace parts {
 
 using mgc::math::Vec2i;
-using mgc::parts::types::ParallaxFactor;
-using mgc::parts::types::DrawOptions;
+using mgc::parts::types::TrimRegion;
 using mgc::parts::assets::Tileset;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
+using mgc::graphics::DrawOptions;
+using mgc::graphics::ParallaxFactor;
 
 // [feature] Resettable
 void mgc::parts::BasicSprite::reset() {
@@ -43,11 +44,12 @@ void mgc::parts::BasicSprite::set_position(const Vec2i& position) {
 
 // [feature] HasParallaxFactor
 void mgc::parts::BasicSprite::set_parallax_factor(const ParallaxFactor &factor) {
-    sprite_set_parallax_factor(&sprite_, factor.f_x, factor.f_y);
+    auto f = factor.to_c();
+    sprite_set_parallax_factor(&sprite_, f.f_x, f.f_y);
 }
 
 ParallaxFactor mgc::parts::BasicSprite::parallax_factor() const {
-    return sprite_get_parallax_factor(&sprite_);
+    return ParallaxFactor(sprite_get_parallax_factor(&sprite_));
 }
 
 // [feature] Visible
@@ -91,12 +93,13 @@ size_t mgc::parts::BasicSprite::tile_index_impl() const {
 }
 
 // [impl] WithTrimRegion
-void mgc::parts::BasicSprite::set_trim_region_impl(mgc::parts::types::TrimRegion region) {
-    sprite_set_trim(&sprite_, region.left, region.right, region.top, region.bottom);
+void mgc::parts::BasicSprite::set_trim_region_impl(TrimRegion region) {
+    auto trim = region.to_c();
+    sprite_set_trim(&sprite_, trim.left, trim.right, trim.top, trim.bottom);
 }
 
-mgc::parts::types::TrimRegion mgc::parts::BasicSprite::trim_region_impl() const {
-    return sprite_get_trim_region(&sprite_);
+TrimRegion mgc::parts::BasicSprite::trim_region_impl() const {
+    return TrimRegion(sprite_get_trim_region(&sprite_));
 }
 
 void mgc::parts::BasicSprite::clear_trim_region_impl() {
@@ -104,13 +107,13 @@ void mgc::parts::BasicSprite::clear_trim_region_impl() {
 }
 
 bool mgc::parts::BasicSprite::has_trim_region_impl() const {
-    mgc::parts::types::TrimRegion region = 
-        sprite_get_trim_region(&sprite_);
+    auto trim = 
+        TrimRegion(sprite_get_trim_region(&sprite_));
     return (
-        (region.left != 0) ||
-        (region.right != 0 ) ||
-        (region.top != 0 ) ||
-        (region.bottom != 0 )
+        (trim.left != 0) ||
+        (trim.right != 0 ) ||
+        (trim.top != 0 ) ||
+        (trim.bottom != 0 )
     );
 }
 

@@ -8,7 +8,7 @@
 #define MGC_PARTS_INTERFACES_MIXINS_WITH_TRIM_REGION_HPP
 
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/parts/types/types.hpp"
+#include "mgc_cpp/parts/types/trim_region.hpp"
 
 namespace mgc {
 namespace parts {

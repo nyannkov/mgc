@@ -36,6 +36,10 @@ struct ActorImpl
 
     ActorImpl() { reset(); }
     ~ActorImpl() = default;
+    ActorImpl(const ActorImpl&) = delete;
+    ActorImpl& operator=(const ActorImpl&) = delete;
+    ActorImpl(ActorImpl&&) = default;
+    ActorImpl& operator=(ActorImpl&&) = default;
 
     const SpriteT& sprite() const { return sprite_; }
 

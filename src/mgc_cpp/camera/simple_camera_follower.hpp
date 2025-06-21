@@ -23,6 +23,11 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
     SimpleCameraFollower() { reset(); }
     ~SimpleCameraFollower() = default;
 
+    SimpleCameraFollower(const SimpleCameraFollower&) = delete;
+    SimpleCameraFollower& operator=(const SimpleCameraFollower&) = delete;
+    SimpleCameraFollower(SimpleCameraFollower&&) = default;
+    SimpleCameraFollower& operator=(SimpleCameraFollower&&) = default;
+
     void set_target(const mgc::features::HasPosition<mgc::math::Vec2i>& target) {
         target_ = &target;
     }

@@ -15,10 +15,10 @@ void dialoguebox_init(mgc_dialoguebox_t *dialoguebox, mgc_id_t id, const mgc_fon
 
     dialoguebox->id = id;
 
-    dialoguebox->top_margin = 8;
-    dialoguebox->bottom_margin = 8;
-    dialoguebox->left_margin = 8;
-    dialoguebox->right_margin = 8;
+    dialoguebox->padding.top = 8;
+    dialoguebox->padding.bottom = 8;
+    dialoguebox->padding.left = 8;
+    dialoguebox->padding.right = 8;
 
     rect_init(&dialoguebox->bg_box, 0);
     rect_set_position(&dialoguebox->bg_box, 0, 0);
@@ -27,12 +27,12 @@ void dialoguebox_init(mgc_dialoguebox_t *dialoguebox, mgc_id_t id, const mgc_fon
     rect_set_height(&dialoguebox->bg_box, 16);
     rect_set_parallax_factor(&dialoguebox->bg_box, 0.0F, 0.0F);
 
-    text_width = dialoguebox->bg_box.width - (dialoguebox->left_margin+dialoguebox->right_margin);
-    text_height = dialoguebox->bg_box.height - (dialoguebox->top_margin+dialoguebox->bottom_margin);
+    text_width = dialoguebox->bg_box.width - (dialoguebox->padding.left+dialoguebox->padding.right);
+    text_height = dialoguebox->bg_box.height - (dialoguebox->padding.top+dialoguebox->padding.bottom);
     textblock_init(&dialoguebox->textblock, 0, font, fontsize2x);
     textblock_set_width(&dialoguebox->textblock, text_width);
     textblock_set_height(&dialoguebox->textblock, text_height);
-    textblock_set_position(&dialoguebox->textblock, dialoguebox->left_margin, dialoguebox->top_margin);
+    textblock_set_position(&dialoguebox->textblock, dialoguebox->padding.left, dialoguebox->padding.top);
     textblock_set_enable_back_color(&dialoguebox->textblock, false);
     textblock_set_parallax_factor(&dialoguebox->textblock, 0.0F, 0.0F);
 
@@ -69,7 +69,7 @@ void dialoguebox_set_width(mgc_dialoguebox_t *dialoguebox, uint16_t width) {
         width = 16;
     }
     rect_set_width(&dialoguebox->bg_box, width);
-    text_width = width - (dialoguebox->left_margin+dialoguebox->right_margin);
+    text_width = width - (dialoguebox->padding.left+dialoguebox->padding.right);
     textblock_set_width(&dialoguebox->textblock, text_width);
 }
 
@@ -83,7 +83,7 @@ void dialoguebox_set_height(mgc_dialoguebox_t *dialoguebox, uint16_t height) {
         height = 16;
     }
     rect_set_height(&dialoguebox->bg_box, height);
-    text_height = height - (dialoguebox->top_margin+dialoguebox->bottom_margin);
+    text_height = height - (dialoguebox->padding.top+dialoguebox->padding.bottom);
     textblock_set_height(&dialoguebox->textblock, text_height);
 }
 
@@ -94,21 +94,21 @@ void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, int16_t x, int16_t
         return;
     }
     rect_set_position(&dialoguebox->bg_box, x, y);
-    text_x = x + dialoguebox->left_margin;
-    text_y = y + dialoguebox->top_margin;
+    text_x = x + dialoguebox->padding.left;
+    text_y = y + dialoguebox->padding.top;
     textblock_set_position(&dialoguebox->textblock, text_x, text_y);
 }
 
-void dialoguebox_set_margin(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right) {
+void dialoguebox_set_padding(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right) {
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
 
-    dialoguebox->top_margin = top;
-    dialoguebox->bottom_margin = bottom;
-    dialoguebox->right_margin = right;
-    dialoguebox->left_margin = left;
+    dialoguebox->padding.top = top;
+    dialoguebox->padding.bottom = bottom;
+    dialoguebox->padding.right = right;
+    dialoguebox->padding.left = left;
 
     textblock_set_width(&dialoguebox->textblock, dialoguebox->bg_box.width - ((uint16_t)left+right));
     textblock_set_width(&dialoguebox->textblock, dialoguebox->bg_box.height- ((uint16_t)top+bottom));
@@ -215,8 +215,8 @@ void dialoguebox_adjust_height(mgc_dialoguebox_t *dialoguebox) {
         (dialoguebox->textblock.font->fbb_y*scale)
         * dialoguebox->textblock.scroll_line;
 
-    height = (uint16_t)dialoguebox->top_margin +
-             (uint16_t)dialoguebox->bottom_margin +
+    height = (uint16_t)dialoguebox->padding.top +
+             (uint16_t)dialoguebox->padding.bottom +
              text_height;
     textblock_set_height(&dialoguebox->textblock, text_height);
     rect_set_height(&dialoguebox->bg_box, height);

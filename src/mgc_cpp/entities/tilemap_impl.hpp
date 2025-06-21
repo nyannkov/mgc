@@ -29,6 +29,10 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
 
     TilemapImpl() { reset(); }
     ~TilemapImpl() = default;
+    TilemapImpl(const TilemapImpl&) = delete;
+    TilemapImpl& operator=(const TilemapImpl&) = delete;
+    TilemapImpl(TilemapImpl&&) = default;
+    TilemapImpl& operator=(TilemapImpl&&) = default;
 
     const TilegridT& tilegrid() const {
         return tilegrid_;

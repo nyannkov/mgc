@@ -11,12 +11,12 @@ namespace parts {
 
 using mgc::math::Vec2i;
 using mgc::parts::types::Size;
-using mgc::parts::types::ParallaxFactor;
-using mgc::parts::types::DrawOptions;
 using mgc::parts::assets::Font;
 using mgc::graphics::Color;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
+using mgc::graphics::DrawOptions;
+using mgc::graphics::ParallaxFactor;
 
 // [features] Resettable
 void mgc::parts::BasicLabel::reset() {
@@ -44,11 +44,12 @@ void mgc::parts::BasicLabel::set_position(const Vec2i& position) {
 
 // [features] HasParallaxFactor
 void mgc::parts::BasicLabel::set_parallax_factor(const ParallaxFactor &factor) {
-    label_set_parallax_factor(&label_, factor.f_x, factor.f_y);
+    auto f = factor.to_c();
+    label_set_parallax_factor(&label_, f.f_x, f.f_y);
 }
 
 ParallaxFactor mgc::parts::BasicLabel::parallax_factor() const {
-    return label_get_parallax_factor(&label_);
+    return ParallaxFactor(label_get_parallax_factor(&label_));
 }
 
 // [features] Visible
@@ -74,7 +75,7 @@ bool mgc::parts::BasicLabel::cell_draw(CellBuffer &cb, int16_t cell_x, int16_t c
 
 // [impl] WithSize
 Size mgc::parts::BasicLabel::size_impl() const {
-    return label_get_size(&label_);
+    return Size(label_get_size(&label_));
 }
 
 void mgc::parts::BasicLabel::set_size_impl(uint16_t width, uint16_t height) {

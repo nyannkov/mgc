@@ -6,7 +6,7 @@
  */
 #include "hitbox.h"
 
-void hitbox_init(mgc_hitbox_t *hitbox, mgc_id_t id, int8_t x0_ofs, int8_t y0_ofs, uint16_t width, uint16_t height) {
+void hitbox_init(mgc_hitbox_t *hitbox, mgc_id_t id, int16_t x0_ofs, int16_t y0_ofs, uint16_t width, uint16_t height) {
     if ( hitbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;

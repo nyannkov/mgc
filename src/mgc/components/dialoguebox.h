@@ -20,10 +20,7 @@ typedef struct mgc_dialoguebox {
     bool visible;
     mgc_rect_t bg_box;
     mgc_textblock_t textblock;
-    uint8_t top_margin;
-    uint8_t bottom_margin;
-    uint8_t right_margin;
-    uint8_t left_margin;
+    mgc_padding_t padding;
 } mgc_dialoguebox_t;
 
 void dialoguebox_init(mgc_dialoguebox_t *dialoguebox, mgc_id_t id, const mgc_font_t *font, bool fontsize2x);
@@ -32,7 +29,7 @@ void dialoguebox_set_visible(mgc_dialoguebox_t *dialoguebox, bool v);
 void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, int16_t x, int16_t y);
 void dialoguebox_set_width(mgc_dialoguebox_t *dialoguebox, uint16_t width);
 void dialoguebox_set_height(mgc_dialoguebox_t *dialoguebox, uint16_t height);
-void dialoguebox_set_margin(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right);
+void dialoguebox_set_padding(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right);
 void dialoguebox_set_fore_color(mgc_dialoguebox_t *dialoguebox, mgc_color_t fore_color);
 void dialoguebox_set_back_color(mgc_dialoguebox_t *dialoguebox, mgc_color_t back_color);
 void dialoguebox_set_cursor_speed(mgc_dialoguebox_t *dialoguebox, uint8_t cursor_speed);
@@ -169,15 +166,9 @@ uint8_t dialoguebox_get_scroll_line(const mgc_dialoguebox_t *dialoguebox) {
 }
 
 static inline
-mgc_margin_region_t dialoguebox_get_margin(const mgc_dialoguebox_t *dialoguebox) {
+mgc_padding_t dialoguebox_get_padding(const mgc_dialoguebox_t *dialoguebox) {
     MGC_ASSERT(dialoguebox != NULL, "Invalid handler");
-    mgc_margin_region_t region = {
-        dialoguebox->left_margin,
-        dialoguebox->right_margin,
-        dialoguebox->top_margin,
-        dialoguebox->bottom_margin
-    };
-    return region;
+    return dialoguebox->padding;
 }
 
 //////////////////////////////// Legacy ////////////////////////////////

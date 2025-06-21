@@ -10,14 +10,14 @@ namespace mgc {
 namespace parts {
 
 using mgc::math::Vec2i;
-using mgc::parts::types::ParallaxFactor;
-using mgc::parts::types::DrawOptions;
 using mgc::parts::types::Padding;
 using mgc::parts::types::Size;
 using mgc::parts::assets::Font;
 using mgc::graphics::Color;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
+using mgc::graphics::DrawOptions;
+using mgc::graphics::ParallaxFactor;
 
 
 // [feature] Resettable
@@ -46,11 +46,12 @@ void mgc::parts::BasicSelectbox::set_position(const Vec2i& position) {
 
 // [feature] HasParallaxFactor
 void mgc::parts::BasicSelectbox::set_parallax_factor(const ParallaxFactor &factor) {
-    selectbox_set_parallax_factor(&selectbox_, factor.f_x, factor.f_y);
+    auto f = factor.to_c();
+    selectbox_set_parallax_factor(&selectbox_, f.f_x, f.f_y);
 }
 
 ParallaxFactor mgc::parts::BasicSelectbox::parallax_factor() const {
-    return selectbox_get_parallax_factor(&selectbox_);
+    return ParallaxFactor(selectbox_get_parallax_factor(&selectbox_));
 }
 
 // [feature] ItemSelectable
@@ -125,7 +126,7 @@ bool mgc::parts::BasicSelectbox::cell_draw(CellBuffer &cb, int16_t cell_x, int16
 
 // [impl] WithSize
 Size mgc::parts::BasicSelectbox::size_impl() const {
-    return selectbox_get_size(&selectbox_);
+    return Size(selectbox_get_size(&selectbox_));
 }
 
 void mgc::parts::BasicSelectbox::set_size_impl(uint16_t width, uint16_t height) {
@@ -140,17 +141,18 @@ void mgc::parts::BasicSelectbox::adjust_size_to_fit() {
 
 // [impl] WithPadding
 void mgc::parts::BasicSelectbox::set_padding_impl(Padding padding) {
+    auto pad = padding.to_c();
     selectbox_set_padding(
             &selectbox_,
-            padding.top,
-            padding.bottom,
-            padding.left,
-            padding.right
+            pad.top,
+            pad.bottom,
+            pad.left,
+            pad.right
     );
 }
 
 Padding mgc::parts::BasicSelectbox::padding_impl() const {
-    return selectbox_get_padding(&selectbox_);
+    return Padding(selectbox_get_padding(&selectbox_));
 }
 
 // [impl] WithFont
@@ -191,6 +193,15 @@ void mgc::parts::BasicSelectbox::clear_items_impl() {
 
 size_t mgc::parts::BasicSelectbox::item_count_impl() const {
     return selectbox_get_item_count(&selectbox_);
+}
+
+// WithItems-related
+void mgc::parts::BasicSelectbox::set_item_spacing(uint8_t item_spacing) {
+    selectbox_set_item_spacing(&selectbox_, item_spacing);
+}
+
+uint8_t mgc::parts::BasicSelectbox::item_spacing() const {
+    return selectbox_get_item_spacing(&selectbox_);
 }
 
 }// namespace parts

@@ -8,7 +8,7 @@
 #define MGC_PARTS_INTERFACES_IDIALOGUEBOX_HPP
 
 #include "mixins/with_size.hpp"
-#include "mixins/with_margin.hpp"
+#include "mixins/with_padding.hpp"
 #include "mixins/with_font.hpp"
 #include "mixins/with_text.hpp"
 #include "mixins/with_auto_text_scroll.hpp"
@@ -20,7 +20,7 @@ namespace interfaces {
 
 template <typename Derived>
 struct IDialoguebox : mgc::parts::interfaces::mixins::WithSize<Derived>,
-                      mgc::parts::interfaces::mixins::WithMargin<Derived>,
+                      mgc::parts::interfaces::mixins::WithPadding<Derived>,
                       mgc::parts::interfaces::mixins::WithFont<Derived>,
                       mgc::parts::interfaces::mixins::WithText<Derived>,
                       mgc::parts::interfaces::mixins::WithAutoTextScroll<Derived>,

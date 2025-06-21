@@ -8,7 +8,7 @@
 #define MGC_PARTS_INTERFACES_MIXINS_WITH_PADDING_HPP
 
 #include "mgc_cpp/internal/common.hpp"
-#include "mgc_cpp/parts/types/types.hpp"
+#include "mgc_cpp/parts/types/padding.hpp"
 
 namespace mgc {
 namespace parts {

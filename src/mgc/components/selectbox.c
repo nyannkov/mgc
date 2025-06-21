@@ -25,7 +25,7 @@ void set_position_all(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
             item_height *= 2;
         }
         x_item = x + selectbox->padding.left;
-        y_item = y + selectbox->padding.top + (item_height + selectbox->line_spacing) * idx;
+        y_item = y + selectbox->padding.top + (item_height + selectbox->item_spacing) * idx;
         label_set_position(item, x_item, y_item);
         if ( idx == selectbox->selected_idx ) {
             label_set_position(
@@ -56,7 +56,7 @@ void selectbox_init(mgc_selectbox_t *selectbox, mgc_id_t id, const mgc_font_t *f
     selectbox->padding.right = 8;
 
     selectbox->left_cursor_margin = 4;
-    selectbox->line_spacing = 4;
+    selectbox->item_spacing = 4;
     selectbox->parallax_factor_x = 0.0F;
     selectbox->parallax_factor_y = 0.0F;
     selectbox->font = font;
@@ -162,7 +162,7 @@ void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     rect_set_height(
         &selectbox->bg_box,
         selectbox->padding.top + selectbox->padding.bottom + item_height * selectbox->item_count +
-        selectbox->line_spacing * (selectbox->item_count-1)
+        selectbox->item_spacing * (selectbox->item_count-1)
     );
 }
 
@@ -226,12 +226,12 @@ void selectbox_set_cursor_margin(mgc_selectbox_t *selectbox, uint8_t left) {
     selectbox->left_cursor_margin = left;
 }
 
-void selectbox_set_line_spacing(mgc_selectbox_t *selectbox, uint8_t line_spacing) {
+void selectbox_set_item_spacing(mgc_selectbox_t *selectbox, uint8_t item_spacing) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    selectbox->line_spacing = line_spacing;
+    selectbox->item_spacing = item_spacing;
 }
 
 void selectbox_set_cursor_text(mgc_selectbox_t *selectbox, const char *text) {
