@@ -10,6 +10,41 @@
 #include "emu2149.h"
 #include "Psgino.h"
 
+typedef int64_t           q_t;
+
+#define Q_VALUE           (16)
+#define Q_TO_F(q)         (float)((float)(q) / (1 << Q_VALUE))
+#define F_TO_Q(f)         (q_t)((f) * (1 << Q_VALUE) + 0.5f)
+#define MUL_Q(q1, q2)     (((q_t)(q1) * (q_t)(q2)) >> Q_VALUE)
+
+#ifndef MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA
+#define MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA           F_TO_Q(0.4f)
+#endif/*MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA*/
+
+
+#ifndef MGC_MML_PSG_RP2040_LPF_SHIFT_BIT
+#define MGC_MML_PSG_RP2040_LPF_SHIFT_BIT               (3)
+#endif/*MGC_MML_PSG_RP2040_LPF_SHIFT_BIT*/
+
+#ifndef MGC_MML_PSG_RP2040_EMULATOR_CLOCK
+#define MGC_MML_PSG_RP2040_EMULATOR_CLOCK              (2000000.0f)
+#endif/*MGC_MML_PSG_RP2040_EMULATOR_CLOCK*/
+
+#ifndef MGC_MML_PSG_RP2040_EMULATOR_RATE
+#define MGC_MML_PSG_RP2040_EMULATOR_RATE               (40000.0f)
+#endif/*MGC_MML_PSG_RP2040_EMULATOR_RATE*/
+
+#ifndef MGC_MML_PSG_RP2040_MML_PROC_RATE
+#define MGC_MML_PSG_RP2040_MML_PROC_RATE               (400.0f)
+#endif/*MGC_MML_PSG_RP2040_MML_PROC_RATE*/
+
+#define EMULATOR_CLOCK      MGC_MML_PSG_RP2040_EMULATOR_CLOCK
+#define EMULATOR_RATE       MGC_MML_PSG_RP2040_EMULATOR_RATE
+#define MML_PROC_RATE       MGC_MML_PSG_RP2040_MML_PROC_RATE
+#define LPF_DEFAULT_ALPHA   MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA
+#define LPF_SHIFT_BIT       MGC_MML_PSG_RP2040_LPF_SHIFT_BIT
+
+
 typedef struct mgc_mml_record_list {
     const mgc_mml_record_t *records;
     size_t record_count;
@@ -17,35 +52,18 @@ typedef struct mgc_mml_record_list {
 
 static PsginoZ psgino_z;
 static PSG* psg;
-static float prev_psg_output;
-static float psg_lpf_alpha;
+
+static q_t psg_lpf_alpha_q;
+static q_t psg_output_1_q;
+static q_t psg_output_2_q;
+
 static bool psg_lpf_enabled;
 static mgc_mml_record_list_t bgm_list, se_list;
 static void* context;
 static void (*cb_background_music)(uint8_t ch, int32_t param, void *ctx);
 static void (*cb_sound_effect)(uint8_t ch, int32_t param, void *ctx);
-static float master_volume;
+static q_t master_volume_q;
 
-#ifndef MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA
-#define MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA           (0.7F)
-#endif/*MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA*/
-
-#ifndef MGC_MML_PSG_RP2040_EMULATOR_CLOCK
-#define MGC_MML_PSG_RP2040_EMULATOR_CLOCK              (2000000.0F)
-#endif/*MGC_MML_PSG_RP2040_EMULATOR_CLOCK*/
-
-#ifndef MGC_MML_PSG_RP2040_EMULATOR_RATE
-#define MGC_MML_PSG_RP2040_EMULATOR_RATE               (40000.0F)
-#endif/*MGC_MML_PSG_RP2040_EMULATOR_RATE*/
-
-#ifndef MGC_MML_PSG_RP2040_MML_PROC_RATE
-#define MGC_MML_PSG_RP2040_MML_PROC_RATE               (400.0F)
-#endif/*MGC_MML_PSG_RP2040_MML_PROC_RATE*/
-
-#define EMULATOR_CLOCK      MGC_MML_PSG_RP2040_EMULATOR_CLOCK
-#define EMULATOR_RATE       MGC_MML_PSG_RP2040_EMULATOR_RATE
-#define MML_PROC_RATE       MGC_MML_PSG_RP2040_MML_PROC_RATE
-#define LPF_DEFAULT_ALPHA   MGC_MML_PSG_RP2040_DEFAULT_LPF_ALPHA
 
 static void psg_write(uint8_t addr, uint8_t data) {
 
@@ -77,9 +95,12 @@ void mml_psg_init(float mml_proc_rate, void *ctx) {
         mml_proc_rate = MML_PROC_RATE;
     }
 
-    master_volume = 1.0F;
-    psg_lpf_alpha = LPF_DEFAULT_ALPHA;
-    prev_psg_output = 0.0F;
+    master_volume_q = F_TO_Q(1.0f);
+    psg_lpf_enabled = true;
+    psg_lpf_alpha_q = LPF_DEFAULT_ALPHA;
+    psg_output_1_q = F_TO_Q(0.0f);
+    psg_output_2_q = F_TO_Q(0.0f);
+
     psg = PSG_new(EMULATOR_CLOCK, EMULATOR_RATE);
     psgino_z.Initialize(psg_write, EMULATOR_CLOCK, mml_proc_rate);
 
@@ -165,7 +186,13 @@ bool mml_psg_have_all_sound_effects_finished(void) {
 }
 
 void mml_psg_set_master_volume(float volume) {
-    // NOTE: Not supported.
+    if ( volume < 0.0F ) {
+        master_volume_q = F_TO_Q(0.0f);
+    } else if ( volume > 1.0F ) {
+        master_volume_q = F_TO_Q(1.0f);
+    } else {
+        master_volume_q = F_TO_Q(volume);
+    }
 }
 
 void mml_psg_set_background_music_volume(float volume) {
@@ -173,25 +200,19 @@ void mml_psg_set_background_music_volume(float volume) {
 }
 
 void mml_psg_set_sound_effect_volume(float volume) {
-    if ( volume < 0.0F ) {
-        master_volume = 0.0F;
-    } else if ( volume > 1.0F ) {
-        master_volume = 1.0F;
-    } else {
-        master_volume = volume;
-    }
+    // NOTE: Not supported.
 }
 
 float mml_psg_get_master_volume() {
-    return master_volume;
+    return Q_TO_F(master_volume_q);
 }
 
 float mml_psg_get_background_music_volume() {
-    return master_volume;
+    return Q_TO_F(master_volume_q);
 }
 
 float mml_psg_get_sound_effect_volume() {
-    return master_volume;
+    return Q_TO_F(master_volume_q);
 }
 
 void mml_psg_set_background_music_list(const mgc_mml_record_t *records, size_t count) {
@@ -219,12 +240,14 @@ void mml_psg_set_psg_lpf_enabled(bool enabled) {
 }
 
 void mml_psg_set_psg_lpf_alpha(float alpha) {
-    if ( alpha < 0.0F ) {
-        psg_lpf_alpha = 0.0F;
-    } else if ( alpha > 1.0F ) {
-        psg_lpf_alpha = 1.0F;
+    if ( alpha < 0.0f ) {
+        psg_lpf_alpha_q = F_TO_Q(0.0f);
+
+    } else if ( alpha > 1.0f ) {
+        psg_lpf_alpha_q = F_TO_Q(1.0f);
+
     } else {
-        psg_lpf_alpha = alpha;
+        psg_lpf_alpha_q = F_TO_Q(alpha);
     }
 }
 
@@ -238,20 +261,29 @@ void mml_psg_shift_pitch_by_degree(int16_t degree) {
 
 uint16_t mml_psg_local__proc_psg_emu(void) {
 
+    q_t output_q = 0;
     if( psg != nullptr ) {
-        float psg_output = (float)PSG_calc(psg);
+        q_t input_q = 0;
+        input_q = (q_t)((int32_t)PSG_calc(psg) << Q_VALUE);
+        input_q >>= LPF_SHIFT_BIT;
         if ( psg_lpf_enabled ) {
-            prev_psg_output = 
-                prev_psg_output + psg_lpf_alpha * ( psg_output - prev_psg_output );
+            q_t delta_1 = input_q - psg_output_1_q;
+            psg_output_1_q += MUL_Q(delta_1, psg_lpf_alpha_q);
+
+            q_t delta_2 = psg_output_1_q - psg_output_2_q;
+            psg_output_2_q += MUL_Q(delta_2, psg_lpf_alpha_q);
+
+            output_q = psg_output_2_q;
         } else {
-            prev_psg_output = psg_output;
+            output_q = input_q;
         }
     } else {
-        prev_psg_output = 0.0F;
+        output_q = 0;
     }
-    prev_psg_output *= master_volume;
 
-    return (uint16_t)(prev_psg_output + 0.5F)>>8;
+    output_q = MUL_Q(output_q, master_volume_q);
+
+    return (uint16_t)(output_q >> Q_VALUE);
 }
 
 void mml_psg_local__proc_psg_mml(void) {
