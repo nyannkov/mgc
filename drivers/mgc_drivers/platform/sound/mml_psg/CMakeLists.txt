@@ -11,6 +11,29 @@ endif()
 
 add_library(mgc_sound_mml_psg STATIC ${MML_PSG_SRC})
 
+
+set(MGC_MML_PSG_RP2040_ALARM_NUM "" CACHE STRING "Override: Alarm number for MML PSG")
+set(MGC_MML_PSG_RP2040_ALARM_IRQ_PRI "" CACHE STRING "Override: Alarm IRQ priority")
+set(MGC_MML_PSG_RP2040_PWM_IRQ_PRI "" CACHE STRING "Override: PWM IRQ priority")
+set(MGC_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT "" CACHE STRING "Override: GPIO pin for PSG output")
+
+if(NOT "${MGC_MML_PSG_RP2040_ALARM_NUM}" STREQUAL "")
+	target_compile_definitions(mgc_drivers_mml_psg PUBLIC
+		MGC_DRIVERS_MML_PSG_RP2040_ALARM_NUM=${MGC_MML_PSG_RP2040_ALARM_NUM})
+endif()
+if(NOT "${MGC_MML_PSG_RP2040_ALARM_IRQ_PRI}" STREQUAL "")
+	target_compile_definitions(mgc_drivers_mml_psg PUBLIC
+		MGC_DRIVERS_MML_PSG_RP2040_ALARM_IRQ_PRI=${MGC_MML_PSG_RP2040_ALARM_IRQ_PRI})
+endif()
+if(NOT "${MGC_MML_PSG_RP2040_PWM_IRQ_PRI}" STREQUAL "")
+	target_compile_definitions(mgc_drivers_mml_psg PUBLIC
+		MGC_DRIVERS_MML_PSG_RP2040_PWM_IRQ_PRI=${MGC_MML_PSG_RP2040_PWM_IRQ_PRI})
+endif()
+if(NOT "${MGC_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT}" STREQUAL "")
+	target_compile_definitions(mgc_drivers_mml_psg PUBLIC
+		MGC_DRIVERS_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT=${MGC_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT})
+endif()
+
 target_include_directories(mgc_sound_mml_psg PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${MGC_SRC_DIR}

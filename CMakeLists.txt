@@ -25,7 +25,7 @@ set(MGC_EXTERNAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external")
 option(MGC_USE_RP2040 "Enable RP2040 platform support" ON)
 
 if(MGC_USE_RP2040)
-	# Set and import pico-sdk if RP2040 is used
+    # Set and import pico-sdk if RP2040 is used
     set(PICO_SDK_PATH "$ENV{PICO_SDK_PATH}" CACHE PATH "Path to pico-sdk")
     include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
     pico_sdk_init()

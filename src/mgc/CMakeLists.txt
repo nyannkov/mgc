@@ -27,9 +27,12 @@ if(MGC_COLOR_NOSWAP)
     target_compile_definitions(mgc_c PUBLIC MGC_PIXELBUF_NOSWAP)
 endif()
 
-set(MGC_DRAW_BUFFER_DIRECTION 1 CACHE STRING "0 for vertical (Y) order, non-zero for horizontal (X) order")
-target_compile_definitions(mgc_c PUBLIC MGC_PIXELBUF_ORDER=${MGC_DRAW_BUFFER_DIRECTION})
-
+set(MGC_DRAW_BUFFER_DIRECTION "" CACHE STRING "Override: 0 for vertical (Y) order, non-zero for horizontal (X) order")
+if(NOT "${MGC_DRAW_BUFFER_DIRECTION}" STREQUAL "")
+    target_compile_definitions(mgc_c PUBLIC
+        MGC_PIXELBUF_ORDER=${MGC_DRAW_BUFFER_DIRECTION}
+    )
+endif()
 
 target_include_directories(mgc_c PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../
