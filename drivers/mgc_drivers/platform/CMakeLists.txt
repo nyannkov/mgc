@@ -1,7 +1,7 @@
 
 if (MGC_ENABLE_DISPLAY)
-	if(MGC_DISPLAY_DEVICE STREQUAL "ST7789")
-		add_subdirectory(display/ST7789)
+	if(MGC_DISPLAY_DEVICE STREQUAL "st7789")
+		add_subdirectory(display/st7789)
         target_link_libraries(mgc_drivers INTERFACE mgc_display_st7789)
 	else()
 		message(FATAL_ERROR "Unknown display device: ${MGC_DISPLAY_DEVICE}")

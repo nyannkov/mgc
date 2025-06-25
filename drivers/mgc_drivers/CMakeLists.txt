@@ -9,8 +9,8 @@ if(MGC_USE_RP2040)
 endif()
 
 # === Device Selection with GUI-friendly STRINGS ===
-set(MGC_DISPLAY_DEVICE "ST7789" CACHE STRING "Display device to use")
-set_property(CACHE MGC_DISPLAY_DEVICE PROPERTY STRINGS "ST7789")
+set(MGC_DISPLAY_DEVICE "st7789" CACHE STRING "Display device to use")
+set_property(CACHE MGC_DISPLAY_DEVICE PROPERTY STRINGS "st7789")
 
 set(MGC_INPUT_DEVICE "digital_gamepad" CACHE STRING "Input device to use")
 set_property(CACHE MGC_INPUT_DEVICE PROPERTY STRINGS "digital_gamepad")

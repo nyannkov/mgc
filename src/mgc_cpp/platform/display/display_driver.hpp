@@ -36,6 +36,10 @@ struct DisplayDriver {
         static_cast<Derived*>(this)->transfer_region_impl(buffer, len, x0, y0, x1, y1);
     }
 
+    void transfer_full_region(uint8_t *buffer, size_t len) {
+        static_cast<Derived*>(this)->transfer_full_region_impl(buffer, len);
+    }
+
 protected:
     DisplayDriver() = default;
 };

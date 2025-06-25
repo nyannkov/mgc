@@ -53,14 +53,20 @@ struct Renderer {
                 drawables[index]->draw(fb, cam_pos, nullptr);
             }
         }
-        driver_.transfer_region(
-                    fb.data_bytes(),
-                    fb.size(),
-                    0,
-                    0,
-                    fb.width() - 1,
-                    fb.height() -1
-        );
+        if ( ( driver_.width() == fb.width() ) &&
+             ( driver_.height() == fb.height() )
+        ) {
+            driver_.transfer_full_region(fb.data_bytes(), fb.size());
+        } else {
+            driver_.transfer_region(
+                        fb.data_bytes(),
+                        fb.size(),
+                        0,
+                        0,
+                        fb.width() - 1,
+                        fb.height() -1
+            );
+        }
 
         if ( buffer_clear ) {
             fb.set_back_color(back_color_);
@@ -69,14 +75,20 @@ struct Renderer {
     }
 
     void render(mgc::graphics::Framebuffer& fb, bool buffer_clear = true) {
-        driver_.transfer_region(
-                    fb.data_bytes(),
-                    fb.size(),
-                    0,
-                    0,
-                    fb.width() - 1,
-                    fb.height() -1
-        );
+        if ( ( driver_.width() == fb.width() ) &&
+             ( driver_.height() == fb.height() )
+        ) {
+            driver_.transfer_full_region(fb.data_bytes(), fb.size());
+        } else {
+            driver_.transfer_region(
+                        fb.data_bytes(),
+                        fb.size(),
+                        0,
+                        0,
+                        fb.width() - 1,
+                        fb.height() -1
+            );
+        }
         if ( buffer_clear ) {
             fb.set_back_color(back_color_);
             fb.clear();
