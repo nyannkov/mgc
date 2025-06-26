@@ -22,15 +22,15 @@ set(MGC_C_SOURCES
 add_library(mgc_c STATIC ${MGC_C_SOURCES})
 
 
-option(MGC_COLOR_NOSWAP "Do not swap byte order when storing 16-bit color data" OFF)
-if(MGC_COLOR_NOSWAP)
+option(MGC_PIXELBUF_NOSWAP "Do not swap byte order when storing 16-bit color data" OFF)
+if(MGC_PIXELBUF_NOSWAP)
     target_compile_definitions(mgc_c PUBLIC MGC_PIXELBUF_NOSWAP)
 endif()
 
-set(MGC_DRAW_BUFFER_DIRECTION "" CACHE STRING "Override: 0 for vertical (Y) order, non-zero for horizontal (X) order")
-if(NOT "${MGC_DRAW_BUFFER_DIRECTION}" STREQUAL "")
+set(MGC_PIXELBUF_ORDER "" CACHE STRING "Override: 0 for vertical (Y) order, non-zero for horizontal (X) order")
+if(NOT "${MGC_PIXELBUF_ORDER}" STREQUAL "")
     target_compile_definitions(mgc_c PUBLIC
-        MGC_PIXELBUF_ORDER=${MGC_DRAW_BUFFER_DIRECTION}
+        MGC_PIXELBUF_ORDER=${MGC_PIXELBUF_ORDER}
     )
 endif()
 

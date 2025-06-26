@@ -1,20 +1,21 @@
+/*
+ * MIT License
+ * (https://opensource.org/license/mit/)
+ *
+ * Copyright (c) 2025 nyannkov
+ */
 #include "st7789.h"
 #include "ports/st7789_port.h"
 
 #define LCD_WIDTH                   MGC_DRIVERS_ST7789_WIDTH
 #define LCD_HEIGHT                  MGC_DRIVERS_ST7789_HEIGHT
 
-#define LCD_RST_PIN                 MGC_DRIVERS_ST7789_PORT__LCD_RST_PIN
-#define LCD_DC_PIN                  MGC_DRIVERS_ST7789_PORT__LCD_DC_PIN
-#define LCD_BL_PIN                  MGC_DRIVERS_ST7789_PORT__LCD_BL_PIN
-#define LCD_CS_PIN                  MGC_DRIVERS_ST7789_PORT__LCD_CS_PIN
-
 #define gpio_output_init            st7789_port__gpio_output_init
 #define gpio_write                  st7789_port__gpio_write
 #define spi_init                    st7789_port__spi_init
 #define spi_transfer_blocking       st7789_port__spi_transfer_blocking
 #define spi_transfer_async          st7789_port__spi_transfer_async
-#define spi_get_transfer_state      st7789_port__spi_get_transfer_state
+#define is_busy                     st7789_port__is_busy
 #define sleep_ms                    st7789_port__sleep_ms
 
 #define ST7789_COMMAND_SLPIN   (0x10)   // Sleep In
@@ -107,72 +108,100 @@ static void init_st7789_registers(st7789_registers_t *regs) {
 }
 
 static inline void transfer_command(uint8_t value) {
-    gpio_write(LCD_DC_PIN, false);
-    gpio_write(LCD_CS_PIN, false);
-    spi_transfer_blocking(&value, 1);
-    gpio_write(LCD_CS_PIN, true);
+    gpio_write(ST7789_PORT__DC, false);
+    spi_transfer_blocking(&value, 1, false);
 }
 
-static inline void transfer_data8(uint8_t value) {
-    gpio_write(LCD_DC_PIN, true);
-    gpio_write(LCD_CS_PIN, false);
-    spi_transfer_blocking(&value, 1);
-    gpio_write(LCD_CS_PIN, true);
+static inline void transfer_data8(uint8_t value, bool cs_hold) {
+    gpio_write(ST7789_PORT__DC, true);
+    spi_transfer_blocking(&value, 1, cs_hold);
 }
 
 static inline void set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
     transfer_command(ST7789_COMMAND_CASET);
-    transfer_data8((x0>>8)&0xFF);
-    transfer_data8((x0>>0)&0xFF);
-    transfer_data8((x1>>8)&0xFF);
-    transfer_data8((x1>>0)&0xFF);
+    transfer_data8((x0>>8)&0xFF, true);
+    transfer_data8((x0>>0)&0xFF, true);
+    transfer_data8((x1>>8)&0xFF, true);
+    transfer_data8((x1>>0)&0xFF, false);
 
     transfer_command(ST7789_COMMAND_RASET);
-    transfer_data8((y0>>8)&0xFF);
-    transfer_data8((y0>>0)&0xFF);
-    transfer_data8((y1>>8)&0xFF);
-    transfer_data8((y1>>0)&0xFF);
+    transfer_data8((y0>>8)&0xFF, true);
+    transfer_data8((y0>>0)&0xFF, true);
+    transfer_data8((y1>>8)&0xFF, true);
+    transfer_data8((y1>>0)&0xFF, false);
 
     transfer_command(ST7789_COMMAND_RAMWR);
 }
 
-void st7789_init(uint32_t clock_rate) {
+MGC_WEAK void st7789_init(uint32_t clock_rate) {
 
     init_st7789_registers(&st7789_regs);
 
     spi_init(clock_rate);
 
-    gpio_output_init(LCD_RST_PIN, true);
-    gpio_output_init(LCD_DC_PIN, false);
-    gpio_output_init(LCD_BL_PIN, true);
-    gpio_output_init(LCD_CS_PIN, true);
+    gpio_output_init(ST7789_PORT__RST, true);
+    gpio_output_init(ST7789_PORT__DC, false);
+    gpio_output_init(ST7789_PORT__BL, true);
 
     // INVON
     transfer_command(ST7789_COMMAND_INVON);
 
     // MADCTRL
     transfer_command(ST7789_COMMAND_MADCTL);
-    transfer_data8(st7789_regs.MADCTRL);
+    transfer_data8(st7789_regs.MADCTRL, false);
 
     // COLMOD
     transfer_command(ST7789_COMMAND_COLMOD);
-    transfer_data8(st7789_regs.COLMOD);
+    transfer_data8(st7789_regs.COLMOD, false);
 
     // SLPOUT
     transfer_command(ST7789_COMMAND_SLPOUT);
+
+    // Clear GRAM
+    set_window(0, 0, MGC_DRIVERS_ST7789_WIDTH - 1, MGC_DRIVERS_ST7789_HEIGHT - 1);
+    for (size_t i = 0; i < sizeof(uint16_t)*MGC_DRIVERS_ST7789_WIDTH*MGC_DRIVERS_ST7789_HEIGHT-1; i++) {
+        transfer_data8(0, true);
+    }
+    transfer_data8(0, false);
+
+    // DISON
     transfer_command(ST7789_COMMAND_DISPON);
 }
 
 
 void st7789_reset(void) {
 
-    gpio_write(LCD_RST_PIN, false);
+    gpio_write(ST7789_PORT__RST, false);
     sleep_ms(100);
-    gpio_write(LCD_RST_PIN, true);
+    gpio_write(ST7789_PORT__RST, true);
     sleep_ms(100);
 }
 
-int st7789_transfer_region_blocking_rgb565(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+void st7789_display_on(void) {
+    transfer_command(ST7789_COMMAND_DISPON);
+}
+
+void st7789_display_off(void) {
+    transfer_command(ST7789_COMMAND_DISPOFF);
+}
+
+void st7789_inversion_on(void) {
+    transfer_command(ST7789_COMMAND_INVON);
+}
+
+void st7789_inversion_off(void) {
+    transfer_command(ST7789_COMMAND_INVOFF);
+}
+
+void st7789_sleep_out(void) {
+    transfer_command(ST7789_COMMAND_SLPOUT);
+}
+
+void st7789_sleep_in(void) {
+    transfer_command(ST7789_COMMAND_SLPIN);
+}
+
+bool st7789_transfer_region_blocking_rgb565(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
     (void)len;
 
     size_t dx, dy, count;
@@ -180,30 +209,46 @@ int st7789_transfer_region_blocking_rgb565(uint8_t *buffer, size_t len, uint16_t
     dy = y1 - y0 + 1;
     count = dx * sizeof(uint16_t); 
     const uint16_t *image = (mgc_color_t*)buffer;
+    size_t remain_lines = dy - 1;
 
     set_window(x0, y0, x1, y1);
-    gpio_write(LCD_DC_PIN, true);
-    gpio_write(LCD_CS_PIN, false);
-    for (size_t j = 0; j < dy; j++ ) {
-        spi_transfer_blocking((uint8_t*)&image[j * dx], count);
+    gpio_write(ST7789_PORT__DC, true);
+    for (size_t j = 0; j < dy; j++, remain_lines-- ) {
+        spi_transfer_blocking((uint8_t*)&image[j * dx], count, remain_lines != 0 );
     }
-    gpio_write(LCD_CS_PIN, true);
 
-    return 0;
+    return true;
 }
 
-int st7789_transfer_full_region_blocking_rgb565(uint8_t *buffer, size_t len) {
+bool st7789_transfer_full_region_blocking_rgb565(uint8_t *buffer, size_t len) {
 
     if ( ( LCD_WIDTH * LCD_HEIGHT * sizeof(uint16_t) ) != len ) {
-        return -1;
+        return false;
     }
 
     set_window(0, 0, LCD_WIDTH - 1, LCD_HEIGHT - 1);
-    gpio_write(LCD_DC_PIN, true);
-    gpio_write(LCD_CS_PIN, false);
-    spi_transfer_blocking(buffer, len);
-    gpio_write(LCD_CS_PIN, true);
+    gpio_write(ST7789_PORT__DC, true);
+    spi_transfer_blocking(buffer, len, false);
 
-    return 0;
+    return true;
+}
+
+bool st7789_transfer_full_region_async_rgb565(uint8_t *buffer, size_t len) {
+
+    while ( is_busy() ) { }
+
+    if ( ( LCD_WIDTH * LCD_HEIGHT * sizeof(uint16_t) ) != len ) {
+        return false;
+    }
+
+    set_window(0, 0, LCD_WIDTH - 1, LCD_HEIGHT - 1);
+    gpio_write(ST7789_PORT__DC, true);
+    spi_transfer_async(buffer, len);
+
+    return true;
+}
+
+bool st7789_is_busy(void) {
+    return is_busy();
 }
 

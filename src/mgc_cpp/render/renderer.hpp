@@ -56,9 +56,9 @@ struct Renderer {
         if ( ( driver_.width() == fb.width() ) &&
              ( driver_.height() == fb.height() )
         ) {
-            driver_.transfer_full_region(fb.data_bytes(), fb.size());
+            driver_.transfer_full_region_blocking(fb.data_bytes(), fb.size());
         } else {
-            driver_.transfer_region(
+            driver_.transfer_region_blocking(
                         fb.data_bytes(),
                         fb.size(),
                         0,
@@ -78,9 +78,9 @@ struct Renderer {
         if ( ( driver_.width() == fb.width() ) &&
              ( driver_.height() == fb.height() )
         ) {
-            driver_.transfer_full_region(fb.data_bytes(), fb.size());
+            driver_.transfer_full_region_blocking(fb.data_bytes(), fb.size());
         } else {
-            driver_.transfer_region(
+            driver_.transfer_region_blocking(
                         fb.data_bytes(),
                         fb.size(),
                         0,
@@ -89,10 +89,50 @@ struct Renderer {
                         fb.height() -1
             );
         }
+
         if ( buffer_clear ) {
             fb.set_back_color(back_color_);
             fb.clear();
         }
+    }
+
+	/**
+	 * Renders and starts asynchronous transfer of the framebuffer.
+	 *
+	 * Using a single shared framebuffer (for both draw and transfer) is unsafe
+	 * if a previous transfer is still in progress.
+	 *
+	 * This is experimental and may change.
+	 */
+    void render_async(mgc::graphics::Framebuffer& fb, const mgc::features::Drawable** drawables, size_t drawable_count) {
+        if ( !drawables ) {
+            return;
+        }
+        if ( ( driver_.width() != fb.width() ) ||
+             ( driver_.height() != fb.height() )
+        ) {
+            return;
+        }
+
+        auto cam_pos = this->camera_position();
+
+        for ( size_t index = 0; index < drawable_count; index++ ) {
+            if ( drawables[index] ) {
+                drawables[index]->draw(fb, cam_pos, nullptr);
+            }
+        }
+
+        driver_.transfer_full_region_async(fb.data_bytes(), fb.size());
+    }
+
+    void render_async(mgc::graphics::Framebuffer& fb) {
+        if ( ( driver_.width() != fb.width() ) ||
+             ( driver_.height() != fb.height() )
+        ) {
+            return;
+        }
+
+        driver_.transfer_full_region_async(fb.data_bytes(), fb.size());
     }
 
     void render(mgc::graphics::CellBuffer& cb, const mgc::features::CellDrawable** drawables, size_t drawable_count) {
@@ -112,7 +152,7 @@ struct Renderer {
                         drawables[index]->cell_draw(cb, x, y, cam_pos, nullptr);
                     }
                 }
-                driver_.transfer_region(
+                driver_.transfer_region_blocking(
                             cb.data_bytes(),
                             cb.size(),
                             x,

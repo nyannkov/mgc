@@ -33,12 +33,44 @@ struct ST7789 : mgc::platform::display::DisplayDriver<ST7789> {
         return MGC_DRIVERS_ST7789_HEIGHT;
     }
 
-    void transfer_region_impl(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+    void transfer_region_blocking_impl(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
         st7789_transfer_region_blocking_rgb565(buffer, len, x0, y0, x1, y1);
     }
 
-    void transfer_full_region_impl(uint8_t *buffer, size_t len) {
+    void transfer_full_region_blocking_impl(uint8_t *buffer, size_t len) {
         st7789_transfer_full_region_blocking_rgb565(buffer, len);
+    }
+
+    void transfer_full_region_async_impl(uint8_t *buffer, size_t len) {
+        st7789_transfer_full_region_async_rgb565(buffer, len);
+    }
+
+    bool is_busy_impl() const {
+        return st7789_is_busy();
+    }
+
+    void display_on() {
+        st7789_display_on();
+    }
+
+    void display_off() {
+        st7789_display_off();
+    }
+
+    void inversion_on() {
+        st7789_inversion_on();
+    }
+
+    void inversion_off() {
+        st7789_inversion_off();
+    }
+
+    void sleep_in() {
+        st7789_sleep_in();
+    }
+
+    void sleep_out() {
+        st7789_sleep_out();
     }
 };
 
