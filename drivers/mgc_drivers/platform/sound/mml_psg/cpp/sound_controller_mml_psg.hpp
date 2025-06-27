@@ -27,6 +27,10 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
 
     MmlPsgSoundController() {}
     ~MmlPsgSoundController() = default;
+    MmlPsgSoundController(const MmlPsgSoundController&) = delete;
+    MmlPsgSoundController& operator=(const MmlPsgSoundController&) = delete;
+    MmlPsgSoundController(MmlPsgSoundController&&) = default;
+    MmlPsgSoundController& operator=(MmlPsgSoundController&&) = default;
 
     void on_background_music_callback(uint8_t ch, int32_t param) {
         if (listener_) {
@@ -73,7 +77,7 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
 
     void set_speed_factor(float factor) {
         
-        mml_psg_set_speed_factor(static_cast<uint16_t>(factor)*100);
+        mml_psg_set_speed_factor(factor);
     }
 
     void shift_pitch_by_degree(int16_t degree) {

@@ -114,7 +114,6 @@ struct CollisionDetectorBoxToMap {
             if ( !h.enabled ) {
                 continue;
             }
-
             ql_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.offset.x - map.position().x);
             qr_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.offset.x + h.size.width() - 1 - map.position().x);
             qt_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.offset.y - map.position().y);
@@ -137,10 +136,12 @@ struct CollisionDetectorBoxToMap {
                 }
             }
 
-            mgc::math::Vec2i pushback = calc_wall_pushback(obj, h, map, push_dir);
-            const mgc::collision::MapPushbackInfo info = { h, pushback };
-            obj.handle_map_pushback_result(obj, map, info);
-            map.handle_map_pushback_result(obj, map, info);
+            if ( hit_count_ > 0 ) {
+                mgc::math::Vec2i pushback = calc_wall_pushback(obj, h, map, push_dir);
+                const mgc::collision::MapPushbackInfo info = { h, pushback };
+                obj.handle_map_pushback_result(obj, map, info);
+                map.handle_map_pushback_result(obj, map, info);
+            }
         }
     }
 
@@ -289,10 +290,10 @@ private:
             } else {
                 switch (push_dir) {
                 case CornerPushDirection::PreferX:
-                    p_x = 0;
+                    p_y = 0;
                     break;
                 case CornerPushDirection::PreferY:
-                    p_y = 0;
+                    p_x = 0;
                     break;
                 default:
                     break;

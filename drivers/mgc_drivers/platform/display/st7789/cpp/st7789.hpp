@@ -17,6 +17,13 @@ namespace display {
 
 struct ST7789 : mgc::platform::display::DisplayDriver<ST7789> {
 
+    ST7789() = default;
+
+    ST7789(const ST7789&) = delete;
+    ST7789& operator=(const ST7789&) = delete;
+    ST7789(ST7789&&) = default;
+    ST7789& operator=(ST7789&&) = default;
+
     void init_impl(uint32_t clock_rate) {
         st7789_init(clock_rate);
     }

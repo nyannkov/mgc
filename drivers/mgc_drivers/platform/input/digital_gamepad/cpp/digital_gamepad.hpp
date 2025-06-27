@@ -46,6 +46,10 @@ struct DigitalGamepad : mgc::platform::input::IButton {
             state_table_[i] = MGC_DIGITAL_GAMEPAD_INIT_STATE(&config_table_[i]);
         }
     }
+    DigitalGamepad(const DigitalGamepad&) = delete;
+    DigitalGamepad& operator=(const DigitalGamepad&) = delete;
+    DigitalGamepad(DigitalGamepad&&) = default;
+    DigitalGamepad& operator=(DigitalGamepad&&) = default;
 
     void init() {
         digital_gamepad_init(&gamepad_, state_table_, NumKeys);

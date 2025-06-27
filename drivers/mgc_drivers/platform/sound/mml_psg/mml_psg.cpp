@@ -102,6 +102,7 @@ void mml_psg_init(float mml_proc_rate, void *ctx) {
     psg_output_2_q = F_TO_Q(0.0f);
 
     psg = PSG_new(EMULATOR_CLOCK, EMULATOR_RATE);
+    PSG_reset(psg);
     psgino_z.Initialize(psg_write, EMULATOR_CLOCK, mml_proc_rate);
 
     mml_psg_port__init(EMULATOR_RATE, mml_proc_rate);
@@ -252,7 +253,13 @@ void mml_psg_set_psg_lpf_alpha(float alpha) {
 }
 
 void mml_psg_set_speed_factor(float factor) {
-    psgino_z.SetSpeedFactor(factor);
+    uint16_t factor_pct = 0;
+    if ( factor < 0.0f ) {
+        factor_pct = 0;
+    } else {
+        factor_pct = static_cast<uint16_t>(factor * 100 + 0.5f);
+    }
+    psgino_z.SetSpeedFactor(factor_pct);
 }
 
 void mml_psg_shift_pitch_by_degree(int16_t degree) {
@@ -264,7 +271,7 @@ uint16_t mml_psg_local__proc_psg_emu(void) {
     q_t output_q = 0;
     if( psg != nullptr ) {
         q_t input_q = 0;
-        input_q = (q_t)((int32_t)PSG_calc(psg) << Q_VALUE);
+        input_q = (q_t)(static_cast<int32_t>(PSG_calc(psg)) << Q_VALUE);
         input_q >>= LPF_SHIFT_BIT;
         if ( psg_lpf_enabled ) {
             q_t delta_1 = input_q - psg_output_1_q;
@@ -283,7 +290,7 @@ uint16_t mml_psg_local__proc_psg_emu(void) {
 
     output_q = MUL_Q(output_q, master_volume_q);
 
-    return (uint16_t)(output_q >> Q_VALUE);
+    return static_cast<uint16_t>(output_q >> Q_VALUE);
 }
 
 void mml_psg_local__proc_psg_mml(void) {

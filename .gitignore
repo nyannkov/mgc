@@ -1,6 +1,8 @@
 # Directory
-**/build/
-assets/
+build/
+generated/
+.venv/
+/assets/
 
 # Prerequisites
 *.d

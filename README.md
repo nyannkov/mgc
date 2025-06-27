@@ -36,6 +36,7 @@ root/
 ├── src/        # Core library source files
 │   ├── mgc/        # C interface (platform-agnostic)
 │   └── mgc_cpp/    # C++ wrapper (type-safe, heapless)
+├── devtest/    # Experimental code and prototypes for internal development
 ├── drivers/    # Platform-specific drivers (display, input, sound, etc.)
 ├── external/   # External libraries and git submodules
 ├── scripts/    # Initialization and utility scripts, including setup and small tools
@@ -47,6 +48,14 @@ root/
 ```
 
 > When using `mgc_cpp`, you must also include `mgc/`, which contains the core functionality.
+
+### 🧪 `devtest/` – Developer Playground
+
+The `devtest/` directory contains experimental code, temporary tests, and prototypes used during development.  
+Unlike `test/`, which is for stable unit tests, this directory is intended for internal debugging and validation  
+of features that are still in progress or under consideration.
+
+Contents in this directory may break frequently and are not part of the public API.
 
 ---
 
