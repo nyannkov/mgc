@@ -62,7 +62,6 @@ root/
 
 - **Font format**: BDF (Bitmap Distribution Format)
 - **Maximum font height**: 16 pixels
-- Fonts are converted to C header files during build time
 
 ---
 
