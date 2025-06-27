@@ -1,6 +1,6 @@
 # Directory
 **/build/
-external/assets/
+assets/
 
 # Prerequisites
 *.d
