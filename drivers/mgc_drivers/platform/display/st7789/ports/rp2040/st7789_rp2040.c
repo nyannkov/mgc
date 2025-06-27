@@ -90,7 +90,7 @@ static void dma_handler(void) {
     dma_hw->ints0 = 1u << dma_chan;
 }
 
-void st7789_port__spi_init(uint32_t clock_rate) {
+MGC_WEAK void st7789_port__spi_init(uint32_t clock_rate) {
 
     if ( clock_rate == 0 ) {
         clock_rate = LCD_SPI_CLOCK_RATE;

@@ -9,7 +9,6 @@
 
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/platform/display/display_driver.hpp"
-#include "mgc_cpp/graphics/framebuffer.hpp"
 #include "mgc_cpp/camera/icamera_follower.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/drawable.hpp"
