@@ -56,8 +56,6 @@ root/
 - **Color format**: RGB565
 - **Color mode**: Indexed color
 
-The framebuffer size must be a multiple of 16x16 pixels.
-
 ---
 
 ## 🔤 Font Support
