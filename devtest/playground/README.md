@@ -39,7 +39,7 @@ cd devtest/playground
 
 # Build
 ./build.sh
-
+```
 Copy ./build/playground.elf.uf2 to your Raspberry Pi Pico by dragging and dropping it into the USB mass storage device that appears when the Pico is in boot mode.
 
 ## MML (Music Macro Language)
