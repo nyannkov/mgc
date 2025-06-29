@@ -10,6 +10,9 @@ set(C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_map_elements.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_player.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_blue.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/talkscript/test_talkscript.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/font/k8x12.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_01.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_01_fg.c"
 )

@@ -93,6 +93,7 @@ void talkflow_set_callbacks(
 );
 void talkflow_begin(mgc_talkflow_t *talkflow, mgc_node_idx_t entry_label);
 enum mgc_talkflow_state talkflow_proc(mgc_talkflow_t *talkflow);
+void talkflow_reset_state(mgc_talkflow_t *talkflow);
 
 enum mgc_talkflow_state talkflow_get_state(const mgc_talkflow_t *talkflow);
 void talkflow_decide_choice(mgc_talkflow_t *talkflow, size_t item_tag);

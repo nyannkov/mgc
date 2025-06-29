@@ -7,6 +7,9 @@
 #include "resources/generated/map/map_01_fg.h"
 #include "resources/generated/tileset/tileset_map_elements.h"
 #include "resources/generated/tileset/tileset_player.h"
+#include "resources/generated/tileset/tileset_blue.h"
+#include "resources/generated/talkscript/test_talkscript.h"
+#include "resources/generated/font/k8x12.h"
 
 namespace {
 
@@ -14,14 +17,23 @@ using mgc::drivers::platform::display::ST7789;
 using mgc::drivers::platform::sound::MmlPsgSoundController;
 using mgc::camera::SimpleCameraFollower;
 using mgc::collision::CollisionDetectorBoxToMap;
+using mgc::collision::CollisionDetectorBoxToBox;
+using mgc::collision::Hitbox;
+using mgc::collision::HitboxOffset;
+using mgc::collision::HitboxSize;
 using CornerPushDirection = mgc::collision::CollisionDetectorBoxToMap::CornerPushDirection;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;;
 using mgc::platform::input::Key;
+using mgc::control::talkflow::DefaultTalkflowController;
+using mgc::control::talkflow::DialogueboxConfig;
+using mgc::control::talkflow::SelectboxConfig;
 
 ST7789 display_driver;
 MmlPsgSoundController sound_controller;
 auto& gamepad = mgc::drivers::platform::input::default_gamepad();
+
+DefaultTalkflowController talkflow_controller(gamepad);
 
 SimpleCameraFollower camera;
 mgc::render::Renderer<ST7789> renderer(display_driver, &camera);
@@ -36,6 +48,10 @@ size_t fb_index = 0;
 
 CellBuffer cell_buffer;
 
+// Rendering logic depending on buffer mode
+// - UseCellBuffer: simple cell-based rendering using 16x16 pixel grid.
+// - UseFrameBuffer: single framebuffer rendering (blocking)
+// - UseDoubleBuffer: double buffering with asynchronous rendering
 enum class RenderType {
     UseCellBuffer,
     UseFrameBuffer,
@@ -61,7 +77,7 @@ private:
     struct Listener : mgc::parts::IBasicTilegridListener {
         uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) override {
             if ( tile_id == 20 ) {
-                // flickering flame
+                // Flame flickering effect for tile_id 20 (used in tilemap listener)
                 tile_id += counter%3;
             }
             return tile_id;
@@ -85,11 +101,27 @@ struct Stage1_FG : mgc::entities::TilemapImpl<Stage1_FG> {
 };
 
 
+struct NPC1 : mgc::entities::ActorImpl<NPC1, 1> {
+
+    NPC1() {
+        sprite_.set_tileset(tileset_blue);
+        sprite_.set_tile_index(1);
+        // Setup basic hitbox for NPC1
+        hitboxes_[0].offset = mgc::collision::HitboxOffset(0, 0);
+        hitboxes_[0].size = mgc::collision::HitboxSize(16, 16);
+        hitboxes_[0].enabled = true;
+
+        this->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(11), MGC_CELL2PIXEL(38)));
+    }
+    ~NPC1() = default;
+};
+
+
 struct Player : mgc::entities::ActorImpl<Player, 1> {
 
-    Player() : vy_(0), is_jumped_(false) {
+    Player() : vy_(0), jumping_(false) {
         sprite_.set_tileset(tileset_player);
-        sprite_.set_tile_index(1);
+        sprite_.set_tile_index(3);
         hitboxes_[0].offset = mgc::collision::HitboxOffset(0, 0);
         hitboxes_[0].size = mgc::collision::HitboxSize(16, 16);
         hitboxes_[0].enabled = true;
@@ -105,12 +137,12 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
              pos.x -= 4;
         } else if ( gamepad.is_pressed(Key::Right) ) {
              pos.x += 4;
-        } else {
-        }
-
-        if ( gamepad.just_pressed(Key::Enter) ) {
-            if ( !is_jumped_ ) {
-                is_jumped_ = true;
+        } else { }
+        
+        // Jump logic with simple vertical velocity (vy_)
+        if ( gamepad.just_pressed(Key::Cancel) ) {
+            if ( !jumping_ ) {
+                jumping_ = true;
                 vy_ = -12;
             }
         }
@@ -127,6 +159,20 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
         }
     }
 
+    template <typename Other>
+    void on_hit_box_to_box_impl(
+            const Other& other,
+            const mgc::collision::BoxCollisionInfo& info
+    ) {
+        // Talkflow interaction: trigger only when near NPC and player releases Enter key
+        if constexpr (std::is_same_v<Other, NPC1>) {
+            if ( !talkflow_controller.in_progress() ) {
+                if ( gamepad.just_released(Key::Enter) ) {
+                    talkflow_controller.begin(MGC_TEST_TALKSCRIPT_START);
+                }
+            }
+        }
+    }
 
     template <typename ObjT, typename MapT>
     void handle_map_pushback_result_impl(
@@ -137,14 +183,15 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
         if constexpr (std::is_same_v<MapT, Stage1>) {
 
             auto pos = sprite_.position();
+            // Pushback response logic: stop falling or bounce depending on direction
             if ( info.pushback.y < 0 ) {
                 vy_ = 0;
                 pos.y += info.pushback.y;
-                is_jumped_ = false;
+                jumping_ = false;
             } else if ( info.pushback.y > 0 ) {
                 vy_ *= -1;
                 pos.y += info.pushback.y;
-            } else {}
+            } else { }
             pos.x += info.pushback.x;
 
             sprite_.set_position(pos);
@@ -153,8 +200,9 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
 
 private:
     int16_t vy_;
-    bool is_jumped_;
+    bool jumping_;
 };
+
 
 
 const mgc_mml_record_t se_records[1] = {
@@ -229,11 +277,10 @@ const mgc_mml_record_t bgm_records[1] = {
 
 int main() {
 
-
     float sound_speed_factor = 1.0f;
- 
 
     display_driver.init(50*1000*1000); // over clock
+
     sound_controller.init();
     sound_controller.set_background_music_list(bgm_records, countof(bgm_records));
     sound_controller.set_sound_effect_list(se_records, countof(se_records));
@@ -243,20 +290,49 @@ int main() {
 
     gamepad.init(); 
 
-    CollisionDetectorBoxToMap collision_detector;
     Stage1 stage1;
     Stage1_FG stage1_fg;
     Player player;
+    NPC1 npc1;
+    CollisionDetectorBoxToMap collision_detector;
+
+    talkflow_controller.set_font(k8x12);
+    talkflow_controller.set_talkscript(test_talkscript);
+    //struct TalkflowListener : mgc::control::talkflow::ITalkflowListener { };
+    //TalkflowListener listener;
+    //talkflow_controller.bind_listener(listener);
+
+    talkflow_controller.set_dialoguebox_config(
+        DialogueboxConfig {
+            mgc::math::Vec2i(8, 8),
+            mgc::parts::types::Size(150, 40),
+            2,1,4,2
+        }
+    );
+    talkflow_controller.set_selectbox_config(
+        SelectboxConfig {
+            mgc::math::Vec2i(100, 16),
+            mgc::parts::types::Size(80, 80),
+            "*",
+            mgc::math::Vec2i(10, 0)
+        }
+    );
+
+
 
     std::vector<const mgc::features::Drawable*> drawables;
     drawables.push_back(&stage1.tilegrid());
     drawables.push_back(&player.sprite());
+    drawables.push_back(&npc1.sprite());
     drawables.push_back(&stage1_fg.tilegrid());
+    drawables.push_back(&talkflow_controller);
 
     std::vector<const mgc::features::CellDrawable*> cell_drawables;
     cell_drawables.push_back(&stage1.tilegrid());
     cell_drawables.push_back(&player.sprite());
+    cell_drawables.push_back(&npc1.sprite());
     cell_drawables.push_back(&stage1_fg.tilegrid());
+    cell_drawables.push_back(&talkflow_controller);
 
 
     camera.set_x_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(3));
@@ -270,28 +346,36 @@ int main() {
     while (1) {
 
         gamepad.proc();
+        // Adjust sound playback speed with pitch correction
+        // Press Menu to speed up, Home to slow down
+        if ( gamepad.just_pressed(Key::Menu) ) {
+            sound_speed_factor += 0.01f;
+            int16_t pitch_factor = (int16_t)(360 * (sound_speed_factor - 1.0f));
+            sound_controller.set_speed_factor(sound_speed_factor);
+            sound_controller.shift_pitch_by_degree(pitch_factor);
+        } else if ( gamepad.just_pressed(Key::Home) ) {
+            sound_speed_factor -= 0.01f;
+            int16_t pitch_factor = (int16_t)(360 * (sound_speed_factor - 1.0f));
+            sound_controller.set_speed_factor(sound_speed_factor);
+            sound_controller.shift_pitch_by_degree(pitch_factor);
+        } else { }
 
-        {
-            if ( gamepad.just_pressed(Key::Menu) ) {
-                sound_speed_factor += 0.01f;
-                int16_t pitch_factor = (int16_t)(360 * (sound_speed_factor - 1.0f));
-                sound_controller.set_speed_factor(sound_speed_factor);
-                sound_controller.shift_pitch_by_degree(pitch_factor);
-            } else if ( gamepad.just_pressed(Key::Home) ) {
-                sound_speed_factor -= 0.01f;
-                int16_t pitch_factor = (int16_t)(360 * (sound_speed_factor - 1.0f));
-                sound_controller.set_speed_factor(sound_speed_factor);
-                sound_controller.shift_pitch_by_degree(pitch_factor);
-            } else {}
-        }
-
-        camera.update_follow_position();
-
-        player.update();
 
         stage1.update();
 
-        collision_detector.detect(player, stage1, CornerPushDirection::PreferX);
+        talkflow_controller.proc();
+        // If a talkflow is active, player update and collisions are paused
+        if ( talkflow_controller.in_progress() ) {
+            // Do nothing - wait for talk to finish
+        } else if ( talkflow_controller.has_finished() ) {
+            talkflow_controller.reset_state();
+        } else {
+            player.update();
+            collision_detector.detect(player, stage1, CornerPushDirection::PreferX);
+            CollisionDetectorBoxToBox::detect(player, npc1);
+        }
+
+        camera.update_follow_position();
 
         if ( render_type == RenderType::UseCellBuffer ) {
 
@@ -317,8 +401,7 @@ int main() {
             current.clear();
             renderer.render_async(current, drawables.data(), drawables.size());
 
-        } else {
-        }
+        } else { }
     }
 
 

@@ -1,0 +1,20 @@
+talkscript:
+  subject: "Test Dialogue"
+  description: "Test"
+
+  talknodes:
+    start:
+      - message: "Hello."
+      - message: "How are you?"
+      - choice:
+          items:
+            - { item: "Not too bad.", next: end_en }
+            - { item: "悪くはないです。", next: end_jp }
+
+    end_en:
+      - message: "That's good to hear."
+        end: true
+    end_jp:
+      - message: "それは良かったです。"
+        end: true
+

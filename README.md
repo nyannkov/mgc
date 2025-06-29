@@ -7,8 +7,10 @@ designed to simplify graphics, input, and asset handling in embedded environment
 
 It is designed for resource-constrained systems, with a focus on **deterministic** behavior and **zero heap allocation**.
 
-While the core avoids dynamic memory allocation,  
-it integrates well with C++ features such as `std::vector` when used on the application side.
+While the core avoids dynamic memory allocation to remain lightweight and predictable,  
+this is intended to support user-side control over memory usage and efficient resource reuse,  
+e.g., via `std::vector` or `std::unique_ptr`.
+
 
 > ⚠️ **Warning:** mgc is currently in active development.  
 > Some interfaces and features may change without backward compatibility.  
@@ -61,7 +63,7 @@ Contents in this directory may break frequently and are not part of the public A
 
 ## 🖼️ Graphics
 
-- **Tile size**: 16x16 pixels
+- **Map tile size**: 16x16 pixels
 - **Color format**: RGB565
 - **Color mode**: Indexed color
 
@@ -111,3 +113,6 @@ See the [LICENSE](./LICENSE) file for details.
 
 > Auto-generated files such as fonts, maps, and tilesets should comply with the license of their original data sources.
 
+> Some drivers under the `drivers/` directory make use of third-party libraries located in the `external/` directory.  
+> These external modules are included as Git submodules and are maintained under their own respective licenses  
+> (e.g., MIT, BSD, or GPL). Please refer to each submodule's documentation and license file for more information.
