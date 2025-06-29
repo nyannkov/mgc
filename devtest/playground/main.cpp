@@ -48,6 +48,8 @@ size_t fb_index = 0;
 
 CellBuffer cell_buffer;
 
+size_t npc1_talk_count = 0;
+
 // Rendering logic depending on buffer mode
 // - UseCellBuffer: simple cell-based rendering using 16x16 pixel grid.
 // - UseFrameBuffer: single framebuffer rendering (blocking)
@@ -168,6 +170,7 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
         if constexpr (std::is_same_v<Other, NPC1>) {
             if ( !talkflow_controller.in_progress() ) {
                 if ( gamepad.just_released(Key::Enter) ) {
+                    npc1_talk_count++;
                     talkflow_controller.begin(MGC_TEST_TALKSCRIPT_START);
                 }
             }
@@ -272,6 +275,7 @@ const mgc_mml_record_t bgm_records[1] = {
     }
 };
 
+
 }
 
 
@@ -298,9 +302,17 @@ int main() {
 
     talkflow_controller.set_font(k8x12);
     talkflow_controller.set_talkscript(test_talkscript);
-    //struct TalkflowListener : mgc::control::talkflow::ITalkflowListener { };
-    //TalkflowListener listener;
-    //talkflow_controller.bind_listener(listener);
+    struct TalkflowListener : mgc::control::talkflow::ITalkflowListener {
+        bool on_decision(mgc_node_idx_t tag) override {
+            if ( tag == MGC_TEST_TALKSCRIPT_TAG_DECISION__IS_FIRST_TALK ) {
+               return ( npc1_talk_count == 1 );
+            } else {
+                return true; 
+            }
+        }
+    };
+    TalkflowListener listener;
+    talkflow_controller.bind_listener(listener);
 
     talkflow_controller.set_dialoguebox_config(
         DialogueboxConfig {

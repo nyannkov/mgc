@@ -1,20 +1,40 @@
 talkscript:
   subject: "Test Dialogue"
   description: "Test"
-
   talknodes:
     start:
       - message: "Hello."
       - message: "How are you?"
+      - decision:
+          tag: IS_FIRST_TALK
+          branches:
+            true: response_type1
+            false: response_type2
+
+    response_type1:
       - choice:
           items:
             - { item: "Not too bad.", next: end_en }
             - { item: "悪くはないです。", next: end_jp }
 
+    response_type2:
+      - choice:
+          items:
+            - { item: "Same as usual.", next: end_en2 }
+            - { item: "まあまあです。", next: end_jp2 }
+
     end_en:
       - message: "That's good to hear."
         end: true
+
     end_jp:
       - message: "それは良かったです。"
         end: true
 
+    end_en2:
+      - message: "I see, hope things stay stable."
+        end: true
+
+    end_jp2:
+      - message: "そうですか。平穏が一番ですね。"
+        end: true
