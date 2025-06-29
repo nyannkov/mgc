@@ -1,57 +1,118 @@
 # mgc
 
-mgc is a library under development intended for creating small games or gadgets.
-This library processes images in units of 16x16 pixels.Threfore, the size of the 
-graphic RAM needs to be at least this size.
+**mgc** is a lightweight, embedded-friendly library for building small games and gadgets.
 
-## Cloning the Repository
+Rather than being a full-fledged game engine, **mgc** offers a set of lightweight and modular tools  
+designed to simplify graphics, input, and asset handling in embedded environments.
 
-This repository includes submodules. To clone it properly, please use the `--recursive` option:
+It is designed for resource-constrained systems, with a focus on **deterministic** behavior and **zero heap allocation**.
+
+While the core avoids dynamic memory allocation to remain lightweight and predictable,  
+this is intended to support user-side control over memory usage and efficient resource reuse,  
+e.g., via `std::vector` or `std::unique_ptr`.
+
+
+> ⚠️ **Warning:** mgc is currently in active development.  
+> Some interfaces and features may change without backward compatibility.  
+> We recommend using the latest version and following the repository for updates.
+
+---
+
+## ✨ Key Features
+
+- ⚙️ **Heapless design** – No dynamic memory allocation in core modules
+- 💡 **Dual interface** – Provides both **C** and **C++** APIs
+- 🧱 **Modular architecture** – Display, input, sound, and other modules are platform-selectable
+- 🖼️ **Supports 16x16 pixel unit drawing (cell_draw in mgc_cpp)**
+- 🎨 **Indexed color format** using RGB565
+- 🔤 **BDF font support** (up to 16px height)
+- 🕹️ Designed for **RP2040** and adaptable to other embedded targets
+- 📦 **CMake-based build system**
+
+---
+
+## 📁 Project Structure
+
+```
+root/
+├── src/        # Core library source files
+│   ├── mgc/        # C interface (platform-agnostic)
+│   └── mgc_cpp/    # C++ wrapper (type-safe, heapless)
+├── devtest/    # Experimental code and prototypes for internal development
+├── drivers/    # Platform-specific drivers (display, input, sound, etc.)
+├── external/   # External libraries and git submodules
+├── scripts/    # Initialization and utility scripts, including setup and small tools
+├── test/       # Test code
+├── tools/      # Asset generator tools such as font and tileset converters
+├── CMakeLists.txt
+├── LICENSE
+└── README.md
+```
+
+> When using `mgc_cpp`, you must also include `mgc/`, which contains the core functionality.
+
+### 🧪 `devtest/` – Developer Playground
+
+The `devtest/` directory contains experimental code, temporary tests, and prototypes used during development.  
+Unlike `test/`, which is for stable unit tests, this directory is intended for internal debugging and validation  
+of features that are still in progress or under consideration.
+
+Contents in this directory may break frequently and are not part of the public API.
+
+---
+
+## 🖼️ Graphics
+
+- **Map tile size**: 16x16 pixels
+- **Color format**: RGB565
+- **Color mode**: Indexed color
+
+---
+
+## 🔤 Font Support
+
+- **Font format**: BDF (Bitmap Distribution Format)
+- **Maximum font height**: 16 pixels
+
+---
+
+## 🚀 Setup
+
+After cloning the repository, change into the project directory and run the setup script to initialize external dependencies:
 
 ```bash
-git clone --recursive <repository_url>
+cd mgc
+git submodule update --init --recursive
+python3 scripts/setup_assets.py
 ```
+This script downloads and prepares external assets such as fonts and other resources required for building the project.
 
-## Demonstrations
+### Using Raspberry Pi Pico
+If you plan to build for the Raspberry Pi Pico platform, you need to set up the [Pico SDK](https://github.com/raspberrypi/pico-sdk) beforehand.
+Please follow the official Pico SDK setup instructions to configure your development environment.
 
-There are demonstrations using a Raspberry Pi Pico (RP2040) and an LCD module equipped with an ILI9341.
+---
 
-### samples/platformer
-<div style="display: flex;">
-  <img src="samples/platformer/img/lcd+controller.jpg" style="width: 35%;">
-  <img src="samples/platformer/img/platformer.gif" style="width: 100%;">
-</div>
+## 🧰 Intended Use
 
- - Source code: [samples/platformer](samples/platformer)
+- **mgc is not a game engine** — it is a **toolkit** providing reusable components like:
+  - Drawable interfaces
+  - Framebuffer abstraction
+  - Font rendering
+  - Simple input models
+  - Platform-specific device drivers
 
-### samples/cutscene_player
+- You are encouraged to build your own game architecture by composing these building blocks.
 
-https://www.youtube.com/watch?v=uYc1KSSySi8
+---
 
- - Source code: [samples/cutscene_player](samples/cutscene_player)
+## ⚖️ License
 
-## Specification
-### Image format
- - Color format: RGB565
- - Color mode: indexed color
+mgc is released under the **MIT License**.  
+See the [LICENSE](./LICENSE) file for details.
 
-### Font
- - Font size: maximum 16 pixels
- - Font file format: BDF
+> Auto-generated files such as fonts, maps, and tilesets should comply with the license of their original data sources.
 
-## How to use
-
-There is currently no manual for this library, but samples and examples are gradually being created.
-These samples and examples use the k8x12S font. Therefore, when building, the font files must be in the following path
-```
-mgc/fonts/k8x12_bdf/k8x12S.bdf
-```
-This font can be downloaded from [the creator's website](https://littlelimit.net/k8x12.htm).
-See [SETUP.md](SETUP.md) for information on setting up the development environment.
-
-## License
-
-mgc is released under the MIT licence. For more information, see the LICENSE file.
-However, for automatically generated code such as fonts, maps and tilesets, 
-follow the licence of the original data.
-
+> Some drivers under the `drivers/` directory make use of third-party libraries located in the `external/` directory.  
+> These external modules are included as Git submodules and are maintained under their own respective licenses  
+> (e.g., MIT, BSD, or GPL). Please refer to each submodule's documentation and license file for more information.

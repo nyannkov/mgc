@@ -53,6 +53,14 @@ const mgc_color_t *framebuffer_get_buffer(const mgc_framebuffer_t *fb) {
     return fb->buffer;
 }
 
+mgc_color_t *framebuffer_get_buffer_mut(mgc_framebuffer_t *fb) {
+    if ( fb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return NULL;
+    }
+    return fb->buffer;
+}
+
 uint16_t framebuffer_get_width(const mgc_framebuffer_t *fb) {
     if ( fb == NULL ) {
         MGC_WARN("Invalid handler");

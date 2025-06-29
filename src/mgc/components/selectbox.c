@@ -6,20 +6,26 @@
  */
 #include "selectbox.h"
 
-static void setup_form(mgc_selectbox_t *selectbox) {
-    int16_t x, y;
-    size_t m;
-    x = selectbox->x;
-    y = selectbox->y;
-    m = (selectbox->fontsize2x == true) ? 2 : 1;
+#define MGC_SELECTBOX_DEFAULT_FBB_Y   (16)
+
+static inline
+void set_position_all(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
+
+    selectbox->x = x;
+    selectbox->y = y;
 
     rect_set_position(&selectbox->bg_box, x, y);
+
     for ( size_t idx = 0; idx < MGC_SELECTBOX_MAX_SELECT_NUM; idx++ ) {
         struct mgc_label *item = &selectbox->item[idx];
         int16_t x_item, y_item;
-        x_item = x + selectbox->left_margin;
-        y_item = y + selectbox->top_margin + 
-            (item->font->fbb_y*m + selectbox->line_spacing) * idx;
+        int16_t item_height;
+        item_height = ( selectbox->font != NULL ) ? item->font->fbb_y : MGC_SELECTBOX_DEFAULT_FBB_Y;
+        if ( selectbox->fontsize2x == true ) {
+            item_height *= 2;
+        }
+        x_item = x + selectbox->padding.left;
+        y_item = y + selectbox->padding.top + (item_height + selectbox->item_spacing) * idx;
         label_set_position(item, x_item, y_item);
         if ( idx == selectbox->selected_idx ) {
             label_set_position(
@@ -32,49 +38,106 @@ static void setup_form(mgc_selectbox_t *selectbox) {
 }
 
 void selectbox_init(mgc_selectbox_t *selectbox, mgc_id_t id, const mgc_font_t *font, bool fontsize2x) {
-    if ( ( selectbox == NULL ) ||
-         ( font == NULL )
-    ) {
+    if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
+    selectbox->id = id;
     selectbox->x = 0;
     selectbox->y = 0;
     selectbox->fontsize2x = fontsize2x;
-    selectbox->enabled = MGC_DEFAULT_ENABLED;
+    selectbox->visible = MGC_DEFAULT_VISIBLE;
     selectbox->selected_idx = 0;
     selectbox->item_count = 0;
-    selectbox->top_margin = 4;
-    selectbox->bottom_margin = 4;
-    selectbox->left_margin = 16;
+
+    selectbox->padding.top = 4;
+    selectbox->padding.bottom = 4;
+    selectbox->padding.left = 16;
+    selectbox->padding.right = 8;
+
     selectbox->left_cursor_margin = 4;
-    selectbox->line_spacing = 4;
+    selectbox->item_spacing = 4;
     selectbox->parallax_factor_x = 0.0F;
     selectbox->parallax_factor_y = 0.0F;
+    selectbox->font = font;
 
     rect_init(&selectbox->bg_box, 0);
-    rect_set_enabled(&selectbox->bg_box, true);
+    rect_set_visible(&selectbox->bg_box, true);
+    rect_set_parallax_factor(&selectbox->bg_box, 0.0F, 0.0F);
 
     label_init(&selectbox->cursor, 0, font, fontsize2x);
     label_set_text(&selectbox->cursor, "*");
-    label_set_enabled(&selectbox->cursor, true);
+    label_resize_to_fit(&selectbox->cursor);
+    label_set_visible(&selectbox->cursor, true);
     for (size_t i = 0; i < MGC_SELECTBOX_MAX_SELECT_NUM; i++ ) {
         label_init(&selectbox->item[i], 0, font, fontsize2x);
-        label_set_enabled(&selectbox->item[i], true);
+        label_set_visible(&selectbox->item[i], true);
     }
 
     rect_set_width(&selectbox->bg_box, 80);
     rect_set_border_width(&selectbox->bg_box, 2);
     rect_set_inner_color(&selectbox->bg_box, MGC_COLOR_BLACK);
     rect_set_border_color(&selectbox->bg_box, MGC_COLOR_WHITE);
+}
 
-    setup_form(selectbox);
+void selectbox_set_id(mgc_selectbox_t *selectbox, mgc_id_t id) {
+    if ( selectbox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    selectbox->id = id;
+}
+
+void selectbox_set_font(mgc_selectbox_t *selectbox, const mgc_font_t *font) {
+    if ( ( selectbox == NULL ) ||
+         ( font == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    selectbox->font = font;
+    label_set_font(&selectbox->cursor, font);
+    for (size_t i = 0; i < MGC_SELECTBOX_MAX_SELECT_NUM; i++ ) {
+        label_set_font(&selectbox->item[i], font);
+    }
+}
+
+void selectbox_set_fontsize2x(mgc_selectbox_t *selectbox, bool fontsize2x) {
+    if ( selectbox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    label_set_fontsize2x(&selectbox->cursor, fontsize2x);
+    for (size_t i = 0; i < MGC_SELECTBOX_MAX_SELECT_NUM; i++ ) {
+        label_set_fontsize2x(&selectbox->item[i], fontsize2x);
+    }
+
+    set_position_all(selectbox, selectbox->x, selectbox->y);
+}
+
+void selectbox_resize_to_fit(mgc_selectbox_t *selectbox) {
+    uint16_t max_width = 0;
+    if ( selectbox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+
+    label_resize_to_fit(&selectbox->cursor);
+
+    for ( size_t index = 0; index < selectbox->item_count; index++ ) {
+        uint16_t item_width = 0;
+        label_resize_to_fit(&selectbox->item[index]);
+        item_width = selectbox->item[index].width;
+        if ( max_width < item_width ) {
+            max_width = item_width;
+        }
+    }
+    rect_set_width(&selectbox->bg_box, max_width + (uint16_t)selectbox->padding.left + (uint16_t)selectbox->padding.right);
 }
 
 void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     struct mgc_label *item;
-    uint16_t box_width;
-    size_t m;
+    int16_t item_height;
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -92,12 +155,14 @@ void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     );
     selectbox->item_count++;
 
-    m = (selectbox->fontsize2x == true) ? 2 : 1;
+    item_height = ( selectbox->font != NULL ) ? item->font->fbb_y : MGC_SELECTBOX_DEFAULT_FBB_Y;
+    if ( selectbox->fontsize2x == true ) {
+        item_height *= 2;
+    }
     rect_set_height(
         &selectbox->bg_box,
-        selectbox->top_margin + selectbox->bottom_margin +
-        (item->font->fbb_y*m) * selectbox->item_count +
-        selectbox->line_spacing * (selectbox->item_count-1)
+        selectbox->padding.top + selectbox->padding.bottom + item_height * selectbox->item_count +
+        selectbox->item_spacing * (selectbox->item_count-1)
     );
 }
 
@@ -107,14 +172,15 @@ void selectbox_clear_items(mgc_selectbox_t *selectbox) {
         return;
     }
     selectbox->item_count = 0;
+    selectbox->selected_idx = 0;
 }
 
-void selectbox_set_enabled(mgc_selectbox_t *selectbox, bool enabled) {
+void selectbox_set_visible(mgc_selectbox_t *selectbox, bool v) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    selectbox->enabled = enabled;
+    selectbox->visible = v;
 }
 
 void selectbox_set_position(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
@@ -122,9 +188,7 @@ void selectbox_set_position(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
         MGC_WARN("Invalid handler");
         return;
     }
-    selectbox->x = x;
-    selectbox->y = y;
-    setup_form(selectbox);
+    set_position_all(selectbox, x, y);
 }
 
 void selectbox_set_width(mgc_selectbox_t *selectbox, uint16_t width) {
@@ -143,14 +207,15 @@ void selectbox_set_border_width(mgc_selectbox_t *selectbox, uint16_t width) {
     rect_set_border_width(&selectbox->bg_box, width);
 }
 
-void selectbox_set_margin(mgc_selectbox_t *selectbox, uint8_t top, uint8_t bottom, uint8_t left) {
+void selectbox_set_padding(mgc_selectbox_t *selectbox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    selectbox->top_margin = top;
-    selectbox->bottom_margin = bottom;
-    selectbox->left_margin = left;
+    selectbox->padding.top = top;
+    selectbox->padding.bottom = bottom;
+    selectbox->padding.left = left;
+    selectbox->padding.right = right;
 }
 
 void selectbox_set_cursor_margin(mgc_selectbox_t *selectbox, uint8_t left) {
@@ -161,12 +226,12 @@ void selectbox_set_cursor_margin(mgc_selectbox_t *selectbox, uint8_t left) {
     selectbox->left_cursor_margin = left;
 }
 
-void selectbox_set_line_spacing(mgc_selectbox_t *selectbox, uint8_t line_spacing) {
+void selectbox_set_item_spacing(mgc_selectbox_t *selectbox, uint8_t item_spacing) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    selectbox->line_spacing = line_spacing;
+    selectbox->item_spacing = item_spacing;
 }
 
 void selectbox_set_cursor_text(mgc_selectbox_t *selectbox, const char *text) {
@@ -266,35 +331,14 @@ void selectbox_set_parallax_factor(mgc_selectbox_t *selectbox, float factor_x, f
 
 bool selectbox_draw(const mgc_selectbox_t *selectbox, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
 
-    bool is_blending = false;
-    if ( ( selectbox == NULL ) ||
-         ( fb == NULL ) ||
+    if ( ( fb == NULL ) ||
          ( fb->buffer == NULL )
     ) {
         MGC_WARN("Invalid handler");
         return false;
     }
-    if ( selectbox->enabled == false ) {
-        MGC_INFO("Handler is disabled");
-        return false;
-    }
-    if ( selectbox->item_count == 0 ) {
-        MGC_WARN("Empty items");
-        return false;
-    }
-    if ( rect_draw(&selectbox->bg_box, fb, cam_pos, options) == true ) {
-        is_blending = true;
-    }
-    for ( size_t i = 0; i < selectbox->item_count; i++ ) {
-        if ( label_draw(&selectbox->item[i], fb, cam_pos, options) == true ) {
-            is_blending = true;
-        }
-    }
-    if ( label_draw(&selectbox->cursor, fb, cam_pos, options) == true ) {
-        is_blending = true;
-    }
 
-    return is_blending;
+    return selectbox_draw_raw(selectbox, fb->buffer, fb->width, fb->height, cam_pos, options);
 }
 
 bool selectbox_draw_cell(
@@ -305,14 +349,68 @@ bool selectbox_draw_cell(
         const mgc_point_t *cam_pos,
         const mgc_draw_options_t *options
 ) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    return selectbox_draw_cell_raw(selectbox, pb->pixelbuf, cell_x, cell_y, cam_pos, options);
+}
+
+bool selectbox_draw_raw(
+        const mgc_selectbox_t *selectbox,
+        mgc_color_t *buffer,
+        uint16_t width,
+        uint16_t height,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    bool is_blending = false;
     if ( ( selectbox == NULL ) ||
-         ( pb == NULL )
+         ( buffer == NULL )
     ) {
         MGC_WARN("Invalid handler");
         return false;
     }
-    if ( selectbox->enabled == false ) {
-        MGC_INFO("Handler is disabled");
+    if ( selectbox->visible == false ) {
+        MGC_INFO("Handler is not visible");
+        return false;
+    }
+    if ( selectbox->item_count == 0 ) {
+        MGC_WARN("Empty items");
+        return false;
+    }
+    if ( rect_draw_raw(&selectbox->bg_box, buffer, width, height, cam_pos, options) == true ) {
+        is_blending = true;
+    }
+    for ( size_t i = 0; i < selectbox->item_count; i++ ) {
+        if ( label_draw_raw(&selectbox->item[i], buffer, width, height, cam_pos, options) == true ) {
+            is_blending = true;
+        }
+    }
+    if ( label_draw_raw(&selectbox->cursor, buffer, width, height, cam_pos, options) == true ) {
+        is_blending = true;
+    }
+
+    return is_blending;
+}
+
+bool selectbox_draw_cell_raw(
+        const mgc_selectbox_t *selectbox,
+        mgc_color_t *cell_buffer,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( ( selectbox == NULL ) ||
+         ( cell_buffer == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+    if ( selectbox->visible == false ) {
+        MGC_INFO("Handler is not visible");
         return false;
     }
     if ( selectbox->item_count == 0 ) {
@@ -320,11 +418,11 @@ bool selectbox_draw_cell(
         return false;
     }
 
-    if ( rect_draw_cell(&selectbox->bg_box, pb, cell_x, cell_y, cam_pos, options) == true ) {
+    if ( rect_draw_cell_raw(&selectbox->bg_box, cell_buffer, cell_x, cell_y, cam_pos, options) == true ) {
         for ( size_t i = 0; i < selectbox->item_count; i++ ) {
-            label_draw_cell(&selectbox->item[i], pb, cell_x, cell_y, cam_pos, options);
+            label_draw_cell_raw(&selectbox->item[i], cell_buffer, cell_x, cell_y, cam_pos, options);
         }
-        label_draw_cell(&selectbox->cursor, pb, cell_x, cell_y, cam_pos, options);
+        label_draw_cell_raw(&selectbox->cursor, cell_buffer, cell_x, cell_y, cam_pos, options);
         return true;
     } else {
         return false;

@@ -8,46 +8,55 @@
 
 void dialoguebox_init(mgc_dialoguebox_t *dialoguebox, mgc_id_t id, const mgc_font_t *font, bool fontsize2x) {
     uint16_t text_width, text_height;
-    if ( ( dialoguebox == NULL ) ||
-         ( font == NULL ) ||
-         ( font->fbb_x > MGC_FONT_MAX_FONT_SIZE ) ||
-         ( font->fbb_y > MGC_FONT_MAX_FONT_SIZE )
-    ) {
+    if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    dialoguebox->top_margin = 8;
-    dialoguebox->bottom_margin = 8;
-    dialoguebox->left_margin = 8;
-    dialoguebox->right_margin = 8;
+
+    dialoguebox->id = id;
+
+    dialoguebox->padding.top = 8;
+    dialoguebox->padding.bottom = 8;
+    dialoguebox->padding.left = 8;
+    dialoguebox->padding.right = 8;
 
     rect_init(&dialoguebox->bg_box, 0);
     rect_set_position(&dialoguebox->bg_box, 0, 0);
     rect_set_border_width(&dialoguebox->bg_box, 2);
     rect_set_width(&dialoguebox->bg_box, 16);
     rect_set_height(&dialoguebox->bg_box, 16);
+    rect_set_parallax_factor(&dialoguebox->bg_box, 0.0F, 0.0F);
 
-    text_width = dialoguebox->bg_box.width - (dialoguebox->left_margin+dialoguebox->right_margin);
-    text_height = dialoguebox->bg_box.height - (dialoguebox->top_margin+dialoguebox->bottom_margin);
+    text_width = dialoguebox->bg_box.width - (dialoguebox->padding.left+dialoguebox->padding.right);
+    text_height = dialoguebox->bg_box.height - (dialoguebox->padding.top+dialoguebox->padding.bottom);
     textblock_init(&dialoguebox->textblock, 0, font, fontsize2x);
     textblock_set_width(&dialoguebox->textblock, text_width);
     textblock_set_height(&dialoguebox->textblock, text_height);
-    textblock_set_position(&dialoguebox->textblock, dialoguebox->left_margin, dialoguebox->top_margin);
+    textblock_set_position(&dialoguebox->textblock, dialoguebox->padding.left, dialoguebox->padding.top);
     textblock_set_enable_back_color(&dialoguebox->textblock, false);
+    textblock_set_parallax_factor(&dialoguebox->textblock, 0.0F, 0.0F);
 
-    rect_set_enabled(&dialoguebox->bg_box, true);
-    textblock_set_enabled(&dialoguebox->textblock, true);
-    dialoguebox->enabled = MGC_DEFAULT_ENABLED;
+    rect_set_visible(&dialoguebox->bg_box, true);
+    textblock_set_visible(&dialoguebox->textblock, true);
+    dialoguebox->visible = MGC_DEFAULT_VISIBLE;
 }
 
-void dialoguebox_set_enabled(mgc_dialoguebox_t *dialoguebox, bool enabled) {
+void dialoguebox_set_id(mgc_dialoguebox_t *dialoguebox, mgc_id_t id) {
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    dialoguebox->enabled = enabled;
-    rect_set_enabled(&dialoguebox->bg_box, enabled);
-    textblock_set_enabled(&dialoguebox->textblock, enabled);
+    dialoguebox->id = id;
+}
+
+void dialoguebox_set_visible(mgc_dialoguebox_t *dialoguebox, bool v) {
+    if ( dialoguebox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    dialoguebox->visible = v;
+    rect_set_visible(&dialoguebox->bg_box, v);
+    textblock_set_visible(&dialoguebox->textblock, v);
 }
 
 void dialoguebox_set_width(mgc_dialoguebox_t *dialoguebox, uint16_t width) {
@@ -60,7 +69,7 @@ void dialoguebox_set_width(mgc_dialoguebox_t *dialoguebox, uint16_t width) {
         width = 16;
     }
     rect_set_width(&dialoguebox->bg_box, width);
-    text_width = width - (dialoguebox->left_margin+dialoguebox->right_margin);
+    text_width = width - (dialoguebox->padding.left+dialoguebox->padding.right);
     textblock_set_width(&dialoguebox->textblock, text_width);
 }
 
@@ -74,7 +83,7 @@ void dialoguebox_set_height(mgc_dialoguebox_t *dialoguebox, uint16_t height) {
         height = 16;
     }
     rect_set_height(&dialoguebox->bg_box, height);
-    text_height = height - (dialoguebox->top_margin+dialoguebox->bottom_margin);
+    text_height = height - (dialoguebox->padding.top+dialoguebox->padding.bottom);
     textblock_set_height(&dialoguebox->textblock, text_height);
 }
 
@@ -85,22 +94,21 @@ void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, int16_t x, int16_t
         return;
     }
     rect_set_position(&dialoguebox->bg_box, x, y);
-    text_x = x + dialoguebox->left_margin;
-    text_y = y + dialoguebox->top_margin;
+    text_x = x + dialoguebox->padding.left;
+    text_y = y + dialoguebox->padding.top;
     textblock_set_position(&dialoguebox->textblock, text_x, text_y);
 }
 
-void dialoguebox_set_margin(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right) {
-    int16_t text_x, text_y;
+void dialoguebox_set_padding(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right) {
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
 
-    dialoguebox->top_margin = top;
-    dialoguebox->bottom_margin = bottom;
-    dialoguebox->right_margin = right;
-    dialoguebox->left_margin = left;
+    dialoguebox->padding.top = top;
+    dialoguebox->padding.bottom = bottom;
+    dialoguebox->padding.right = right;
+    dialoguebox->padding.left = left;
 
     textblock_set_width(&dialoguebox->textblock, dialoguebox->bg_box.width - ((uint16_t)left+right));
     textblock_set_width(&dialoguebox->textblock, dialoguebox->bg_box.height- ((uint16_t)top+bottom));
@@ -155,6 +163,22 @@ void dialoguebox_set_text(mgc_dialoguebox_t *dialoguebox, const char *text) {
     textblock_set_text(&dialoguebox->textblock, text);
 }
 
+void dialoguebox_set_font(mgc_dialoguebox_t *dialoguebox, const mgc_font_t *font) {
+    if ( dialoguebox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    textblock_set_font(&dialoguebox->textblock, font);
+}
+
+void dialoguebox_set_fontsize2x(mgc_dialoguebox_t *dialoguebox, bool fontsize2x) {
+    if ( dialoguebox == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    textblock_set_fontsize2x(&dialoguebox->textblock, fontsize2x);
+}
+
 void dialoguebox_set_parallax_factor(mgc_dialoguebox_t *dialoguebox, float factor_x, float factor_y) {
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
@@ -191,8 +215,8 @@ void dialoguebox_adjust_height(mgc_dialoguebox_t *dialoguebox) {
         (dialoguebox->textblock.font->fbb_y*scale)
         * dialoguebox->textblock.scroll_line;
 
-    height = (uint16_t)dialoguebox->top_margin +
-             (uint16_t)dialoguebox->bottom_margin +
+    height = (uint16_t)dialoguebox->padding.top +
+             (uint16_t)dialoguebox->padding.bottom +
              text_height;
     textblock_set_height(&dialoguebox->textblock, text_height);
     rect_set_height(&dialoguebox->bg_box, height);
@@ -214,39 +238,20 @@ void dialoguebox_display_clear(mgc_dialoguebox_t *dialoguebox) {
     textblock_display_clear(&dialoguebox->textblock);
 }
 
-enum mgc_display_text_state dialoguebox_get_display_text_state(const mgc_dialoguebox_t *dialoguebox) {
-    if ( dialoguebox == NULL ) {
-        MGC_WARN("Invalid handler");
-        return MGC_DISPLAY_TEXT_STATE_INIT;
-    }
-    return dialoguebox->textblock.state;
-}
-
 bool dialoguebox_draw(
     const mgc_dialoguebox_t *dialoguebox,
     mgc_framebuffer_t *fb,
     const mgc_point_t *cam_pos,
     const mgc_draw_options_t *options
 ) {
-    bool is_blending = false;
-    if ( ( dialoguebox == NULL ) ||
-         ( fb == NULL ) ||
+    if ( ( fb == NULL ) ||
          ( fb->buffer == NULL )
     ) {
         MGC_WARN("Invalid handler");
         return false;
     }
-    if ( dialoguebox->enabled == false ) {
-        MGC_INFO("Handler is disabled");
-        return false;
-    }
-    if ( rect_draw(&dialoguebox->bg_box, fb, cam_pos, options) == true ) {
-        is_blending = true;
-    }
-    if ( textblock_draw(&dialoguebox->textblock, fb, cam_pos, options) == true ) {
-        is_blending = true;
-    }
-    return is_blending;
+
+    return dialoguebox_draw_raw(dialoguebox, fb->buffer, fb->width, fb->height, cam_pos, options);
 }
 
 bool dialoguebox_draw_cell(
@@ -257,19 +262,64 @@ bool dialoguebox_draw_cell(
         const mgc_point_t *cam_pos,
         const mgc_draw_options_t *options
 ) {
+
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+
+    return dialoguebox_draw_cell_raw(dialoguebox, pb->pixelbuf, cell_x, cell_y, cam_pos, options);
+}
+
+bool dialoguebox_draw_raw(
+        const mgc_dialoguebox_t *dialoguebox,
+        mgc_color_t *buffer,
+        uint16_t width,
+        uint16_t height,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    bool is_blending = false;
     if ( ( dialoguebox == NULL ) ||
-         ( pb == NULL )
+         ( buffer == NULL ) 
     ) {
         MGC_WARN("Invalid handler");
         return false;
     }
-    if ( dialoguebox->enabled == false ) {
-        MGC_INFO("Handler is disabled");
+    if ( dialoguebox->visible == false ) {
+        MGC_INFO("Handler is not visible");
+        return false;
+    }
+    if ( rect_draw_raw(&dialoguebox->bg_box, buffer, width, height, cam_pos, options) == true ) {
+        is_blending = true;
+    }
+    if ( textblock_draw_raw(&dialoguebox->textblock, buffer, width, height, cam_pos, options) == true ) {
+        is_blending = true;
+    }
+    return is_blending;
+}
+
+bool dialoguebox_draw_cell_raw(
+        const mgc_dialoguebox_t *dialoguebox,
+        mgc_color_t *cell_buffer,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    if ( ( dialoguebox == NULL ) ||
+         ( cell_buffer == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return false;
+    }
+    if ( dialoguebox->visible == false ) {
+        MGC_INFO("Handler is not visible");
         return false;
     }
 
-    if ( rect_draw_cell(&dialoguebox->bg_box, pb, cell_x, cell_y, cam_pos, options) == true ) {
-        textblock_draw_cell(&dialoguebox->textblock, pb, cell_x, cell_y, cam_pos, options);
+    if ( rect_draw_cell_raw(&dialoguebox->bg_box, cell_buffer, cell_x, cell_y, cam_pos, options) == true ) {
+        textblock_draw_cell_raw(&dialoguebox->textblock, cell_buffer, cell_x, cell_y, cam_pos, options);
         return true;
     } else {
         return false;

@@ -253,6 +253,16 @@ enum mgc_talkflow_state talkflow_get_state(const mgc_talkflow_t *talkflow) {
     return talkflow->state;
 }
 
+void talkflow_reset_state(mgc_talkflow_t *talkflow) {
+    if ( talkflow == NULL )  {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    if ( talkflow->state == MGC_TALKFLOW_STATE_FLOW_END ) {
+        talkflow->state = MGC_TALKFLOW_STATE_INIT;
+    }
+}
+
 void talkflow_decide_choice(mgc_talkflow_t *talkflow, size_t item_tag) {
     if ( ( talkflow == NULL ) ||
          ( talkflow->talkscript == NULL ) ||

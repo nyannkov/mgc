@@ -1,6 +1,9 @@
-[submodule "devices/mgc/sound/psg/common/Psgino"]
-	path = devices/mgc/sound/psg/common/Psgino
+[submodule "external/sound/Psgino"]
+	path = external/sound/Psgino
 	url = https://github.com/nyannkov/Psgino.git
-[submodule "devices/mgc/sound/psg/emulator/emu2149"]
-	path = devices/mgc/sound/psg/emulator/emu2149
-	url = https://github.com/nyannkov/emu2149.git
+[submodule "external/sound/emu2149"]
+	path = external/sound/emu2149
+	url = https://github.com/digital-sound-antiques/emu2149.git
+[submodule "external/test/catch2"]
+	path = external/test/catch2
+	url = https://github.com/catchorg/Catch2.git

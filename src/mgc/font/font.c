@@ -43,7 +43,7 @@ const mgc_glyph_t *font_get_glyph_info(const mgc_font_t *font, uint32_t char_cod
 bool font_load_bitmap(const mgc_font_t *font, const mgc_glyph_t *glyph, uint32_t *bitmap, size_t bitmap_height) {
     int16_t i;
     int16_t x_ofs, y_ofs;
-    int16_t y_len;
+    uint16_t y_len;
     uint32_t shift;
 
     if ( ( font == NULL ) ||

@@ -12,7 +12,7 @@ void rect_init(mgc_rect_t *rect, mgc_id_t id) {
         return;
     }
     rect->id = id;
-    rect->enabled = MGC_DEFAULT_ENABLED;
+    rect->visible = MGC_DEFAULT_VISIBLE;
     rect->x = 0;
     rect->y = 0;
     rect->parallax_factor_x = 1.0F;
@@ -20,16 +20,24 @@ void rect_init(mgc_rect_t *rect, mgc_id_t id) {
     rect->width = MGC_CELL_LEN;
     rect->height = MGC_CELL_LEN;
     rect->border_width = 0;
-    rect->inner_color = MGC_COLOR_SWAP(MGC_COLOR_BLACK);
-    rect->border_color = MGC_COLOR_SWAP(MGC_COLOR_WHITE);
+    rect->inner_color = MGC_COLOR_BLACK;
+    rect->border_color = MGC_COLOR_WHITE;
 }
 
-void rect_set_enabled(mgc_rect_t *rect, bool enabled) {
+void rect_set_id(mgc_rect_t *rect, mgc_id_t id) {
     if ( rect == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    rect->enabled = enabled;
+    rect->id = id;
+}
+
+void rect_set_visible(mgc_rect_t *rect, bool v) {
+    if ( rect == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    rect->visible = v;
 }
 
 void rect_set_position(mgc_rect_t *rect, int16_t x, int16_t y) {
@@ -70,7 +78,7 @@ void rect_set_inner_color(mgc_rect_t *rect, mgc_color_t inner_color) {
         MGC_WARN("Invalid handler");
         return;
     }
-    rect->inner_color = MGC_COLOR_SWAP(inner_color);
+    rect->inner_color = inner_color;
 }
 
 void rect_set_border_color(mgc_rect_t *rect, mgc_color_t border_color) {
@@ -78,7 +86,7 @@ void rect_set_border_color(mgc_rect_t *rect, mgc_color_t border_color) {
         MGC_WARN("Invalid handler");
         return;
     }
-    rect->border_color = MGC_COLOR_SWAP(border_color);
+    rect->border_color = border_color;
 }
 
 void rect_set_parallax_factor(mgc_rect_t *rect, float factor_x, float factor_y) {
@@ -111,8 +119,8 @@ static inline bool draw_buffer(
         MGC_WARN("Invalid handler");
         return false;
     }
-    if ( rect->enabled == false ) {
-        MGC_INFO("Handler is disabled");
+    if ( rect->visible == false ) {
+        MGC_INFO("Handler is not visible");
         return false;
     }
 
@@ -144,7 +152,7 @@ static inline bool draw_buffer(
 
         if ( rect->border_width > 0 ) {
 
-            color = rect->border_color;
+            color = MGC_COLOR_SWAP(rect->border_color);
             x_s = (( l1 < l0 ) ? l0 : l1) - l0;
             x_e = (( r1 < r0 ) ? r1 : r0) - l0;
             y_s = (( t1 < t0 ) ? t0 : t1) - t0;
@@ -162,7 +170,7 @@ static inline bool draw_buffer(
             b0 -= rect->border_width;
         }
 
-        color = rect->inner_color;
+        color = MGC_COLOR_SWAP(rect->inner_color);
         x_s = (( l1 < l0 ) ? l0 : l1) - l0;
         x_e = (( r1 < r0 ) ? r1 : r0) - l0;
         y_s = (( t1 < t0 ) ? t0 : t1) - t0;
@@ -187,9 +195,7 @@ bool rect_draw(const mgc_rect_t *rect, mgc_framebuffer_t *fb, const mgc_point_t 
         return false;
     }
 
-    mgc_point_t fov_ofs = {0, 0};
-
-    return draw_buffer(rect, fb->buffer, fb->width, fb->height, cam_pos, &fov_ofs, options);
+    return rect_draw_raw(rect, fb->buffer, fb->width, fb->height, cam_pos, options);
 }
 
 bool rect_draw_cell(
@@ -205,9 +211,33 @@ bool rect_draw_cell(
         return false;
     }
 
+    return rect_draw_cell_raw(rect, pb->pixelbuf, cell_x, cell_y, cam_pos, options);
+}
+
+bool rect_draw_raw(
+        const mgc_rect_t *rect,
+        mgc_color_t *buffer,
+        uint16_t width,
+        uint16_t height,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
+    mgc_point_t fov_ofs = {0, 0};
+
+    return draw_buffer(rect, buffer, width, height, cam_pos, &fov_ofs, options);
+}
+
+bool rect_draw_cell_raw(
+        const mgc_rect_t *rect,
+        mgc_color_t *cell_buffer,
+        int16_t cell_x,
+        int16_t cell_y,
+        const mgc_point_t *cam_pos,
+        const mgc_draw_options_t *options
+) {
     mgc_point_t fov_ofs = {cell_x, cell_y};
 
-    return draw_buffer(rect, pb->pixelbuf, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
+    return draw_buffer(rect, cell_buffer, MGC_CELL_LEN, MGC_CELL_LEN, cam_pos, &fov_ofs, options);
 }
 
 //////////////////////////////// Legacy ////////////////////////////////

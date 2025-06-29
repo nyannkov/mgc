@@ -122,6 +122,14 @@ void pixelbuffer_draw_cell(mgc_pixelbuffer_t *pixelbuffer, const mgc_display_if_
     }
 }
 
+mgc_color_t *pixelbuffer_get_buffer_mut(mgc_pixelbuffer_t *pb) {
+    if ( pb == NULL ) {
+        MGC_WARN("Invalid handler");
+        return NULL;
+    }
+    return pb->pixelbuf;
+}
+
 const mgc_color_t *pixelbuffer_get_buffer(const mgc_pixelbuffer_t *pb) {
     if ( pb == NULL ) {
         MGC_WARN("Invalid handler");

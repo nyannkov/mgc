@@ -59,29 +59,30 @@ void camera_set_y_follow_enabled(mgc_camera_t *camera, bool enabled) {
     camera->y_enabled = enabled;
 }
 
-void camera_follow_target(mgc_camera_t *camera, const mgc_sprite_t *target) {
-
+void camera_follow_target_position(mgc_camera_t *camera, mgc_point_t target_pos) {
     int16_t dx, dy;
     int16_t next_follow_line;
+    int16_t target_x, target_y;
 
-    if ( ( camera == NULL ) ||
-         ( target == NULL )
-    ) {
+    if ( camera == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
 
+    target_x = target_pos.x;
+    target_y = target_pos.y;
+
     if ( camera->x_enabled ) {
         mgc_follow_settings_t *settings = &camera->x_settings;
-        if ( target->x < settings->start_line ) {
+        if ( target_x < settings->start_line ) {
             next_follow_line = settings->start_line;
-        } else if ( target->x > (settings->end_line + settings->deadzone) ) {
+        } else if ( target_x > (settings->end_line + settings->deadzone) ) {
             next_follow_line = settings->end_line;
         } else {
-            if ( target->x < camera->x_follow_line ) {
-                next_follow_line = target->x;
-            } else if ( target->x > (camera->x_follow_line + settings->deadzone) ) {
-                next_follow_line = target->x - settings->deadzone;
+            if ( target_x < camera->x_follow_line ) {
+                next_follow_line = target_x;
+            } else if ( target_x > (camera->x_follow_line + settings->deadzone) ) {
+                next_follow_line = target_x - settings->deadzone;
             } else {
                 next_follow_line = camera->x_follow_line;
             }
@@ -94,15 +95,15 @@ void camera_follow_target(mgc_camera_t *camera, const mgc_sprite_t *target) {
 
     if ( camera->y_enabled ) {
         mgc_follow_settings_t *settings = &camera->y_settings;
-        if ( target->y < settings->start_line ) {
+        if ( target_y < settings->start_line ) {
             next_follow_line = settings->start_line;
-        } else if ( target->y > (settings->end_line + settings->deadzone) ) {
+        } else if ( target_y > (settings->end_line + settings->deadzone) ) {
             next_follow_line = settings->end_line;
         } else {
-            if ( target->y < camera->y_follow_line ) {
-                next_follow_line = target->y;
-            } else if ( target->y > (camera->y_follow_line + settings->deadzone) ) {
-                next_follow_line = target->y - settings->deadzone;
+            if ( target_y < camera->y_follow_line ) {
+                next_follow_line = target_y;
+            } else if ( target_y > (camera->y_follow_line + settings->deadzone) ) {
+                next_follow_line = target_y - settings->deadzone;
             } else {
                 next_follow_line = camera->y_follow_line;
             }
@@ -115,6 +116,18 @@ void camera_follow_target(mgc_camera_t *camera, const mgc_sprite_t *target) {
 
     camera->x += dx;
     camera->y += dy;
+}
+
+void camera_follow_target(mgc_camera_t *camera, const mgc_sprite_t *target) {
+
+    if ( ( camera == NULL ) ||
+         ( target == NULL )
+    ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    mgc_point_t pos = sprite_get_position(target);
+    camera_follow_target_position(camera, pos);
 }
 
 bool camera_get_position(const mgc_camera_t *camera, mgc_point_t *cam_pos) {
