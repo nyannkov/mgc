@@ -28,8 +28,8 @@ typedef struct mgc_btctrl_callbacks {
     enum mgc_btree_leaf_state (*on_proc_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
     void (*on_enter_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
     void (*on_exit_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
-    void (*on_enter_node)(mgc_btctrl_t* btctrl, void *context);
-    void (*on_exit_node)(mgc_btctrl_t* btctrl, void *context);
+    void (*on_enter_composite)(mgc_btctrl_t* btctrl, void *context);
+    void (*on_exit_composite)(mgc_btctrl_t* btctrl, void *context);
     void (*on_tree_start)(mgc_btctrl_t* btctrl, void *context);
     void (*on_tree_finish)(mgc_btctrl_t* btctrl, void *context);
 } mgc_btctrl_callbacks_t;

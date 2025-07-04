@@ -49,8 +49,8 @@ static inline void go_to_first_child_leaf(mgc_btctrl_t* btctrl, const mgc_btctrl
 
     while ( btctrl->current->type != MGC_BTREE_NODE_TYPE_LEAF ) {
         btctrl->current = btctrl->current->body.first_child;
-        if ( cbs->on_enter_node ) {
-            cbs->on_enter_node(btctrl, cbs->context);
+        if ( cbs->on_enter_composite ) {
+            cbs->on_enter_composite(btctrl, cbs->context);
         }
     }
 
@@ -79,8 +79,8 @@ static bool go_to_next_leaf(mgc_btctrl_t* btctrl, const mgc_btctrl_callbacks_t* 
                 // selector succeeded or last child failed --> go up
                 btctrl->current = parent;
                 parent = btctrl->btree->parents[parent->parent_index];
-                if ( cbs->on_exit_node ) {
-                    cbs->on_exit_node(btctrl, cbs->context);
+                if ( cbs->on_exit_composite ) {
+                    cbs->on_exit_composite(btctrl, cbs->context);
                 }
             } else {
                 // try next sibling
@@ -94,8 +94,8 @@ static bool go_to_next_leaf(mgc_btctrl_t* btctrl, const mgc_btctrl_callbacks_t* 
                 // sequencer failed or done --> go up
                 btctrl->current = parent;
                 parent = btctrl->btree->parents[parent->parent_index];
-                if ( cbs->on_exit_node ) {
-                    cbs->on_exit_node(btctrl, cbs->context);
+                if ( cbs->on_exit_composite ) {
+                    cbs->on_exit_composite(btctrl, cbs->context);
                 }
             } else {
                 // next step

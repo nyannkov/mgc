@@ -1,8 +1,10 @@
+#include <cstdio>
 #include <vector>
 #include "mgc_cpp/mgc.hpp"
 #include "mgc_drivers/platform/display/st7789/cpp/st7789.hpp"
 #include "mgc_drivers/platform/input/digital_gamepad/cpp/digital_gamepad.hpp"
 #include "mgc_drivers/platform/sound/mml_psg/cpp/sound_controller_mml_psg.hpp"
+#include "mgc_drivers/platform/timer/free_running_timer/cpp/free_running_timer_u32.hpp"
 #include "resources/generated/map/map_01.h"
 #include "resources/generated/map/map_01_fg.h"
 #include "resources/generated/tileset/tileset_map_elements.h"
@@ -10,6 +12,7 @@
 #include "resources/generated/tileset/tileset_blue.h"
 #include "resources/generated/talkscript/test_talkscript.h"
 #include "resources/generated/font/k8x12.h"
+#include "resources/generated/btree/test_btree.h"
 
 namespace {
 
@@ -34,6 +37,7 @@ MmlPsgSoundController sound_controller;
 auto& gamepad = mgc::drivers::platform::input::default_gamepad();
 
 DefaultTalkflowController talkflow_controller(gamepad);
+mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32> btc(gamepad);
 
 SimpleCameraFollower camera;
 mgc::render::Renderer<ST7789> renderer(display_driver, &camera);
@@ -278,10 +282,17 @@ const mgc_mml_record_t bgm_records[1] = {
 
 }
 
+static char label_buf_1[32] = {"---------------"};
+static char label_buf_2[32] = {"---------------"};
+static char label_buf_3[32] = {"---------------"};
+static char label_buf_4[32] = {"---------------"};
+static char label_buf_5[32] = {"---------------"};
 
 int main() {
 
     float sound_speed_factor = 1.0f;
+
+	auto now = mgc::drivers::platform::timer::FreeRunningTimerU32::now_ms(); 
 
     display_driver.init(50*1000*1000); // over clock
 
@@ -293,6 +304,37 @@ int main() {
     sound_controller.play_background_music(0, 0.0);
 
     gamepad.init(); 
+
+    mgc::parts::BasicLabel label1;
+    label1.set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(0)));
+    label1.set_font(k8x12);
+    label1.set_text(label_buf_1);
+    label1.set_size(mgc::parts::types::Size(8*sizeof(label_buf_1), 12));
+
+    mgc::parts::BasicLabel label2;
+    label2.set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(1)));
+    label2.set_font(k8x12);
+    label2.set_text(label_buf_2);
+    label2.set_size(mgc::parts::types::Size(8*sizeof(label_buf_2), 12));
+
+    mgc::parts::BasicLabel label3;
+    label3.set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(2)));
+    label3.set_font(k8x12);
+    label3.set_text(label_buf_3);
+    label3.set_size(mgc::parts::types::Size(8*sizeof(label_buf_3), 12));
+
+    mgc::parts::BasicLabel label4;
+    label4.set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(3)));
+    label4.set_font(k8x12);
+    label4.set_text(label_buf_4);
+    label4.set_size(mgc::parts::types::Size(8*sizeof(label_buf_4), 12));
+
+    mgc::parts::BasicLabel label5;
+    label5.set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(4)));
+    label5.set_font(k8x12);
+    label5.set_text(label_buf_5);
+    label5.set_size(mgc::parts::types::Size(8*sizeof(label_buf_5), 12));
+
 
     Stage1 stage1;
     Stage1_FG stage1_fg;
@@ -316,20 +358,66 @@ int main() {
 
     talkflow_controller.set_dialoguebox_config(
         DialogueboxConfig {
-            mgc::math::Vec2i(8, 8),
+            mgc::math::Vec2i(8, MGC_CELL2PIXEL(6)),
             mgc::parts::types::Size(150, 40),
             2,1,4,2
         }
     );
     talkflow_controller.set_selectbox_config(
         SelectboxConfig {
-            mgc::math::Vec2i(100, 16),
+            mgc::math::Vec2i(100, MGC_CELL2PIXEL(6) + 8),
             mgc::parts::types::Size(80, 80),
             "*",
             mgc::math::Vec2i(10, 0)
         }
     );
 
+
+    struct Listener : mgc::control::btree::IBTreeListener<mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32>> {
+        LeafResult on_proc_leaf(std::string_view id, const DurationT& duration, mgc_btree_tag_t tag) override {
+            
+            ::snprintf(label_buf_1, sizeof(label_buf_1)-1, "leaf_id: %s", id.data());
+            ::snprintf(label_buf_2, sizeof(label_buf_2)-1, "input: %08u", duration.input_idle_time);
+            ::snprintf(label_buf_3, sizeof(label_buf_3)-1, "tree: %08u", duration.tree_elapsed);
+            ::snprintf(label_buf_4, sizeof(label_buf_4)-1, "composite: %08u", duration.composite_elapsed);
+            ::snprintf(label_buf_5, sizeof(label_buf_5)-1, "leaf: %08u", duration.leaf_elapsed);
+
+            if ( id == "cond/timer/over_60s" ) {
+                if ( duration.input_idle_time > 60'000 ) {
+                    return LeafResult::Success;
+                } else {
+                    return LeafResult::Failure;
+                }
+            } else if ( id == "action/sleep" ) {
+                return LeafResult::Success;
+
+            } else if ( id == "cond/timer/over_30s" ) {
+
+                if ( duration.input_idle_time > 30'000 ) {
+                    return LeafResult::Success;
+                } else {
+                    return LeafResult::Failure;
+                }
+
+            } else if ( id == "action/dance" ) {
+                
+                if ( duration.leaf_elapsed <= 10'000 ) {
+                    return LeafResult::Running;
+                } else {
+                    return LeafResult::Success;
+                }
+
+            } else if ( id == "idle_breathing" ) {
+                return LeafResult::Success;
+
+            } else { }
+            
+            return LeafResult::Running;
+        }
+    } bt_listener;
+
+    btc.set_btree(test_btree);
+    btc.bind_listener(bt_listener);
 
 
     std::vector<const mgc::features::Drawable*> drawables;
@@ -338,6 +426,11 @@ int main() {
     drawables.push_back(&npc1.sprite());
     drawables.push_back(&stage1_fg.tilegrid());
     drawables.push_back(&talkflow_controller);
+    drawables.push_back(&label1);
+    drawables.push_back(&label2);
+    drawables.push_back(&label3);
+    drawables.push_back(&label4);
+    drawables.push_back(&label5);
 
     std::vector<const mgc::features::CellDrawable*> cell_drawables;
     cell_drawables.push_back(&stage1.tilegrid());
@@ -345,6 +438,11 @@ int main() {
     cell_drawables.push_back(&npc1.sprite());
     cell_drawables.push_back(&stage1_fg.tilegrid());
     cell_drawables.push_back(&talkflow_controller);
+    cell_drawables.push_back(&label1);
+    cell_drawables.push_back(&label2);
+    cell_drawables.push_back(&label3);
+    cell_drawables.push_back(&label4);
+    cell_drawables.push_back(&label5);
 
 
     camera.set_x_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(3));
@@ -374,6 +472,11 @@ int main() {
 
 
         stage1.update();
+
+        if ( btc.has_finished() ) {
+            btc.reset_state();
+        }
+        btc.proc();
 
         talkflow_controller.proc();
         // If a talkflow is active, player update and collisions are paused

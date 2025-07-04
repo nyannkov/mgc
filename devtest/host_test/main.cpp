@@ -1,60 +1,90 @@
 #include <stdio.h>
+#include <chrono>
+#include <iostream>
 #include "mgc/mgc.h"
+#include "mgc_cpp/mgc.hpp"
 #include "./resources/generated/btree/test_btree.h"
 
-static int counter = 0;
-
-static enum mgc_btree_leaf_state on_proc_leaf(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context) {
-    printf("%s, counter=%d\n", leaf->id, counter);
-
-    if ( counter++ < 10 ) {
-        return MGC_BTREE_LEAF_RESULT_FAILURE;
-    } else {
-        return MGC_BTREE_LEAF_RESULT_SUCCESS;
+struct TimerHost : mgc::platform::timer::Timer<TimerHost, uint32_t> {
+    static timestamp_t now_ms_impl() {
+        auto now = std::chrono::steady_clock::now();
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+        return ms;
     }
-}
-static void on_enter_leaf(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context) {
-    counter = 0;
-    printf("on_enter_leaf(%d)\n", btctrl->current->tag);
-}
-static void on_exit_leaf(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context) {
-    printf("on_exit_leaf(%d)\n", btctrl->current->tag);
-}
-static void on_enter_node(mgc_btctrl_t* btctrl, void *context) {
-    printf("on_enter_node(%d)\n", btctrl->current->tag);
-}
-static void on_exit_node(mgc_btctrl_t* btctrl, void *context) {
-    printf("on_exit_node(%d)\n", btctrl->current->tag);
-}
-static void on_tree_start(mgc_btctrl_t* btctrl, void *context) {
-    printf("on_tree_start(%d)\n", btctrl->current->tag);
-}
-static void on_tree_finish(mgc_btctrl_t* btctrl, void *context) {
-    printf("on_tree_finish(%d)\n", btctrl->current->tag);
-}
-
-static const mgc_btctrl_callbacks_t callbacks  = {
-    NULL,
-    on_proc_leaf,
-    on_enter_leaf,
-    on_exit_leaf,
-    on_enter_node,
-    on_exit_node,
-    on_tree_start,
-    on_tree_finish
 };
 
-int main(void) {
+struct InputMock : mgc::platform::input::IButton {
+    bool is_pressed(mgc::platform::input::Key key) const override {
+        return is_pressed_;
+    }
 
-    mgc_btctrl_t btctrl;
+    bool was_pressed(mgc::platform::input::Key key) const override {
+        return false;
+    }
 
-    btctrl_init(&btctrl);
+    uint16_t hold_counter(mgc::platform::input::Key key) const override {
+        return 0;
+    }
 
-    btctrl_set_btree(&btctrl, &test_btree);
+    void set_is_pressed(bool v) {
+       is_pressed_ = v; 
+    }
 
-    btctrl_set_callbacks(&btctrl, &callbacks);
+private:
+    bool is_pressed_ = false;
+};
 
-    while (btctrl_proc(&btctrl) != MGC_BTCTRL_STATE_FINISHED) { }
+
+int main() {
+
+    InputMock input_mock;
+   
+    mgc::control::btree::BTreeController<TimerHost> btc(input_mock);
+
+    struct Listener : mgc::control::btree::IBTreeListener<mgc::control::btree::BTreeController<TimerHost>> {
+        LeafResult on_proc_leaf(std::string_view id, const DurationT& duration, mgc_btree_tag_t tag) override {
+
+            if ( id == "cond/timer/over_60s" ) {
+                std::cout << id << std::endl;
+                return LeafResult::Success;
+            } else if ( id == "action/sleep" ) {
+                std::cout << id << std::endl;
+                return LeafResult::Failure;
+            } else if ( id == "cond/timer/over_30s" ) {
+                std::cout << id << std::endl;
+                return LeafResult::Success;
+            } else if ( id == "action/dance" ) {
+                std::cout << id << std::endl;
+                return LeafResult::Failure;
+            } else if ( id == "idle_breathing" ) {
+                std::cout << id << std::endl;
+                return LeafResult::Success;
+
+            } else { }
+            
+            //if ( duration.leaf_elapsed > 1000 ) {
+            //    std::cout << id << std::endl;
+            //    std::cout << duration.tree_elapsed << std::endl;
+            //    std::cout << duration.composite_elapsed << std::endl;
+            //    std::cout << duration.leaf_elapsed << std::endl;
+            //    std::cout << duration.input_idle_time << std::endl;
+
+            //    return LeafResult::Success;
+            //}
+
+            return LeafResult::Running;
+        }
+    } listener;
+
+    btc.set_btree(test_btree);
+    btc.bind_listener(listener);
+    
+    input_mock.set_is_pressed(true);
+
+    while ( !btc.has_finished() ) {
+        btc.proc();
+    }
 
     return 0;
 }
+

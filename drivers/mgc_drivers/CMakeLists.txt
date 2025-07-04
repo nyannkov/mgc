@@ -4,6 +4,8 @@ option(MGC_ENABLE_DISPLAY "Enable display drivers" ON)
 option(MGC_ENABLE_SOUND "Enable sound drivers" ON)
 option(MGC_ENABLE_INPUT "Enable input drivers" ON)
 
+option(MGC_ENABLE_TIMER "Enable timer" ON)
+
 if(MGC_USE_RP2040)
     target_compile_definitions(mgc_drivers INTERFACE MGC_PLATFORM_RP2040)
 endif()
@@ -17,6 +19,7 @@ set_property(CACHE MGC_INPUT_DEVICE PROPERTY STRINGS "digital_gamepad")
 
 set(MGC_SOUND_DEVICE "mml_psg" CACHE STRING "Sound device to use")
 set_property(CACHE MGC_SOUND_DEVICE PROPERTY STRINGS "mml_psg")
+
 
 add_subdirectory(platform)
 

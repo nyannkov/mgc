@@ -28,7 +28,7 @@ typedef uint16_t mgc_id_t;
 #endif/*NULL*/
 
 #ifndef MGC_WEAK
-#define MGC_WEAK	__attribute__((weak))
+#define MGC_WEAK    __attribute__((weak))
 #endif/*MGC_WEAK*/
 
 #ifndef MGC_INFO
