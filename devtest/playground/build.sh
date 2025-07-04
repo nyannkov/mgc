@@ -15,6 +15,7 @@ TILESET_GEN="../../tools/tileset_gen/tileset_gen.py"
 MAP_GEN="../../tools/map_gen/map_gen.py"
 FONT_GEN="../../tools/font_gen/font_gen.py"
 TALKSCRIPT_GEN="../../tools/talkscript_gen/talkscript_gen.py"
+BTREE_GEN="../../tools/btree_gen/btree_gen.py"
 
 python3 ${TILESET_GEN} ../common/assets/tileset/tileset_map_elements.bmp --count 100 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN} ../common/assets/tileset/tileset_player.bmp --count 25 --dir ./resources/generated/tileset
@@ -23,6 +24,7 @@ python3 ${MAP_GEN}     ../common/assets/map/map_01.csv --compression runlength -
 python3 ${MAP_GEN}     ../common/assets/map/map_01_fg.csv --compression runlength --dir ./resources/generated/map
 python3 ${TALKSCRIPT_GEN}     ../common/assets/talkscript/test_talkscript.yml --dir ./resources/generated/talkscript
 python3 ${FONT_GEN}     ../../assets/fonts/k8x12/k8x12.bdf  --subset ../common/assets/font/k8x12_subset.txt  --dir ./resources/generated/font
+python3 ${BTREE_GEN}     ../common/assets/btree/test_btree.yaml --dir ./resources/generated/btree
 
 
 BUILD_DIR=${BUILD_DIR:-build}

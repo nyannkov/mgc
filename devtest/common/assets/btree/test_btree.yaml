@@ -1,0 +1,47 @@
+btree:
+  root:
+    type: selector
+    description: "This is the root selector node that decides what action to take based on conditions."
+    children:
+      - sleep_if_too_long
+      - dance_if_long_idle
+      - idle_anim
+
+  sleep_if_too_long:
+    type: sequencer
+    description: "Checks if the character has been idle too long, and if so, performs the sleep action."
+    children:
+      - is_idle_for_60_sec
+      - do_sleep
+
+  dance_if_long_idle:
+    type: sequencer
+    description: "Checks if the character has been idle for a long time and performs the dance action."
+    children:
+      - is_idle_for_30_sec
+      - do_dance
+
+  idle_anim:
+    type: leaf
+    description: "Performs idle breathing animation when no actions are being performed."
+    id: idle_breathing
+
+  is_idle_for_30_sec:
+    type: leaf
+    description: "Condition that checks if the character has been idle for more than 30 seconds."
+    id: cond/timer/over_30s
+
+  is_idle_for_60_sec:
+    type: leaf
+    description: "Condition that checks if the character has been idle for more than 60 seconds."
+    id: cond/timer/over_60s
+
+  do_dance:
+    type: leaf
+    description: "Performs the dance animation when the character is idle for too long."
+    id: action/dance
+
+  do_sleep:
+    type: leaf
+    description: "Performs the sleep animation when the character has been idle for too long."
+    id: action/sleep

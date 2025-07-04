@@ -16,6 +16,7 @@ set(MGC_C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/render/pixelbuffer.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/dlgflow.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/talkflow.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/btctrl.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/jumpctrl/jumpctrl.c"
 )
 

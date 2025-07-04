@@ -15,6 +15,7 @@ set(C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/font/k8x12.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_01.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_01_fg.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/btree/test_btree.c"
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -23,13 +24,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../..  mgc_build)
 
-
-target_include_directories(playground.elf PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../mgc/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../mgc/drivers
-)
-
-target_link_libraries(playground.elf PUBLIC
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
     mgc
 )
 
