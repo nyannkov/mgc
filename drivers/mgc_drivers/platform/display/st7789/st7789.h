@@ -38,8 +38,6 @@ bool st7789_is_busy(void);
 
 #ifdef __cplusplus
 }/* extern "C" */
-
-
 #endif
 
 #endif/*MGC_DRIVERS_ST7789_H*/

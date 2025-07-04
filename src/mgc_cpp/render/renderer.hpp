@@ -95,14 +95,14 @@ struct Renderer {
         }
     }
 
-	/**
-	 * Renders and starts asynchronous transfer of the framebuffer.
-	 *
-	 * Using a single shared framebuffer (for both draw and transfer) is unsafe
-	 * if a previous transfer is still in progress.
-	 *
-	 * This is experimental and may change.
-	 */
+    /**
+    * Renders and starts asynchronous transfer of the framebuffer.
+    *
+    * Using a single shared framebuffer (for both draw and transfer) is unsafe
+    * if a previous transfer is still in progress.
+    *
+    * This is experimental and may change.
+    */
     void render_async(mgc::graphics::Framebuffer& fb, const mgc::features::Drawable** drawables, size_t drawable_count) {
         if ( !drawables ) {
             return;

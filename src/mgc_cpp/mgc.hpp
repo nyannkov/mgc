@@ -17,6 +17,7 @@
 #include "mgc_cpp/collision/collision_detector.hpp"
 #include "mgc_cpp/camera/simple_camera_follower.hpp"
 #include "mgc_cpp/control/talkflow/talkflow_controller.hpp"
+#include "mgc_cpp/control/btree/btree_controller.hpp"
 #include "mgc_cpp/render/renderer.hpp"
 
 #endif/*MGC_HPP*/
