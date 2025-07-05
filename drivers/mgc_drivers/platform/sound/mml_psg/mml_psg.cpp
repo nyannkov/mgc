@@ -51,7 +51,7 @@ typedef struct mgc_mml_record_list {
 } mgc_mml_record_list_t;
 
 static PsginoZ psgino_z;
-static PSG* psg;
+static PSG psg;
 
 static q_t psg_lpf_alpha_q;
 static q_t psg_output_1_q;
@@ -69,7 +69,7 @@ static void psg_write(uint8_t addr, uint8_t data) {
 
     mml_psg_port__psg_guard_enter();
 
-    PSG_writeReg(psg, addr, data);
+    PSG_writeReg(&psg, addr, data);
 
     mml_psg_port__psg_guard_exit();
 }
@@ -87,9 +87,7 @@ static void callback_wrapper_sound_effect(uint8_t ch, int32_t param) {
 }
 
 void mml_psg_init(float mml_proc_rate, void *ctx) {
-    if ( psg != nullptr ) {
-        return;
-    }
+
     float proc_rate;
     if ( mml_proc_rate <= 0.0F ) {
         mml_proc_rate = MML_PROC_RATE;
@@ -101,8 +99,16 @@ void mml_psg_init(float mml_proc_rate, void *ctx) {
     psg_output_1_q = F_TO_Q(0.0f);
     psg_output_2_q = F_TO_Q(0.0f);
 
-    psg = PSG_new(EMULATOR_CLOCK, EMULATOR_RATE);
-    PSG_reset(psg);
+    for ( size_t i = 0; i < sizeof(PSG); i++ ) {
+        ((uint8_t*)&psg)[i] = 0;
+    }
+
+    PSG_setVolumeMode(&psg, 0);
+    PSG_setClock(&psg, EMULATOR_CLOCK);
+    PSG_setRate(&psg, EMULATOR_RATE ? EMULATOR_RATE : 44100);
+    PSG_setQuality(&psg, 0);
+    PSG_setMask(&psg, 0x00);
+    PSG_reset(&psg);
     psgino_z.Initialize(psg_write, EMULATOR_CLOCK, mml_proc_rate);
 
     mml_psg_port__init(EMULATOR_RATE, mml_proc_rate);
@@ -117,11 +123,6 @@ void mml_psg_init(float mml_proc_rate, void *ctx) {
 void mml_psg_deinit(void) {
 
     mml_psg_port__deinit();
-
-    if ( psg != nullptr ) {
-        PSG_delete(psg);
-        psg = nullptr;
-    }
 }
 
 bool mml_psg_play_background_music(int music_id, float fade_in_sec) {
@@ -269,23 +270,20 @@ void mml_psg_shift_pitch_by_degree(int16_t degree) {
 uint16_t mml_psg_local__proc_psg_emu(void) {
 
     q_t output_q = 0;
-    if( psg != nullptr ) {
-        q_t input_q = 0;
-        input_q = (q_t)(static_cast<int32_t>(PSG_calc(psg)) << Q_VALUE);
-        input_q >>= LPF_SHIFT_BIT;
-        if ( psg_lpf_enabled ) {
-            q_t delta_1 = input_q - psg_output_1_q;
-            psg_output_1_q += MUL_Q(delta_1, psg_lpf_alpha_q);
+    q_t input_q = (q_t)(static_cast<int32_t>(PSG_calc(&psg)) << Q_VALUE);
+    input_q >>= LPF_SHIFT_BIT;
+    if ( psg_lpf_enabled ) {
+        q_t delta_1 = input_q - psg_output_1_q;
+        psg_output_1_q += MUL_Q(delta_1, psg_lpf_alpha_q);
 
-            q_t delta_2 = psg_output_1_q - psg_output_2_q;
-            psg_output_2_q += MUL_Q(delta_2, psg_lpf_alpha_q);
+        q_t delta_2 = psg_output_1_q - psg_output_2_q;
+        psg_output_2_q += MUL_Q(delta_2, psg_lpf_alpha_q);
 
-            output_q = psg_output_2_q;
-        } else {
-            output_q = input_q;
-        }
+        output_q = psg_output_2_q;
+
     } else {
-        output_q = 0;
+
+        output_q = input_q;
     }
 
     output_q = MUL_Q(output_q, master_volume_q);
