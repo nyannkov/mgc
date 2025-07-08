@@ -8,7 +8,6 @@
 #define MGC_GRAPHICS_ASYNC_DOUBLE_FRAMEBUFFER_HPP
 
 #include "framebuffer.hpp"
-#include <atomic>
 
 namespace mgc {
 namespace graphics {
