@@ -28,6 +28,8 @@ bool st7789_port__spi_transfer_async(const uint8_t *buffer, size_t len);
 
 bool st7789_port__is_busy(void);
 void st7789_port__sleep_ms(uint32_t ms);
+void st7789_port__wait_for_interrupt(void);
+void st7789_port__set_on_transfer_async_completed(void (*cb)(void* context), void* ctx);
 
 #ifdef __cplusplus
 }/* extern "C" */

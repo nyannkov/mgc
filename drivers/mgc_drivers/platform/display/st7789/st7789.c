@@ -17,6 +17,8 @@
 #define spi_transfer_async          st7789_port__spi_transfer_async
 #define is_busy                     st7789_port__is_busy
 #define sleep_ms                    st7789_port__sleep_ms
+#define wait_for_interrupt          st7789_port__wait_for_interrupt
+#define set_on_transfer_async_completed         st7789_port__set_on_transfer_async_completed
 
 #define ST7789_COMMAND_SLPIN   (0x10)   // Sleep In
 #define ST7789_COMMAND_SLPOUT  (0x11)   // Sleep Out
@@ -164,7 +166,7 @@ MGC_WEAK void st7789_init(uint32_t clock_rate) {
     }
     transfer_data8(0, false);
 
-    // DISON
+    // DISPON
     transfer_command(ST7789_COMMAND_DISPON);
 }
 
@@ -201,7 +203,7 @@ void st7789_sleep_in(void) {
     transfer_command(ST7789_COMMAND_SLPIN);
 }
 
-bool st7789_transfer_region_blocking_rgb565(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+bool st7789_transfer_region_blocking_rgb565(const uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
     (void)len;
 
     size_t dx, dy, count;
@@ -220,7 +222,7 @@ bool st7789_transfer_region_blocking_rgb565(uint8_t *buffer, size_t len, uint16_
     return true;
 }
 
-bool st7789_transfer_full_region_blocking_rgb565(uint8_t *buffer, size_t len) {
+bool st7789_transfer_full_region_blocking_rgb565(const uint8_t *buffer, size_t len) {
 
     if ( ( LCD_WIDTH * LCD_HEIGHT * sizeof(uint16_t) ) != len ) {
         return false;
@@ -233,9 +235,33 @@ bool st7789_transfer_full_region_blocking_rgb565(uint8_t *buffer, size_t len) {
     return true;
 }
 
-bool st7789_transfer_full_region_async_rgb565(uint8_t *buffer, size_t len) {
 
-    while ( is_busy() ) { }
+bool st7789_transfer_region_async_aligned_rgb565(const uint8_t* buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+    
+    if ( is_busy() ) {
+        return false;
+    }
+
+    size_t dx = x1 - x0 + 1;
+    size_t dy = y1 - y0 + 1;
+    size_t expected_len = dx * dy * sizeof(uint16_t);
+
+    if (expected_len != len) {
+        return false;
+    }
+    
+    set_window(x0, y0, x1, y1);
+    gpio_write(ST7789_PORT__DC, true);
+    spi_transfer_async(buffer, len);
+
+    return true;
+}
+
+bool st7789_transfer_full_region_async_rgb565(const uint8_t *buffer, size_t len) {
+
+    if ( is_busy() ) {
+        return false;
+    }
 
     if ( ( LCD_WIDTH * LCD_HEIGHT * sizeof(uint16_t) ) != len ) {
         return false;
@@ -250,5 +276,19 @@ bool st7789_transfer_full_region_async_rgb565(uint8_t *buffer, size_t len) {
 
 bool st7789_is_busy(void) {
     return is_busy();
+}
+
+void st7789_wait_until_idle_interrupt(void) {
+    while (is_busy()) {
+        wait_for_interrupt();
+    }
+}
+
+void st7789_wait_until_idle_polling(void) {
+    while (is_busy()) { }
+}
+
+void st7789_set_on_transfer_async_completed(void (*cb)(void* context), void* ctx) {
+    set_on_transfer_async_completed(cb, ctx);
 }
 

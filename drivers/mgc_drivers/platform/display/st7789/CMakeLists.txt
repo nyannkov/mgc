@@ -74,6 +74,7 @@ if(MGC_USE_RP2040)
         hardware_spi
         hardware_irq
         hardware_dma
+        hardware_sync
     )
 endif()
 

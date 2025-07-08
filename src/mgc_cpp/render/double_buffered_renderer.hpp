@@ -4,40 +4,41 @@
  *
  * Copyright (c) 2025 nyannkov
  */
-#ifndef MGC_RENDER_RENDERER_HPP
-#define MGC_RENDER_RENDERER_HPP
+#ifndef MGC_RENDER_DOUBLE_BUFFERED_RENDERER_HPP
+#define MGC_RENDER_DOUBLE_BUFFERED_RENDERER_HPP
 
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/platform/display/display_driver.hpp"
 #include "mgc_cpp/camera/icamera_follower.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/drawable.hpp"
+#include "mgc_cpp/graphics/async_double_framebuffer.hpp"
 
 namespace mgc {
 namespace render {
 
 template <typename DisplayDriverT>
-struct Renderer {
+struct DoubleBufferedRenderer {
 
     static_assert(std::is_base_of<mgc::platform::display::DisplayDriver<DisplayDriverT>, DisplayDriverT>::value,
               "DisplayDriverT must inherit from DisplayDriver<DisplayDriverT>");
 
-    Renderer(mgc::graphics::Framebuffer& fb, DisplayDriverT& driver, const mgc::camera::ICameraFollower* follower)
-        : fb_(fb), driver_(driver), follower_(follower) { }
+    DoubleBufferedRenderer(mgc::graphics::AsyncDoubleFramebuffer& dfb, DisplayDriverT& driver, const mgc::camera::ICameraFollower* follower)
+        : dfb_(dfb), driver_(driver), follower_(follower) { }
 
-    ~Renderer() = default;
+    ~DoubleBufferedRenderer() = default;
 
-    Renderer(const Renderer&) = delete;
-    Renderer& operator=(const Renderer&) = delete;
-    Renderer(Renderer&&) = default;
-    Renderer& operator=(Renderer&&) = default;
+    DoubleBufferedRenderer(const DoubleBufferedRenderer&) = delete;
+    DoubleBufferedRenderer& operator=(const DoubleBufferedRenderer&) = delete;
+    DoubleBufferedRenderer(DoubleBufferedRenderer&&) = default;
+    DoubleBufferedRenderer& operator=(DoubleBufferedRenderer&&) = default;
 
     void set_follower(const mgc::camera::ICameraFollower* follower) {
         follower_ = follower;
     }
 
     void set_back_color(mgc::graphics::Color back_color) {
-        fb_.set_back_color(back_color);
+        dfb_.set_back_color(back_color);
     }
 
     bool is_busy() const {
@@ -61,50 +62,40 @@ struct Renderer {
         auto cam_pos = this->camera_position();
 
         if ( clear_before_draw ) {
-            fb_.clear();
+            dfb_.back().clear();
         }
 
         for ( size_t index = 0; index < drawables_count; index++ ) {
             if ( drawables[index] ) {
-                drawables[index]->draw(fb_, cam_pos, nullptr);
+                drawables[index]->draw(dfb_.back(), cam_pos, nullptr);
             }
         }
 
         return true;
     }
 
-    bool transfer_to_display_region_blocking(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
-
-        return driver_.transfer_region_blocking(fb_.data_bytes(), fb_.size(), x0, y0, x1, y1);
-    }
-
-    bool transfer_to_display_blocking() {
-
-        return driver_.transfer_full_region_blocking(fb_.data_bytes(), fb_.size());
-    }
-
-    /**
-    * Renders and starts asynchronous transfer of the framebuffer.
-    *
-    * Using a single shared framebuffer (for both draw and transfer) is unsafe
-    * if a previous transfer is still in progress.
-    *
-    * This is experimental and may change.
-    */
     bool transfer_to_display_async_at(uint16_t offset_x, uint16_t offset_y) {
 
         if ( is_busy() ) {
             return false;
         }
 
-        return driver_.transfer_region_async_aligned(
-            fb_.data_bytes(),
-            fb_.size(),
+        const mgc::graphics::Framebuffer& fb = dfb_.back();
+
+        bool success = driver_.transfer_region_async_aligned(
+            fb.data_bytes(),
+            fb.size(),
             offset_x,
             offset_y,
-            offset_x + fb_.width() - 1,
-            offset_y + fb_.height() - 1
+            offset_x + fb.width() - 1,
+            offset_y + fb.height() - 1
         );
+
+        if ( success ) {
+            dfb_.swap();
+        }
+        
+        return success;
     }
 
     bool transfer_to_display_async() {
@@ -113,19 +104,27 @@ struct Renderer {
             return false;
         }
         
-        return driver_.transfer_full_region_async(fb_.data_bytes(), fb_.size());
+        const mgc::graphics::Framebuffer& fb = dfb_.back();
+
+        bool success = driver_.transfer_full_region_async(fb.data_bytes(), fb.size());
+
+        if ( success ) {
+            dfb_.swap();
+        }
+        
+        return success;
     }
 
-    const mgc::graphics::Framebuffer& framebuffer() const {
-        return fb_;
+    const mgc::graphics::AsyncDoubleFramebuffer& double_buffer() const {
+        return dfb_;
     }
 
-    mgc::graphics::Framebuffer& framebuffer() {
-        return fb_;
+    mgc::graphics::AsyncDoubleFramebuffer& double_buffer() {
+        return dfb_;
     }
 
 private:
-    mgc::graphics::Framebuffer& fb_;
+    mgc::graphics::AsyncDoubleFramebuffer& dfb_;
     DisplayDriverT& driver_;
     const mgc::camera::ICameraFollower* follower_;
 
@@ -141,4 +140,4 @@ private:
 }// namespace render
 }// namespace mgc
 
-#endif/*MGC_RENDER_RENDERER_HPP*/
+#endif/*MGC_RENDER_DOUBLE_BUFFERED_RENDERER_HPP*/

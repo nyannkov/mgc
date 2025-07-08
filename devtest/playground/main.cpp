@@ -27,6 +27,7 @@ using mgc::collision::HitboxSize;
 using CornerPushDirection = mgc::collision::CollisionDetectorBoxToMap::CornerPushDirection;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;;
+using mgc::graphics::AsyncDoubleFramebuffer;
 using mgc::platform::input::Key;
 using mgc::control::talkflow::DefaultTalkflowController;
 using mgc::control::talkflow::DialogueboxConfig;
@@ -40,17 +41,16 @@ DefaultTalkflowController talkflow_controller(gamepad);
 mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32> btc(gamepad);
 
 SimpleCameraFollower camera;
-mgc::render::Renderer<ST7789> renderer(display_driver, &camera);
 
 mgc_color_t buf1[240*240];
 mgc_color_t buf2[240*240];
-std::array<Framebuffer, 2> fb_array = {
-    Framebuffer(buf1, 240, 240),
-    Framebuffer(buf2, 240, 240)
-};
-size_t fb_index = 0;
 
+Framebuffer fb(buf1, 240, 240);
+AsyncDoubleFramebuffer dfb(buf1, buf2, 240, 240);
 CellBuffer cell_buffer;
+mgc::render::CellRenderer<ST7789> cell_renderer(cell_buffer, display_driver, &camera);
+mgc::render::Renderer<ST7789> renderer(fb, display_driver, &camera);
+mgc::render::DoubleBufferedRenderer<ST7789> dfb_renderer(dfb, display_driver, &camera);
 
 size_t npc1_talk_count = 0;
 
@@ -496,25 +496,21 @@ int main() {
 
             // If this function is called after an asynchronous draw,
             // it must wait until display_driver.is_busy() returns false.
-            renderer.render(cell_buffer, cell_drawables.data(), cell_drawables.size());
+            cell_renderer.draw_all_cells_and_transfer(cell_drawables.data(), cell_drawables.size());
 
         } else if ( render_type == RenderType::UseFrameBuffer ) {
 
             // Same as when using cell_buffer.
-            renderer.render(fb_array[0], drawables.data(), drawables.size());
+            renderer.draw_to_framebuffer(drawables.data(), drawables.size());
+            renderer.transfer_to_display_blocking();
 
         } else if ( render_type == RenderType::UseDoubleBuffer ) {
-            
-            auto& current = fb_array[fb_index];
-            fb_index++;
-            if ( fb_index >= fb_array.size() ) {
-                fb_index = 0;
-            }
-            // Async mode cannot clear buffer post-render,
-            // so it must be pre-initialized.
-            // (render() UI may need reconsideration for consistency with blocking mode)
-            current.clear();
-            renderer.render_async(current, drawables.data(), drawables.size());
+
+            dfb_renderer.draw_to_framebuffer(drawables.data(), drawables.size());
+
+            dfb_renderer.wait_until_idle_interrupt();
+
+            dfb_renderer.transfer_to_display_async();
 
         } else { }
     }
