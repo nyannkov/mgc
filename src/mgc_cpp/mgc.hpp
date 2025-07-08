@@ -19,6 +19,8 @@
 #include "mgc_cpp/control/talkflow/talkflow_controller.hpp"
 #include "mgc_cpp/control/btree/btree_controller.hpp"
 #include "mgc_cpp/render/renderer.hpp"
+#include "mgc_cpp/render/cell_renderer.hpp"
+#include "mgc_cpp/render/double_buffered_renderer.hpp"
 
 #endif/*MGC_HPP*/
 
