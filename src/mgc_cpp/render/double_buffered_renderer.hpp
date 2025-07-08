@@ -12,7 +12,7 @@
 #include "mgc_cpp/camera/icamera_follower.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/drawable.hpp"
-#include "mgc_cpp/graphics/async_double_framebuffer.hpp"
+#include "mgc_cpp/graphics/double_framebuffer.hpp"
 
 namespace mgc {
 namespace render {
@@ -23,7 +23,7 @@ struct DoubleBufferedRenderer {
     static_assert(std::is_base_of<mgc::platform::display::DisplayDriver<DisplayDriverT>, DisplayDriverT>::value,
               "DisplayDriverT must inherit from DisplayDriver<DisplayDriverT>");
 
-    DoubleBufferedRenderer(mgc::graphics::AsyncDoubleFramebuffer& dfb, DisplayDriverT& driver, const mgc::camera::ICameraFollower* follower)
+    DoubleBufferedRenderer(mgc::graphics::DoubleFramebuffer& dfb, DisplayDriverT& driver, const mgc::camera::ICameraFollower* follower)
         : dfb_(dfb), driver_(driver), follower_(follower) { }
 
     ~DoubleBufferedRenderer() = default;
@@ -115,16 +115,16 @@ struct DoubleBufferedRenderer {
         return success;
     }
 
-    const mgc::graphics::AsyncDoubleFramebuffer& double_buffer() const {
+    const mgc::graphics::DoubleFramebuffer& double_buffer() const {
         return dfb_;
     }
 
-    mgc::graphics::AsyncDoubleFramebuffer& double_buffer() {
+    mgc::graphics::DoubleFramebuffer& double_buffer() {
         return dfb_;
     }
 
 private:
-    mgc::graphics::AsyncDoubleFramebuffer& dfb_;
+    mgc::graphics::DoubleFramebuffer& dfb_;
     DisplayDriverT& driver_;
     const mgc::camera::ICameraFollower* follower_;
 

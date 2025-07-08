@@ -4,27 +4,27 @@
  *
  * Copyright (c) 2025 nyannkov
  */
-#ifndef MGC_GRAPHICS_ASYNC_DOUBLE_FRAMEBUFFER_HPP
-#define MGC_GRAPHICS_ASYNC_DOUBLE_FRAMEBUFFER_HPP
+#ifndef MGC_GRAPHICS_DOUBLE_FRAMEBUFFER_HPP
+#define MGC_GRAPHICS_DOUBLE_FRAMEBUFFER_HPP
 
 #include "framebuffer.hpp"
 
 namespace mgc {
 namespace graphics {
 
-class AsyncDoubleFramebuffer {
-public:
-    AsyncDoubleFramebuffer(Color* buf0, Color* buf1, uint16_t w, uint16_t h)
+struct DoubleFramebuffer {
+
+    DoubleFramebuffer(Color* buf0, Color* buf1, uint16_t w, uint16_t h)
         : fb0_(buf0, w, h),
           fb1_(buf1, w, h),
           draw_fb_(&fb0_),
           transfer_fb_(&fb1_)
     {}
 
-    AsyncDoubleFramebuffer(const AsyncDoubleFramebuffer&) = delete;
-    AsyncDoubleFramebuffer& operator=(const AsyncDoubleFramebuffer&) = delete;
-    AsyncDoubleFramebuffer(AsyncDoubleFramebuffer&&) = default;
-    AsyncDoubleFramebuffer& operator=(AsyncDoubleFramebuffer&&) = default;
+    DoubleFramebuffer(const DoubleFramebuffer&) = delete;
+    DoubleFramebuffer& operator=(const DoubleFramebuffer&) = delete;
+    DoubleFramebuffer(DoubleFramebuffer&&) = default;
+    DoubleFramebuffer& operator=(DoubleFramebuffer&&) = default;
 
     void set_back_color(Color color) {
         fb0_.set_back_color(color);
@@ -53,4 +53,4 @@ private:
 } // namespace graphics
 } // namespace mgc
 
-#endif // MGC_GRAPHICS_ASYNC_DOUBLE_FRAMEBUFFER_HPP
+#endif // MGC_GRAPHICS_DOUBLE_FRAMEBUFFER_HPP

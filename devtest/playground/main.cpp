@@ -27,7 +27,7 @@ using mgc::collision::HitboxSize;
 using CornerPushDirection = mgc::collision::CollisionDetectorBoxToMap::CornerPushDirection;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;;
-using mgc::graphics::AsyncDoubleFramebuffer;
+using mgc::graphics::DoubleFramebuffer;
 using mgc::platform::input::Key;
 using mgc::control::talkflow::DefaultTalkflowController;
 using mgc::control::talkflow::DialogueboxConfig;
@@ -46,7 +46,7 @@ mgc_color_t buf1[240*240];
 mgc_color_t buf2[240*240];
 
 Framebuffer fb(buf1, 240, 240);
-AsyncDoubleFramebuffer dfb(buf1, buf2, 240, 240);
+DoubleFramebuffer dfb(buf1, buf2, 240, 240);
 CellBuffer cell_buffer;
 mgc::render::CellRenderer<ST7789> cell_renderer(cell_buffer, display_driver, &camera);
 mgc::render::Renderer<ST7789> renderer(fb, display_driver, &camera);
