@@ -67,12 +67,14 @@ enum class RenderType {
 auto render_type = RenderType::UseDoubleBuffer;
 
 struct Stage1 : mgc::entities::TilemapImpl<Stage1> {
+
     Stage1() {
-        tilegrid_.bind_listener(listener_);
-        tilegrid_.set_tileset(tileset_map_elements);
-        tilegrid_.set_tile_id_map(map_01);
-        tilegrid_.set_position(mgc::math::Vec2i(0, 0));
-        this->set_collision_map_impl(map_01);
+        this->tilegrid().bind_listener(listener_);
+        this->tilegrid().set_tileset(tileset_map_elements);
+        this->tilegrid().set_tile_id_map(map_01);
+        this->tilegrid().set_position(mgc::math::Vec2i(0, 0));
+        this->set_collision_map(&map_01);
+        this->set_collision_enabled(true);
     }
 
     void update() {
@@ -99,10 +101,10 @@ private:
 
 struct Stage1_FG : mgc::entities::TilemapImpl<Stage1_FG> {
     Stage1_FG() {
-        tilegrid_.set_tileset(tileset_map_elements);
-        tilegrid_.set_tile_id_map(map_01_fg);
-        tilegrid_.set_position(mgc::math::Vec2i(0, 0));
-        tilegrid_.set_parallax_factor(mgc::graphics::ParallaxFactor(2.0, 1.0));
+        this->tilegrid().set_tileset(tileset_map_elements);
+        this->tilegrid().set_tile_id_map(map_01_fg);
+        this->tilegrid().set_position(mgc::math::Vec2i(0, 0));
+        this->tilegrid().set_parallax_factor(mgc::graphics::ParallaxFactor(2.0, 1.0));
     }
 };
 
@@ -110,12 +112,13 @@ struct Stage1_FG : mgc::entities::TilemapImpl<Stage1_FG> {
 struct NPC1 : mgc::entities::ActorImpl<NPC1, 1> {
 
     NPC1() {
-        sprite_.set_tileset(tileset_blue);
-        sprite_.set_tile_index(1);
+        this->sprite().set_tileset(tileset_blue);
+        this->sprite().set_tile_index(1);
         // Setup basic hitbox for NPC1
-        hitboxes_[0].offset = mgc::collision::HitboxOffset(0, 0);
-        hitboxes_[0].size = mgc::collision::HitboxSize(16, 16);
-        hitboxes_[0].enabled = true;
+        auto& hitboxes = this->hitboxes();
+        hitboxes[0].offset = mgc::collision::HitboxOffset(0, 0);
+        hitboxes[0].size = mgc::collision::HitboxSize(16, 16);
+        hitboxes[0].enabled = true;
 
         this->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(11), MGC_CELL2PIXEL(38)));
     }
@@ -126,11 +129,12 @@ struct NPC1 : mgc::entities::ActorImpl<NPC1, 1> {
 struct Player : mgc::entities::ActorImpl<Player, 1> {
 
     Player() : vy_(0), jumping_(false) {
-        sprite_.set_tileset(tileset_player);
-        sprite_.set_tile_index(3);
-        hitboxes_[0].offset = mgc::collision::HitboxOffset(0, 0);
-        hitboxes_[0].size = mgc::collision::HitboxSize(16, 16);
-        hitboxes_[0].enabled = true;
+        this->sprite().set_tileset(tileset_player);
+        this->sprite().set_tile_index(3);
+        auto& hitboxes = this->hitboxes();
+        hitboxes[0].offset = mgc::collision::HitboxOffset(0, 0);
+        hitboxes[0].size = mgc::collision::HitboxSize(16, 16);
+        hitboxes[0].enabled = true;
 
         this->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(38)));
     }
@@ -189,7 +193,7 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
     ) { 
         if constexpr (std::is_same_v<MapT, Stage1>) {
 
-            auto pos = sprite_.position();
+            auto pos = this->position();
             // Pushback response logic: stop falling or bounce depending on direction
             if ( info.pushback.y < 0 ) {
                 vy_ = 0;
@@ -201,7 +205,7 @@ struct Player : mgc::entities::ActorImpl<Player, 1> {
             } else { }
             pos.x += info.pushback.x;
 
-            sprite_.set_position(pos);
+            this->set_position(pos);
         }
     }
 
@@ -300,6 +304,7 @@ int main() {
     sound_controller.set_background_music_list(bgm_records, countof(bgm_records));
     sound_controller.set_sound_effect_list(se_records, countof(se_records));
     sound_controller.set_lpf_enabled(true);
+    //sound_controller.set_lpf_alpha(0.3);
     sound_controller.set_master_volume(0.5);
     sound_controller.play_background_music(0, 0.0);
 
@@ -421,10 +426,10 @@ int main() {
 
 
     std::vector<const mgc::features::Drawable*> drawables;
-    drawables.push_back(&stage1.tilegrid());
-    drawables.push_back(&player.sprite());
-    drawables.push_back(&npc1.sprite());
-    drawables.push_back(&stage1_fg.tilegrid());
+    drawables.push_back(&stage1);
+    drawables.push_back(&player);
+    drawables.push_back(&npc1);
+    drawables.push_back(&stage1_fg);
     drawables.push_back(&talkflow_controller);
     drawables.push_back(&label1);
     drawables.push_back(&label2);
@@ -433,10 +438,10 @@ int main() {
     drawables.push_back(&label5);
 
     std::vector<const mgc::features::CellDrawable*> cell_drawables;
-    cell_drawables.push_back(&stage1.tilegrid());
-    cell_drawables.push_back(&player.sprite());
-    cell_drawables.push_back(&npc1.sprite());
-    cell_drawables.push_back(&stage1_fg.tilegrid());
+    cell_drawables.push_back(&stage1);
+    cell_drawables.push_back(&player);
+    cell_drawables.push_back(&npc1);
+    cell_drawables.push_back(&stage1_fg);
     cell_drawables.push_back(&talkflow_controller);
     cell_drawables.push_back(&label1);
     cell_drawables.push_back(&label2);
@@ -449,7 +454,7 @@ int main() {
     camera.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(28), MGC_CELL2PIXEL(3));
     camera.set_x_follow_enabled(true);
     camera.set_y_follow_enabled(true);
-    camera.set_target(player.sprite());
+    camera.set_target(player);
 
     renderer.set_back_color(MGC_COLOR_BLACK);
 

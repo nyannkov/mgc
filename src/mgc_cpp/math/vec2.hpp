@@ -24,10 +24,57 @@ struct Vec2 {
         return Vec2(x + rhs.x, y + rhs.y);
     }
 
+    constexpr Vec2 operator-(const Vec2& rhs) const {
+        return Vec2(x - rhs.x, y - rhs.y);
+    }
+
     constexpr Vec2& operator+=(const Vec2& rhs) {
         x += rhs.x;
         y += rhs.y;
         return *this;
+    }
+
+    constexpr Vec2& operator-=(const Vec2& rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        return *this;
+    }
+
+    constexpr bool operator==(const Vec2& rhs) const {
+        return (x == rhs.x) && (y == rhs.y);
+    }
+
+    constexpr bool operator!=(const Vec2& rhs) const {
+        return !(*this == rhs);
+    }
+
+    constexpr Vec2 operator*(T scalar) const {
+        return Vec2(x * scalar, y * scalar);
+    }
+
+    constexpr Vec2 operator/(T scalar) const {
+        return Vec2(x / scalar, y / scalar);
+    }
+
+    constexpr Vec2& operator*=(T scalar) {
+        x *= scalar;
+        y *= scalar;
+        return *this;
+    }
+
+    constexpr Vec2& operator/=(T scalar) {
+        x /= scalar;
+        y /= scalar;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec2<U> cast_to() const {
+        return Vec2<U>{ static_cast<U>(x), static_cast<U>(y) };
+    }
+
+    friend constexpr Vec2 operator*(T scalar, const Vec2& v) {
+        return v * scalar;
     }
 };
 

@@ -7,6 +7,14 @@
 #ifndef MGC_HPP
 #define MGC_HPP
 
+#include "mgc_cpp/features/cell_drawable.hpp"
+#include "mgc_cpp/features/drawable.hpp"
+#include "mgc_cpp/features/has_id.hpp"
+#include "mgc_cpp/features/has_parallax_factor.hpp"
+#include "mgc_cpp/features/has_position.hpp"
+#include "mgc_cpp/features/item_selectable.hpp"
+#include "mgc_cpp/features/resettable.hpp"
+#include "mgc_cpp/features/visible.hpp"
 #include "mgc_cpp/parts/basic_dialoguebox.hpp"
 #include "mgc_cpp/parts/basic_label.hpp"
 #include "mgc_cpp/parts/basic_selectbox.hpp"
