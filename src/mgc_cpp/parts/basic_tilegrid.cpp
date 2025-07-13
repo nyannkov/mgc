@@ -12,7 +12,6 @@ namespace parts {
 using mgc::math::Vec2i;
 using mgc::parts::assets::TileIdMap;
 using mgc::parts::assets::Tileset;
-using mgc::parts::assets::TileIdMap;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
 using mgc::graphics::DrawOptions;

@@ -55,6 +55,14 @@ btctrl_get_state(const mgc_btctrl_t* btctrl) {
     return btctrl->state;
 }
 
+static inline
+enum mgc_btree_leaf_state
+btctrl_get_last_leaf_state(const mgc_btctrl_t* btctrl) {
+    MGC_ASSERT( btctrl != NULL , "Invalid handler");
+    return btctrl->last_leaf_state;
+}
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif

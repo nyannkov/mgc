@@ -59,6 +59,28 @@ struct BTreeController : mgc::features::Resettable {
         btctrl_proc(&btctrl_);
     }
 
+    void proc_until_blocked() {
+
+        timer_now_ = TimerT::now_ms();
+
+        if (is_any_button_pressed() ) {
+            reset_input_timer(timer_now_);
+        }
+
+        update_duration(timer_now_);
+
+        bool should_continue = true;
+        while (should_continue) {
+            btctrl_proc(&btctrl_);
+            auto state = btctrl_get_state(&btctrl_);
+            auto leaf_result = btctrl_get_last_leaf_state(&btctrl_);
+
+            should_continue = 
+                (state != MGC_BTCTRL_STATE_FINISHED) &&
+                (leaf_result != MGC_BTREE_LEAF_RESULT_RUNNING);
+        }
+    }
+
     bool in_progress() const {
         auto state = btctrl_get_state(&btctrl_);
         
