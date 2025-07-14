@@ -12,6 +12,7 @@ set(C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_player.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_blue.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_fish.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_items.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/talkscript/test_talkscript.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/font/k8x12.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_main_layer_01.c"

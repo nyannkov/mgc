@@ -26,7 +26,7 @@ using mgc::collision::HitboxOffset;
 using mgc::collision::HitboxSize;
 using CornerPushDirection = mgc::collision::CollisionDetectorBoxToMap::CornerPushDirection;
 using mgc::graphics::Framebuffer;
-using mgc::graphics::CellBuffer;;
+using mgc::graphics::CellBuffer;
 using mgc::graphics::DoubleFramebuffer;
 using mgc::platform::input::Key;
 using mgc::control::talkflow::DefaultTalkflowController;

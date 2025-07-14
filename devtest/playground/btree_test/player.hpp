@@ -10,6 +10,9 @@ namespace devtest {
 struct Stage;
 
 template <typename PlatformT>
+struct Enemy;
+
+template <typename PlatformT>
 struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
 
     using TimerT = typename PlatformT::TimerT;
@@ -19,6 +22,7 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
     explicit Player(PlatformT& pf) 
             : pf_(pf), 
               vy_(0),
+              enemy_hit_(false),
               jumping_(false),
               bt_controller_(pf.input()) {
 
@@ -35,6 +39,14 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
         bt_controller_.bind_listener(bt_listener_);
     }
     ~Player() = default;
+
+    bool is_sleep() const {
+        return bt_listener_.anim_state() == AnimState::Sleep;
+    }
+
+    bool is_enemy_hit() const {
+        return enemy_hit_;
+    }
 
     void update() {
         using mgc::platform::input::Key;
@@ -80,13 +92,22 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
         } else {
             this->sprite().set_tile_index(3);
         }
+
+        enemy_hit_ = false;
     }
 
     template <typename Other>
     void on_hit_box_to_box_impl(
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
-    ) { }
+    ) { 
+
+        if constexpr (std::is_same_v<Other, Enemy<PlatformT>>) {
+            if ( info.other_hitbox.id  == 0 ) { // TODO 0 == Body
+                enemy_hit_ = true;
+            }
+        }
+    }
 
     template <typename ObjT, typename MapT>
     void handle_map_pushback_result_impl(
@@ -115,6 +136,7 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
 private:
     PlatformT& pf_;
     int16_t vy_;
+    bool enemy_hit_;
     bool jumping_;
     BTreeControllerT bt_controller_;
     enum class AnimState {

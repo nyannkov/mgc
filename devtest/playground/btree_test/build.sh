@@ -24,6 +24,7 @@ python3 ${TILESET_GEN}      ${COMMON_PATH}/assets/tileset/tileset_map_elements.b
 python3 ${TILESET_GEN}      ${COMMON_PATH}/assets/tileset/tileset_player.bmp --count 25 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ${COMMON_PATH}/assets/tileset/tileset_blue.bmp --count 25 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ${COMMON_PATH}/assets/tileset/tileset_fish.bmp --count 25 --dir ./resources/generated/tileset
+python3 ${TILESET_GEN}      ${COMMON_PATH}/assets/tileset/tileset_items.bmp --count 16 --width 8 --height 8 --dir ./resources/generated/tileset
 python3 ${MAP_GEN}          ${COMMON_PATH}/assets/map/map_main_layer_01.csv --compression runlength --dir ./resources/generated/map
 python3 ${MAP_GEN}          ${COMMON_PATH}/assets/map/map_bg_layer_01.csv --compression runlength --dir ./resources/generated/map
 python3 ${TALKSCRIPT_GEN}   ${COMMON_PATH}/assets/talkscript/test_talkscript.yml --dir ./resources/generated/talkscript
