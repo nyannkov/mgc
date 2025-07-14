@@ -25,7 +25,7 @@ enum mgc_btctrl_state {
 
 typedef struct mgc_btctrl_callbacks {
     void* context;
-    enum mgc_btree_leaf_state (*on_proc_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
+    enum mgc_btree_leaf_result (*on_proc_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
     void (*on_enter_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
     void (*on_exit_leaf)(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context);
     void (*on_enter_composite)(mgc_btctrl_t* btctrl, void *context);
@@ -37,7 +37,7 @@ typedef struct mgc_btctrl_callbacks {
 struct mgc_btctrl {
     const mgc_btree_node_t* current;
     const mgc_btree_t* btree;
-    enum mgc_btree_leaf_state last_leaf_state;
+    enum mgc_btree_leaf_result last_leaf_result;
     enum mgc_btctrl_state state;
     const mgc_btctrl_callbacks_t *callbacks;
 };
@@ -56,10 +56,10 @@ btctrl_get_state(const mgc_btctrl_t* btctrl) {
 }
 
 static inline
-enum mgc_btree_leaf_state
-btctrl_get_last_leaf_state(const mgc_btctrl_t* btctrl) {
+enum mgc_btree_leaf_result
+btctrl_get_last_leaf_result(const mgc_btctrl_t* btctrl) {
     MGC_ASSERT( btctrl != NULL , "Invalid handler");
-    return btctrl->last_leaf_state;
+    return btctrl->last_leaf_result;
 }
 
 

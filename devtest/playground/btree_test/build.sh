@@ -29,6 +29,7 @@ python3 ${MAP_GEN}          ${COMMON_PATH}/assets/map/map_bg_layer_01.csv --comp
 python3 ${TALKSCRIPT_GEN}   ${COMMON_PATH}/assets/talkscript/test_talkscript.yml --dir ./resources/generated/talkscript
 python3 ${FONT_GEN}         ${FONTS_PATH}/k8x12/k8x12.bdf  --subset ${COMMON_PATH}/assets/font/k8x12_subset.txt  --dir ./resources/generated/font
 python3 ${BTREE_GEN}        ${COMMON_PATH}/assets/btree/test_btree.yaml --dir ./resources/generated/btree
+python3 ${BTREE_GEN}        ${COMMON_PATH}/assets/btree/btree_chase.yml --dir ./resources/generated/btree
 
 
 BUILD_DIR=${BUILD_DIR:-build}

@@ -73,7 +73,7 @@ struct BTreeController : mgc::features::Resettable {
         while (should_continue) {
             btctrl_proc(&btctrl_);
             auto state = btctrl_get_state(&btctrl_);
-            auto leaf_result = btctrl_get_last_leaf_state(&btctrl_);
+            auto leaf_result = btctrl_get_last_leaf_result(&btctrl_);
 
             should_continue = 
                 (state != MGC_BTCTRL_STATE_FINISHED) &&
@@ -181,7 +181,7 @@ private:
         btctrl_set_callbacks(&btctrl_, &callbacks_);
     }
 
-    static enum mgc_btree_leaf_state on_proc_leaf_wrapper(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context) {
+    static enum mgc_btree_leaf_result on_proc_leaf_wrapper(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf, void *context) {
         return static_cast<BTreeController*>(context)->on_proc_leaf(btctrl, leaf);
     }
 
@@ -208,7 +208,7 @@ private:
         static_cast<BTreeController*>(context)->on_tree_finish(btctrl);
     }
 
-    enum mgc_btree_leaf_state on_proc_leaf(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf) {
+    enum mgc_btree_leaf_result on_proc_leaf(mgc_btctrl_t* btctrl, const mgc_btree_leaf_t* leaf) {
 
         if ( listener_ ) {
             std::string_view id = (leaf->id != nullptr) ? std::string_view(leaf->id) : std::string_view { };

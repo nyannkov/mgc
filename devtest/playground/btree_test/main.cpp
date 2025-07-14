@@ -62,7 +62,7 @@ int main() {
 
     stage.set_position(mgc::math::Vec2i(0, 0));
 
-    camera.set_x_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(3));
+    camera.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(3));
     camera.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(28), MGC_CELL2PIXEL(3));
     camera.set_x_follow_enabled(true);
     camera.set_y_follow_enabled(true);
@@ -88,6 +88,7 @@ int main() {
         stage.update();
 
         collision_detector.detect(player, stage, CornerPushDirection::PreferX);
+        CollisionDetectorBoxToBox::detect(player, fish);
 
         camera.update_follow_position();
         

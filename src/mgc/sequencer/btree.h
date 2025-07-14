@@ -22,7 +22,7 @@ enum mgc_btree_node_type {
     MGC_BTREE_NODE_TYPE_SEQUENCER
 };
 
-enum mgc_btree_leaf_state {
+enum mgc_btree_leaf_result {
     MGC_BTREE_LEAF_RESULT_INIT,
     MGC_BTREE_LEAF_RESULT_RUNNING,
     MGC_BTREE_LEAF_RESULT_SUCCESS,

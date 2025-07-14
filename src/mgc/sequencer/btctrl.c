@@ -65,7 +65,7 @@ static bool go_to_next_leaf(mgc_btctrl_t* btctrl, const mgc_btctrl_callbacks_t* 
             btctrl->btree->parents[btctrl->current->parent_index];
 
     bool is_leaf_success =
-        ( btctrl->last_leaf_state == MGC_BTREE_LEAF_RESULT_SUCCESS );
+        ( btctrl->last_leaf_result == MGC_BTREE_LEAF_RESULT_SUCCESS );
 
     if ( cbs->on_exit_leaf ) {
         cbs->on_exit_leaf(btctrl, btctrl->current->body.leaf, cbs->context);
@@ -131,7 +131,7 @@ enum mgc_btctrl_state btctrl_proc(mgc_btctrl_t* btctrl) {
     } else if ( btctrl->state == MGC_BTCTRL_STATE_INIT ) {
 
         btctrl->current = btctrl->btree->root;
-        btctrl->last_leaf_state = MGC_BTREE_LEAF_RESULT_INIT;
+        btctrl->last_leaf_result = MGC_BTREE_LEAF_RESULT_INIT;
         btctrl->state = MGC_BTCTRL_STATE_IN_PROGRESS;
         if ( cbs->on_tree_start ) {
             cbs->on_tree_start(btctrl, cbs->context);
@@ -139,18 +139,18 @@ enum mgc_btctrl_state btctrl_proc(mgc_btctrl_t* btctrl) {
 
         go_to_first_child_leaf(btctrl, cbs);
 
-        btctrl->last_leaf_state = MGC_BTREE_LEAF_RESULT_RUNNING;
+        btctrl->last_leaf_result = MGC_BTREE_LEAF_RESULT_RUNNING;
 
         if ( cbs->on_proc_leaf ) {
-            btctrl->last_leaf_state =
+            btctrl->last_leaf_result =
             cbs->on_proc_leaf(btctrl, btctrl->current->body.leaf, cbs->context);
         }
 
     } else if ( btctrl->state == MGC_BTCTRL_STATE_IN_PROGRESS ) {
 
-        if ( btctrl->last_leaf_state == MGC_BTREE_LEAF_RESULT_RUNNING ) {
+        if ( btctrl->last_leaf_result == MGC_BTREE_LEAF_RESULT_RUNNING ) {
             if ( cbs->on_proc_leaf ) {
-                btctrl->last_leaf_state =
+                btctrl->last_leaf_result =
                 cbs->on_proc_leaf(btctrl, btctrl->current->body.leaf, cbs->context);
             }
         } else {
@@ -158,7 +158,7 @@ enum mgc_btctrl_state btctrl_proc(mgc_btctrl_t* btctrl) {
             if ( go_to_next_leaf(btctrl, cbs) ) {
 
                 if ( cbs->on_proc_leaf ) {
-                    btctrl->last_leaf_state =
+                    btctrl->last_leaf_result =
                     cbs->on_proc_leaf(btctrl, btctrl->current->body.leaf, cbs->context);
                 }
 

@@ -34,6 +34,7 @@ struct BackgroundLayer : mgc::entities::TilemapImpl<BackgroundLayer> {
             this->tilegrid().set_id(id);
             this->tilegrid().set_tileset(tileset_map_elements);
             this->tilegrid().set_tile_id_map(map_bg_layer_01);
+            this->tilegrid().set_parallax_factor(mgc::graphics::ParallaxFactor(0.5f, 1.0f));
             this->set_collision_enabled(false);
             break;
 

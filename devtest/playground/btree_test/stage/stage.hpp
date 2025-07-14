@@ -89,7 +89,7 @@ struct Stage : mgc::entities::mixins::WithCollisionMap<Stage>,
 
     void set_position(const mgc::math::Vec2i& position) override {
         main_layer_.set_position(position);
-        bg_layer_.set_position(position + mgc::math::Vec2i(MGC_CELL2PIXEL(0), MGC_CELL2PIXEL(33)));
+        bg_layer_.set_position(position + mgc::math::Vec2i(MGC_CELL2PIXEL(0), MGC_CELL2PIXEL(34)));
     }
 
 private:

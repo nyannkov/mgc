@@ -161,12 +161,6 @@ struct ActorImpl
             const mgc::collision::MapPushbackInfo& info
     ) { }
 
-    void set_sprite(mgc_id_t sprite_id, mgc::parts::assets::Tileset& tileset) {
-        sprite_.set_id(sprite_id);
-        sprite_.set_tileset(tileset);
-        sprite_.set_tile_index(0);
-    }
-
     const SpriteT& sprite() const { return sprite_; }
     const Hitboxes& hitboxes() const { return hitboxes_; }
     const mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) const {

@@ -17,6 +17,7 @@ set(C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_main_layer_01.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/map/map_bg_layer_01.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/btree/test_btree.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/btree/btree_chase.c"
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
