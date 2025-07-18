@@ -30,7 +30,7 @@ struct Enemy : mgc::entities::ActorImpl<Enemy<PlatformT>, 3> {
 
     explicit Enemy(PlatformT& pf) 
             : pf_(pf), 
-              bt_controller_(pf.input()),
+              bt_controller_(),
               bt_listener_(player_in_view_) {
 
         set_by_id(EnemyType::SkyFish);
@@ -113,7 +113,7 @@ struct Enemy : mgc::entities::ActorImpl<Enemy<PlatformT>, 3> {
             bt_controller_.reset_state();
         }
 
-        bt_controller_.proc_until_blocked();
+        bt_controller_.proc_until_blocked(mgc::platform::input::is_any_button_pressed(pf_.input()));
 
         player_in_view_ = false;
     }

@@ -24,7 +24,7 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
               vy_(0),
               enemy_hit_(false),
               jumping_(false),
-              bt_controller_(pf.input()) {
+              bt_controller_() {
 
         this->sprite().set_tileset(tileset_player);
         this->sprite().set_tile_index(3);
@@ -81,7 +81,7 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
         if ( bt_controller_.has_finished() ) {
             bt_controller_.reset_state();
         }
-        bt_controller_.proc_until_blocked();
+        bt_controller_.proc_until_blocked(mgc::platform::input::is_any_button_pressed(pf_.input()));
 
         auto anim_state = bt_listener_.anim_state();
 

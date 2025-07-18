@@ -14,7 +14,6 @@
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/parts/assets/btree.hpp"
-#include "mgc_cpp/platform/input/ibutton.hpp"
 #include "mgc_cpp/platform/timer/timer.hpp"
 
 namespace mgc {
@@ -26,8 +25,7 @@ struct BTreeController : mgc::features::Resettable {
     using timestamp_t = typename TimerT::timestamp_t;
     using DurationT = BTreeDuration<timestamp_t>;
 
-    explicit BTreeController(mgc::platform::input::IButton &button) : button_(button) { reset(); }
-
+    BTreeController() { reset(); }
     ~BTreeController() = default;
     BTreeController(const BTreeController&) = delete;
     BTreeController& operator=(const BTreeController&) = delete;
@@ -46,11 +44,11 @@ struct BTreeController : mgc::features::Resettable {
         btctrl_set_btree(&btctrl_, &btree);
     }
 
-    void proc() {
+    void proc(bool input_detected) {
 
         timer_now_ = TimerT::now_ms();
 
-        if (is_any_button_pressed() ) {
+        if (input_detected) {
             reset_input_timer(timer_now_);
         }
 
@@ -59,11 +57,11 @@ struct BTreeController : mgc::features::Resettable {
         btctrl_proc(&btctrl_);
     }
 
-    void proc_until_blocked() {
+    void proc_until_blocked(bool input_detected) {
 
         timer_now_ = TimerT::now_ms();
 
-        if (is_any_button_pressed() ) {
+        if (input_detected) {
             reset_input_timer(timer_now_);
         }
 
@@ -114,7 +112,6 @@ struct BTreeController : mgc::features::Resettable {
 
 private:
     mgc_btctrl_t btctrl_;
-    mgc::platform::input::IButton& button_;
     IBTreeListener<BTreeController<TimerT>>* listener_;
     DurationT duration_;
     timestamp_t timer_now_;
@@ -140,31 +137,6 @@ private:
         duration_.composite_elapsed = now - composite_entry_time_;
         duration_.leaf_elapsed = now - leaf_entry_time_;
         duration_.input_idle_time = now - last_input_time_;
-    }
-
-    bool is_any_button_pressed() {
-        constexpr mgc::platform::input::Key all_keys[] = {
-            mgc::platform::input::Key::Up,
-            mgc::platform::input::Key::Down,
-            mgc::platform::input::Key::Left,
-            mgc::platform::input::Key::Right,
-            mgc::platform::input::Key::Enter,
-            mgc::platform::input::Key::Cancel,
-            mgc::platform::input::Key::Menu,
-            mgc::platform::input::Key::Option,
-            mgc::platform::input::Key::Home,
-            mgc::platform::input::Key::End,
-            mgc::platform::input::Key::Next,
-            mgc::platform::input::Key::Previous,
-            mgc::platform::input::Key::Control
-        };
-
-        for ( auto key : all_keys ) {
-            if ( button_.is_pressed(key) ) {
-                return true;
-            }
-        }
-        return false;
     }
 
     void bind_callbacks() {
