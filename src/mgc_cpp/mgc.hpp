@@ -14,6 +14,7 @@
 #include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/item_selectable.hpp"
 #include "mgc_cpp/features/resettable.hpp"
+#include "mgc_cpp/features/updatable.hpp"
 #include "mgc_cpp/features/visible.hpp"
 #include "mgc_cpp/parts/basic_dialoguebox.hpp"
 #include "mgc_cpp/parts/basic_label.hpp"

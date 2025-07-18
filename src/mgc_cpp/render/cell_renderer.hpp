@@ -75,10 +75,10 @@ struct CellRenderer {
         return true;
     }
 
-    bool transfer_to_display_cell_blocking(uint16_t cell_row, uint16_t cell_col) {
+    bool transfer_to_display_cell_blocking(uint16_t cell_row, uint16_t cell_col, uint16_t offset_x = 0, uint16_t offset_y = 0) {
 
-        uint16_t x0 = MGC_CELL2PIXEL(cell_col);
-        uint16_t y0 = MGC_CELL2PIXEL(cell_row);
+        uint16_t x0 = MGC_CELL2PIXEL(cell_col) + offset_x;
+        uint16_t y0 = MGC_CELL2PIXEL(cell_row) + offset_y;
         uint16_t x1 = x0 + MGC_CELL_LEN - 1;
         uint16_t y1 = y0 + MGC_CELL_LEN - 1;
         uint16_t display_width = driver_.width();

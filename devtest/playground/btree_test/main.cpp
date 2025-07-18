@@ -21,6 +21,7 @@ using mgc::collision::HitboxOffset;
 using mgc::collision::HitboxSize;
 using CornerPushDirection = mgc::collision::CollisionDetectorBoxToMap::CornerPushDirection;
 using mgc::graphics::DoubleFramebuffer;
+using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
 using mgc::platform::input::Key;
 using mgc::camera::SimpleCameraFollower;
@@ -41,8 +42,10 @@ mgc_color_t buf1[224*192];
 mgc_color_t buf2[224*192];
 DoubleFramebuffer dfb(buf1, buf2, 224, 192);
 CellBuffer cell_buffer;
+Framebuffer fb(buf1, 224, 192);
 SimpleCameraFollower camera;
 mgc::render::DoubleBufferedRenderer<ST7789> renderer(dfb, display_driver, &camera);
+mgc::render::Renderer<ST7789> single_renderer(fb, display_driver, &camera);
 mgc::render::CellRenderer<ST7789> cell_renderer(cell_buffer, display_driver, nullptr);
 
 void platform_init() {
@@ -95,7 +98,7 @@ struct StatusRegion {
     }
 
     void inclement_life() {
-        if ( life_value_ < 52 ) {
+        if ( life_value_ < 48 ) {
             life_value_++;
             is_update_life_ = true;
         }
@@ -121,7 +124,7 @@ struct StatusRegion {
         auto draw_life = life_value_;
 
         for ( uint16_t row = 0; row < 2; row++ ) {
-            for ( uint16_t col = 1; col < 14; col++ ) {
+            for ( uint16_t col = 1; col < 13; col++ ) {
 
                 if ( 2 <= draw_life ) {
                     heart1_.set_tile_index(1);
@@ -140,7 +143,7 @@ struct StatusRegion {
                     0, 0, twin_hearts_.data(), twin_hearts_.size()
                 );
 
-                cell_renderer.transfer_to_display_cell_blocking(row, col);
+                cell_renderer.transfer_to_display_cell_blocking(row, col, 8, 8);
 
             }
         }
@@ -233,14 +236,18 @@ int main() {
         }
 
         camera.update_follow_position();
+
+        //single_renderer.wait_until_idle_interrupt();
         
         renderer.draw_to_framebuffer(drawables.data(), drawables.size());
+        //single_renderer.draw_to_framebuffer(drawables.data(), drawables.size());
 
         renderer.wait_until_idle_interrupt();
-
         status_region.draw_blocking();
 
         renderer.transfer_to_display_async_at(8, 16*2+8);
+        //single_renderer.transfer_to_display_async_at(8, 16*2+8);
+        //single_renderer.transfer_to_display_blocking_at(8, 16*2+8);
     }
 
     return 0;

@@ -204,22 +204,32 @@ void st7789_sleep_in(void) {
 }
 
 bool st7789_transfer_region_blocking_rgb565(const uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
-    (void)len;
 
-    size_t dx, dy, count;
+    size_t dx, dy, count, total_len;
     dx = x1 - x0 + 1;
     dy = y1 - y0 + 1;
     count = dx * sizeof(uint16_t); 
-    const uint16_t *image = (mgc_color_t*)buffer;
-    size_t remain_lines = dy - 1;
+    total_len = dx * dy * sizeof(uint16_t);
+
+    if ( len < total_len ) {
+        return false;
+    }
 
     set_window(x0, y0, x1, y1);
     gpio_write(ST7789_PORT__DC, true);
-    for (size_t j = 0; j < dy; j++, remain_lines-- ) {
-        spi_transfer_blocking((uint8_t*)&image[j * dx], count, remain_lines != 0 );
-    }
 
-    return true;
+    if ( len == total_len ) {
+        spi_transfer_blocking(buffer, len, false);
+    } else {
+        const uint16_t *image = (mgc_color_t*)buffer;
+        size_t remain_lines = dy - 1;
+
+        for (size_t j = 0; j < dy; j++, remain_lines-- ) {
+            spi_transfer_blocking((uint8_t*)&image[j * dx], count, remain_lines != 0 );
+        }
+
+        return true;
+    }
 }
 
 bool st7789_transfer_full_region_blocking_rgb565(const uint8_t *buffer, size_t len) {

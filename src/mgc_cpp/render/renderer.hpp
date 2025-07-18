@@ -83,6 +83,18 @@ struct Renderer {
         return driver_.transfer_full_region_blocking(fb_.data_bytes(), fb_.size());
     }
 
+    bool transfer_to_display_blocking_at(uint16_t offset_x, uint16_t offset_y) {
+
+        return driver_.transfer_region_blocking(
+            fb_.data_bytes(),
+            fb_.size(),
+            offset_x,
+            offset_y,
+            offset_x + fb_.width() - 1,
+            offset_y + fb_.height() - 1 
+        );
+    }
+
     /**
     * Renders and starts asynchronous transfer of the framebuffer.
     *
