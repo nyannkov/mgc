@@ -187,7 +187,6 @@ int main() {
     camera.set_x_follow_enabled(true);
     camera.set_y_follow_enabled(true);
     camera.set_target(player);
-    camera.set_target(player);
 
     std::array<const mgc::features::Drawable*, 4> 
     drawables {

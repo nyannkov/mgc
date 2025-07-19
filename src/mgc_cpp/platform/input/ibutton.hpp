@@ -30,7 +30,7 @@ struct IButton {
     }
 };
 
-inline bool is_any_button_pressed(IButton& button) {
+inline bool is_any_button_pressed(const IButton& button) {
     constexpr mgc::platform::input::Key all_keys[] = {
         mgc::platform::input::Key::Up,
         mgc::platform::input::Key::Down,
