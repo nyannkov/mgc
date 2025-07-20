@@ -3,20 +3,18 @@
 
 #include <cstdlib>
 #include "mgc_cpp/math/vec2.hpp"
-#include "platform.hpp"
+#include "game_context.hpp"
+#include "game_scene/enemy_kind.hpp"
 #include "resources/generated/tileset/tileset_fish.h"
 #include "resources/generated/btree/btree_chase.h"
 
 namespace app {
 
 struct Stage;
+struct Player;
 
 struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
                mgc::features::Updatable<app::GameContext> {
-
-    enum class EnemyType {
-        SkyFish
-    };
 
     enum class HitboxId : mgc_id_t {
         Body = 0,
@@ -27,13 +25,14 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
     Enemy() : bt_controller_(),
               bt_listener_(player_in_view_) {
 
-        set_by_id(EnemyType::SkyFish);
+        setup(EnemyKind::SkyFish);
         bt_controller_.bind_listener(bt_listener_);
     }
     ~Enemy() = default;
 
-    void set_by_id(EnemyType type) {
-        if ( type == EnemyType::SkyFish ) {
+    void setup(EnemyKind kind) {
+
+        if ( kind == EnemyKind::SkyFish ) {
             player_in_view_ = false;
             this->sprite().set_tileset(tileset_fish);
             this->sprite().set_tile_index(4);
@@ -57,12 +56,13 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
             hitboxes[2].enabled = false;
 
             this->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(35)));
-
             this->temp_position_ = this->position().template cast_to<float>();
             this->velocity_ = mgc::math::Vec2<float>(0.0f, 0.0f);
 
             bt_controller_.set_btree(btree_chase);
         }
+
+        enemy_kind_ = kind;
     }
 
     void update(app::GameContext& ctx) override {
@@ -70,44 +70,47 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
         auto enemy_state = bt_listener_.enemy_state();
         auto& hitboxes = this->hitboxes();
 
-        if ( enemy_state == BTreeListener::EnemyState::Chase ) {
+        if ( enemy_kind_ == EnemyKind::SkyFish ) {
 
-            const float stiffness = 0.03f;
-            const float damping = 1.0f;
-            auto player_pos = ctx.player().position().template cast_to<float>();
+            if ( enemy_state == BTreeListener::EnemyState::Chase ) {
 
-            auto delta = player_pos - temp_position_;
-            auto force = delta * stiffness - velocity_ * damping;
-            velocity_ = velocity_ + force;
-            temp_position_ = temp_position_ + velocity_;
+                const float stiffness = 0.03f;
+                const float damping = 1.0f;
+                auto player_pos = ctx.player_position().template cast_to<float>();
 
-            if ( this->temp_position_.x < player_pos.x ) {
-                this->sprite().set_tile_index(1);
-            } else {
+                auto delta = player_pos - temp_position_;
+                auto force = delta * stiffness - velocity_ * damping;
+                velocity_ = velocity_ + force;
+                temp_position_ = temp_position_ + velocity_;
+
+                if ( this->temp_position_.x < player_pos.x ) {
+                    this->sprite().set_tile_index(1);
+                } else {
+                    this->sprite().set_tile_index(4);
+                }
+                
+                this->set_position(temp_position_.template cast_to<int16_t>());
+
+            } else if ( enemy_state == BTreeListener::EnemyState::LookLeft ) {
+                hitboxes[1].enabled = true;
+                hitboxes[2].enabled = false;
                 this->sprite().set_tile_index(4);
+
+            } else if ( enemy_state == BTreeListener::EnemyState::LookRight ) {
+                hitboxes[1].enabled = false;
+                hitboxes[2].enabled = true;
+                this->sprite().set_tile_index(1);
+
+            } else { }
+
+            if ( bt_controller_.has_finished() ) {
+                bt_controller_.reset_state();
             }
-            
-            this->set_position(temp_position_.template cast_to<int16_t>());
 
-        } else if ( enemy_state == BTreeListener::EnemyState::LookLeft ) {
-            hitboxes[1].enabled = true;
-            hitboxes[2].enabled = false;
-            this->sprite().set_tile_index(4);
+            bt_controller_.proc_until_blocked(ctx.is_any_key_pressed());
 
-        } else if ( enemy_state == BTreeListener::EnemyState::LookRight ) {
-            hitboxes[1].enabled = false;
-            hitboxes[2].enabled = true;
-            this->sprite().set_tile_index(1);
-
-        } else { }
-
-        if ( bt_controller_.has_finished() ) {
-            bt_controller_.reset_state();
+            player_in_view_ = false;
         }
-
-        bt_controller_.proc_until_blocked(ctx.is_any_key_pressed());
-
-        player_in_view_ = false;
     }
 
     template <typename Other>
@@ -142,6 +145,8 @@ private:
     mgc::math::Vec2<float> velocity_;
     BTreeControllerT bt_controller_;
     bool player_in_view_;
+    bool activation_;
+    EnemyKind enemy_kind_;
 
     struct BTreeListener : IBTreeListenerT {
         enum class EnemyState {

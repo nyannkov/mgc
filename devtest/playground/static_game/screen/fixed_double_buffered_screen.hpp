@@ -17,7 +17,6 @@ template <
     uint16_t Width,
     uint16_t Height,
     typename DisplayDriverT,
-    typename GameContextT,
     size_t MaxDrawableCount = 16,
     size_t MaxUpdatableCount = 16
 >
@@ -28,12 +27,10 @@ struct FixedDoubleBufferedScreen {
     using RendererT = mgc::render::DoubleBufferedRenderer<DisplayDriverT>;
     using CameraT = mgc::camera::SimpleCameraFollower;
     using DrawableT = mgc::features::Drawable;
-    using UpdatableT = mgc::features::Updatable<GameContextT>;
 
     explicit FixedDoubleBufferedScreen(DisplayDriverT& display_driver)
         : dfb_(buffer_0_, buffer_1_, Width, Height),
           renderer_(dfb_, display_driver, &camera_),
-          updatable_count_(0),
           drawable_count_(0)
           { }
 
@@ -42,17 +39,6 @@ struct FixedDoubleBufferedScreen {
     FixedDoubleBufferedScreen& operator=(const FixedDoubleBufferedScreen&) = delete;
     FixedDoubleBufferedScreen(FixedDoubleBufferedScreen&&) = default;
     FixedDoubleBufferedScreen& operator=(FixedDoubleBufferedScreen&&) = default;
-
-    bool register_updatable(UpdatableT* updatable) {
-
-        if ( !updatable ) { return false; }
-
-        if ( updatable_count_ < updatables_.size() ) {
-            updatables_[updatable_count_++] = updatable;
-            return true;
-        }
-        return false;
-    }
 
     bool register_drawable(const DrawableT* drawable) {
 
@@ -65,27 +51,10 @@ struct FixedDoubleBufferedScreen {
         return false;
     }
 
-    void unregister_all_updatables() {
-        for ( size_t i = 0; i < updatable_count_; i++ ) {
-            updatables_[i] = nullptr;
-        }
-    }
-
     void unregister_all_drawables() {
         for ( size_t i = 0; i < drawable_count_; i++ ) {
             drawables_[i] = nullptr;
         }
-    }
-
-    void update(GameContextT& ctx) {
-
-        for ( size_t i = 0; i < updatable_count_; i++ ) {
-            if ( updatables_[i] ) {
-                updatables_[i]->update(ctx);
-            }
-        }
-
-        camera_.update_follow_position();
     }
 
     void draw_to_buffer() {
@@ -117,8 +86,6 @@ struct FixedDoubleBufferedScreen {
 
 private:
 
-    std::array<UpdatableT*, MaxUpdatableCount> updatables_;
-    size_t updatable_count_;
     std::array<const DrawableT*, MaxDrawableCount> drawables_;
     size_t drawable_count_;
     ColorT buffer_0_[Width*Height];

@@ -21,6 +21,11 @@ struct Stage : mgc::entities::mixins::WithCollisionMap<Stage>,
     };
 
     Stage() { reset(); }
+    ~Stage() = default;
+    Stage(const Stage&) = delete;
+    Stage& operator=(const Stage&) = delete;
+    Stage(Stage&&) = default;
+    Stage& operator=(Stage&&) = default;
 
     void reset() {
         main_layer_.setup_by_id(MainLayer::LayerId::None);

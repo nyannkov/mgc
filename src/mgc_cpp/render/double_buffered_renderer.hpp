@@ -19,6 +19,10 @@ namespace render {
 
 template <typename DisplayDriverT>
 struct DoubleBufferedRenderer {
+    enum class SwapMode {
+        Auto,
+        Manual
+    };
 
     static_assert(std::is_base_of<mgc::platform::display::DisplayDriver<DisplayDriverT>, DisplayDriverT>::value,
               "DisplayDriverT must inherit from DisplayDriver<DisplayDriverT>");
@@ -74,7 +78,7 @@ struct DoubleBufferedRenderer {
         return true;
     }
 
-    bool transfer_to_display_async_at(uint16_t offset_x, uint16_t offset_y) {
+    bool transfer_to_display_async_at(uint16_t offset_x, uint16_t offset_y, SwapMode mode = SwapMode::Auto) {
 
         if ( is_busy() ) {
             return false;
@@ -91,14 +95,14 @@ struct DoubleBufferedRenderer {
             offset_y + fb.height() - 1
         );
 
-        if ( success ) {
+        if ( success && mode == SwapMode::Auto) {
             dfb_.swap();
         }
         
         return success;
     }
 
-    bool transfer_to_display_async() {
+    bool transfer_to_display_async(SwapMode mode = SwapMode::Auto) {
 
         if ( is_busy() ) {
             return false;
@@ -108,11 +112,52 @@ struct DoubleBufferedRenderer {
 
         bool success = driver_.transfer_full_region_async(fb.data_bytes(), fb.size());
 
-        if ( success ) {
+        if ( success && mode == SwapMode::Auto) {
             dfb_.swap();
         }
         
         return success;
+    }
+
+    bool transfer_to_display_blocking_at(uint16_t offset_x, uint16_t offset_y, SwapMode mode = SwapMode::Manual) {
+
+        const mgc::graphics::Framebuffer& fb = dfb_.back();
+
+        bool success = driver_.transfer_region_blocking(
+            fb.data_bytes(),
+            fb.size(),
+            offset_x,
+            offset_y,
+            offset_x + fb.width() - 1,
+            offset_y + fb.height() - 1
+        );
+
+        if ( success && mode == SwapMode::Auto) {
+            dfb_.swap();
+        }
+        
+        return success;
+    }
+
+    bool transfer_to_display_blocking(SwapMode mode = SwapMode::Manual) {
+        
+        const mgc::graphics::Framebuffer& fb = dfb_.back();
+
+        bool success = driver_.transfer_full_region_blocking(fb.data_bytes(), fb.size());
+
+        if ( success && mode == SwapMode::Auto) {
+            dfb_.swap();
+        }
+        
+        return success;
+    }
+
+    bool swap() {
+        if ( is_busy() ) {
+            return false;
+        }
+        dfb_.swap();
+        return true;
     }
 
     const mgc::graphics::DoubleFramebuffer& double_buffer() const {

@@ -1,8 +1,8 @@
 #ifndef MGC_PLAYER_HPP
 #define MGC_PLAYER_HPP
 
-#include "game_context.hpp"
 #include "app_typedefs.hpp"
+#include "game_context.hpp"
 #include "resources/generated/tileset/tileset_player.h"
 #include "resources/generated/btree/test_btree.h"
 
@@ -12,7 +12,7 @@ struct Stage;
 struct Enemy;
 
 struct Player : mgc::entities::ActorImpl<Player, 1>,
-                mgc::features::Updatable<app::GameContext> {
+                mgc::features::Updatable<GameContext> {
 
     Player() : heal_cooldown_(0),
                damage_cooldown_(0),
@@ -36,11 +36,11 @@ struct Player : mgc::entities::ActorImpl<Player, 1>,
     }
     ~Player() = default;
 
-    size_t life_value() const {
+    const size_t& life_value() const {
         return life_value_;
     }
 
-    void update(app::GameContext& ctx) override {
+    void update(GameContext& ctx) override {
 
         using mgc::platform::input::Key;
         auto& gamepad = ctx.button();

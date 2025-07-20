@@ -9,6 +9,8 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "resources/generated/tileset/tileset_items.h"
+#include "game_context.hpp"
+#include "app_typedefs.hpp"
 
 namespace app {
 
@@ -17,14 +19,13 @@ template <
     uint16_t Y,
     uint16_t Width,
     uint16_t Height,
-    typename DisplayDriverT,
-    typename GameContextT
+    typename DisplayDriverT
 >
 struct StatusScreen {
     using ColorT = mgc::graphics::Color;
     using CellBufferT = mgc::graphics::CellBuffer;
     using CellRendererT = mgc::render::CellRenderer<DisplayDriverT>;
-    using UpdatableT = mgc::features::Updatable<GameContextT>;
+    using UpdatableT = mgc::features::Updatable<GameContext>;
 
     explicit StatusScreen(DisplayDriverT& display_driver)
         : cell_renderer_(cb_, display_driver, nullptr) {
@@ -54,10 +55,10 @@ struct StatusScreen {
     StatusScreen(StatusScreen&&) = default;
     StatusScreen& operator=(StatusScreen&&) = default;
 
-    void update(const GameContextT& ctx) {
-        if ( ctx.player().life_value() != player_life_value_ ) {
+    void update(const GameContext& ctx) {
+        if ( ctx.player_life() != player_life_value_ ) {
             is_update_life_value_ = true;
-            player_life_value_ = ctx.player().life_value();
+            player_life_value_ = ctx.player_life();
         } else {
             is_update_life_value_ = false;
         }
