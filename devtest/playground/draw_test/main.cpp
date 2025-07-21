@@ -38,7 +38,7 @@ MmlPsgSoundController sound_controller;
 auto& gamepad = mgc::drivers::platform::input::default_gamepad();
 
 DefaultTalkflowController talkflow_controller(gamepad);
-mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32> btc(gamepad);
+mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32> btc;
 
 SimpleCameraFollower camera;
 
@@ -481,7 +481,7 @@ int main() {
         if ( btc.has_finished() ) {
             btc.reset_state();
         }
-        btc.proc();
+        btc.proc(mgc::platform::input::is_any_button_pressed(gamepad));
 
         talkflow_controller.proc();
         // If a talkflow is active, player update and collisions are paused
