@@ -16,6 +16,12 @@ template <typename EnemyT, size_t N>
 struct EnemyPool {
     std::array<EnemySlot<EnemyT>, N> enemy_slots;
 
+    EnemyPool() {
+        for ( auto& slot : enemy_slots ) {
+            slot.active = false;
+        }
+    }
+
     EnemyT* spawn(mgc_id_t id) {
         
         for ( auto& slot : enemy_slots ) {

@@ -65,6 +65,10 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
         enemy_kind_ = kind;
     }
 
+    void clear_temp_position() {
+        this->temp_position_ = this->position().template cast_to<float>();
+    }
+
     void update(app::GameContext& ctx) override {
 
         auto enemy_state = bt_listener_.enemy_state();

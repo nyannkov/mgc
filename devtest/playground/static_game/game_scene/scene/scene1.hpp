@@ -12,7 +12,10 @@ namespace app {
 namespace scene1 {
 
 enum class EnemyEntityId : mgc_id_t {
-    SkyFish1
+    SkyFish1,
+    SkyFish2,
+    SkyFish3,
+    SkyFish4,
 };
     
 void setup(
@@ -25,7 +28,20 @@ void setup(
     stage.setup_by_id(app::Stage::StageId::Stage1);
     stage.set_position(mgc::math::Vec2i(0, 0));
 
-    Enemy* enemy = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish1), EnemyKind::SkyFish);
+    Enemy* enemy1 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish1), EnemyKind::SkyFish);
+    enemy1->clear_temp_position();
+
+    Enemy* enemy2 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish2), EnemyKind::SkyFish);
+    enemy2->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(33)));
+    enemy2->clear_temp_position();
+
+    Enemy* enemy3 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish3), EnemyKind::SkyFish);
+    enemy3->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(11), MGC_CELL2PIXEL(32)));
+    enemy3->clear_temp_position();
+
+    Enemy* enemy4 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish4), EnemyKind::SkyFish);
+    enemy4->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(30)));
+    enemy4->clear_temp_position();
 
     auto& camera = main_screen.camera();
     camera.set_target(player);
@@ -37,7 +53,10 @@ void setup(
     // TODO scope
     main_screen.register_drawable(stage.bg_layer());
     main_screen.register_drawable(stage.main_layer());
-    main_screen.register_drawable(enemy);
+    main_screen.register_drawable(enemy1);
+    main_screen.register_drawable(enemy2);
+    main_screen.register_drawable(enemy3);
+    main_screen.register_drawable(enemy4);
     main_screen.register_drawable(&player);
 }
 
@@ -49,8 +68,14 @@ void update(
 ) {
     stage.update();
 
-    Enemy* enemy = enemy_pool.get(static_cast<mgc_id_t>(EnemyEntityId::SkyFish1));
-    enemy->update(ctx);
+    Enemy* enemy1 = enemy_pool.get(static_cast<mgc_id_t>(EnemyEntityId::SkyFish1));
+    Enemy* enemy2 = enemy_pool.get(static_cast<mgc_id_t>(EnemyEntityId::SkyFish2));
+    Enemy* enemy3 = enemy_pool.get(static_cast<mgc_id_t>(EnemyEntityId::SkyFish3));
+    Enemy* enemy4 = enemy_pool.get(static_cast<mgc_id_t>(EnemyEntityId::SkyFish4));
+    enemy1->update(ctx);
+    enemy2->update(ctx);
+    enemy3->update(ctx);
+    enemy4->update(ctx);
 
     player.update(ctx);
 }
