@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(C_SOURCES 
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/game_scene/enemy/bt_listener/bt_listener_enemy.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_map_elements.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_player.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/tileset/tileset_blue.c"

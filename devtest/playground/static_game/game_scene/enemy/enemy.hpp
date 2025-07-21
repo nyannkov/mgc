@@ -3,10 +3,12 @@
 
 #include <cstdlib>
 #include "mgc_cpp/math/vec2.hpp"
+#include "app_typedefs.hpp"
 #include "game_context.hpp"
-#include "game_scene/enemy/enemy_kind.hpp"
+#include "game_scene/enemy/enemy_kind/enemy_kind.hpp"
 #include "resources/generated/tileset/tileset_fish.h"
 #include "resources/generated/btree/btree_chase.h"
+#include "game_scene/enemy/bt_listener/bt_listener_enemy.hpp"
 
 namespace app {
 
@@ -16,14 +18,23 @@ struct Player;
 struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
                mgc::features::Updatable<app::GameContext> {
 
-    enum class HitboxId : mgc_id_t {
-        Body = 0,
-        ViewLeft = 1,
-        ViewRight = 2
+    enum class EnemyState {
+        LookLeft,
+        LookRight,
+        Chase
     };
 
-    Enemy() : bt_controller_(),
-              bt_listener_(player_in_view_) {
+    enum class HitboxId : mgc_id_t {
+        Body = 0,
+        ViewLeft,
+        ViewRight,
+        Count
+    };
+
+    Enemy() : is_hit_{{false, false, false}},
+              bt_frame_counter_(0),
+              bt_controller_(),
+              bt_listener_(*this) {
 
         setup(EnemyKind::SkyFish);
         bt_controller_.bind_listener(bt_listener_);
@@ -33,50 +44,25 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
     void setup(EnemyKind kind) {
 
         if ( kind == EnemyKind::SkyFish ) {
-            player_in_view_ = false;
-            this->sprite().set_tileset(tileset_fish);
-            this->sprite().set_tile_index(4);
-            auto& hitboxes = this->hitboxes();
-            // body
-            hitboxes[0].id = static_cast<mgc_id_t>(HitboxId::Body);
-            hitboxes[0].offset = mgc::collision::HitboxOffset(0, 0);
-            hitboxes[0].size = mgc::collision::HitboxSize(16, 16);
-            hitboxes[0].enabled = true;
-
-            // view left
-            hitboxes[1].id = static_cast<mgc_id_t>(HitboxId::ViewLeft);
-            hitboxes[1].offset = mgc::collision::HitboxOffset(8-16*7, 8-16*5);
-            hitboxes[1].size = mgc::collision::HitboxSize(16*7, 16*10);
-            hitboxes[1].enabled = true;
-
-            // view right
-            hitboxes[2].id = static_cast<mgc_id_t>(HitboxId::ViewRight);
-            hitboxes[2].offset = mgc::collision::HitboxOffset(8, 8-16*5);
-            hitboxes[2].size = mgc::collision::HitboxSize(16*7, 16*10);
-            hitboxes[2].enabled = false;
-
-            this->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(35)));
-            this->temp_position_ = this->position().template cast_to<float>();
-            this->velocity_ = mgc::math::Vec2<float>(0.0f, 0.0f);
-
-            bt_controller_.set_btree(btree_chase);
+            setup_sky_fish(*this);
         }
 
+        bt_frame_counter_ = 0;
         enemy_kind_ = kind;
     }
 
-    void clear_temp_position() {
-        this->temp_position_ = this->position().template cast_to<float>();
+    void set_position(const mgc::math::Vec2i& position) override {
+        mgc::entities::ActorImpl<Enemy, 3>::set_position(position);
+        this->temp_position_ = position.template cast_to<float>();
     }
 
     void update(app::GameContext& ctx) override {
 
-        auto enemy_state = bt_listener_.enemy_state();
         auto& hitboxes = this->hitboxes();
 
         if ( enemy_kind_ == EnemyKind::SkyFish ) {
 
-            if ( enemy_state == BTreeListener::EnemyState::Chase ) {
+            if ( enemy_state_ == EnemyState::Chase ) {
 
                 const float stiffness = 0.03f;
                 const float damping = 1.0f;
@@ -93,14 +79,15 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
                     this->sprite().set_tile_index(4);
                 }
                 
-                this->set_position(temp_position_.template cast_to<int16_t>());
+                // TODO The set_position override unintentionally clears the temporary position data
+                this->sprite().set_position(temp_position_.template cast_to<int16_t>());
 
-            } else if ( enemy_state == BTreeListener::EnemyState::LookLeft ) {
+            } else if ( enemy_state_ == EnemyState::LookLeft ) {
                 hitboxes[1].enabled = true;
                 hitboxes[2].enabled = false;
                 this->sprite().set_tile_index(4);
 
-            } else if ( enemy_state == BTreeListener::EnemyState::LookRight ) {
+            } else if ( enemy_state_ == EnemyState::LookRight ) {
                 hitboxes[1].enabled = false;
                 hitboxes[2].enabled = true;
                 this->sprite().set_tile_index(1);
@@ -113,7 +100,9 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
 
             bt_controller_.proc_until_blocked(ctx.is_any_key_pressed());
 
-            player_in_view_ = false;
+            for ( auto& h : is_hit_ ) {
+                h = false;
+            }
         }
     }
 
@@ -123,14 +112,7 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
             const mgc::collision::BoxCollisionInfo& info
     ) { 
         if constexpr (std::is_same_v<Other, Player>) {
-            switch ( info.self_hitbox.id ) {
-            case static_cast<mgc_id_t>(HitboxId::ViewLeft):/*fallthrough*/
-            case static_cast<mgc_id_t>(HitboxId::ViewRight):
-                player_in_view_ = true;
-                break;
-            default:
-                break;
-            }
+            is_hit_[static_cast<mgc_id_t>(info.self_hitbox.id)] = true;
         }
     }
 
@@ -140,87 +122,56 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
             const MapT& map,
             const mgc::collision::MapPushbackInfo& info
     ) { 
-        if constexpr (std::is_same_v<MapT, Stage>) {
-        }
+        if constexpr (std::is_same_v<MapT, Stage>) { }
     }
 
 private:
     mgc::math::Vec2<float> temp_position_;
     mgc::math::Vec2<float> velocity_;
     BTreeControllerT bt_controller_;
-    bool player_in_view_;
-    bool activation_;
+    std::array<bool, static_cast<mgc_id_t>(HitboxId::Count)> is_hit_;
+    EnemyState enemy_state_;
     EnemyKind enemy_kind_;
+    size_t bt_frame_counter_;
 
-    struct BTreeListener : IBTreeListenerT {
-        enum class EnemyState {
-            LookLeft,
-            LookRight,
-            Chase
-        };
-        using LeafResult = typename IBTreeListenerT::LeafResult;
-        using DurationT  = typename IBTreeListenerT::DurationT;
+    friend BTListenerEnemy;
+    BTListenerEnemy bt_listener_;
 
-        explicit BTreeListener(const bool& player_in_view) 
-            : in_view_(player_in_view),
-              count_(0),
-              enemy_state_(EnemyState::LookLeft) { }
+    static void setup_sky_fish(Enemy& enemy) {
+        enemy.sprite().set_tileset(tileset_fish);
+        enemy.sprite().set_tile_index(4);
+        auto& hitboxes = enemy.hitboxes();
+        // body
+        hitboxes[0].id = static_cast<mgc_id_t>(HitboxId::Body);
+        hitboxes[0].offset = mgc::collision::HitboxOffset(0, 0);
+        hitboxes[0].size = mgc::collision::HitboxSize(16, 16);
+        hitboxes[0].enabled = true;
 
+        // view left
+        hitboxes[1].id = static_cast<mgc_id_t>(HitboxId::ViewLeft);
+        hitboxes[1].offset = mgc::collision::HitboxOffset(8-16*7, 8-16*5);
+        hitboxes[1].size = mgc::collision::HitboxSize(16*7, 16*10);
+        hitboxes[1].enabled = true;
 
-        LeafResult on_proc_leaf(
-            std::string_view id,
-            const DurationT& duration,
-            mgc_btree_tag_t tag
-        ) override  {
+        // view right
+        hitboxes[2].id = static_cast<mgc_id_t>(HitboxId::ViewRight);
+        hitboxes[2].offset = mgc::collision::HitboxOffset(8, 8-16*5);
+        hitboxes[2].size = mgc::collision::HitboxSize(16*7, 16*10);
+        hitboxes[2].enabled = false;
 
-            if ( id == "cond/player/visible" ) {
-                
-                if ( in_view_ ) {
-                    return LeafResult::Success;
-                } else {
-                    return LeafResult::Failure;
-                }
-
-            } else if ( id == "action/player/chase" ) {
-
-                enemy_state_ = EnemyState::Chase;
-                return LeafResult::Success;
-
-            } else if ( id == "action/look/random" ) {
-
-                if ( ++count_ >= 30 ) {
-                    count_ = 0;
-                    if ( ( rand() % 2 ) == 0 ) {
-                        enemy_state_ = EnemyState::LookLeft;
-                    } else {
-                        enemy_state_ = EnemyState::LookRight;
-                    }
-                } else {
-                    if ( enemy_state_ == EnemyState::Chase ) {
-                        // Temporary hardcorded value
-                        enemy_state_ = EnemyState::LookLeft;
-                    }
-                }
-                return LeafResult::Success;
-
-            } else {
-
-                return LeafResult::Failure;
-            }
+        for ( auto& h : enemy.is_hit_ ) {
+            h = false;
         }
 
-        EnemyState enemy_state() const {
-            return enemy_state_;
-        }
+        enemy.sprite().set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(35)));
+        enemy.temp_position_ = enemy.position().template cast_to<float>();
+        enemy.velocity_ = mgc::math::Vec2<float>(0.0f, 0.0f);
 
-    private:
-        EnemyState enemy_state_;
-        const bool& in_view_;
-        uint32_t count_;
+        enemy.bt_controller_.set_btree(btree_chase);
 
-    } bt_listener_;
+        enemy.enemy_state_ = EnemyState::LookRight;
+    }
 };
-
 
 }// namespace app
 

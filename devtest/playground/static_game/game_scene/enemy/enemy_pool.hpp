@@ -2,7 +2,6 @@
 #define MGC_ENEMY_POOL_HPP
 
 #include "enemy.hpp"
-#include "enemy_kind.hpp"
 
 namespace app {
 

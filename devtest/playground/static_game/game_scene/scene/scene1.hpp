@@ -29,19 +29,15 @@ void setup(
     stage.set_position(mgc::math::Vec2i(0, 0));
 
     Enemy* enemy1 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish1), EnemyKind::SkyFish);
-    enemy1->clear_temp_position();
 
     Enemy* enemy2 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish2), EnemyKind::SkyFish);
     enemy2->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(33)));
-    enemy2->clear_temp_position();
 
     Enemy* enemy3 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish3), EnemyKind::SkyFish);
     enemy3->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(11), MGC_CELL2PIXEL(32)));
-    enemy3->clear_temp_position();
 
     Enemy* enemy4 = enemy_pool.spawn(static_cast<mgc_id_t>(EnemyEntityId::SkyFish4), EnemyKind::SkyFish);
     enemy4->set_position(mgc::math::Vec2i(MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(30)));
-    enemy4->clear_temp_position();
 
     auto& camera = main_screen.camera();
     camera.set_target(player);
