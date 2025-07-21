@@ -4,11 +4,11 @@
 #include "mgc_cpp/features/updatable.hpp"
 #include "app_typedefs.hpp"
 #include "game_scene/game_scene.hpp"
-#include "game_scene/game_scene_id.hpp"
 #include "game_scene/stage/stage.hpp"
-#include "game_scene/player.hpp"
-#include "game_scene/enemy.hpp"
-#include "game_scene/enemy_pool.hpp"
+#include "game_scene/player/player.hpp"
+#include "game_scene/enemy/enemy.hpp"
+#include "game_scene/enemy/enemy_pool.hpp"
+#include "game_scene/scene/game_scene_id.hpp"
 
 namespace app {
 

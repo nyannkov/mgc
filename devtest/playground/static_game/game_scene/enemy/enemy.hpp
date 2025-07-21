@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include "mgc_cpp/math/vec2.hpp"
 #include "game_context.hpp"
-#include "game_scene/enemy_kind.hpp"
+#include "game_scene/enemy/enemy_kind.hpp"
 #include "resources/generated/tileset/tileset_fish.h"
 #include "resources/generated/btree/btree_chase.h"
 
