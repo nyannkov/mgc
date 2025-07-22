@@ -9,11 +9,12 @@
 
 #include <array>
 #include "mgc_cpp/math/vec2.hpp"
-#include "mgc_cpp/collision/hitbox.hpp"
 #include "mgc_cpp/entities/mixins/with_hitboxes.hpp"
+#include "mgc_cpp/entities/mixins/with_collision_map.hpp"
 #include "mgc_cpp/entities/mixins/with_on_hit_box_to_box_response.hpp"
 #include "mgc_cpp/entities/mixins/with_on_hit_box_to_map_response.hpp"
 #include "mgc_cpp/entities/mixins/with_handle_map_pushback_result.hpp"
+#include "mgc_cpp/collision/collision_detector.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 
@@ -27,27 +28,34 @@ struct ActorImpl
       mgc::entities::mixins::WithOnHitBoxToBoxResponse<Derived>,
       mgc::entities::mixins::WithOnHitBoxToMapResponse<Derived>,
       mgc::entities::mixins::WithHandleMapPushbackResult<Derived>,
-      mgc::features::Resettable,
-      mgc::features::HasPosition<mgc::math::Vec2i> {
+      mgc::features::HasId,
+      mgc::features::HasPosition<mgc::math::Vec2i>,
+      mgc::features::Visible,
+      mgc::features::Drawable,
+      mgc::features::CellDrawable {
+
+    friend mgc::collision::CollisionDetectorBoxToBox;
+    friend mgc::collision::CollisionDetectorBoxToMap;
 
     using SpriteT = mgc::parts::BasicSprite;
     using Hitboxes = std::array<mgc::collision::Hitbox, MaxHitboxCount>; 
     static constexpr size_t HitboxCount = MaxHitboxCount;
 
-    ActorImpl() { reset(); }
+    ActorImpl() : id_(0) {
+        sprite_.reset();
+        for ( auto& h : hitboxes_ ) {
+            h.enabled = false;
+        }
+    }
     ~ActorImpl() = default;
     ActorImpl(const ActorImpl&) = delete;
     ActorImpl& operator=(const ActorImpl&) = delete;
     ActorImpl(ActorImpl&&) = default;
     ActorImpl& operator=(ActorImpl&&) = default;
 
-    const SpriteT& sprite() const { return sprite_; }
-
-    // [feature] Resettable
-    void reset() {
-        sprite_.reset();
-        hitboxes_.fill(mgc::collision::Hitbox{});
-    }
+    // [features] HasId
+    void set_id(mgc_id_t id) override { id_ = id; }
+    mgc_id_t id() const override { return id_; }
 
     // [feature] HasPosition
     mgc::math::Vec2i position() const override {
@@ -58,24 +66,34 @@ struct ActorImpl
         sprite_.set_position(position);
     }
 
+    // [feature] Visible
+    bool is_visible() const override {
+        return sprite_.is_visible();
+    }
+
+    void set_visible(bool v) override {
+        sprite_.set_visible(v);
+    }
+
+    // [feature] Drawable
+    using mgc::features::Drawable::draw;
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
+        return sprite_.draw(fb, cam_pos, options);
+    }
+
+    // [feature] CellDrawable
+    using mgc::features::CellDrawable::cell_draw;
+    bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
+        return sprite_.cell_draw(cb, cell_x, cell_y, cam_pos, options);
+    }
+
     // [impl] WithHitboxes
     const Hitboxes& hitboxes_impl() const {
         return hitboxes_;
     }
 
-    Hitboxes& hitboxes_impl() {
-        return hitboxes_;
-    }
-
     const mgc::collision::Hitbox* get_hitbox_by_id_impl(mgc_id_t hitbox_id) const {
         for (const auto& h : hitboxes_) {
-            if (h.id == hitbox_id) return &h;
-        }
-        return nullptr;
-    }
-
-    mgc::collision::Hitbox* get_hitbox_by_id_impl(mgc_id_t hitbox_id) {
-        for (auto& h : hitboxes_) {
             if (h.id == hitbox_id) return &h;
         }
         return nullptr;
@@ -143,7 +161,27 @@ struct ActorImpl
             const mgc::collision::MapPushbackInfo& info
     ) { }
 
+    const SpriteT& sprite() const { return sprite_; }
+    const Hitboxes& hitboxes() const { return hitboxes_; }
+    const mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) const {
+        for (auto& h : hitboxes_) {
+            if (h.id == hitbox_id) return &h;
+        }
+        return nullptr;
+    }
+
 protected:
+    SpriteT& sprite() { return sprite_; }
+    Hitboxes& hitboxes() { return hitboxes_; }
+    mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) {
+        for (auto& h : hitboxes_) {
+            if (h.id == hitbox_id) return &h;
+        }
+        return nullptr;
+    }
+
+private:
+    mgc_id_t id_;
     SpriteT sprite_;
     Hitboxes hitboxes_;
 };

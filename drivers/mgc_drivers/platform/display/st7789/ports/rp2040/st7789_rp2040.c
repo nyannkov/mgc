@@ -16,6 +16,7 @@
 #include <hardware/spi.h>
 #include <hardware/dma.h>
 #include <hardware/irq.h>
+#include <hardware/sync.h>
 #include "mgc_drivers/platform/display/st7789/ports/st7789_port.h"
 
 #ifndef MGC_DRIVERS_ST7789_RP2040_SPI_PORT
@@ -78,15 +79,19 @@ int to_pin_num(enum st7789_port__pin pin_name) {
     }
 }
 
-
-
-
 static int dma_chan; 
+static void *context;
+static void (*on_transfer_async_completed)(void *context);
 
 static void dma_handler(void) {
 
     while ( spi_is_busy(LCD_SPI_PORT) ) { }
     gpio_put(LCD_PIN_CS, true);
+
+    if ( on_transfer_async_completed ) {
+        on_transfer_async_completed(context);
+    }
+
     dma_hw->ints0 = 1u << dma_chan;
 }
 
@@ -131,7 +136,7 @@ void st7789_port__gpio_write(enum st7789_port__pin pin_name, bool value) {
 
 bool st7789_port__spi_transfer_blocking(const uint8_t *buffer, size_t len, bool cs_hold) {
 
-    while (dma_channel_is_busy(dma_chan)) {}
+    dma_channel_wait_for_finish_blocking(dma_chan);
 
     gpio_put(LCD_PIN_CS, false);
 
@@ -146,7 +151,9 @@ bool st7789_port__spi_transfer_blocking(const uint8_t *buffer, size_t len, bool 
 
 bool st7789_port__spi_transfer_async(const uint8_t *buffer, size_t len) {
 
-    while (dma_channel_is_busy(dma_chan)) {}
+    if (dma_channel_is_busy(dma_chan)) {
+        return false;
+    }
 
     dma_channel_config config = dma_channel_get_default_config(dma_chan);
     channel_config_set_transfer_data_size(&config, DMA_SIZE_8);
@@ -175,3 +182,13 @@ bool st7789_port__is_busy(void) {
 void st7789_port__sleep_ms(uint32_t ms) {
     sleep_ms(ms);
 }
+
+void st7789_port__wait_for_interrupt(void) {
+    __wfi();
+}
+
+void st7789_port__set_on_transfer_async_completed(void (*cb)(void* context), void* ctx) {
+    context = ctx;
+    on_transfer_async_completed = cb;
+}
+

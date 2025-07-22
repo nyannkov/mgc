@@ -1,0 +1,29 @@
+btree:
+  root:
+    type: selector
+    description: "If the player is visible, chase them; otherwise, search randomly."
+    children:
+      - chase_player
+      - search_for_player
+
+  chase_player:
+    type: sequencer
+    description: "If the player is visible, move toward them. If not, fail and fall back to search."
+    children:
+      - is_player_visible
+      - move_toward_player
+
+  search_for_player:
+    type: leaf
+    description: "Look around randomly to search for the player."
+    id: action/look/random
+
+  is_player_visible:
+    type: leaf
+    description: "Check whether the player is currently visible."
+    id: cond/player/visible
+
+  move_toward_player:
+    type: leaf
+    description: "Move in the direction of the visible player."
+    id: action/player/chase

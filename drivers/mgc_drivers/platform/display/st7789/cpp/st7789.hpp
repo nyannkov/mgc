@@ -40,20 +40,36 @@ struct ST7789 : mgc::platform::display::DisplayDriver<ST7789> {
         return MGC_DRIVERS_ST7789_HEIGHT;
     }
 
-    void transfer_region_blocking_impl(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
-        st7789_transfer_region_blocking_rgb565(buffer, len, x0, y0, x1, y1);
+    bool transfer_region_blocking_impl(const uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+        return st7789_transfer_region_blocking_rgb565(buffer, len, x0, y0, x1, y1);
     }
 
-    void transfer_full_region_blocking_impl(uint8_t *buffer, size_t len) {
-        st7789_transfer_full_region_blocking_rgb565(buffer, len);
+    bool transfer_region_async_aligned_impl(const uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
+        return st7789_transfer_region_async_aligned_rgb565(buffer, len, x0, y0, x1, y1);
     }
 
-    void transfer_full_region_async_impl(uint8_t *buffer, size_t len) {
-        st7789_transfer_full_region_async_rgb565(buffer, len);
+    bool transfer_full_region_blocking_impl(const uint8_t *buffer, size_t len) {
+        return st7789_transfer_full_region_blocking_rgb565(buffer, len);
+    }
+
+    bool transfer_full_region_async_impl(const uint8_t *buffer, size_t len) {
+        return st7789_transfer_full_region_async_rgb565(buffer, len);
     }
 
     bool is_busy_impl() const {
         return st7789_is_busy();
+    }
+
+    void wait_until_idle_interrupt_impl() const {
+        st7789_wait_until_idle_interrupt();
+    }
+
+    void wait_until_idle_polling_impl() const {
+        st7789_wait_until_idle_polling();
+    }
+
+    void set_on_transfer_async_completed_impl(void (*cb)(void* context), void* ctx) {
+        st7789_set_on_transfer_async_completed(cb, ctx);
     }
 
     void display_on() {

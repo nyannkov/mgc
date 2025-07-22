@@ -11,8 +11,6 @@
 extern "C" {
 #endif
 
-#define MGC_VERSION     "0.4.0"
-
 #include "components/dialoguebox.h"
 #include "components/hitbox.h"
 #include "components/label.h"
@@ -27,6 +25,7 @@ extern "C" {
 #include "detector/maphit.h"
 #include "detector/sprhit.h"
 #include "sequencer/talkflow.h"
+#include "sequencer/btctrl.h"
 
 //////////////////////////////// Legacy ////////////////////////////////
 #include "sequencer/dlgflow.h"

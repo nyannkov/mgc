@@ -12,7 +12,6 @@
 #include "mgc_cpp/camera/icamera_follower.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 #include "mgc_cpp/features/drawable.hpp"
-#include "mgc_cpp/features/cell_drawable.hpp"
 
 namespace mgc {
 namespace render {
@@ -23,8 +22,8 @@ struct Renderer {
     static_assert(std::is_base_of<mgc::platform::display::DisplayDriver<DisplayDriverT>, DisplayDriverT>::value,
               "DisplayDriverT must inherit from DisplayDriver<DisplayDriverT>");
 
-    Renderer(DisplayDriverT& driver, const mgc::camera::ICameraFollower* follower)
-        : driver_(driver), follower_(follower) { }
+    Renderer(mgc::graphics::Framebuffer& fb, DisplayDriverT& driver, const mgc::camera::ICameraFollower* follower)
+        : fb_(fb), driver_(driver), follower_(follower) { }
 
     ~Renderer() = default;
 
@@ -38,136 +37,109 @@ struct Renderer {
     }
 
     void set_back_color(mgc::graphics::Color back_color) {
-        back_color_ = back_color;
+        fb_.set_back_color(back_color);
     }
 
-    void render(mgc::graphics::Framebuffer& fb, const mgc::features::Drawable** drawables, size_t drawable_count, bool buffer_clear = true) {
+    bool is_busy() const {
+        return driver_.is_busy();
+    }
+
+    void wait_until_idle_interrupt() const {
+        driver_.wait_until_idle_interrupt();
+    }
+
+    void wait_until_idle_polling() const {
+        driver_.wait_until_idle_polling();
+    }
+
+    bool draw_to_framebuffer(const mgc::features::Drawable** drawables, size_t drawables_count, bool clear_before_draw = true) {
+
         if ( !drawables ) {
-            return;
+            return false;
         }
 
         auto cam_pos = this->camera_position();
-        for ( size_t index = 0; index < drawable_count; index++ ) {
+
+        if ( clear_before_draw ) {
+            fb_.clear();
+        }
+
+        for ( size_t index = 0; index < drawables_count; index++ ) {
             if ( drawables[index] ) {
-                drawables[index]->draw(fb, cam_pos, nullptr);
-            }
-        }
-        if ( ( driver_.width() == fb.width() ) &&
-             ( driver_.height() == fb.height() )
-        ) {
-            driver_.transfer_full_region_blocking(fb.data_bytes(), fb.size());
-        } else {
-            driver_.transfer_region_blocking(
-                        fb.data_bytes(),
-                        fb.size(),
-                        0,
-                        0,
-                        fb.width() - 1,
-                        fb.height() -1
-            );
-        }
-
-        if ( buffer_clear ) {
-            fb.set_back_color(back_color_);
-            fb.clear();
-        }
-    }
-
-    void render(mgc::graphics::Framebuffer& fb, bool buffer_clear = true) {
-        if ( ( driver_.width() == fb.width() ) &&
-             ( driver_.height() == fb.height() )
-        ) {
-            driver_.transfer_full_region_blocking(fb.data_bytes(), fb.size());
-        } else {
-            driver_.transfer_region_blocking(
-                        fb.data_bytes(),
-                        fb.size(),
-                        0,
-                        0,
-                        fb.width() - 1,
-                        fb.height() -1
-            );
-        }
-
-        if ( buffer_clear ) {
-            fb.set_back_color(back_color_);
-            fb.clear();
-        }
-    }
-
-	/**
-	 * Renders and starts asynchronous transfer of the framebuffer.
-	 *
-	 * Using a single shared framebuffer (for both draw and transfer) is unsafe
-	 * if a previous transfer is still in progress.
-	 *
-	 * This is experimental and may change.
-	 */
-    void render_async(mgc::graphics::Framebuffer& fb, const mgc::features::Drawable** drawables, size_t drawable_count) {
-        if ( !drawables ) {
-            return;
-        }
-        if ( ( driver_.width() != fb.width() ) ||
-             ( driver_.height() != fb.height() )
-        ) {
-            return;
-        }
-
-        auto cam_pos = this->camera_position();
-
-        for ( size_t index = 0; index < drawable_count; index++ ) {
-            if ( drawables[index] ) {
-                drawables[index]->draw(fb, cam_pos, nullptr);
+                drawables[index]->draw(fb_, cam_pos, nullptr);
             }
         }
 
-        driver_.transfer_full_region_async(fb.data_bytes(), fb.size());
+        return true;
     }
 
-    void render_async(mgc::graphics::Framebuffer& fb) {
-        if ( ( driver_.width() != fb.width() ) ||
-             ( driver_.height() != fb.height() )
-        ) {
-            return;
-        }
+    bool transfer_to_display_region_blocking(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
 
-        driver_.transfer_full_region_async(fb.data_bytes(), fb.size());
+        return driver_.transfer_region_blocking(fb_.data_bytes(), fb_.size(), x0, y0, x1, y1);
     }
 
-    void render(mgc::graphics::CellBuffer& cb, const mgc::features::CellDrawable** drawables, size_t drawable_count) {
-        if ( !drawables ) {
-            return;
+    bool transfer_to_display_blocking() {
+
+        return driver_.transfer_full_region_blocking(fb_.data_bytes(), fb_.size());
+    }
+
+    bool transfer_to_display_blocking_at(uint16_t offset_x, uint16_t offset_y) {
+
+        return driver_.transfer_region_blocking(
+            fb_.data_bytes(),
+            fb_.size(),
+            offset_x,
+            offset_y,
+            offset_x + fb_.width() - 1,
+            offset_y + fb_.height() - 1 
+        );
+    }
+
+    /**
+    * Renders and starts asynchronous transfer of the framebuffer.
+    *
+    * Using a single shared framebuffer (for both draw and transfer) is unsafe
+    * if a previous transfer is still in progress.
+    *
+    * This is experimental and may change.
+    */
+    bool transfer_to_display_async_at(uint16_t offset_x, uint16_t offset_y) {
+
+        if ( is_busy() ) {
+            return false;
         }
 
-        uint16_t width = driver_.width();
-        uint16_t height = driver_.height();
-        auto cam_pos = this->camera_position();
-        cb.set_back_color(back_color_);
+        return driver_.transfer_region_async_aligned(
+            fb_.data_bytes(),
+            fb_.size(),
+            offset_x,
+            offset_y,
+            offset_x + fb_.width() - 1,
+            offset_y + fb_.height() - 1
+        );
+    }
 
-        for ( uint16_t y = 0; y < height; y += MGC_CELL2PIXEL(1)) {
-            for ( uint16_t x = 0; x < width; x += MGC_CELL2PIXEL(1)) {
-                for ( size_t index = 0; index < drawable_count; index++ ) {
-                    if ( drawables[index] ) {
-                        drawables[index]->cell_draw(cb, x, y, cam_pos, nullptr);
-                    }
-                }
-                driver_.transfer_region_blocking(
-                            cb.data_bytes(),
-                            cb.size(),
-                            x,
-                            y,
-                            x + MGC_CELL_LEN - 1,
-                            y + MGC_CELL_LEN - 1
-                );
-                cb.clear();
-            }
+    bool transfer_to_display_async() {
+
+        if ( is_busy() ) {
+            return false;
         }
+        
+        return driver_.transfer_full_region_async(fb_.data_bytes(), fb_.size());
+    }
+
+    const mgc::graphics::Framebuffer& framebuffer() const {
+        return fb_;
+    }
+
+    mgc::graphics::Framebuffer& framebuffer() {
+        return fb_;
     }
 
 private:
+    mgc::graphics::Framebuffer& fb_;
     DisplayDriverT& driver_;
     const mgc::camera::ICameraFollower* follower_;
-    mgc::graphics::Color back_color_;
 
     mgc::math::Vec2i camera_position() {
         if ( follower_ ) {

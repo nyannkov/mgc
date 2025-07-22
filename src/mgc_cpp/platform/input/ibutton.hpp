@@ -30,6 +30,32 @@ struct IButton {
     }
 };
 
+inline bool is_any_button_pressed(const IButton& button) {
+    constexpr mgc::platform::input::Key all_keys[] = {
+        mgc::platform::input::Key::Up,
+        mgc::platform::input::Key::Down,
+        mgc::platform::input::Key::Left,
+        mgc::platform::input::Key::Right,
+        mgc::platform::input::Key::Enter,
+        mgc::platform::input::Key::Cancel,
+        mgc::platform::input::Key::Menu,
+        mgc::platform::input::Key::Option,
+        mgc::platform::input::Key::Home,
+        mgc::platform::input::Key::End,
+        mgc::platform::input::Key::Next,
+        mgc::platform::input::Key::Previous,
+        mgc::platform::input::Key::Control
+    };
+
+    for ( auto key : all_keys ) {
+        if ( button.is_pressed(key) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 }// namespace input
 }// namespace platform
 }// namespace mgc

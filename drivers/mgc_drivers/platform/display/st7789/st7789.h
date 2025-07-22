@@ -31,15 +31,17 @@ void st7789_inversion_on(void);
 void st7789_inversion_off(void);
 void st7789_sleep_out(void);
 void st7789_sleep_in(void);
-bool st7789_transfer_region_blocking_rgb565(uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
-bool st7789_transfer_full_region_blocking_rgb565(uint8_t *buffer, size_t len);
-bool st7789_transfer_full_region_async_rgb565(uint8_t *buffer, size_t len);
+bool st7789_transfer_region_blocking_rgb565(const uint8_t *buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+bool st7789_transfer_region_async_aligned_rgb565(const uint8_t* buffer, size_t len, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+bool st7789_transfer_full_region_blocking_rgb565(const uint8_t *buffer, size_t len);
+bool st7789_transfer_full_region_async_rgb565(const uint8_t *buffer, size_t len);
 bool st7789_is_busy(void);
+void st7789_wait_until_idle_interrupt(void);
+void st7789_wait_until_idle_polling(void);
+void st7789_set_on_transfer_async_completed(void (*cb)(void* context), void* ctx);
 
 #ifdef __cplusplus
 }/* extern "C" */
-
-
 #endif
 
 #endif/*MGC_DRIVERS_ST7789_H*/

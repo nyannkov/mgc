@@ -23,15 +23,7 @@ struct WithHitboxes {
         return static_cast<const Derived*>(this)->hitboxes_impl();
     }
 
-    Hitboxes& hitboxes() {
-        return static_cast<Derived*>(this)->hitboxes_impl();
-    }
-
     const mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) const {
-        return static_cast<Derived*>(this)->get_hitbox_by_id_impl(hitbox_id);
-    }
-
-    mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) {
         return static_cast<Derived*>(this)->get_hitbox_by_id_impl(hitbox_id);
     }
 
