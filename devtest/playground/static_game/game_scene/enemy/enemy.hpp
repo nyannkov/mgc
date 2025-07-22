@@ -80,7 +80,7 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
                 }
                 
                 // TODO The set_position override unintentionally clears the temporary position data
-                this->sprite().set_position(temp_position_.template cast_to<int16_t>());
+                mgc::entities::ActorImpl<Enemy, 3>::set_position(temp_position_.template cast_to<int16_t>());
 
             } else if ( enemy_state_ == EnemyState::LookLeft ) {
                 hitboxes[1].enabled = true;

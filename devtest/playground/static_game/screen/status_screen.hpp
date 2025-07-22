@@ -94,7 +94,7 @@ struct StatusScreen {
                     0, 0, twin_hearts_.data(), twin_hearts_.size()
                 );
 
-                cell_renderer_.transfer_to_display_cell_blocking(row, col, 8, 8);
+                cell_renderer_.transfer_to_display_cell_blocking(row, col, X, Y);
             }
         }
     }
