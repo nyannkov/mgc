@@ -39,7 +39,7 @@ int main() {
 
     InputMock input_mock;
    
-    mgc::control::btree::BTreeController<TimerHost> btc(input_mock);
+    mgc::control::btree::BTreeController<TimerHost> btc;
 
     struct Listener : mgc::control::btree::IBTreeListener<mgc::control::btree::BTreeController<TimerHost>> {
         LeafResult on_proc_leaf(std::string_view id, const DurationT& duration, mgc_btree_tag_t tag) override {
@@ -82,7 +82,7 @@ int main() {
     input_mock.set_is_pressed(true);
 
     while ( !btc.has_finished() ) {
-        btc.proc();
+        btc.proc(mgc::platform::input::is_any_button_pressed(input_mock));
     }
 
     return 0;
