@@ -1,17 +1,22 @@
 #include "mgc/mgc.h"
+#include "mgc_cpp/mgc.hpp"
 #include "resources/generated/anim/anim_player.h"
-#include "mgc_drivers/platform/timer/free_running_timer/free_running_timer.h"
+#include "mgc_drivers/platform/timer/free_running_timer/cpp/free_running_timer_u32.hpp"
 #include "mgc_drivers/platform/display/st7789/st7789.h"
 #include "mgc_drivers/platform/input/digital_gamepad/digital_gamepad.h"
 
+namespace {
+mgc_sprite_t sprite;
+mgc_animctrl_t animctrl;
+mgc_framebuffer_t fb;
+mgc_color_t buffer[240*240];
+mgc_digital_gamepad_t gamepad;
 
-static mgc_sprite_t sprite;
-static mgc_animctrl_t animctrl;
-static mgc_framebuffer_t fb;
-static mgc_color_t buffer[240*240];
-static mgc_digital_gamepad_t gamepad;
+mgc::platform::timer::FrameTimer<mgc::drivers::platform::timer::FreeRunningTimerU32> frame_timer;
 
-int main(void) {
+}
+
+int main() {
 
     st7789_init(50*1000*1000);
 
@@ -29,13 +34,18 @@ int main(void) {
     sprite_set_tileset(&sprite, animctrl_get_tileset(&animctrl));
     sprite_set_tile_index(&sprite, animctrl_get_current_tile_index(&animctrl));
 
-    uint32_t timer_now = free_running_timer_get_now_ms();
+    frame_timer.reset();
+
+    uint32_t timer_now = frame_timer.now_ms32();
+
     animctrl_start(&animctrl, timer_now);
 
     while (1) {
 
-        timer_now = free_running_timer_get_now_ms();
-        
+        frame_timer.tick();
+
+        timer_now = frame_timer.now_ms32();
+
         digital_gamepad_proc(&gamepad);
 
         if ( digital_gamepad_is_pressed(&gamepad, MGC_DIGITAL_GAMEPAD_KEY_RIGHT) ) {

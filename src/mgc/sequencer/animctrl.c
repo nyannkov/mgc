@@ -13,8 +13,7 @@ void animctrl_init(mgc_animctrl_t* animctrl) {
     animctrl->speed = 1.0f;
     animctrl->frame_anchor_ms = 0;
     animctrl->frame_elapsed_ms = 0;
-    animctrl->paused = false;
-    animctrl->finished = false;
+    animctrl->state = MGC_ANIMCTRL_STATE_INIT;
 }
 
 void animctrl_set_anim_frames(mgc_animctrl_t* animctrl, const mgc_anim_frames_t* frames) {
@@ -61,10 +60,10 @@ void animctrl_reset(mgc_animctrl_t* animctrl) {
             animctrl->current_frame_index = frames->frame_count - 1;
         }
 
-        animctrl->finished = false;
-        animctrl->paused = true;
         animctrl->frame_elapsed_ms = 0;
     }
+
+    animctrl->state = MGC_ANIMCTRL_STATE_INIT;
 }
 
 void animctrl_start(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
@@ -73,9 +72,11 @@ void animctrl_start(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
         return;
     }
 
-    animctrl->frame_anchor_ms = timer_now_ms;
-    animctrl->frame_elapsed_ms = 0;
-    animctrl->paused = false;
+    if ( animctrl->state == MGC_ANIMCTRL_STATE_INIT ) {
+        animctrl->frame_anchor_ms = timer_now_ms;
+        animctrl->frame_elapsed_ms = 0;
+        animctrl->state = MGC_ANIMCTRL_STATE_IN_PROGRESS;
+    }
 }
 
 void animctrl_pause(mgc_animctrl_t* animctrl) {
@@ -83,7 +84,9 @@ void animctrl_pause(mgc_animctrl_t* animctrl) {
         MGC_WARN("Invalid handler");
         return;
     }
-    animctrl->paused = true;
+    if ( animctrl->state == MGC_ANIMCTRL_STATE_IN_PROGRESS ) {
+        animctrl->state = MGC_ANIMCTRL_STATE_PAUSED;
+    }
 }
 
 void animctrl_resume(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
@@ -91,8 +94,10 @@ void animctrl_resume(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
         MGC_WARN("Invalid handler");
         return;
     }
-    animctrl->paused = false;
-    animctrl->frame_anchor_ms = timer_now_ms;
+    if ( animctrl->state == MGC_ANIMCTRL_STATE_PAUSED ) {
+        animctrl->state = MGC_ANIMCTRL_STATE_IN_PROGRESS;
+        animctrl->frame_anchor_ms = timer_now_ms;
+    }
 }
 
 /**
@@ -110,11 +115,7 @@ bool animctrl_proc(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
         return false;
     }
 
-    if ( animctrl->paused ) {
-        return false;
-    }
-
-    if ( animctrl->finished ) {
+    if ( animctrl->state != MGC_ANIMCTRL_STATE_IN_PROGRESS ) {
         return false;
     }
 
@@ -151,7 +152,7 @@ bool animctrl_proc(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
                 if ( animctrl->loop ) {
                     animctrl->current_frame_index = animctrl->frames->frame_count - 1;
                 } else {
-                    animctrl->finished = true;
+                    animctrl->state = MGC_ANIMCTRL_STATE_FINISHED;
                     frame_changed = false;
                 }
             }
@@ -163,7 +164,7 @@ bool animctrl_proc(mgc_animctrl_t* animctrl, uint32_t timer_now_ms) {
                 if ( animctrl->loop ) {
                     animctrl->current_frame_index = 0;
                 } else {
-                    animctrl->finished = true;
+                    animctrl->state = MGC_ANIMCTRL_STATE_FINISHED;
                     frame_changed = false;
                 }
             }

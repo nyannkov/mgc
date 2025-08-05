@@ -10,6 +10,7 @@ def load_yaml(path):
         return yaml.safe_load(f)
 
 def normalize_paths(yaml_data, yaml_dir):
+    """Normalize frame file paths with yaml_dir"""
     for anim in yaml_data["animations"]:
         for frame in anim["frames"]:
             frame["norm_file"] = os.path.normpath(
@@ -17,6 +18,7 @@ def normalize_paths(yaml_data, yaml_dir):
             )
 
 def build_tile_index_map(yaml_data):
+    """Build unique frame file list and mapping to tile index"""
     all_files = []
     for anim in yaml_data["animations"]:
         for frame in anim["frames"]:
@@ -33,6 +35,7 @@ def build_tile_index_map(yaml_data):
     return unique_files, tile_index_map
 
 def generate_merged_bmp(unique_files, output_bmp_path, columns=8):
+    """Merge all unique frame BMPs into one tileset BMP"""
     if not unique_files:
         print("No frames to merge.", file=sys.stderr)
         sys.exit(1)
@@ -74,26 +77,52 @@ def generate_merged_bmp(unique_files, output_bmp_path, columns=8):
 
     return tile_w, tile_h
 
-def generate_c_and_h(yaml_data, yaml_base, output_dir, tile_index_map, tile_count):
-    h_path = os.path.join(output_dir, f"{yaml_base}.h")
-    c_path = os.path.join(output_dir, f"{yaml_base}.c")
-
-    with open(h_path, "w") as hf:
+def generate_anim_files(yaml_data, yaml_base, output_dir, tile_index_map):
+    """Generate .c/.h per animation and a combined <yamlbase>.h"""
+    combined_h_path = os.path.join(output_dir, f"{yaml_base}.h")
+    with open(combined_h_path, "w") as combined_h:
         include_guard = f"ANIM_{yaml_base.upper()}_H"
-        hf.write(f"#ifndef {include_guard}\n#define {include_guard}\n\n")
-        hf.write("#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n")
-        hf.write("#include \"mgc/sequencer/anim_frames.h\"\n\n")
-        for anim in yaml_data["animations"]:
-            anim_name = anim["name"]
-            hf.write(f"extern const mgc_anim_frames_t {anim_name};\n")
-        hf.write("\n#ifdef __cplusplus\n}\n#endif\n")
-        hf.write(f"#endif /* {include_guard} */\n")
+        combined_h.write(f"#ifndef {include_guard}\n#define {include_guard}\n\n")
+        combined_h.write("#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n")
+        combined_h.write("#include \"mgc/sequencer/anim_frames.h\"\n\n")
 
-    with open(c_path, "w") as cf:
-        cf.write(f"#include \"{yaml_base}.h\"\n")
-        cf.write(f"#include \"tileset_{yaml_base}.h\"\n\n")
         for anim in yaml_data["animations"]:
-            anim_name = anim["name"]
+            anim_name = f"{yaml_base}_{anim["name"]}"
+            combined_h.write(f"extern const mgc_anim_frames_t {anim_name};\n")
+
+        combined_h.write("\n#ifdef __cplusplus\n}\n#endif\n")
+        combined_h.write(f"#endif /* {include_guard} */\n")
+
+    c_files = []
+    for anim in yaml_data["animations"]:
+        anim_name = f"{yaml_base}_{anim["name"]}"
+        h_path = os.path.join(output_dir, f"{anim_name}.h")
+        c_path = os.path.join(output_dir, f"{anim_name}.c")
+        c_files.append(c_path)
+
+        with open(h_path, "w") as hf:
+            include_guard = f"ANIM_{anim_name.upper()}_H"
+            hf.write(f"#ifndef {include_guard}\n#define {include_guard}\n\n")
+            hf.write("#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n")
+            hf.write("#include \"mgc/sequencer/anim_frames.h\"\n\n")
+
+            hf.write("enum {\n")
+            for idx, frame in enumerate(anim["frames"]):
+                user_name = frame.get("name")
+                if user_name:
+                    enum_name = f"{anim_name}_{user_name}".upper()
+                else:
+                    enum_name = f"{anim_name}_FRAME{idx}".upper()
+                hf.write(f"    {enum_name} = {idx},\n")
+            hf.write("};\n\n")
+
+            hf.write(f"extern const mgc_anim_frames_t {anim_name};\n\n")
+            hf.write("#ifdef __cplusplus\n}\n#endif\n")
+            hf.write(f"#endif /* {include_guard} */\n")
+
+        with open(c_path, "w") as cf:
+            cf.write(f"#include \"{anim_name}.h\"\n")
+            cf.write(f"#include \"tileset_{yaml_base}.h\"\n\n")
             description = anim.get("description", "")
             if description:
                 cf.write(f"/* {description} */\n")
@@ -117,11 +146,30 @@ def generate_c_and_h(yaml_data, yaml_base, output_dir, tile_index_map, tile_coun
                 f"}};\n\n"
             )
 
-    print(f"Generated C/H: {c_path}, {h_path}")
+    print(f"Generated animation files in {output_dir}")
+    return c_files
+
+def generate_cmakelists(output_dir, yaml_base, c_files):
+    """Generate a CMakeLists.txt that builds all generated C files into a static lib"""
+    cmake_path = os.path.join(output_dir, "CMakeLists.txt")
+    libname = f"{yaml_base}"
+    with open(cmake_path, "w") as cf:
+        cf.write("cmake_minimum_required(VERSION 3.12)\n")
+        cf.write(f"project({libname} C)\n\n")
+        cf.write("add_library(${PROJECT_NAME} STATIC\n")
+        for cfile in c_files:
+            cf.write(f"    {os.path.basename(cfile)}\n")
+        cf.write(")\n\n")
+        cf.write("# Link against mgc (must be added via add_subdirectory in parent project)\n")
+        cf.write("target_link_libraries(${PROJECT_NAME} PUBLIC mgc)\n")
+        cf.write("target_include_directories(${PROJECT_NAME} PUBLIC\n")
+        cf.write("    ${CMAKE_CURRENT_SOURCE_DIR}\n")
+        cf.write(")\n")
+    print(f"Generated CMakeLists.txt: {cmake_path}")
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate merged tileset BMP and C/H for animations"
+        description="Generate merged tileset BMP and animation C/H files"
     )
     parser.add_argument("yamlfile", help="Animation definition YAML")
     parser.add_argument("-d", "--dir", default=".", help="Output directory")
@@ -143,12 +191,15 @@ def main():
     merged_bmp_path = os.path.join(output_dir, merged_bmp_name)
     tile_w, tile_h = generate_merged_bmp(unique_files, merged_bmp_path, args.columns)
 
-    # Generate C/H
-    generate_c_and_h(yaml_data, yaml_base, output_dir, tile_index_map, len(unique_files))
+    # Generate anim C/H files
+    c_files = generate_anim_files(yaml_data, yaml_base, output_dir, tile_index_map)
+    c_files.append(merged_bmp_name.replace(".bmp", ".c"))
+
+    # Generate CMakeLists
+    generate_cmakelists(output_dir, yaml_base, c_files)
 
     # Optionally call tileset_gen.py
     if not args.no_gen_tileset:
-        tileset_h = os.path.join(output_dir, f"tileset_{yaml_base}.h")
         cmd = [
             sys.executable,
             os.path.join(os.path.dirname(__file__), "..", "tileset_gen", "tileset_gen.py"),
@@ -163,4 +214,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

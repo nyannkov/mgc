@@ -7,9 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 set(C_SOURCES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/anim/anim_player.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/anim/tileset_anim_player.c"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/main.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
 
 add_executable(${CMAKE_PROJECT_NAME}
@@ -17,9 +16,11 @@ add_executable(${CMAKE_PROJECT_NAME}
     )
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../..  mgc_build)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/resources/generated/anim)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
     mgc
+    anim_player
 )
 
 add_compile_options(-Wall

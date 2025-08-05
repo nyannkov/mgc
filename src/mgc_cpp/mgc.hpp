@@ -11,6 +11,7 @@
 #include "mgc_cpp/platform/input/ibutton.hpp"
 #include "mgc_cpp/platform/sound/isound_controller.hpp"
 #include "mgc_cpp/platform/timer/timer.hpp"
+#include "mgc_cpp/platform/timer/frame_timer.hpp"
 #include "mgc_cpp/features/cell_drawable.hpp"
 #include "mgc_cpp/features/drawable.hpp"
 #include "mgc_cpp/features/has_id.hpp"

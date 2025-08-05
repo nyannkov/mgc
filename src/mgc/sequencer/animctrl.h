@@ -14,6 +14,13 @@ extern "C" {
 #include "mgc/common/common.h"
 #include "anim_frames.h"
 
+enum mgc_animctrl_state {
+    MGC_ANIMCTRL_STATE_INIT = 0,
+    MGC_ANIMCTRL_STATE_IN_PROGRESS,
+    MGC_ANIMCTRL_STATE_PAUSED,
+    MGC_ANIMCTRL_STATE_FINISHED
+};
+
 typedef struct mgc_animctrl {
     const mgc_anim_frames_t* frames;
     size_t current_frame_index;
@@ -21,8 +28,7 @@ typedef struct mgc_animctrl {
     float speed;
     uint32_t frame_anchor_ms;
     uint32_t frame_elapsed_ms;
-    bool paused;
-    bool finished;
+    enum mgc_animctrl_state state;
 } mgc_animctrl_t;
 
 void animctrl_init(mgc_animctrl_t* animctrl);
@@ -70,7 +76,7 @@ bool animctrl_is_finished(const mgc_animctrl_t* animctrl) {
 
     MGC_ASSERT(animctrl != NULL , "Invalid handler");
 
-    return animctrl->finished;
+    return animctrl->state == MGC_ANIMCTRL_STATE_FINISHED;
 }
 
 static inline
@@ -78,7 +84,15 @@ bool animctrl_is_paused(const mgc_animctrl_t* animctrl) {
 
     MGC_ASSERT(animctrl != NULL , "Invalid handler");
 
-    return animctrl->paused;
+    return animctrl->state == MGC_ANIMCTRL_STATE_PAUSED;
+}
+
+static inline
+enum mgc_animctrl_state animctrl_get_state(const mgc_animctrl_t* animctrl) {
+
+    MGC_ASSERT(animctrl != NULL , "Invalid handler");
+
+    return animctrl->state;
 }
 
 #ifdef __cplusplus
