@@ -9,4 +9,3 @@ animations:
     frames:
       - { file: frame_003.bmp, time_ms: 50 }
       - { file: frame_004.bmp, time_ms: 50, name: WALK_RIGHT_2 }
-

@@ -20,10 +20,10 @@ FONT_GEN="${TOOLS_PATH}/font_gen/font_gen.py"
 TALKSCRIPT_GEN="${TOOLS_PATH}/talkscript_gen/talkscript_gen.py"
 BTREE_GEN="${TOOLS_PATH}/btree_gen/btree_gen.py"
 ANIM_GEN="${TOOLS_PATH}/anim_gen/anim_gen.py"
-TILE_SPLITTER="${TOOLS_PATH}/anim_gen/splitter.py"
+ANIM_FRAME_SPLITTER="${TOOLS_PATH}/anim_frame_splitter/anim_frame_splitter.py"
 
 
-python3 ${TILE_SPLITTER}    ${COMMON_PATH}/assets/tileset/tileset_player.bmp --width 16 --height 16 --dir ./resources/anim/player
+python3 ${ANIM_FRAME_SPLITTER}    ${COMMON_PATH}/assets/tileset/tileset_player.bmp --width 16 --height 16 --dir ./resources/anim/player
 python3 ${ANIM_GEN}   ./resources/anim/player/anim_player.yml  --dir ./resources/generated/anim
 
 
