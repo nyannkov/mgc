@@ -24,7 +24,7 @@ set(C_SOURCES
 
 add_executable(${CMAKE_PROJECT_NAME}
     ${C_SOURCES}
-    )
+)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../..  mgc_build)
 

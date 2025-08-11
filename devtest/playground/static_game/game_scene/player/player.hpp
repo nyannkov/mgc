@@ -3,6 +3,7 @@
 
 #include "app_typedefs.hpp"
 #include "game_context.hpp"
+#include "game_timer.hpp"
 #include "resources/generated/tileset/tileset_player.h"
 #include "resources/generated/btree/test_btree.h"
 
@@ -20,7 +21,7 @@ struct Player : mgc::entities::ActorImpl<Player, 1>,
                vy_(0),
                is_enemy_hit_(false),
                jumping_(false),
-               bt_controller_() {
+               bt_controller_(app::game_timer()) {
 
         this->sprite().set_tileset(tileset_player);
         this->sprite().set_tile_index(3);

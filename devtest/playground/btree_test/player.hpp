@@ -15,7 +15,7 @@ struct Enemy;
 template <typename PlatformT>
 struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
 
-    using TimerT = typename PlatformT::TimerT;
+    using TimerT = typename PlatformT::FrameTimerT;
     using BTreeControllerT = mgc::control::btree::BTreeController<TimerT>;
     using IBTreeListenerT = mgc::control::btree::IBTreeListener<BTreeControllerT>;
 
@@ -24,7 +24,7 @@ struct Player : mgc::entities::ActorImpl<Player<PlatformT>, 1> {
               vy_(0),
               enemy_hit_(false),
               jumping_(false),
-              bt_controller_() {
+              bt_controller_(pf.timer_impl()) {
 
         this->sprite().set_tileset(tileset_player);
         this->sprite().set_tile_index(3);

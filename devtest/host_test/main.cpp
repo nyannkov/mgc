@@ -38,10 +38,11 @@ private:
 int main() {
 
     InputMock input_mock;
-   
-    mgc::control::btree::BTreeController<TimerHost> btc;
+    mgc::platform::timer::FrameTimer<TimerHost> timer;
 
-    struct Listener : mgc::control::btree::IBTreeListener<mgc::control::btree::BTreeController<TimerHost>> {
+    mgc::control::btree::BTreeController<decltype(timer)> btc(timer);
+
+    struct Listener : mgc::control::btree::IBTreeListener<decltype(btc)> {
         LeafResult on_proc_leaf(std::string_view id, const DurationT& duration, mgc_btree_tag_t tag) override {
 
             if ( id == "cond/timer/over_60s" ) {
@@ -82,6 +83,7 @@ int main() {
     input_mock.set_is_pressed(true);
 
     while ( !btc.has_finished() ) {
+        timer.tick();
         btc.proc(mgc::platform::input::is_any_button_pressed(input_mock));
     }
 

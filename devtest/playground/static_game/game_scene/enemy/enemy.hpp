@@ -5,6 +5,7 @@
 #include "mgc_cpp/math/vec2.hpp"
 #include "app_typedefs.hpp"
 #include "game_context.hpp"
+#include "game_timer.hpp"
 #include "game_scene/enemy/enemy_kind/enemy_kind.hpp"
 #include "resources/generated/tileset/tileset_fish.h"
 #include "resources/generated/btree/btree_chase.h"
@@ -33,7 +34,7 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, 3>,
 
     Enemy() : is_hit_{{false, false, false}},
               bt_frame_counter_(0),
-              bt_controller_(),
+              bt_controller_(app::game_timer()),
               bt_listener_(*this) {
 
         setup(EnemyKind::SkyFish);

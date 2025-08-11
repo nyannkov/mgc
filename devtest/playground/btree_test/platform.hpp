@@ -4,7 +4,7 @@
 #include "mgc_cpp/platform/input/ibutton.hpp"
 #include "mgc_cpp/platform/sound/isound_controller.hpp"
 #include "mgc_cpp/platform/display/display_driver.hpp"
-#include "mgc_cpp/platform/timer/timer.hpp"
+#include "mgc_cpp/platform/timer/frame_timer.hpp"
 
 namespace devtest {
 
@@ -12,21 +12,21 @@ template <
     typename InputImplT,
     typename SoundImplT,
     typename DisplayImplT,
-    typename TimerImplT
+    typename FrameTimerImplT
 >
 struct Platform {
 
-    Platform(InputImplT& input, SoundImplT& sound, DisplayImplT& display, TimerImplT& timer) :
+    Platform(InputImplT& input, SoundImplT& sound, DisplayImplT& display, FrameTimerImplT& timer) :
         input_(input),
         sound_(sound),
         display_(display),
         timer_(timer)
     {}
 
-    using timestamp_t = typename TimerImplT::timestamp_t;
+    using timestamp_t = typename FrameTimerImplT::timestamp_t;
 
     using InputT = InputImplT;
-    using TimerT = TimerImplT;
+    using FrameTimerT = FrameTimerImplT;
     using SoundT = SoundImplT;
     using DisplayT =DisplayImplT;
 
@@ -61,11 +61,11 @@ struct Platform {
         return display_;
     }
 
-    mgc::platform::timer::Timer<TimerImplT, timestamp_t>& timer() {
+    mgc::platform::timer::FrameTimer<FrameTimerImplT>& timer() {
         return timer_;
     }
 
-    const mgc::platform::timer::Timer<TimerImplT, timestamp_t>& timer() const {
+    const mgc::platform::timer::FrameTimer<FrameTimerImplT>& timer() const {
         return timer_;
     }
 
@@ -93,11 +93,11 @@ struct Platform {
         return display_;
     }
 
-    TimerImplT& timer_impl() {
+    FrameTimerImplT& timer_impl() {
         return timer_;
     }
 
-    const TimerImplT& timer_impl() const {
+    const FrameTimerImplT& timer_impl() const {
         return timer_;
     }
 
@@ -105,7 +105,7 @@ private:
     InputImplT& input_;
     SoundImplT& sound_;
     DisplayImplT& display_;
-    TimerImplT& timer_;
+    FrameTimerImplT& timer_;
 };
 
 } // namepsace devtest

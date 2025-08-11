@@ -2,15 +2,12 @@
 #define MGC_GAME_CONTEXT_HPP
 
 #include "mgc_cpp/mgc.hpp"
-#include "mgc_drivers/platform/timer/free_running_timer/cpp/free_running_timer_u32.hpp"
 
 namespace app {
 
 struct GameContext {
     using IButtonT = mgc::platform::input::IButton;
     using ISoundT = mgc::platform::sound::ISoundController;
-    using TimerT = mgc::drivers::platform::timer::FreeRunningTimerU32;
-    using TimerValueT = TimerT::timestamp_t;
 
     GameContext(const IButtonT& button, ISoundT& sound, mgc::math::Vec2i player_pos, const size_t& player_life)
         : button_(button),
@@ -18,10 +15,6 @@ struct GameContext {
           player_pos_(player_pos),
           player_life_(player_life) { }
           
-    TimerValueT timer_value_ms() {
-        return TimerT::now_ms();
-    }
-
     const IButtonT& button() const {
         return button_;
     }

@@ -24,13 +24,13 @@ struct Enemy : mgc::entities::ActorImpl<Enemy<PlatformT>, 3> {
         ViewRight = 2
     };
 
-    using TimerT = typename PlatformT::TimerT;
+    using TimerT = typename PlatformT::FrameTimerT;
     using BTreeControllerT = mgc::control::btree::BTreeController<TimerT>;
     using IBTreeListenerT = mgc::control::btree::IBTreeListener<BTreeControllerT>;
 
     explicit Enemy(PlatformT& pf) 
             : pf_(pf), 
-              bt_controller_(),
+              bt_controller_(pf.timer_impl()),
               bt_listener_(player_in_view_) {
 
         set_by_id(EnemyType::SkyFish);

@@ -38,7 +38,8 @@ MmlPsgSoundController sound_controller;
 auto& gamepad = mgc::drivers::platform::input::default_gamepad();
 
 DefaultTalkflowController talkflow_controller(gamepad);
-mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32> btc;
+mgc::platform::timer::FrameTimer<mgc::drivers::platform::timer::FreeRunningTimerU32> timer;
+mgc::control::btree::BTreeController<decltype(timer)> btc(timer);
 
 SimpleCameraFollower camera;
 
@@ -378,7 +379,7 @@ int main() {
     );
 
 
-    struct Listener : mgc::control::btree::IBTreeListener<mgc::control::btree::BTreeController<mgc::drivers::platform::timer::FreeRunningTimerU32>> {
+    struct Listener : mgc::control::btree::IBTreeListener<decltype(btc)> {
         LeafResult on_proc_leaf(std::string_view id, const DurationT& duration, mgc_btree_tag_t tag) override {
             
             ::snprintf(label_buf_1, sizeof(label_buf_1)-1, "leaf_id: %s", id.data());
@@ -461,6 +462,7 @@ int main() {
     while (1) {
 
         gamepad.proc();
+        timer.tick();
         // Adjust sound playback speed with pitch correction
         // Press Menu to speed up, Home to slow down
         if ( gamepad.just_pressed(Key::Menu) ) {
