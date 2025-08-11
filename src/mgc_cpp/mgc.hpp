@@ -32,6 +32,7 @@
 #include "mgc_cpp/camera/simple_camera_follower.hpp"
 #include "mgc_cpp/control/talkflow/talkflow_controller.hpp"
 #include "mgc_cpp/control/btree/btree_controller.hpp"
+#include "mgc_cpp/control/anim/anim_controller.hpp"
 #include "mgc_cpp/render/renderer.hpp"
 #include "mgc_cpp/render/cell_renderer.hpp"
 #include "mgc_cpp/render/double_buffered_renderer.hpp"
