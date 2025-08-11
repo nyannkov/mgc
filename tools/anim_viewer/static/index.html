@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animation Viewer</title>
+  <style>
+    body { background: #222; color: #fff; text-align: center; }
+    canvas { background: #444; margin-top: 20px; }
+    select, button { margin-top: 5px; font-size: 16px; }
+    #controls { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Animation Viewer</h1>
+  
+  <div id="info_yaml">
+    YAML: <span id="yamlName"></span><br>
+  </div>
+  <div id="info_anim">
+    <label for="animSelector" id="animLabel">Animation:</label>
+    <select id="animSelector"></select><br>
+    
+    <label id="descLabel">Description:</label>
+    <span id="animDesc"></span><br>
+  </div>
+
+  <canvas id="viewer" width="128" height="128"></canvas>
+  <div style="margin-top: 10px;">
+    <div id="info_frame">
+      Frame Index: <span id="frameIndex">0</span> /
+      <span id="frameCount">0</span><br>
+      Frame Name: <span id="frameName">---</span><br>
+      Frame Time: <span id="frameTime">0</span> ms
+    </div>
+    <button id="prevBtn">◀ Prev</button>
+    <button id="nextBtn">Next ▶</button>
+  </div>
+
+  <div id="controls">
+    <div style="margin-top: 10px;">
+      <button id="playBtn">Stop</button>
+      <button id="resetBtn">Reset</button>
+      <label><input type="checkbox" id="loopToggle" checked> Loop</label>
+    </div>
+    <div style="margin-top: 10px;">
+        Speed: 
+        <input type="range" id="speedSlider" min="-10" max="10" step="0.1" value="1.0" style="width:300px;">
+        <span id="speedLabel">1.0x</span>
+    </div>
+  </div>
+  <script src="/viewer.js"></script>
+</body>
+</html>

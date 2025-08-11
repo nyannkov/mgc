@@ -26,6 +26,7 @@ extern "C" {
 #include "detector/sprhit.h"
 #include "sequencer/talkflow.h"
 #include "sequencer/btctrl.h"
+#include "sequencer/animctrl.h"
 
 //////////////////////////////// Legacy ////////////////////////////////
 #include "sequencer/dlgflow.h"
