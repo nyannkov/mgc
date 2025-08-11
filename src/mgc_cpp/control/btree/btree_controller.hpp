@@ -20,19 +20,19 @@ namespace mgc {
 namespace control {
 namespace btree {
 
-template <typename TimerT>
+template <typename FrameTimerT>
 struct BTreeController : mgc::features::Resettable {
-    using timestamp_t = typename TimerT::timestamp_t;
+    using timestamp_t = typename FrameTimerT::timestamp_t;
     using DurationT = BTreeDuration<timestamp_t>;
 
-    BTreeController() { reset(); }
+    BTreeController(const FrameTimerT& timer) : timer_(timer) { reset(); }
     ~BTreeController() = default;
     BTreeController(const BTreeController&) = delete;
     BTreeController& operator=(const BTreeController&) = delete;
     BTreeController(BTreeController&&) = default;
     BTreeController& operator=(BTreeController&&) = default;
 
-    void bind_listener(IBTreeListener<BTreeController<TimerT>>& listener) {
+    void bind_listener(IBTreeListener<BTreeController<FrameTimerT>>& listener) {
         listener_ = &listener;
     }
 
@@ -46,7 +46,7 @@ struct BTreeController : mgc::features::Resettable {
 
     void proc(bool input_detected) {
 
-        timer_now_ = TimerT::now_ms();
+        timer_now_ = timer_.now_ms();
 
         if (input_detected) {
             reset_input_timer(timer_now_);
@@ -59,7 +59,7 @@ struct BTreeController : mgc::features::Resettable {
 
     void proc_until_blocked(bool input_detected) {
 
-        timer_now_ = TimerT::now_ms();
+        timer_now_ = timer_.now_ms();
 
         if (input_detected) {
             reset_input_timer(timer_now_);
@@ -92,7 +92,7 @@ struct BTreeController : mgc::features::Resettable {
 
     void reset_state() {
         btctrl_reset_state(&btctrl_);
-        timer_now_ = TimerT::now_ms();
+        timer_now_ = timer_.now_ms();
         reset_btree_timer(timer_now_);
         // don't reset input timer
     }
@@ -104,7 +104,7 @@ struct BTreeController : mgc::features::Resettable {
         bind_callbacks();
         listener_ = nullptr;
 
-        timer_now_ = TimerT::now_ms();
+        timer_now_ = timer_.now_ms();
         reset_btree_timer(timer_now_);
         reset_input_timer(timer_now_);
         update_duration(timer_now_);
@@ -112,7 +112,8 @@ struct BTreeController : mgc::features::Resettable {
 
 private:
     mgc_btctrl_t btctrl_;
-    IBTreeListener<BTreeController<TimerT>>* listener_;
+    const FrameTimerT& timer_;
+    IBTreeListener<BTreeController<FrameTimerT>>* listener_;
     DurationT duration_;
     timestamp_t timer_now_;
     timestamp_t tree_start_time_;
@@ -186,9 +187,9 @@ private:
             std::string_view id = (leaf->id != nullptr) ? std::string_view(leaf->id) : std::string_view { };
             auto state = listener_->on_proc_leaf(id, duration_, btctrl->current->tag);
             switch ( state ) {
-            case IBTreeListener<BTreeController<TimerT>>::LeafResult::Running: return MGC_BTREE_LEAF_RESULT_RUNNING;
-            case IBTreeListener<BTreeController<TimerT>>::LeafResult::Success: return MGC_BTREE_LEAF_RESULT_SUCCESS;
-            case IBTreeListener<BTreeController<TimerT>>::LeafResult::Failure: return MGC_BTREE_LEAF_RESULT_FAILURE;
+            case IBTreeListener<BTreeController<FrameTimerT>>::LeafResult::Running: return MGC_BTREE_LEAF_RESULT_RUNNING;
+            case IBTreeListener<BTreeController<FrameTimerT>>::LeafResult::Success: return MGC_BTREE_LEAF_RESULT_SUCCESS;
+            case IBTreeListener<BTreeController<FrameTimerT>>::LeafResult::Failure: return MGC_BTREE_LEAF_RESULT_FAILURE;
             default: return MGC_BTREE_LEAF_RESULT_FAILURE;
             }
 

@@ -7,13 +7,11 @@ namespace {
 app::InputT&   gamepad = mgc::drivers::platform::input::default_gamepad();
 app::DisplayT  display_driver;
 app::SoundT    sound_controller;
-app::TimerT    timer_u32;
 
 app::PlatformT platform(
     gamepad,
     sound_controller, 
-    display_driver,
-    timer_u32
+    display_driver
 );
 
 void platform_init() {

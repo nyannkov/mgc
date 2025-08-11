@@ -12,7 +12,6 @@
 #include "screen/fixed_double_buffered_screen.hpp"
 #include "screen/status_screen.hpp"
 
-
 namespace app {
 
 struct GameContext;
@@ -20,14 +19,15 @@ struct GameContext;
 using InputT = decltype(mgc::drivers::platform::input::default_gamepad());
 using DisplayT = mgc::drivers::platform::display::ST7789;
 using SoundT = mgc::drivers::platform::sound::MmlPsgSoundController;
-using TimerT = mgc::drivers::platform::timer::FreeRunningTimerU32;
+using HwTimerT = mgc::drivers::platform::timer::FreeRunningTimerU32;
+using FrameTimerT = mgc::platform::timer::FrameTimer<HwTimerT>;
 
-using PlatformT = Platform<InputT, SoundT, DisplayT, TimerT>;
+using PlatformT = Platform<InputT, SoundT, DisplayT>;
 
 using StatusScreenT = app::StatusScreen< 8, 8, 224, 32, app::DisplayT>;
 using MainScreenT = app::FixedDoubleBufferedScreen< 8, 48, 224, 192, app::DisplayT>;
 
-using BTreeControllerT = mgc::control::btree::BTreeController<PlatformT::TimerT>;
+using BTreeControllerT = mgc::control::btree::BTreeController<FrameTimerT>;
 using IBTreeListenerT = mgc::control::btree::IBTreeListener<BTreeControllerT>;
 
 }// namespace app

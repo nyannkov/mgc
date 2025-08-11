@@ -3,6 +3,7 @@
 
 #include "mgc_cpp/features/updatable.hpp"
 #include "app_typedefs.hpp"
+#include "game_timer.hpp"
 #include "game_scene/game_scene.hpp"
 #include "game_scene/stage/stage.hpp"
 #include "game_scene/player/player.hpp"
@@ -28,6 +29,8 @@ struct GameSceneManager {
     void run() {
         
         platform_.input_impl().proc();
+
+        game_timer().tick();
 
         game_scene_.update(game_context_);
 

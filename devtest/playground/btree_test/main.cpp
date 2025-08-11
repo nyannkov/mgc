@@ -29,7 +29,7 @@ using mgc::camera::SimpleCameraFollower;
 ST7789 display_driver;
 MmlPsgSoundController sound_controller;
 auto& gamepad = mgc::drivers::platform::input::default_gamepad();
-FreeRunningTimerU32 timer_u32;
+mgc::platform::timer::FrameTimer<FreeRunningTimerU32> timer_u32;
 
 devtest::Platform platform(
     gamepad,
@@ -196,9 +196,13 @@ int main() {
         &player
     };
 
+    timer_u32.reset();
+
     while (1) {
 
         gamepad.proc();
+
+        timer_u32.tick();
 
         fish.update(player.position().template cast_to<float>());
 
