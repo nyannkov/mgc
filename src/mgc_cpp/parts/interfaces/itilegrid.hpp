@@ -8,7 +8,7 @@
 #define MGC_PARTS_INTERFACES_ITILEGRID_HPP
 
 #include "mixins/with_tileset.hpp"
-#include "mixins/with_tile_id_map.hpp"
+#include "mixins/with_tile_index_map.hpp"
 
 namespace mgc {
 namespace parts {
@@ -16,7 +16,7 @@ namespace interfaces {
 
 template <typename Derived>
 struct ITilegrid : mgc::parts::interfaces::mixins::WithTileset<Derived>,
-                   mgc::parts::interfaces::mixins::WithTileIdMap<Derived> { };
+                   mgc::parts::interfaces::mixins::WithTileIndexMap<Derived> { };
 
 }// namespace interfaces
 }// namespace parts

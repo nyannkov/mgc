@@ -35,6 +35,7 @@ JOBS=${JOBS:-$(nproc)}
 
 cmake -S . -B "$BUILD_DIR" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
                            -DMGC_USE_DEFAULT_DIGITAL_GAMEPAD=ON \
-                           -DMGC_PIXELBUF_ORDER=1
+                           -DMGC_PIXELBUF_ORDER=1 \
+                           -DMGC_MAP_TILESET_INDEX_OFFSET=0
 
 cmake --build "$BUILD_DIR" --parallel "$JOBS"

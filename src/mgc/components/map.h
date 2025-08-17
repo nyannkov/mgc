@@ -26,7 +26,7 @@ typedef struct mgc_map {
     enum mgc_map_compression comp_type;
 } mgc_map_t;
 
-static inline uint8_t map_decompress_and_get_tile_id(const mgc_map_t *map, uint16_t i, uint16_t j) {
+static inline uint8_t map_get_map_cell_value(const mgc_map_t *map, uint16_t i, uint16_t j) {
     if ( ( map == NULL ) ||
          ( map->map == NULL )
     ) {

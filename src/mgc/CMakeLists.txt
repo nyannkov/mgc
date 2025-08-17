@@ -36,6 +36,11 @@ if(NOT "${MGC_PIXELBUF_ORDER}" STREQUAL "")
     )
 endif()
 
+set(MGC_MAP_TILESET_INDEX_OFFSET 0 CACHE STRING "Tile index offset: 0 = zero-based, 1 = one-based")
+target_compile_definitions(mgc_c PUBLIC
+    MGC_MAP_TILESET_INDEX_OFFSET=${MGC_MAP_TILESET_INDEX_OFFSET}
+)
+
 target_include_directories(mgc_c PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../
 )

@@ -72,7 +72,7 @@ struct Stage1 : mgc::entities::TilemapImpl<Stage1> {
     Stage1() {
         this->tilegrid().bind_listener(listener_);
         this->tilegrid().set_tileset(tileset_map_elements);
-        this->tilegrid().set_tile_id_map(map_01);
+        this->tilegrid().set_tile_index_map(map_01);
         this->tilegrid().set_position(mgc::math::Vec2i(0, 0));
         this->set_collision_map(&map_01);
         this->set_collision_enabled(true);
@@ -84,12 +84,14 @@ struct Stage1 : mgc::entities::TilemapImpl<Stage1> {
 
 private:
     struct Listener : mgc::parts::IBasicTilegridListener {
-        uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) override {
-            if ( tile_id == 20 ) {
-                // Flame flickering effect for tile_id 20 (used in tilemap listener)
-                tile_id += counter%3;
+        uint8_t on_request_map_cell_value(uint8_t map_cell_value, uint16_t row, uint16_t col) override {
+            uint8_t tileset_index = MGC_GET_MAP_TILESET_INDEX(map_cell_value);
+            bool hit_flag = MGC_GET_MAP_HIT_FLAG(map_cell_value);
+            if ( tileset_index == 20 ) {
+                // Flame flickering effect for tileset_index 20 (used in tilemap listener)
+                tileset_index += counter%3;
             }
-            return tile_id;
+            return MGC_MAP_CELL_VALUE(hit_flag, tileset_index);
         }
         void update() {
             counter++;
@@ -103,7 +105,7 @@ private:
 struct Stage1_FG : mgc::entities::TilemapImpl<Stage1_FG> {
     Stage1_FG() {
         this->tilegrid().set_tileset(tileset_map_elements);
-        this->tilegrid().set_tile_id_map(map_01_fg);
+        this->tilegrid().set_tile_index_map(map_01_fg);
         this->tilegrid().set_position(mgc::math::Vec2i(0, 0));
         this->tilegrid().set_parallax_factor(mgc::graphics::ParallaxFactor(2.0, 1.0));
     }
