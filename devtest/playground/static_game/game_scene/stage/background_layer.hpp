@@ -33,7 +33,7 @@ struct BackgroundLayer : mgc::entities::TilemapImpl<BackgroundLayer> {
         case LayerId::Layer1:
             this->tilegrid().set_id(id);
             this->tilegrid().set_tileset(tileset_map_elements);
-            this->tilegrid().set_tile_id_map(map_bg_layer_01);
+            this->tilegrid().set_tile_index_map(map_bg_layer_01);
             this->tilegrid().set_parallax_factor(mgc::graphics::ParallaxFactor(0.5f, 1.0f));
             this->set_collision_enabled(false);
             break;
@@ -57,14 +57,16 @@ private:
 
         void update() { counter_++; }
 
-        uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) override {
+        uint8_t on_request_map_cell_value(uint8_t map_cell_value, uint16_t row, uint16_t col) override {
+            uint8_t tileset_index = MGC_GET_MAP_TILESET_INDEX(map_cell_value);
+            bool hit_flag = MGC_GET_MAP_HIT_FLAG(map_cell_value);
             if ( layer_id_ == LayerId::Layer1 ) {
-                if ( tile_id == 20 ) {
-                    // Flame flickering effect for tile_id 20 (used in tilemap listener)
-                    tile_id += counter_%3;
+                if ( tileset_index == 20 ) {
+                    // Flame flickering effect for tileset_index 20 (used in tilemap listener)
+                    tileset_index += counter_%3;
                 }
             }
-            return tile_id;
+            return MGC_MAP_CELL_VALUE(hit_flag, tileset_index);
         }
 
     private:

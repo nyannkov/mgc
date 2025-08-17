@@ -91,7 +91,7 @@ void maphit_init(mgc_maphit_t *maphit) {
     }
     maphit->hit_x = 0;
     maphit->hit_y = 0;
-    maphit->hit_tile_id = 0;
+    maphit->hit_map_cell_value = 0;
     maphit->hit_count = 0;
     maphit->is_hit_r = false;
     maphit->is_hit_l = false;
@@ -177,7 +177,7 @@ void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *target, mg
     maphit->dy = MGC_MOD_CELL_LEN(target->y + hitbox->y0_ofs + - tilemap->y);
 
     maphit->hit_count = 0;
-    maphit->hit_tile_id = 0;
+    maphit->hit_map_cell_value = 0;
     maphit->is_hit_r = false;
     maphit->is_hit_l = false;
     maphit->is_hit_t = false;
@@ -207,11 +207,11 @@ bool maphit_detect(mgc_maphit_t *maphit) {
 
     for ( ; maphit->map_j <= maphit->qb; maphit->map_j++, maphit->map_i = maphit->ql ) {
         for ( ; maphit->map_i <= maphit->qr; maphit->map_i++ ) {
-            uint8_t tile_id = map_decompress_and_get_tile_id(map, maphit->map_i, maphit->map_j);
-            if ( (tile_id  & 0x80) != 0 ) {
+            uint8_t map_cell_value = map_get_map_cell_value(map, maphit->map_i, maphit->map_j);
+            if ( (map_cell_value  & 0x80) != 0 ) {
                 maphit->hit_x = maphit->tilemap->x + MGC_CELL2PIXEL(maphit->map_i);
                 maphit->hit_y = maphit->tilemap->y + MGC_CELL2PIXEL(maphit->map_j);
-                maphit->hit_tile_id = tile_id;
+                maphit->hit_map_cell_value = map_cell_value;
                 maphit->state = MGC_MAPHIT_STATE_IN_PROGRESS;
                 update_hit_info(maphit);
                 maphit->map_i++;

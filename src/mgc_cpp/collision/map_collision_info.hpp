@@ -16,7 +16,7 @@ namespace collision {
 
 struct MapCollisionInfo {
     const mgc::collision::Hitbox& obj_hitbox;
-    uint8_t tile_id;
+    uint8_t map_cell_value;
     uint16_t row;
     uint16_t col;
 };

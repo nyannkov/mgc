@@ -125,11 +125,11 @@ struct CollisionDetectorBoxToMap {
 
             for ( uint16_t j = qt_ ; j <= qb_; j++ ) {
                 for ( uint16_t i = ql_; i <= qr_; i++ ) {
-                    uint8_t tile_id = map_decompress_and_get_tile_id(collision_map, i, j);
-                    if ( (tile_id  & 0x80) != 0 ) {
+                    uint8_t map_cell_value = map_get_map_cell_value(collision_map, i, j);
+                    if ( (map_cell_value  & 0x80) != 0 ) {
                         this->update_hit_flags_and_counter(i, j);
 
-                        const mgc::collision::MapCollisionInfo info = {h, tile_id, j, i};
+                        const mgc::collision::MapCollisionInfo info = {h, map_cell_value, j, i};
                         obj.on_hit_box_to_map(obj, map, info);
                         map.on_hit_box_to_map(obj, map, info);
                     }

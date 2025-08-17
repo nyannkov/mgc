@@ -105,6 +105,26 @@ typedef mgc_color_rgb565_t mgc_color_t;
 #endif
 #endif
 
+#ifndef MGC_MAP_TILESET_INDEX_OFFSET
+#define MGC_MAP_TILESET_INDEX_OFFSET 0
+#endif
+
+#if (MGC_MAP_TILESET_INDEX_OFFSET != 0) && (MGC_MAP_TILESET_INDEX_OFFSET != 1)
+#error "MGC_MAP_TILESET_INDEX_OFFSET must be 0 or 1"
+#endif
+
+#define MGC_GET_MAP_TILESET_INDEX(map_cell_value) \
+	(((map_cell_value) & 0x7F) - (MGC_MAP_TILESET_INDEX_OFFSET))
+
+#define MGC_GET_MAP_TILE_INDEX(tileset_index) \
+    ((tileset_index) + (MGC_MAP_TILESET_INDEX_OFFSET))
+
+#define MGC_GET_MAP_HIT_FLAG(map_cell_value) \
+    (((map_cell_value) & 0x80) != 0 )
+
+#define MGC_MAP_CELL_VALUE(hit_flag, tileset_index) \
+    (((hit_flag) ? 0x80 : 0x00) | ((tileset_index) + (MGC_MAP_TILESET_INDEX_OFFSET)))
+    
 typedef struct mgc_point {
     int16_t x;
     int16_t y;

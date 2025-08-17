@@ -26,7 +26,7 @@ struct MainLayer : mgc::entities::TilemapImpl<MainLayer> {
         case LayerId::Layer1:
             this->tilegrid().set_id(id);
             this->tilegrid().set_tileset(tileset_map_elements);
-            this->tilegrid().set_tile_id_map(map_main_layer_01);
+            this->tilegrid().set_tile_index_map(map_main_layer_01);
             this->set_collision_map(&map_main_layer_01);
             this->set_collision_enabled(true);
             break;

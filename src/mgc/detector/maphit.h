@@ -32,7 +32,7 @@ enum mgc_corner_escape_type {
 typedef struct mgc_maphit {
     int16_t hit_x;
     int16_t hit_y;
-    uint8_t hit_tile_id;
+    uint8_t hit_map_cell_value;
     uint8_t hit_count;
     bool is_hit_r;
     bool is_hit_l;
@@ -58,12 +58,16 @@ typedef struct mgc_maphit {
 
 #define MAPHIT_GET_HIT_X(maphit) ((maphit).hit_x)
 #define MAPHIT_GET_HIT_Y(maphit) ((maphit).hit_y)
-#define MAPHIT_GET_HIT_TILE_ID(maphit)  ((maphit).hit_tile_id)
+
+#define MAPHIT_GET_HIT_MAP_CELL_VALUE(maphit)  ((maphit).hit_map_cell_value)
 
 extern void maphit_init(mgc_maphit_t *maphit);
 extern void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *target, mgc_id_t target_hitbox_id, const mgc_tilemap_t *tilemap);
 extern bool maphit_detect(mgc_maphit_t *maphit);
 extern void maphit_calc_wall_pushback(const mgc_maphit_t *maphit, int16_t *pushback_x, int16_t *pushback_y, enum mgc_corner_escape_type escape_type);
+
+//////////////////////////////// Legacy ////////////////////////////////
+#define MAPHIT_GET_HIT_TILE_ID  MAPHIT_GET_HIT_MAP_CELL_VALUE
 
 #ifdef __cplusplus
 }/* extern "C" */
