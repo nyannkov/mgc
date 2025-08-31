@@ -1,0 +1,32 @@
+animations:
+  - name: stand_left
+    description: "Stand left"
+    frames:
+      - { file: frame_001.bmp, time_ms: 999999 }
+
+  - name: stand_right
+    description: "Stand right"
+    frames:
+      - { file: frame_003.bmp, time_ms: 999999 }
+
+  - name: walk_left
+    description: "Walk left"
+    frames:
+      - { file: frame_001.bmp, time_ms: 50, name: WALK_LEFT_1 }
+      - { file: frame_002.bmp, time_ms: 50, name: WALK_LEFT_2 }
+
+  - name: walk_right
+    description: "Walk right"
+    frames:
+      - { file: frame_003.bmp, time_ms: 50 }
+      - { file: frame_004.bmp, time_ms: 50, name: WALK_RIGHT_2 }
+
+  - name: jump_left
+    description: "Jump left"
+    frames:
+      - { file: frame_007.bmp, time_ms: 999999 }
+
+  - name: jump_right
+    description: "Jump right"
+    frames:
+      - { file: frame_010.bmp, time_ms: 999999 }

@@ -88,7 +88,7 @@ def generate_anim_files(yaml_data, yaml_base, output_dir, tile_index_map):
 
         for anim in yaml_data["animations"]:
             anim_name = f"{yaml_base}_{anim["name"]}"
-            combined_h.write(f"extern const mgc_anim_frames_t {anim_name};\n")
+            combined_h.write(f"#include \"{anim_name}.h\"\n")
 
         combined_h.write("\n#ifdef __cplusplus\n}\n#endif\n")
         combined_h.write(f"#endif /* {include_guard} */\n")

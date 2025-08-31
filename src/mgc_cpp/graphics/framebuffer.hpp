@@ -66,6 +66,10 @@ struct Framebuffer {
         framebuffer_clear(&fb_, back_color_);
     }
 
+    void clear(Color color) {
+        framebuffer_clear(&fb_, color);
+    }
+
 private:
     mgc_framebuffer fb_;
     Color back_color_;

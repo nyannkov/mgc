@@ -30,6 +30,11 @@ struct CellDrawable {
 
         return cell_draw(cb, cell_x, cell_y, mgc::math::Vec2i(0, 0), &options);
     }
+
+    bool cell_draw(graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &campos) const {
+
+        return cell_draw(cb, cell_x, cell_y, campos, nullptr);
+    }
 };
 
 }// namespace features

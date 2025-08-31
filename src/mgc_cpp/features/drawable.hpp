@@ -28,6 +28,10 @@ struct Drawable {
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::graphics::DrawOptions &options) const {
         return draw(fb, mgc::math::Vec2i(0, 0), &options);
     }
+
+    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos) const {
+        return draw(fb, cam_pos, nullptr);
+    }
 };
 
 }// namespace features

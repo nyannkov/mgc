@@ -41,8 +41,9 @@ struct ActorImpl
     using Hitboxes = std::array<mgc::collision::Hitbox, MaxHitboxCount>; 
     static constexpr size_t HitboxCount = MaxHitboxCount;
 
-    ActorImpl() : id_(0) {
+    ActorImpl() : id_(0), real_pos_(0.0f, 0.0f) {
         sprite_.reset();
+        sprite_.set_position(real_pos_.template cast_to<int16_t>());
         for ( auto& h : hitboxes_ ) {
             h.enabled = false;
         }
@@ -64,6 +65,20 @@ struct ActorImpl
 
     void set_position(const mgc::math::Vec2i& position) override {
         sprite_.set_position(position);
+        real_pos_ = position.template cast_to<float>();
+    }
+
+    // HasPosition-related
+    mgc::math::Vec2f internal_position() const {
+        return real_pos_;
+    }
+
+    void set_internal_position(const mgc::math::Vec2f& real_position) {
+        real_pos_ = real_position;
+    }
+
+    void commit_position() {
+        sprite_.set_position(real_pos_.template cast_to<int16_t>());
     }
 
     // [feature] Visible
@@ -183,6 +198,7 @@ protected:
 private:
     mgc_id_t id_;
     SpriteT sprite_;
+    mgc::math::Vec2f real_pos_;
     Hitboxes hitboxes_;
 };
 

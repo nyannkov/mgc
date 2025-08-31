@@ -34,11 +34,13 @@ struct CollisionDetectorBoxToBox {
         const auto& obj1_hitboxes = obj1.hitboxes();
         const auto& obj2_hitboxes = obj2.hitboxes();
 
-        for ( auto& h1 : obj1_hitboxes ) {
+        for ( size_t h1_index = 0; h1_index < obj1_hitboxes.size(); h1_index++ ) {
+            auto& h1 = obj1_hitboxes[h1_index];
             if ( !h1.enabled ) {
                 continue;
             }
-            for ( auto& h2 : obj2_hitboxes ) {
+            for ( size_t h2_index = 0; h2_index < obj2_hitboxes.size(); h2_index++ ) {
+                auto& h2 = obj2_hitboxes[h2_index];
                 if ( !h2.enabled ) {
                     continue;
                 }
@@ -53,10 +55,10 @@ struct CollisionDetectorBoxToBox {
                 int32_t b2 = t2 + h2.size.height() - 1;
 
                 if ((l1 <= r2) && (l2 <= r1) && (t1 <= b2) && (t2 <= b1)) {
-                    const mgc::collision::BoxCollisionInfo info1 = {h1, h2};
+                    const mgc::collision::BoxCollisionInfo info1 = {h1, h2, h1_index, h2_index};
                     obj1.on_hit_box_to_box(obj2, info1);
 
-                    const mgc::collision::BoxCollisionInfo info2 = {h2, h1};
+                    const mgc::collision::BoxCollisionInfo info2 = {h2, h1, h2_index, h1_index};
                     obj2.on_hit_box_to_box(obj1, info2);
                 }
             }
