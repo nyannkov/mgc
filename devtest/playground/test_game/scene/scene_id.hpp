@@ -5,6 +5,7 @@ namespace app {
 
 enum class SceneId : int {
     Id_000 = 0,
+    Id_001,
 };
 
 } // namespace app

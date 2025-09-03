@@ -3,6 +3,7 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "scene/scene.hpp"
+#include "utils/screen_fader/screen_fader.hpp"
 #include "game_context/game_context.hpp"
 
 namespace app {
@@ -37,13 +38,33 @@ struct MainFrame {
     void change_next_scene(GameContext& ctx) {
         if ( scene_ && scene_->has_scene_change_request() ) {
             set_scene(scene_->id_next(), ctx);
+            screen_fader_.request_fade_in(dfb_.back());
         }
     }
 
-    bool update_scene(GameContext& ctx) {
+    bool update_scene() {
         if ( scene_ ) {
-            scene_->update();
-            return scene_->has_scene_change_request();
+
+            ScreenFaderState fade_state = screen_fader_.fade_state();
+
+            if ( fade_state == ScreenFaderState::None ) {
+                scene_->update();
+                if ( scene_->has_scene_change_request() ) {
+                    screen_fader_.request_fade_out(dfb_.back());
+                }
+                return false;
+            } else {
+                if ( fade_state == ScreenFaderState::FadeOutComplete ) {
+                    screen_fader_.clear();
+                    return true;// Change into next scene.
+                } else if ( fade_state == ScreenFaderState::FadeInComplete ) {
+                    screen_fader_.clear();
+                    return false;
+                } else {
+                    return false;
+                }
+            }
+
         } else {
             return false;
         }
@@ -57,10 +78,10 @@ struct MainFrame {
         }
     }
 
-    //TODO fade out/in
     void draw_to_buffer() {
         if ( scene_ ) {
             scene_->draw(dfb_.back());
+            screen_fader_.update(dfb_.back());
         }
     }
 
@@ -80,6 +101,7 @@ private:
     mgc::graphics::Color buffer_1_[Width*Height];
     mgc::graphics::DoubleFramebuffer dfb_;
     mgc::render::DoubleBufferedRenderer<DisplayDriverT> renderer_;
+    ScreenFader screen_fader_;
 };
 
 } // namespace app

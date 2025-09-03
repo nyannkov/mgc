@@ -26,6 +26,7 @@ struct GameContext {
     Player& player() { return player_; }
 
     const FrameTimerT& frame_timer() { return frame_timer_; }
+    const GamepadT& gamepad() { return gamepad_; }
 
 private:
     DisplayDriverT& display_driver_;

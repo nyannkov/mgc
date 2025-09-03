@@ -35,7 +35,7 @@ int main() {
         
         platform_proc();
         
-        if ( main_frame.update_scene(ctx) ) {
+        if ( main_frame.update_scene() ) {
             main_frame.change_next_scene(ctx);
         }
 

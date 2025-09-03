@@ -4,90 +4,79 @@
 #include "mgc_cpp/mgc.hpp"
 #include "scene/scene_base.hpp"
 #include "game_context/game_context.hpp"
-#include "entity/player/player.hpp"
-#include "entity/enemy/skyfish/skyfish.hpp"
-#include "entity/stage/collision_tile_layer/collision_tile_layer.hpp"
-#include "entity/stage/tile_layer/tile_layer.hpp"
+#include "resources/generated/font/k8x12.h"
 
 namespace app {
+
+using mgc::platform::input::Key;
 
 struct Scene000 : SceneBase {
 
     explicit Scene000(GameContext& ctx) 
-                : id_(SceneId::Id_000),
+                : gamepad_(ctx.gamepad()),
+                  id_(SceneId::Id_000),
                   id_next_(SceneId::Id_000),
-                  ctx_(ctx),
-                  change_request_(false),
-                  skyfish_(ctx.frame_timer(), ctx.player()),
-                  main_layer_(ctx.frame_timer()),
-                  back_layer_(ctx.frame_timer()) {}
+                  change_request_(false)
+                  { }
 
     SceneId id() const override { return id_; }
     SceneId id_next() const override { return id_next_; }
     bool has_scene_change_request() const override { return change_request_; };
 
     void init() override {
-        
-        main_layer_.set_layer(CollisionTileLayerId::Layer_001);
-        main_layer_.set_position({0, 0});
+        label_title_.set_position({16*4, 16});
+        label_title_.set_font(k8x12);
+        label_title_.set_fontsize2x(true);
+        label_title_.set_font_fore_color(MGC_COLOR_WHITE);
+        label_title_.set_text("テストゲーム");
 
-        back_layer_.set_layer(TileLayerId::Layer_001);
-        back_layer_.set_position({0, MGC_CELL2PIXEL(34)});
-        back_layer_.set_parallax_factor({0.5, 1});
+        label_title_en_.set_position({16*4+8, 16*3});
+        label_title_en_.set_font(k8x12);
+        label_title_en_.set_fontsize2x(true);
+        label_title_en_.set_font_fore_color(MGC_COLOR_WHITE);
+        label_title_en_.set_text("TEST GAME");
 
-        auto& player = ctx_.player();
-        player.set_position({MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(38)});
-
-        skyfish_.set_position({MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(34)});
-
-        camera_.set_target(ctx_.player());
-        camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(3));
-        camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(31), MGC_CELL2PIXEL(3));
-        camera_.set_x_follow_enabled(true);
-        camera_.set_y_follow_enabled(true);
+        selectbox_menu_.set_position({16*5, 16*7});
+        selectbox_menu_.set_font(k8x12);
+        selectbox_menu_.set_padding({8, 8, 8, 8});
+        selectbox_menu_.add_item("START");
+        selectbox_menu_.add_item("SCORE");
     }
 
     void update() override {
-
-        auto& player = ctx_.player();
         
-        player.prepare_update();
+        if ( gamepad_.just_pressed(Key::Up) ) {
+            selectbox_menu_.select_previous();
 
-        skyfish_.prepare_update();
+        } else if ( gamepad_.just_pressed(Key::Down) ) {
+            selectbox_menu_.select_next();
 
-        col_detector_.detect(player, main_layer_);
+        } else if ( gamepad_.just_pressed(Key::Enter) ) {
+            
+            if ( selectbox_menu_.selected_index() == 0 ) {
+                id_next_ = SceneId::Id_001;
+                change_request_ = true;
+            }
 
-        mgc::collision::CollisionDetectorBoxToBox::detect(player, skyfish_);
-
-        player.finalize_update();
-
-        skyfish_.finalize_update();
-
-        camera_.update_follow_position();
+        } else {
+        }
     }
 
     void draw(mgc::graphics::Framebuffer& fb) override {
-
         fb.clear(MGC_COLOR_BLACK);
-        
-        const auto pos = camera_.follow_position();
-
-        back_layer_.draw(fb, pos);
-        main_layer_.draw(fb, pos);
-        ctx_.player().draw(fb, pos);
-        skyfish_.draw(fb, pos);
+        label_title_.draw(fb);    
+        label_title_en_.draw(fb);    
+        selectbox_menu_.draw(fb);    
     }
 
 private:
-   GameContext& ctx_;
-   const SceneId id_; 
-   SceneId id_next_;
-   bool change_request_;
-   CollisionTileLayer main_layer_;
-   TileLayer back_layer_;
-   app::enemy::SkyFish skyfish_;
-   mgc::camera::SimpleCameraFollower camera_;
-   mgc::collision::CollisionDetectorBoxToMap col_detector_;
+    const GamepadT& gamepad_;
+    const SceneId id_; 
+    SceneId id_next_;
+    bool change_request_;
+    mgc::parts::BasicLabel label_title_;
+    mgc::parts::BasicLabel label_title_en_;
+    mgc::parts::BasicSelectbox selectbox_menu_;
 };
 
 } // namespace app
