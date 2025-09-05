@@ -69,15 +69,12 @@ struct ActorImpl
     }
 
     // HasPosition-related
-    mgc::math::Vec2f internal_position() const {
+    mgc::math::Vec2f precise_position() const {
         return real_pos_;
     }
 
-    void set_internal_position(const mgc::math::Vec2f& real_position) {
+    void set_precise_position(const mgc::math::Vec2f& real_position) {
         real_pos_ = real_position;
-    }
-
-    void commit_position() {
         sprite_.set_position(real_pos_.template cast_to<int16_t>());
     }
 

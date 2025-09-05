@@ -62,6 +62,10 @@ struct CellBuffer {
         pixelbuffer_set_back_color(&buffer_, color);
     }
 
+    void fill(Color color) {
+        pixelbuffer_fill_with_color(&buffer_, color);
+    }
+
     void clear() {
         pixelbuffer_reset_buffer(&buffer_);
     }

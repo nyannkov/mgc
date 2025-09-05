@@ -30,3 +30,14 @@ animations:
     description: "Jump right"
     frames:
       - { file: frame_010.bmp, time_ms: 999999 }
+
+  - name: attack_left
+    description: "Attack left"
+    frames:
+      - { file: frame_025.bmp, time_ms: 200 }
+
+  - name: attack_right
+    description: "Attack right"
+    frames:
+      - { file: frame_026.bmp, time_ms: 200 }
+

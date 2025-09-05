@@ -17,6 +17,7 @@ struct Scene001 : SceneBase {
                 : id_(SceneId::Id_001),
                   id_next_(SceneId::Id_001),
                   player_(ctx.player()),
+                  status_display_request_(ctx.status_display_request()),
                   change_request_(false),
                   skyfish_(ctx.frame_timer(), ctx.player()),
                   main_layer_(ctx.frame_timer()),
@@ -46,6 +47,9 @@ struct Scene001 : SceneBase {
         camera_.set_y_follow_enabled(true);
 
         camera_.update_follow_position();
+
+        // Show status display.
+        status_display_request_.request_show();
     }
 
     void update() override {
@@ -57,6 +61,7 @@ struct Scene001 : SceneBase {
         col_detector_.detect(player_, main_layer_);
 
         mgc::collision::CollisionDetectorBoxToBox::detect(player_, skyfish_);
+        mgc::collision::CollisionDetectorBoxToBox::detect(player_.effect(), skyfish_);
 
         player_.finalize_update();
 
@@ -75,10 +80,12 @@ struct Scene001 : SceneBase {
         main_layer_.draw(fb, pos);
         player_.draw(fb, pos);
         skyfish_.draw(fb, pos);
+        player_.effect().draw(fb, pos);
     }
 
 private:
     Player& player_;
+    StatusDisplayRequest& status_display_request_;
     const SceneId id_; 
     SceneId id_next_;
     bool change_request_;

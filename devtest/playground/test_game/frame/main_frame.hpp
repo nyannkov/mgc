@@ -64,7 +64,6 @@ struct MainFrame {
                     return false;
                 }
             }
-
         } else {
             return false;
         }

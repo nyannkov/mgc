@@ -52,7 +52,7 @@ struct Renderer {
         driver_.wait_until_idle_polling();
     }
 
-    bool draw_to_framebuffer(const mgc::features::Drawable** drawables, size_t drawables_count, bool clear_before_draw = true) {
+    bool draw_to_framebuffer(const mgc::features::Drawable* const* drawables, size_t drawables_count, bool clear_before_draw = true) {
 
         if ( !drawables ) {
             return false;

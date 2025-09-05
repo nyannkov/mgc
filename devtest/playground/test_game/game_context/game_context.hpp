@@ -3,6 +3,7 @@
 
 #include "app_common.hpp"
 #include "entity/player/player.hpp"
+#include "game_context/status_display_request.hpp"
 
 namespace app {
 
@@ -28,12 +29,15 @@ struct GameContext {
     const FrameTimerT& frame_timer() { return frame_timer_; }
     const GamepadT& gamepad() { return gamepad_; }
 
+    StatusDisplayRequest& status_display_request() { return status_display_request_; }
+
 private:
     DisplayDriverT& display_driver_;
     SoundControllerT& sound_controller_;
     GamepadT& gamepad_;
     FrameTimerT& frame_timer_;
     Player player_;
+    StatusDisplayRequest status_display_request_{};
 };
 
 } // namespace app

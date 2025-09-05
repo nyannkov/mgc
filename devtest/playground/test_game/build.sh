@@ -30,6 +30,7 @@ python3 ${ANIM_GEN}         ./resources/anim/enemy/skyfish/anim_skyfish.yml  --d
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_map_elements.bmp --count 100 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_blue.bmp --count 25 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_items.bmp --count 16 --width 8 --height 8 --dir ./resources/generated/tileset
+python3 ${TILESET_GEN}      ./resources/tileset/tileset_effect.bmp --count 2 --width 8 --height 16 --dir ./resources/generated/tileset
 python3 ${MAP_GEN}          ./resources/map/map_main_layer_01.csv --compression runlength --dir ./resources/generated/map
 python3 ${MAP_GEN}          ./resources/map/map_bg_layer_01.csv --compression runlength --dir ./resources/generated/map
 python3 ${TALKSCRIPT_GEN}   ./resources/talkscript/test_talkscript.yml --dir ./resources/generated/talkscript

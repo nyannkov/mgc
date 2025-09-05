@@ -10,6 +10,7 @@ SkyFish::SkyFish(const FrameTimerT& frame_timer, const Player& player)
       bt_(frame_timer),
       bt_listener_(frame_timer),
       velocity_({0.0f, 0.0f}),
+      force_ex_({0.0f, 0.0f}),
       anim_state_(SkyFishAnimState::HoverRight) {
 
     this->set_spawn_point({0, 0}, anim_state_);
@@ -60,7 +61,7 @@ void SkyFish::prepare_update() {
 
     if ( behavior_state == SkyFishBehaviorState::Chase ) {
         
-        auto real_pos = this->internal_position();
+        auto real_pos = this->precise_position();
 
         const float stiffness = 0.03f;
         const float damping = 1.0f;
@@ -68,11 +69,23 @@ void SkyFish::prepare_update() {
 
         auto delta = player_pos - real_pos;
         auto force = delta * stiffness - velocity_ * damping;
-        velocity_ = velocity_ + force;
+
+        velocity_ = velocity_ + force + force_ex_;
         real_pos += velocity_;
 
-        this->set_internal_position(real_pos);
-        this->commit_position();
+        if ( force_ex_.x > 0 ) {
+            force_ex_.x -= 1.0f;
+            if ( force_ex_.x <= 0.0f ) {
+                force_ex_.x = 0.0f;
+            }
+        } else if ( force_ex_.x < 0 ) {
+            force_ex_.x += 1.0f;
+            if ( force_ex_.x >= 0.0f ) {
+                force_ex_.x = 0.0f;
+            }
+        } else { }
+
+        this->set_precise_position(real_pos);
 
     } else {
         if ( behavior_state == SkyFishBehaviorState::LookRight ) {
