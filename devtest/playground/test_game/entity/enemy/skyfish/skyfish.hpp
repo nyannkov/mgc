@@ -5,44 +5,36 @@
 #include "skyfish_anim.hpp"
 #include "skyfish_hitbox.hpp"
 #include "skyfish_bt.hpp"
+#include "entity/enemy/enemy.hpp"
 
 namespace app {
-
-struct Player;
-struct Effect;
-
 namespace enemy {
 
-struct SkyFish : mgc::entities::ActorImpl<SkyFish, static_cast<size_t>(SkyFishHitboxIndex::Count)> {
+constexpr int32_t SKYFISH_MAX_HP = 3;
 
-    explicit SkyFish(const FrameTimerT& frame_timer, const Player& player);
+struct SkyFish: Enemy {
+
+    SkyFish(const FrameTimerT& frame_timer, const Player& player);
     ~SkyFish() = default;
     SkyFish(const SkyFish&) = delete;
     SkyFish& operator=(const SkyFish&) = delete;
     SkyFish(SkyFish&&) = default;
     SkyFish& operator=(SkyFish&&) = default;
 
-    void set_spawn_point(const mgc::math::Vec2i& pos, SkyFishAnimState anim_state);
-    void prepare_update();
-    void finalize_update();
-    template <typename Other>
-    void on_hit_box_to_box_impl(
-            const Other& other,
-            const mgc::collision::BoxCollisionInfo& info
-    ) { 
-        if constexpr (std::is_same_v<Other, Player>) {
-            bt_listener_.set_hit_flag(info.self_hitbox_index);
-        } else if constexpr (std::is_same_v<Other, Effect>) {
-            
-            if ( info.self_hitbox_index == static_cast<size_t>(SkyFishHitboxIndex::Body)) {
-                if ( other.is_right() ) {
-                    this->set_force_ex({6.0f, 0.0f});
-                } else {
-                    this->set_force_ex({-6.0f, 0.0f});
-                }
-            }
-        } else { }
-    }
+    void spawn(const mgc::math::Vec2i& pos, bool is_right) override;
+    void despawn() override;
+    void pre_update() override;
+    void post_update() override;
+
+    void on_player_hit(
+        const Player& player,
+        const mgc::collision::BoxCollisionInfo& info
+    ) override;
+
+    void on_attack_hit(
+        const Attack& attack,
+        const mgc::collision::BoxCollisionInfo& info
+    ) override;
 
 private:
     const Player& player_;
@@ -52,6 +44,7 @@ private:
     BTreeControllerT bt_;
     SkyFishBTListener bt_listener_;
     mgc::math::Vec2f force_ex_;
+    BlinkAnimator blink_animator_;
 
     void set_force_ex(mgc::math::Vec2f v) { force_ex_ = v; }
     bool is_direction_right() const {

@@ -5,7 +5,6 @@
 
 namespace app {
 
-// Utility
 struct StopWatch {
     explicit StopWatch(const FrameTimerT& frame_timer)
         : frame_timer_(frame_timer) { reset(); }

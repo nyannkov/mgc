@@ -7,7 +7,7 @@ using mgc::platform::input::Key;
 Player::Player(const FrameTimerT& frame_timer, const GamepadT& gamepad)
     : gamepad_(gamepad),
       frame_timer_(frame_timer),
-      effect_(frame_timer, gamepad),
+      attack_(frame_timer, gamepad),
       anim_(frame_timer), 
       velocity_({0.0f, 0.0f}),
       anim_state_(PlayerAnimState::StandRight),
@@ -15,7 +15,8 @@ Player::Player(const FrameTimerT& frame_timer, const GamepadT& gamepad)
       is_grounded_(true),
       is_grounded_pre_(true),
       attack_state_(AttackState::Stop),
-      hp_(MAX_PLAYER_HP) {
+      hp_(MAX_PLAYER_HP),
+      blink_animator_(frame_timer) {
 
     this->set_spawn_point({0, 0}, anim_state_);
 
@@ -112,15 +113,16 @@ void Player::update_anim_normal() {
 void Player::update_anim_attacking() {
 
     anim_.set_loop(false);
+    attack_.set_damage(1);
 
     if ( attack_state_ == AttackState::Start ) {
         attack_state_ = AttackState::InProgress;
 
         if ( is_right_ ) {
-            effect_.spawn(this->position() + mgc::math::Vec2i(18, 0), true);
+            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), AttackOwner::Player, AttackDirection::Right);
             anim_state_ = PlayerAnimState::AttackRight;
         } else {
-            effect_.spawn(this->position() + mgc::math::Vec2i(-10, 0), false);
+            attack_.spawn(this->position() + mgc::math::Vec2i(-10, 0), AttackOwner::Player, AttackDirection::Left);
             anim_state_ = PlayerAnimState::AttackLeft;
         }
 
@@ -130,7 +132,7 @@ void Player::update_anim_attacking() {
     } else if ( attack_state_ == AttackState::InProgress ) {
         if ( anim_.is_finished() ) {
             attack_state_ = AttackState::Stop;
-            effect_.despawn();
+            attack_.despawn();
         }
 
     } else { }

@@ -5,6 +5,7 @@
 #include "mgc_cpp/mgc.hpp"
 #include "platform_conf.hpp"
 #include "utils/stopwatch.hpp"
+#include "utils/blink_animator.hpp"
 
 namespace app {
 

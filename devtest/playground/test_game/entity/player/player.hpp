@@ -3,7 +3,7 @@
 
 #include "app_common.hpp"
 #include "entity/stage/collision_tile_layer/collision_tile_layer.hpp"
-#include "entity/effect/effect.hpp"
+#include "entity/attack/scratch/scratch.hpp"
 #include "player_anim.hpp"
 #include "player_hitbox_index.hpp"
 
@@ -23,7 +23,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void set_spawn_point(const mgc::math::Vec2i& pos, PlayerAnimState anim_state);
     void prepare_update();
     void finalize_update();
-    Effect& effect() { return effect_; }//TODO to array
+    Attack& attack() { return attack_; }
 
     int32_t hp() const { return hp_; }
 
@@ -63,8 +63,8 @@ private:
     enum class AttackState {
         Stop, Start, InProgress
     } attack_state_;
-    mgc::parts::BasicSprite attack_effect_;
-    Effect effect_;
+    Scratch attack_;
+    BlinkAnimator blink_animator_;
 
     void update_anim_normal();
     void update_anim_attacking();

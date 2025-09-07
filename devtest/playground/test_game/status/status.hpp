@@ -21,6 +21,7 @@ struct Status {
 private:
     const Player& player_;
     int32_t disp_player_hp_;
+    mgc::parts::BasicLabel label_life_;
     std::array<mgc::parts::BasicSprite, Player::MAX_PLAYER_HP> hearts_;
     std::array<const mgc::features::CellDrawable*, MAX_CELL_DRAWABLES> cell_drawables_;
     size_t count_cell_drawables_;

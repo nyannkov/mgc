@@ -11,13 +11,22 @@ SkyFish::SkyFish(const FrameTimerT& frame_timer, const Player& player)
       bt_listener_(frame_timer),
       velocity_({0.0f, 0.0f}),
       force_ex_({0.0f, 0.0f}),
-      anim_state_(SkyFishAnimState::HoverRight) {
+      anim_state_(SkyFishAnimState::HoverRight),
+      blink_animator_(frame_timer) {
 
-    this->set_spawn_point({0, 0}, anim_state_);
+      blink_animator_.set_target(*this);
+      set_hp(SKYFISH_MAX_HP);
 }
 
-void SkyFish::set_spawn_point(const mgc::math::Vec2i& pos, SkyFishAnimState anim_state) {
-    anim_state_ = anim_state;
+void SkyFish::spawn(const mgc::math::Vec2i& pos, bool is_right) {
+    
+    this->set_enemy_state(EnemyState::Spawning);
+
+    if ( is_right ) {
+        anim_state_ = SkyFishAnimState::HoverRight;
+    } else {
+        anim_state_ = SkyFishAnimState::HoverLeft;
+    }
     anim_.set_anim_frames(get_anim_frames(anim_state_));
     anim_.start_animation();
     anim_.set_loop(true);
@@ -53,54 +62,85 @@ void SkyFish::set_spawn_point(const mgc::math::Vec2i& pos, SkyFishAnimState anim
     bt_listener_.clear_all_hit_flags();
     bt_.set_btree(bt_listener_.btree());
     bt_.bind_listener(bt_listener_);
+
+    // No spawning animation
+    this->set_enemy_state(EnemyState::Active);
 }
 
-void SkyFish::prepare_update() {
+void SkyFish::despawn() {
 
-    const auto behavior_state = bt_listener_.behavior_state();
+    auto& hitboxes = this->hitboxes();
+    for ( auto& h : hitboxes ) { h.enabled = false; }
 
-    if ( behavior_state == SkyFishBehaviorState::Chase ) {
-        
-        auto real_pos = this->precise_position();
+    this->set_enemy_state(EnemyState::Despawning);
 
-        const float stiffness = 0.03f;
-        const float damping = 1.0f;
-        auto player_pos = player_.position().template cast_to<float>();
-
-        auto delta = player_pos - real_pos;
-        auto force = delta * stiffness - velocity_ * damping;
-
-        velocity_ = velocity_ + force + force_ex_;
-        real_pos += velocity_;
-
-        if ( force_ex_.x > 0 ) {
-            force_ex_.x -= 1.0f;
-            if ( force_ex_.x <= 0.0f ) {
-                force_ex_.x = 0.0f;
-            }
-        } else if ( force_ex_.x < 0 ) {
-            force_ex_.x += 1.0f;
-            if ( force_ex_.x >= 0.0f ) {
-                force_ex_.x = 0.0f;
-            }
-        } else { }
-
-        this->set_precise_position(real_pos);
-
-    } else {
-        if ( behavior_state == SkyFishBehaviorState::LookRight ) {
-            at(hitboxes(), SkyFishHitboxIndex::ViewRight).enabled = true;
-            at(hitboxes(), SkyFishHitboxIndex::ViewLeft).enabled = false;
-        } else if (behavior_state == SkyFishBehaviorState::LookLeft ) {
-            at(hitboxes(), SkyFishHitboxIndex::ViewRight).enabled = false;
-            at(hitboxes(), SkyFishHitboxIndex::ViewLeft).enabled = true;
-        } else { }
-    }
-
-    bt_listener_.clear_all_hit_flags();
+    blink_animator_.start();
 }
 
-void SkyFish::finalize_update() {
+void SkyFish::pre_update() {
+
+    auto state = this->enemy_state();
+
+    if ( state == EnemyState::Active ) {
+        const auto behavior_state = bt_listener_.behavior_state();
+
+        if ( behavior_state == SkyFishBehaviorState::Chase ) {
+            
+            auto real_pos = this->precise_position();
+
+            const float stiffness = 0.03f;
+            const float damping = 1.0f;
+            auto player_pos = player_.position().template cast_to<float>();
+
+            auto delta = player_pos - real_pos;
+            auto force = delta * stiffness - velocity_ * damping;
+
+            velocity_ = velocity_ + force + force_ex_;
+            real_pos += velocity_;
+
+            if ( force_ex_.x > 0 ) {
+                force_ex_.x -= 1.0f;
+                if ( force_ex_.x <= 0.0f ) {
+                    force_ex_.x = 0.0f;
+                }
+            } else if ( force_ex_.x < 0 ) {
+                force_ex_.x += 1.0f;
+                if ( force_ex_.x >= 0.0f ) {
+                    force_ex_.x = 0.0f;
+                }
+            } else { }
+
+            this->set_precise_position(real_pos);
+
+        } else {
+            if ( behavior_state == SkyFishBehaviorState::LookRight ) {
+                at(hitboxes(), SkyFishHitboxIndex::ViewRight).enabled = true;
+                at(hitboxes(), SkyFishHitboxIndex::ViewLeft).enabled = false;
+            } else if (behavior_state == SkyFishBehaviorState::LookLeft ) {
+                at(hitboxes(), SkyFishHitboxIndex::ViewRight).enabled = false;
+                at(hitboxes(), SkyFishHitboxIndex::ViewLeft).enabled = true;
+            } else { }
+        }
+
+        bt_listener_.clear_all_hit_flags();
+
+    } else if ( state == EnemyState::Despawning ) {
+       
+        blink_animator_.update();
+
+        if ( blink_animator_.state() == BlinkAnimatorState::Done ) {
+
+            blink_animator_.clear();
+
+            this->set_enemy_state(EnemyState::Inactive);
+        }
+
+    } else { }
+}
+
+void SkyFish::post_update() {
+
+    if ( this->enemy_state() == EnemyState::Inactive ) return;
 
     if ( bt_.has_finished() ) {
         bt_.reset_state();
@@ -146,6 +186,32 @@ void SkyFish::finalize_update() {
     anim_.set_current_frame(this->sprite());
 }
 
+void SkyFish::on_player_hit(
+    const Player& player,
+    const mgc::collision::BoxCollisionInfo& info
+) { 
+    bt_listener_.set_hit_flag(info.self_hitbox_index);
+}
+
+void SkyFish::on_attack_hit(
+    const Attack& attack,
+    const mgc::collision::BoxCollisionInfo& info
+) { 
+    if ( info.self_hitbox_index == static_cast<size_t>(SkyFishHitboxIndex::Body)) {
+
+        this->take_damage(attack.damage());
+
+        if ( this->hp() >  0 ) {
+            if ( attack.direction() == AttackDirection::Right ) {
+                this->set_force_ex({6.0f, 0.0f});
+            } else {
+                this->set_force_ex({-6.0f, 0.0f});
+            }
+        } else {
+            this->despawn();
+        }
+    }
+}
 
 }// namespace enemy
 }// namespace app

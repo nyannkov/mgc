@@ -19,7 +19,18 @@ struct Scene001 : SceneBase {
                   player_(ctx.player()),
                   status_display_request_(ctx.status_display_request()),
                   change_request_(false),
-                  skyfish_(ctx.frame_timer(), ctx.player()),
+                  skyfish_1_(ctx.frame_timer(), ctx.player()),
+                  skyfish_2_(ctx.frame_timer(), ctx.player()),
+                  skyfish_3_(ctx.frame_timer(), ctx.player()),
+                  skyfish_4_(ctx.frame_timer(), ctx.player()),
+                  skyfish_5_(ctx.frame_timer(), ctx.player()),
+                  enemies_ {
+                      &skyfish_1_,
+                      &skyfish_2_,
+                      &skyfish_3_,
+                      &skyfish_4_,
+                      &skyfish_5_,
+                  },
                   main_layer_(ctx.frame_timer()),
                   back_layer_(ctx.frame_timer()) {}
 
@@ -38,7 +49,11 @@ struct Scene001 : SceneBase {
 
         player_.set_position({MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(38)});
 
-        skyfish_.set_position({MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(34)});
+        skyfish_1_.spawn({MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(34)}, true);
+        skyfish_2_.spawn({MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(20)}, false);
+        skyfish_3_.spawn({MGC_CELL2PIXEL(10), MGC_CELL2PIXEL(8)}, true);
+        skyfish_4_.spawn({MGC_CELL2PIXEL(12), MGC_CELL2PIXEL(15)}, false);
+        skyfish_5_.spawn({MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(34)}, true);
 
         camera_.set_target(player_);
         camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(3));
@@ -56,16 +71,18 @@ struct Scene001 : SceneBase {
 
         player_.prepare_update();
 
-        skyfish_.prepare_update();
+        for ( auto& e : enemies_) e->pre_update();
 
         col_detector_.detect(player_, main_layer_);
 
-        mgc::collision::CollisionDetectorBoxToBox::detect(player_, skyfish_);
-        mgc::collision::CollisionDetectorBoxToBox::detect(player_.effect(), skyfish_);
+        for ( auto& e : enemies_ ) {
+            mgc::collision::CollisionDetectorBoxToBox::detect(player_, *e);
+            mgc::collision::CollisionDetectorBoxToBox::detect(player_.attack(), *e);
+        }
 
         player_.finalize_update();
 
-        skyfish_.finalize_update();
+        for ( auto& e : enemies_ ) e->post_update();
 
         camera_.update_follow_position();
     }
@@ -79,8 +96,8 @@ struct Scene001 : SceneBase {
         back_layer_.draw(fb, pos);
         main_layer_.draw(fb, pos);
         player_.draw(fb, pos);
-        skyfish_.draw(fb, pos);
-        player_.effect().draw(fb, pos);
+        for ( auto& e : enemies_ ) e->draw(fb, pos);
+        player_.attack().draw(fb, pos);
     }
 
 private:
@@ -91,7 +108,12 @@ private:
     bool change_request_;
     CollisionTileLayer main_layer_;
     TileLayer back_layer_;
-    app::enemy::SkyFish skyfish_;
+    app::enemy::SkyFish skyfish_1_;
+    app::enemy::SkyFish skyfish_2_;
+    app::enemy::SkyFish skyfish_3_;
+    app::enemy::SkyFish skyfish_4_;
+    app::enemy::SkyFish skyfish_5_;
+    std::array<app::enemy::Enemy*, 5> enemies_;
     mgc::camera::SimpleCameraFollower camera_;
     mgc::collision::CollisionDetectorBoxToMap col_detector_;
 };

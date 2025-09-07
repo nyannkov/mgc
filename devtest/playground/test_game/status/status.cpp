@@ -1,5 +1,6 @@
 #include "status.hpp"
 #include "resources/generated/tileset/tileset_items.h"
+#include "resources/generated/font/misaki_gothic.h"
 
 namespace app {
 
@@ -8,15 +9,24 @@ Status::Status(GameContext& ctx)
 
     this->clear_cell_drawables();
 
+    label_life_.set_position({0, 0});
+    label_life_.set_font(misaki_gothic);
+    label_life_.set_fontsize2x(false);
+    label_life_.set_font_fore_color(MGC_COLOR_WHITE);
+    label_life_.set_text("LIFE: ");
+
+    bool success = this->add_cell_drawable(label_life_);
+    assert(success);
+
     for ( size_t i = 0; i < hearts_.size(); i++ ) {
         auto& h = hearts_[i];
         h.set_tileset(tileset_items);
         h.set_tile_index(2);
         h.set_visible(true);
-        h.set_position(mgc::math::Vec2i(8*i, 0));
+        h.set_position(mgc::math::Vec2i(4*6 + 8*i, 0));
         h.set_parallax_factor(mgc::graphics::ParallaxFactor(0.0f, 0.0f));
 
-        bool success = this->add_cell_drawable(h);
+        success = this->add_cell_drawable(h);
         assert(success);
     }
     
