@@ -18,11 +18,13 @@ The cells after the second line describe the specific map information.
 
 Each cell specifies one byte of data. The data content follows the following bit fields.
 
-| Bit | Description |
-|--------|----------------------------|
-| 0-6 | Tile number to be drawn (0x00-0x7F) |
-| 7 | Collision detection enabled/disabled (0: disabled, 1: enabled) |
-
+| Bit  | Description |
+|------|-------------|
+| 0-6  | Tile index (0x00-0x7F).  
+          The interpretation of this index depends on the build configuration:  
+          - If `MGC_MAP_TILESET_INDEX_OFFSET = 0`: the index is zero-based (0 refers to the first tile).  
+          - If `MGC_MAP_TILESET_INDEX_OFFSET = 1`: the index is one-based (1 refers to the first tile). |
+| 7    | Collision flag (0 = disabled, 1 = enabled) |
 
 The tile number to be drawn corresponds to the tileset index. Also, when collision detection is enabled,
 collision between that cell and the sprite can be detected by the maphit module.

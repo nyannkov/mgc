@@ -17,6 +17,7 @@ set(MGC_C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/dlgflow.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/talkflow.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/btctrl.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sequencer/animctrl.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/jumpctrl/jumpctrl.c"
 )
 
@@ -34,6 +35,11 @@ if(NOT "${MGC_PIXELBUF_ORDER}" STREQUAL "")
         MGC_PIXELBUF_ORDER=${MGC_PIXELBUF_ORDER}
     )
 endif()
+
+set(MGC_MAP_TILESET_INDEX_OFFSET 0 CACHE STRING "Tile index offset: 0 = zero-based, 1 = one-based")
+target_compile_definitions(mgc_c PUBLIC
+    MGC_MAP_TILESET_INDEX_OFFSET=${MGC_MAP_TILESET_INDEX_OFFSET}
+)
 
 target_include_directories(mgc_c PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../

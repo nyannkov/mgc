@@ -40,6 +40,14 @@ struct CellRenderer {
         cb_.set_back_color(back_color);
     }
 
+    void fill(mgc::graphics::Color color) {
+        cb_.fill(color);
+    }
+
+    void clear() {
+        cb_.clear();
+    }
+
     bool is_busy() const {
         return driver_.is_busy();
     }
@@ -47,7 +55,7 @@ struct CellRenderer {
     bool draw_to_cell_buffer(
         uint16_t cell_row,
         uint16_t cell_col,
-        const mgc::features::CellDrawable** drawables,
+        const mgc::features::CellDrawable* const* drawables,
         size_t drawables_count,
         bool clear_before_draw = true
     ) {
@@ -94,7 +102,7 @@ struct CellRenderer {
     }
 
     bool draw_all_cells_and_transfer(
-        const mgc::features::CellDrawable** drawables,
+        const mgc::features::CellDrawable* const* drawables,
         size_t drawables_count,
         bool clear_before_draw = true
     ) {

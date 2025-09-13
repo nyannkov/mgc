@@ -10,7 +10,7 @@ namespace mgc {
 namespace parts {
 
 using mgc::math::Vec2i;
-using mgc::parts::assets::TileIdMap;
+using mgc::parts::assets::TileIndexMap;
 using mgc::parts::assets::Tileset;
 using mgc::graphics::Framebuffer;
 using mgc::graphics::CellBuffer;
@@ -23,7 +23,7 @@ void mgc::parts::BasicTilegrid::reset() {
     listener_ = nullptr;
     callbacks_ = mgc_tilemap_callbacks_t {
         this,
-        on_request_tile_id_wrapper
+        on_request_map_cell_value_wrapper
     };
     tilemap_set_callbacks(&tilemap_, &callbacks_);
 }
@@ -95,12 +95,12 @@ const Tileset* mgc::parts::BasicTilegrid::tileset_impl() const {
     return tilemap_get_tileset(&tilemap_);
 }
 
-// [impl] WithTileIdMap
-void mgc::parts::BasicTilegrid::set_tile_id_map_impl(const TileIdMap& tile_id_map) {
-    tilemap_set_map(&tilemap_, &tile_id_map);
+// [impl] WithTileIndexMap
+void mgc::parts::BasicTilegrid::set_tile_index_map_impl(const TileIndexMap& tile_index_map) {
+    tilemap_set_map(&tilemap_, &tile_index_map);
 }
 
-const TileIdMap* mgc::parts::BasicTilegrid::tile_id_map_impl() const {
+const TileIndexMap* mgc::parts::BasicTilegrid::tile_index_map_impl() const {
     return tilemap_get_map(&tilemap_);
 }
 

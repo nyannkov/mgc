@@ -1,0 +1,38 @@
+animations:
+  - name: hover_left
+    description: "Hover left"
+    frames:
+      - { file: frame_004.bmp, time_ms: 100 }
+      - { file: frame_005.bmp, time_ms: 100 }
+      - { file: frame_006.bmp, time_ms: 100 }
+
+  - name: hover_right
+    description: "Hover right"
+    frames:
+      - { file: frame_001.bmp, time_ms: 100 }
+      - { file: frame_002.bmp, time_ms: 100 }
+      - { file: frame_003.bmp, time_ms: 100 }
+
+  - name: rise_left
+    description: "Rise left"
+    frames:
+      - { file: frame_004.bmp, time_ms: 100 }
+      - { file: frame_005.bmp, time_ms: 100 }
+      - { file: frame_006.bmp, time_ms: 100 }
+
+  - name: rise_right
+    description: "Rise right"
+    frames:
+      - { file: frame_001.bmp, time_ms: 100 }
+      - { file: frame_002.bmp, time_ms: 100 }
+      - { file: frame_003.bmp, time_ms: 100 }
+
+  - name: fall_left
+    description: "Fall left"
+    frames:
+      - { file: frame_005.bmp, time_ms: 999999 }
+
+  - name: fall_right
+    description: "Fall right"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }

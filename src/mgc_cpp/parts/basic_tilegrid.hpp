@@ -23,10 +23,12 @@ namespace parts {
 
 struct IBasicTilegridListener {
     virtual ~IBasicTilegridListener() = default;
-    virtual uint8_t on_request_tile_id(uint8_t tile_id, uint16_t row, uint16_t col) {
+    virtual uint8_t on_request_map_cell_value(uint8_t map_cell_value, uint16_t row, uint16_t col) {
         (void)row;
         (void)col;
-        return tile_id;
+        uint8_t tileset_index = MGC_GET_MAP_TILESET_INDEX(map_cell_value);
+        bool hit_flag = MGC_GET_MAP_HIT_FLAG(map_cell_value);
+        return MGC_MAP_CELL_VALUE(hit_flag, tileset_index);
     }
 };
 
@@ -79,20 +81,20 @@ struct BasicTilegrid : mgc::parts::interfaces::ITilegrid<BasicTilegrid>,
     void set_tileset_impl(const mgc::parts::assets::Tileset &tileset);
     const mgc::parts::assets::Tileset *tileset_impl() const;
 
-    // [impl] WithTileIdMap
-    void set_tile_id_map_impl(const mgc::parts::assets::TileIdMap &tile_id_map);
-    const mgc::parts::assets::TileIdMap *tile_id_map_impl() const;
+    // [impl] WithTileIndexMap
+    void set_tile_index_map_impl(const mgc::parts::assets::TileIndexMap &tile_index_map);
+    const mgc::parts::assets::TileIndexMap *tile_index_map_impl() const;
 
 private:
     mgc_tilemap_t tilemap_;
     mgc_tilemap_callbacks_t callbacks_;
     IBasicTilegridListener *listener_;
-    static uint8_t on_request_tile_id_wrapper(uint8_t tile_id, uint16_t row, uint16_t col, void *context) {
+    static uint8_t on_request_map_cell_value_wrapper(uint8_t map_cell_value, uint16_t row, uint16_t col, void *context) {
         auto* obj = static_cast<BasicTilegrid*>(context);
         if ( !obj->listener_ ) {
-            return tile_id;
+            return map_cell_value;
         }
-        return obj->listener_->on_request_tile_id(tile_id, row, col);
+        return obj->listener_->on_request_map_cell_value(map_cell_value, row, col);
     }
 };
 

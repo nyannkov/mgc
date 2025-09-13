@@ -16,6 +16,7 @@ namespace collision {
 
 struct MapPushbackInfo {
     const mgc::collision::Hitbox& obj_hitbox;
+    size_t obj_hitbox_index;
     mgc::math::Vec2i pushback;
 };
 

@@ -78,6 +78,7 @@ struct Vec2 {
     }
 };
 
+using Vec2f = Vec2<float>;
 using Vec2i16 = Vec2<int16_t>;
 using Vec2i= Vec2i16;
 

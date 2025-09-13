@@ -35,7 +35,7 @@ git submodule update --init --recursive
 python3 scripts/setup_assets.py
 
 # Build
-cd devtest/playground/draw_test
+cd devtest/playground/test_game
 ./build.sh
 ```
 Copy ./build/playground.elf.uf2 to your Raspberry Pi Pico by dragging and dropping it into the USB mass storage device that appears when the Pico is in boot mode.

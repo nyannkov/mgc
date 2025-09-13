@@ -1,0 +1,19 @@
+talkscript:
+  subject: "Test Dialogue"
+  description: "Test"
+  talknodes:
+    game_over:
+      - message: "つづける？"
+      - choice:
+          tag: "TRY_AGAIN"
+          items:
+            - { item: "はい" , tag: "YES", next: game_retry }
+            - { item: "いいえ", tag: "NO", next: game_end }
+
+    game_retry:
+      - { message: "がんばって！", end: true }
+
+    game_end:
+      - { message: "", end: true }
+
+

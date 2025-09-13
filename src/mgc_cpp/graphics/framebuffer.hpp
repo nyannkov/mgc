@@ -66,6 +66,14 @@ struct Framebuffer {
         framebuffer_clear(&fb_, back_color_);
     }
 
+    void clear(Color color) {
+        framebuffer_clear(&fb_, color);
+    }
+
+    void draw_pixel(uint16_t x, uint16_t y, Color color) {
+        framebuffer_draw_pixel(&fb_, x, y, color);
+    }
+
 private:
     mgc_framebuffer fb_;
     Color back_color_;

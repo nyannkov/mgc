@@ -21,7 +21,7 @@ void tilemap_init(mgc_tilemap_t *tilemap, mgc_id_t id, const mgc_map_t *map, con
     tilemap->map = map;
     tilemap->tileset = tileset;
     tilemap->callbacks.context = NULL;
-    tilemap->callbacks.on_get_tile_id = NULL;
+    tilemap->callbacks.on_get_map_cell_value = NULL;
 }
 
 void tilemap_set_id(mgc_tilemap_t *tilemap, mgc_id_t id) {
@@ -102,16 +102,16 @@ void tilemap_set_callbacks(mgc_tilemap_t *tilemap, const mgc_tilemap_callbacks_t
         return;
     }
     tilemap->callbacks.context = callbacks->context;
-    tilemap->callbacks.on_get_tile_id = callbacks->on_get_tile_id;
+    tilemap->callbacks.on_get_map_cell_value = callbacks->on_get_map_cell_value;
 }
 
-void tilemap_set_on_get_tile_id_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t tile_id, uint16_t row, uint16_t col, void *context), void *context) {
+void tilemap_set_on_get_map_cell_value_cb(mgc_tilemap_t *tilemap, uint8_t (*cb)(uint8_t map_cell_value, uint16_t row, uint16_t col, void *context), void *context) {
     if ( tilemap == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
     tilemap->callbacks.context = context;
-    tilemap->callbacks.on_get_tile_id = cb;
+    tilemap->callbacks.on_get_map_cell_value = cb;
 }
 
 bool tilemap_draw(const mgc_tilemap_t *tilemap, mgc_framebuffer_t *fb, const mgc_point_t *cam_pos, const mgc_draw_options_t *options) {
@@ -197,13 +197,13 @@ bool tilemap_draw_raw(
 
         for ( uint16_t i = i_s; i <= i_e; i++ ) {
             for ( uint16_t j = j_s; j <= j_e; j++ ) {
-                uint8_t tile_id = map_decompress_and_get_tile_id(map, i, j);
-                if ( tilemap->callbacks.on_get_tile_id != NULL ) {
-                    tile_id = tilemap->callbacks.on_get_tile_id(tile_id, j, i, tilemap->callbacks.context);
+                uint8_t map_cell_value = map_get_map_cell_value(map, i, j);
+                if ( tilemap->callbacks.on_get_map_cell_value != NULL ) {
+                    map_cell_value = tilemap->callbacks.on_get_map_cell_value(map_cell_value, j, i, tilemap->callbacks.context);
                 }
-                tile_id &= 0x7F;
-                if ( (0 < tile_id ) && ( tile_id < tile_count ) ) {
-                    const uint8_t *tile = tile_array[tile_id];
+                map_cell_value &= 0x7F;
+                if ( (0 < map_cell_value ) && ( map_cell_value < tile_count ) ) {
+                    const uint8_t *tile = tile_array[MGC_GET_MAP_TILESET_INDEX(map_cell_value)];
                     int16_t l2 = l0 + (i * MGC_CELL_LEN);
                     int16_t r2 = l2 + MGC_CELL_LEN - 1;
                     int16_t t2 = t0 + (j * MGC_CELL_LEN);
@@ -277,7 +277,7 @@ bool tilemap_draw_cell_raw(
 
     if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
         int16_t i, j;
-        uint8_t tile_lt, tile_rt, tile_lb, tile_rb;
+        uint8_t cell_lt, cell_rt, cell_lb, cell_rb;
         const mgc_tileset_t *tileset;
         const mgc_map_t *map;
         const uint8_t *tile;
@@ -300,14 +300,14 @@ bool tilemap_draw_cell_raw(
         ) {
             i = MGC_DIV_CELL_LEN(i);
             j = MGC_DIV_CELL_LEN(j);
-            tile_lt = map_decompress_and_get_tile_id(map, i, j);
-            if ( tilemap->callbacks.on_get_tile_id != NULL ) {
-                tile_lt = tilemap->callbacks.on_get_tile_id(tile_lt, j, i, tilemap->callbacks.context);
+            cell_lt = map_get_map_cell_value(map, i, j);
+            if ( tilemap->callbacks.on_get_map_cell_value != NULL ) {
+                cell_lt = tilemap->callbacks.on_get_map_cell_value(cell_lt, j, i, tilemap->callbacks.context);
             }
-            tile_lt &= 0x7F;
-            if ( tile_lt >= tileset->tile_count ) tile_lt = 0;
+            cell_lt &= 0x7F;
+            if ( cell_lt >= tileset->tile_count ) cell_lt = 0;
         } else {
-            tile_lt = 0;
+            cell_lt = 0;
         }
 
         /* (right, top) */
@@ -320,14 +320,14 @@ bool tilemap_draw_cell_raw(
         ) {
             i = MGC_DIV_CELL_LEN(i);
             j = MGC_DIV_CELL_LEN(j);
-            tile_rt = map_decompress_and_get_tile_id(map, i, j);
-            if ( tilemap->callbacks.on_get_tile_id != NULL ) {
-                tile_rt = tilemap->callbacks.on_get_tile_id(tile_rt, j, i, tilemap->callbacks.context);
+            cell_rt = map_get_map_cell_value(map, i, j);
+            if ( tilemap->callbacks.on_get_map_cell_value != NULL ) {
+                cell_rt = tilemap->callbacks.on_get_map_cell_value(cell_rt, j, i, tilemap->callbacks.context);
             }
-            tile_rt &= 0x7F;
-            if ( tile_rt >= tileset->tile_count ) tile_rt = 0;
+            cell_rt &= 0x7F;
+            if ( cell_rt >= tileset->tile_count ) cell_rt = 0;
         } else {
-            tile_rt = 0;
+            cell_rt = 0;
         }
 
         /* (left, bottom) */
@@ -340,14 +340,14 @@ bool tilemap_draw_cell_raw(
         ) {
             i = MGC_DIV_CELL_LEN(i);
             j = MGC_DIV_CELL_LEN(j);
-            tile_lb = map_decompress_and_get_tile_id(map, i, j);
-            if ( tilemap->callbacks.on_get_tile_id != NULL ) {
-                tile_lb = tilemap->callbacks.on_get_tile_id(tile_lb, j, i, tilemap->callbacks.context);
+            cell_lb = map_get_map_cell_value(map, i, j);
+            if ( tilemap->callbacks.on_get_map_cell_value != NULL ) {
+                cell_lb = tilemap->callbacks.on_get_map_cell_value(cell_lb, j, i, tilemap->callbacks.context);
             }
-            tile_lb &= 0x7F;
-            if ( tile_lb >= tileset->tile_count ) tile_lb = 0;
+            cell_lb &= 0x7F;
+            if ( cell_lb >= tileset->tile_count ) cell_lb = 0;
         } else {
-            tile_lb = 0;
+            cell_lb = 0;
         }
 
         /* (right, bottom) */
@@ -360,20 +360,20 @@ bool tilemap_draw_cell_raw(
         ) {
             i = MGC_DIV_CELL_LEN(i);
             j = MGC_DIV_CELL_LEN(j);
-            tile_rb = map_decompress_and_get_tile_id(map, i, j);
-            if ( tilemap->callbacks.on_get_tile_id != NULL ) {
-                tile_rb = tilemap->callbacks.on_get_tile_id(tile_rb, j, i, tilemap->callbacks.context);
+            cell_rb = map_get_map_cell_value(map, i, j);
+            if ( tilemap->callbacks.on_get_map_cell_value != NULL ) {
+                cell_rb = tilemap->callbacks.on_get_map_cell_value(cell_rb, j, i, tilemap->callbacks.context);
             }
-            tile_rb &= 0x7F;
-            if ( tile_rb >= tileset->tile_count ) tile_rb = 0;
+            cell_rb &= 0x7F;
+            if ( cell_rb >= tileset->tile_count ) cell_rb = 0;
         } else {
-            tile_rb = 0;
+            cell_rb = 0;
         }
 
-        if ( (tile_lt == 0 ) &&
-             (tile_rt == 0 ) &&
-             (tile_lb == 0 ) &&
-             (tile_rb == 0 )
+        if ( (cell_lt == 0 ) &&
+             (cell_rt == 0 ) &&
+             (cell_lb == 0 ) &&
+             (cell_rb == 0 )
         ) {
             return false;
         }
@@ -384,8 +384,8 @@ bool tilemap_draw_cell_raw(
         y_e = MGC_MOD_CELL_LEN(b1 - tilemap->y);
 
         if ( (x_s != 0) && (y_s != 0) ) {
-            if ( tile_lt != 0 ) {
-                tile = tileset->tile_array[tile_lt];
+            if ( cell_lt != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_lt)];
                 for ( x = x_s; x < MGC_CELL_LEN; x++ ) {
                     for ( y = y_s, wy = y_s*MGC_CELL_LEN; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -397,8 +397,8 @@ bool tilemap_draw_cell_raw(
                     }
                 }
             }
-            if ( tile_rt != 0 ) {
-                tile = tileset->tile_array[tile_rt];
+            if ( cell_rt != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_rt)];
                 for ( x = 0; x <= x_e; x++ ) {
                     for ( y = y_s, wy = y_s*MGC_CELL_LEN; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -410,8 +410,8 @@ bool tilemap_draw_cell_raw(
                     }
                 }
             }
-            if ( tile_lb != 0 ) {
-                tile = tileset->tile_array[tile_lb];
+            if ( cell_lb != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_lb)];
                 for ( x = x_s; x < MGC_CELL_LEN; x++ ) {
                     for ( y = 0, wy = 0; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -423,8 +423,8 @@ bool tilemap_draw_cell_raw(
                     }
                 }
             }
-            if ( tile_rb != 0 ) {
-                tile = tileset->tile_array[tile_rb];
+            if ( cell_rb != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_rb)];
                 for ( x = 0; x <= x_e; x++ ) {
                     for ( y = 0, wy = 0; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -437,8 +437,8 @@ bool tilemap_draw_cell_raw(
                 }
             }
         } else if ( (x_s != 0) && (y_s == 0) ) {
-            if ( tile_lt != 0 ) {
-                tile = tileset->tile_array[tile_lt];
+            if ( cell_lt != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_lt)];
                 for ( x = x_s; x < MGC_CELL_LEN; x++ ) {
                     for ( y = 0, wy = 0; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -450,8 +450,8 @@ bool tilemap_draw_cell_raw(
                     }
                 }
             }
-            if ( tile_rt != 0 ) {
-                tile = tileset->tile_array[tile_rt];
+            if ( cell_rt != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_rt)];
                 for ( x = 0; x <= x_e; x++ ) {
                     for ( y = 0, wy = 0; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -464,8 +464,8 @@ bool tilemap_draw_cell_raw(
                 }
             }
         } else if ( (x_s == 0) && (y_s != 0) ) {
-            if ( tile_lt != 0 ) {
-                tile = tileset->tile_array[tile_lt];
+            if ( cell_lt != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_lt)];
                 for ( x = 0; x < MGC_CELL_LEN; x++ ) {
                     for ( y = y_s, wy = y_s*MGC_CELL_LEN; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -477,8 +477,8 @@ bool tilemap_draw_cell_raw(
                     }
                 }
             }
-            if ( tile_lb != 0 ) {
-                tile = tileset->tile_array[tile_lb];
+            if ( cell_lb != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_lb)];
                 for ( x = 0; x < MGC_CELL_LEN; x++ ) {
                     for ( y = 0, wy = 0; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];
@@ -491,8 +491,8 @@ bool tilemap_draw_cell_raw(
                 }
             }
         } else {
-            if ( tile_lt != 0 ) {
-                tile = tileset->tile_array[tile_lt];
+            if ( cell_lt != 0 ) {
+                tile = tileset->tile_array[MGC_GET_MAP_TILESET_INDEX(cell_lt)];
                 for ( x = 0; x < MGC_CELL_LEN; x++ ) {
                     for ( y = 0, wy = 0; y < MGC_CELL_LEN; y++, wy+=MGC_CELL_LEN ) {
                         color_index = tile[x+wy];

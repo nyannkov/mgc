@@ -16,6 +16,8 @@ namespace collision {
 struct BoxCollisionInfo {
     const mgc::collision::Hitbox& self_hitbox;
     const mgc::collision::Hitbox& other_hitbox;
+    size_t self_hitbox_index;
+    size_t other_hitbox_index;
 };
 
 }// namespace collision
