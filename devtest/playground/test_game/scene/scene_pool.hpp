@@ -18,8 +18,7 @@ struct ScenePool {
 
     template <typename T, typename... Args>
     T* create(Args&&... args) {
-        static_assert(std::is_base_of<SceneBase, T>::value,
-            "T must inherit from SceneBase");
+        static_assert(std::is_base_of_v<SceneBase, T>, "T must inherit from SceneBase");
 
         destroy();
         assert(sizeof(T) <= sizeof(storage_));

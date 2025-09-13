@@ -3,18 +3,23 @@
 
 #include "app_common.hpp"
 #include "skyfish_anim.hpp"
-#include "skyfish_hitbox.hpp"
 #include "skyfish_bt.hpp"
 #include "entity/enemy/enemy.hpp"
+#include "game_context/player_stats.hpp"
 
 namespace app {
 namespace enemy {
 
-constexpr int32_t SKYFISH_MAX_HP = 3;
+constexpr int32_t SkyFishMaxHP = 3;
 
 struct SkyFish: Enemy {
 
-    SkyFish(const FrameTimerT& frame_timer, const Player& player);
+    SkyFish(
+        const FrameTimerT& frame_timer,
+        SoundControllerT& sound_controller,
+        const Player& player,
+        PlayerStats& player_stats
+    );
     ~SkyFish() = default;
     SkyFish(const SkyFish&) = delete;
     SkyFish& operator=(const SkyFish&) = delete;
@@ -26,6 +31,13 @@ struct SkyFish: Enemy {
     void pre_update() override;
     void post_update() override;
 
+    int32_t apply_damage_to(
+        Player& player,
+        size_t enemy_hitbox_index
+    ) const override;
+    void receive_damage(int32_t amount) override;
+    void receive_impact(mgc::math::Vec2f delta) override;
+
     void on_player_hit(
         const Player& player,
         const mgc::collision::BoxCollisionInfo& info
@@ -36,17 +48,22 @@ struct SkyFish: Enemy {
         const mgc::collision::BoxCollisionInfo& info
     ) override;
 
+    void on_collision_resolved(
+        const CollisionTileLayer& layer,
+        const mgc::collision::MapPushbackInfo& info
+    ) override;
+
 private:
     const Player& player_;
+    SoundControllerT& sound_controller_;
+    PlayerStats& player_stats_;
     AnimControllerT anim_;
     mgc::math::Vec2f velocity_;
+    mgc::math::Vec2f force_ex_;
     SkyFishAnimState anim_state_;
     BTreeControllerT bt_;
     SkyFishBTListener bt_listener_;
-    mgc::math::Vec2f force_ex_;
-    BlinkAnimator blink_animator_;
-
-    void set_force_ex(mgc::math::Vec2f v) { force_ex_ = v; }
+    BlinkAnimatorT blink_animator_;
     bool is_direction_right() const {
         return (
             ( anim_state_ == SkyFishAnimState::HoverRight ) ||

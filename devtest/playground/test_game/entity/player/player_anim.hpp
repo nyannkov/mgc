@@ -15,6 +15,10 @@ enum class PlayerAnimState {
     JumpRight,
     AttackLeft,
     AttackRight,
+    GameOverLeft,
+    GameOverRight,
+    PowerPose,
+    VoidPose,
 };
 
 inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState state) {
@@ -27,6 +31,10 @@ inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState sta
     case PlayerAnimState::JumpRight: return anim_player_jump_right;
     case PlayerAnimState::AttackLeft: return anim_player_attack_left;
     case PlayerAnimState::AttackRight: return anim_player_attack_right;
+    case PlayerAnimState::GameOverLeft: return anim_player_game_over_left;
+    case PlayerAnimState::GameOverRight: return anim_player_game_over_right;
+    case PlayerAnimState::PowerPose: return anim_player_yeah;
+    case PlayerAnimState::VoidPose: return anim_player_void_stand;
     default: return anim_player_stand_right;
     }
 }

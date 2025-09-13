@@ -1,6 +1,7 @@
 #include "app_common.hpp"
 #include "frame/main_frame.hpp"
 #include "frame/status_frame.hpp"
+#include "resources/mml/mml.h"
 
 namespace {
 
@@ -9,15 +10,25 @@ app::SoundControllerT sound_controller;
 app::GamepadT& gamepad = mgc::drivers::platform::input::default_gamepad();
 app::FrameTimerT frame_timer;
 
-app::GameContext ctx(display_driver, sound_controller, gamepad, frame_timer);
+app::Player player(frame_timer, gamepad, sound_controller);
+app::GameContext ctx(display_driver, sound_controller, gamepad, frame_timer, player);
+
 app::MainFrame<224, 192, app::DisplayDriverT> main_frame(8, 48, display_driver);
 app::StatusFrame<224, 32, app::DisplayDriverT> status_frame(8, 8, display_driver, ctx);
 
 void platform_init() {
+
     display_driver.init(50*1000*1000); // over-clock
     sound_controller.init();
     gamepad.init();
     frame_timer.reset();
+
+    sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
+    sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
+    sound_controller.set_lpf_enabled(true);
+    //sound_controller.set_lpf_alpha(0.3);
+    sound_controller.set_master_volume(0.5);
+    //sound_controller.play_background_music(0, 0.0);
 }
 
 void platform_proc() {

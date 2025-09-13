@@ -83,22 +83,22 @@ struct CollisionDetectorBoxToMap {
 
     template <typename ObjT, typename MapT>
     void detect(ObjT& obj, MapT& map, CornerPushDirection push_dir = CornerPushDirection::None) {
-        static_assert(std::is_base_of<mgc::entities::mixins::WithHitboxes<ObjT, ObjT::HitboxCount>, ObjT>::value,
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<ObjT, ObjT::HitboxCount>, ObjT>,
                       "ObjT must inherit from WithHitboxes<ObjT, N>");
 
-        static_assert(std::is_base_of<mgc::entities::mixins::WithOnHitBoxToMapResponse<ObjT>, ObjT>::value,
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToMapResponse<ObjT>, ObjT>,
                       "ObjT must inherit from WithOnHitBoxToMapResponse<ObjT>");
 
-        static_assert(std::is_base_of<mgc::entities::mixins::WithHandleMapPushbackResult<ObjT>, ObjT>::value,
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHandleMapPushbackResult<ObjT>, ObjT>,
                       "ObjT must inherit from WithHandleMapPushbackResult<ObjT>");
 
-        static_assert(std::is_base_of<mgc::entities::mixins::WithCollisionMap<MapT>, MapT>::value,
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithCollisionMap<MapT>, MapT>,
                       "MapT must inherit from WithCollisionMap<MapT>");
 
-        static_assert(std::is_base_of<mgc::entities::mixins::WithOnHitBoxToMapResponse<MapT>, MapT>::value,
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToMapResponse<MapT>, MapT>,
                       "MapT must inherit from WithOnHitBoxToMapResponse<MapT>");
 
-        static_assert(std::is_base_of<mgc::entities::mixins::WithHandleMapPushbackResult<MapT>, MapT>::value,
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHandleMapPushbackResult<MapT>, MapT>,
                       "MapT must inherit from WithHandleMapPushbackResult<MapT>");
 
         if ( !map.collision_enabled() ) {
@@ -112,7 +112,8 @@ struct CollisionDetectorBoxToMap {
 
         this->init();
 
-        for ( auto& h : obj_hitboxes ) {
+        for ( size_t h_index = 0; h_index < obj_hitboxes.size(); h_index++ ) {
+            auto& h = obj_hitboxes[h_index];
             if ( !h.enabled ) {
                 continue;
             }
@@ -131,7 +132,7 @@ struct CollisionDetectorBoxToMap {
                     if ( (map_cell_value  & 0x80) != 0 ) {
                         this->update_hit_flags_and_counter(i, j);
 
-                        const mgc::collision::MapCollisionInfo info = {h, map_cell_value, j, i};
+                        const mgc::collision::MapCollisionInfo info = {h, h_index, map_cell_value, j, i};
                         obj.on_hit_box_to_map(obj, map, info);
                         map.on_hit_box_to_map(obj, map, info);
                     }
@@ -140,7 +141,7 @@ struct CollisionDetectorBoxToMap {
 
             if ( hit_count_ > 0 ) {
                 mgc::math::Vec2i pushback = calc_wall_pushback(obj, h, map, push_dir);
-                const mgc::collision::MapPushbackInfo info = { h, pushback };
+                const mgc::collision::MapPushbackInfo info = { h, h_index, pushback };
                 obj.handle_map_pushback_result(obj, map, info);
                 map.handle_map_pushback_result(obj, map, info);
             }

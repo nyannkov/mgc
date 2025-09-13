@@ -4,8 +4,6 @@
 #include <type_traits>
 #include "mgc_cpp/mgc.hpp"
 #include "platform_conf.hpp"
-#include "utils/stopwatch.hpp"
-#include "utils/blink_animator.hpp"
 
 namespace app {
 
@@ -13,6 +11,10 @@ namespace app {
 using BTreeControllerT = mgc::control::btree::BTreeController<FrameTimerT>;
 using IBTListenerT =  mgc::control::btree::IBTreeListener<BTreeControllerT>;
 using AnimControllerT = mgc::control::anim::AnimController<FrameTimerT>;
+using StopwatchT = mgc::utils::Stopwatch<FrameTimerT>;
+using BlinkAnimatorT = mgc::utils::BlinkAnimator<FrameTimerT>;
+using TalkflowControllerT = mgc::control::talkflow::DefaultTalkflowController;
+using ITalkflowListenerT = mgc::control::talkflow::ITalkflowListener;
 
 template <typename T, typename IndexT, size_t N>
 constexpr T& at(std::array<T, N>& arr, IndexT index) noexcept {
@@ -25,6 +27,27 @@ constexpr const T& at(const std::array<T, N>& arr, IndexT index) noexcept {
 }
 
 } // namespace app
+
+namespace app {
+struct Player;
+struct Attack;
+struct CollisionTileLayer;
+struct TileLayer;
+struct GameContext;
+struct TriggerInfo;//TODO
+}
+
+namespace app::enemy {
+struct Enemy;
+}
+
+namespace app::item {
+struct Item;
+}
+
+namespace app::prop {
+struct Prop;
+}
 
 #endif/*MGC_APP_COMMON_HPP*/
 

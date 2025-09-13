@@ -23,9 +23,9 @@ uint8_t TileIndexHook::on_request_map_cell_value(
     uint32_t count_100ms = sw_.elapsed_ms()/100;
 
     switch (current_layer_id_) {
-    case TileLayerId::Layer_001:
-        if ( tileset_index == 20 ) {
-            // Flame flickering effect for tileset_index 20 ( tile index is 21 )
+    case TileLayerId::Layer_001_Background_1:
+        if ( (tileset_index == 20) || (tileset_index == 30) ) {
+            // Flame flickering effect for tileset_index 20 or 30 ( tile index is 21 or 31)
             switch(count_100ms%3) {
             case 1: tileset_index += 1; break;
             case 2: tileset_index += 2; break;

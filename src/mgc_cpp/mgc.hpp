@@ -36,6 +36,8 @@
 #include "mgc_cpp/render/renderer.hpp"
 #include "mgc_cpp/render/cell_renderer.hpp"
 #include "mgc_cpp/render/double_buffered_renderer.hpp"
+#include "mgc_cpp/utils/stopwatch.hpp"
+#include "mgc_cpp/utils/blink_animator.hpp"
 
 #endif/*MGC_HPP*/
 

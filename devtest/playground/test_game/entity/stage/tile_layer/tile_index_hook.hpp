@@ -22,7 +22,7 @@ struct TileIndexHook : mgc::parts::IBasicTilegridListener {
     ) override;
 
 private:
-    StopWatch sw_;
+    StopwatchT sw_;
     const TileLayerId& current_layer_id_;
 };
 

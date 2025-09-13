@@ -22,7 +22,7 @@ struct CollisionTileIndexHook : mgc::parts::IBasicTilegridListener {
     ) override;
 
 private:
-    StopWatch sw_;
+    StopwatchT sw_;
     const CollisionTileLayerId& current_layer_id_;
 };
 

@@ -116,31 +116,30 @@ struct ActorImpl
     }
 
     // [impl] WithOnHitBoxToBoxResponse
-    // Users can override this template method `on_hit_box_to_box_impl<Other>`
-    // in their derived class to customize behavior depending on the type `Other`
-    // that the object collided with.
+    // Users can provide their own implementation of `on_hit_box_to_box_impl<Other>`
+    // in a derived class to handle collisions with objects of type `Other`.
     //
-    // You can use `if constexpr` along with `std::is_same_v` to implement
-    // static dispatch based on the type.
+    // Notes on const correctness:
+    // - The collision detector always passes `Other` as a non-const reference.
+    // - You may choose to receive it as `const Other&` for read-only access.
+    // - If you intend to modify the other object, receive it as `Other&`.
     //
-    // Example:
+    // Example usage:
     //
     // template <typename Other>
-    // void on_hit_box_to_box_impl(
-    //     const Other& other,
-    //     const mgc::collision::BoxCollisionInfo& info
-    // ) {
-    //     if constexpr (std::is_same_v<Other, Player>) {
-    //         // Handle collision with Player
-    //     } else if constexpr (std::is_same_v<Other, Enemy>) {
-    //         // Handle collision with Enemy
-    //     } else {
-    //         // Fallback for unknown or unsupported types
-    //     }
+    // void on_hit_box_to_box_impl(const Other& other,
+    //                             const mgc::collision::BoxCollisionInfo& info) {
+    //     // Read-only access; safe for inspecting the other object.
     // }
     //
-    // The default implementation does nothing.
-    // Override as needed.
+    // template <typename Other>
+    // void on_hit_box_to_box_impl(Other& other,
+    //                             const mgc::collision::BoxCollisionInfo& info) {
+    //     // Mutable access; you can modify `other`.
+    //     other.take_damage(1);
+    // }
+    //
+    // The default implementation does nothing. Override as needed in your derived class.
     template <typename Other>
     void on_hit_box_to_box_impl(
             const Other& other,

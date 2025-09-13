@@ -5,7 +5,8 @@ namespace app {
 
 enum class TileLayerId {
     None,
-    Layer_001
+    Layer_001_Background_1,
+    Layer_001_Background_2
 };
 
 } // namespace app

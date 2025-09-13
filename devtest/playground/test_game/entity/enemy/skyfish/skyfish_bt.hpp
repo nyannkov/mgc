@@ -30,7 +30,7 @@ struct SkyFishBTListener : IBTListenerT {
 
 private:
     SkyFishBehaviorState behavior_state_;
-    StopWatch sw_;
+    StopwatchT sw_;
     std::array<bool, static_cast<size_t>(SkyFishHitboxIndex::Count)>  hit_flags_;
 
 };

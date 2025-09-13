@@ -23,16 +23,19 @@ struct ScreenFader {
     void clear() {
         state_ = ScreenFaderState::None;
         fade_area_ = 0;
+        is_fade_out_ = false;
     }
 
     void request_fade_in(const mgc::graphics::Framebuffer& fb) {
         fade_area_ = 0;
         state_ = ScreenFaderState::FadeIn;
+        is_fade_out_ = false;
     }
 
     void request_fade_out(const mgc::graphics::Framebuffer& fb) {
         fade_area_ = 0;
         state_ = ScreenFaderState::FadeOut;
+        is_fade_out_ = true;
     }
 
     void update(mgc::graphics::Framebuffer& fb) {
@@ -48,7 +51,7 @@ struct ScreenFader {
 
             for ( uint16_t w = fade_area_; w < width; w++ ) {
                 for ( uint16_t h = 0; h < height; h++ ) {
-                    buffer[w + width * h] = MGC_COLOR_SWAP(MGC_COLOR_BLACK);
+                    fb.draw_pixel(w, h, MGC_COLOR_BLACK);
                 }
             }
 
@@ -62,7 +65,7 @@ struct ScreenFader {
 
             for ( uint16_t w = 0; w < fade_area_; w++ ) {
                 for ( uint16_t h = 0; h < height; h++ ) {
-                    buffer[w + width * h] = MGC_COLOR_SWAP(MGC_COLOR_BLACK);
+                    fb.draw_pixel(w, h, MGC_COLOR_BLACK);
                 }
             }
 
@@ -70,6 +73,12 @@ struct ScreenFader {
                 state_ = ScreenFaderState::FadeOutComplete;
             } else {
                 fade_area_ += fade_speed_;
+            }
+
+        } else if ( state_ == ScreenFaderState::FadeOutComplete ) {
+            
+            if ( is_fade_out_ ) {
+                fb.clear( MGC_COLOR_BLACK);
             }
 
         } else { }
@@ -87,6 +96,7 @@ private:
     ScreenFaderState state_;
     int32_t fade_area_;
     uint16_t fade_speed_;
+    bool is_fade_out_;
 };
 
 }// namespace app

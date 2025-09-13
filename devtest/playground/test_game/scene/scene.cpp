@@ -1,7 +1,7 @@
 #include "scene.hpp"
 #include "scene_pool.hpp"
-#include "scenes/scene_000.hpp"
-#include "scenes/scene_001.hpp"
+#include "scenes/scene_000_title/scene_000.hpp"
+#include "scenes/scene_001_tower/scene_001.hpp"
 
 namespace app {
 

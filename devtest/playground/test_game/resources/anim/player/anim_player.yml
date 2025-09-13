@@ -34,10 +34,30 @@ animations:
   - name: attack_left
     description: "Attack left"
     frames:
-      - { file: frame_025.bmp, time_ms: 200 }
+      - { file: frame_025.bmp, time_ms: 100 }
 
   - name: attack_right
     description: "Attack right"
     frames:
-      - { file: frame_026.bmp, time_ms: 200 }
+      - { file: frame_026.bmp, time_ms: 100 }
+
+  - name: game_over_left
+    description: "Game Over left"
+    frames:
+      - { file: frame_028.bmp, time_ms: 999999 }
+
+  - name: game_over_right
+    description: "Game Over right"
+    frames:
+      - { file: frame_027.bmp, time_ms: 999999 }
+
+  - name: yeah
+    description: "Yeah!"
+    frames:
+      - { file: frame_023.bmp, time_ms: 999999 }
+
+  - name: void_stand
+    description: "Void stand"
+    frames:
+      - { file: frame_024.bmp, time_ms: 999999 }
 
