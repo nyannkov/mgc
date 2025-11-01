@@ -132,6 +132,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] Drawable
+    using mgc::features::Drawable::draw;
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.draw(fb, cam_pos, options);
@@ -140,6 +141,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] CellDrawable
+    using mgc::features::CellDrawable::cell_draw;
     bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.cell_draw(cb, cell_x, cell_y, cam_pos, options);
