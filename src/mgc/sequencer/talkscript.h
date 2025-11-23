@@ -19,6 +19,7 @@ enum mgc_talknode_type {
     MGC_TALKNODE_TYPE_MESSAGE,
     MGC_TALKNODE_TYPE_CHOICE,
     MGC_TALKNODE_TYPE_DECISION,
+    MGC_TALKNODE_TYPE_END,
 };
 
 typedef struct mgc_node_choice_item {
@@ -43,11 +44,16 @@ typedef struct mgc_node_decision {
     mgc_node_idx_t next_if_false;
 } mgc_node_decision_t;
 
+typedef struct mgc_node_end {
+    mgc_node_idx_t next;
+} mgc_node_end_t;
+
 typedef struct mgc_talknode {
     union {
         const mgc_node_message_t *message;
         const mgc_node_choice_t *choice;
         const mgc_node_decision_t *decision;
+        const mgc_node_end_t *end;
     } content;
     enum mgc_talknode_type type;
     bool end;
