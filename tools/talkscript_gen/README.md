@@ -17,14 +17,14 @@ talkscript:
 
   talknodes:
     start:
-      - message: "Welcome! Would you like to buy something?"
+      - { message: "Welcome! Would you like to buy something?", auto_next: true }
       - choice:
           items:
             - { item: "Yes, please.", next: buy }
             - { item: "No, thank you.", next: end }
 
     buy:
-      - { message: "We have apples and bananas." }
+      - { message: "We have apples and bananas.", auto_next: true }
       - choice:
           tag: ITEM_SELECT
           items:
@@ -32,7 +32,7 @@ talkscript:
             - { item: "Banana", value: 80, tag: BANANA }
             - { item: "Never mind.", next: end }
 
-      - { message: "That will be %u yen. Would you like to proceed?", format: true, tag: PRICE }
+      - { message: "That will be %u yen. Would you like to proceed?", format: true, tag: PRICE, auto_next: true }
       - choice:
           items:
             - { item: "Yes", next: confirm }
