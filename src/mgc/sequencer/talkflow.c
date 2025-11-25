@@ -170,6 +170,13 @@ enum mgc_talkflow_state talkflow_proc(mgc_talkflow_t *talkflow) {
         return MGC_TALKFLOW_STATE_INIT;
     }
 
+    if ( ( talkflow->state == MGC_TALKFLOW_STATE_INIT ) ||
+         ( talkflow->state == MGC_TALKFLOW_STATE_FLOW_END )
+    ) {
+        MGC_INFO("Not started or done");
+        return talkflow->state;
+    }
+
     enum mgc_talkflow_ui_state ui_state = MGC_TALKFLOW_UI_STATE_CONTINUE;
     size_t current_index = talkflow->current_node_idx;
     const mgc_talknode_t *current_node 
@@ -188,8 +195,9 @@ enum mgc_talkflow_state talkflow_proc(mgc_talkflow_t *talkflow) {
                 current_index,
                 current_node->content.choice
         );
-
     } else if ( current_node->type == MGC_TALKNODE_TYPE_DECISION ) {
+        ui_state = MGC_TALKFLOW_UI_STATE_FINISHED;
+    } else if ( current_node->type == MGC_TALKNODE_TYPE_END ) {
         ui_state = MGC_TALKFLOW_UI_STATE_FINISHED;
     } else {
         MGC_WARN("Invalid node type");
@@ -235,6 +243,10 @@ enum mgc_talkflow_state talkflow_proc(mgc_talkflow_t *talkflow) {
                     talkflow->current_node_idx = 
                         current_node->content.decision->next_if_false;
                 }
+                break;
+            case MGC_TALKNODE_TYPE_END:
+                talkflow->current_node_idx = current_node->content.end->next;
+                break;
             default:
                 break;
             }

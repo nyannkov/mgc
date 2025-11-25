@@ -82,6 +82,11 @@ if __name__ == '__main__':
             label_macros[label] = label_macro
             f.write(f"// {label}\n")
             f.write(f"#define {label_macro} {node_index}\n")
+
+            if node_group is None:
+                node_index += 1
+                continue
+
             for entry in node_group:
                 if "message" in entry:
                     if "tag" in entry:
@@ -107,6 +112,8 @@ if __name__ == '__main__':
                     if "tag" in decision:
                         decision_tag_value = decision['tag']
                         f.write(f"#define MGC_{scriptname.upper()}_TAG_DECISION__{decision_tag_value} {node_index}\n")
+                elif "end" in entry:
+                    pass
 
                 node_index += 1
 
@@ -130,18 +137,29 @@ if __name__ == '__main__':
     node_index = 0
     for label, node_group in nodes.items():
         node_list.append(f"// {label}")
+
+        if node_group is None:
+            c_lines.append(f'static const mgc_node_end_t node_{node_index}_end = {{')
+            c_lines.append(f'    .next = {node_index}')
+            c_lines.append('};\n')
+            node_list.append(f'{{ .content.end = &node_{node_index}_end, .type = MGC_TALKNODE_TYPE_END, .end = {"true"} }},')
+            node_index += 1
+            continue
+            
         for entry in node_group:
             if "message" in entry:
                 text = entry["message"]
                 format_flag = entry.get("format", False)
                 next_index = node_index + 1
                 end = entry.get("end", False)
+                auto_next_flag = entry.get("auto_next", False)
                 if "next" in entry:
                     next_index = label_macros[entry["next"]]
                 c_lines.append(f'static const mgc_node_message_t node_{node_index}_message = {{')
                 c_lines.append(f'    .text = "{text}",')
                 c_lines.append(f'    .format = {"true" if format_flag else "false"},')
-                c_lines.append(f'    .next = {next_index}')
+                c_lines.append(f'    .next = {next_index},')
+                c_lines.append(f'    .auto_next = {"true" if auto_next_flag else "false"}')
                 c_lines.append('};\n')
                 node_list.append(f'{{ .content.message = &node_{node_index}_message, .type = MGC_TALKNODE_TYPE_MESSAGE, .end = {"true" if end else "false"} }},')
             elif "choice" in entry:
@@ -176,6 +194,12 @@ if __name__ == '__main__':
                 c_lines.append(f'    .next_if_false = {next_if_false}')
                 c_lines.append('};\n')
                 node_list.append(f'{{ .content.decision = &node_{node_index}_decision, .type = MGC_TALKNODE_TYPE_DECISION, .end = false }},')
+            elif "end" in entry:
+                c_lines.append(f'static const mgc_node_end_t node_{node_index}_end = {{')
+                c_lines.append(f'    .next = {node_index}')
+                c_lines.append('};\n')
+                node_list.append(f'{{ .content.end = &node_{node_index}_end, .type = MGC_TALKNODE_TYPE_END, .end = {"true"} }},')
+                pass
             else:
                 pass
 

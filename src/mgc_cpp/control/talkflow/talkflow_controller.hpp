@@ -97,6 +97,15 @@ struct TalkflowController : mgc::features::Resettable,
         talkflow_proc(&talkflow_);
     }
 
+    void proc(mgc::platform::input::IButton* temp_button) {
+        mgc::platform::input::IButton* prev = active_button_;
+        active_button_ = temp_button ? temp_button : &button_;
+
+        talkflow_proc(&talkflow_);
+
+        active_button_ = prev;
+    }
+
     bool in_progress() const {
         auto state = talkflow_get_state(&talkflow_);
         
@@ -120,6 +129,9 @@ struct TalkflowController : mgc::features::Resettable,
 
     // [feature] Resettable
     void reset() override {
+        
+        active_button_ = &button_;
+
         selectbox_.reset();
         selectbox_.set_visible(false);
 
@@ -132,6 +144,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] Drawable
+    using mgc::features::Drawable::draw;
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.draw(fb, cam_pos, options);
@@ -140,6 +153,7 @@ struct TalkflowController : mgc::features::Resettable,
     }
 
     // [feature] CellDrawable
+    using mgc::features::CellDrawable::cell_draw;
     bool cell_draw(mgc::graphics::CellBuffer &cb, int16_t cell_x, int16_t cell_y, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override {
         bool result = false;
         result |= dialoguebox_.cell_draw(cb, cell_x, cell_y, cam_pos, options);
@@ -149,6 +163,7 @@ struct TalkflowController : mgc::features::Resettable,
 
 private:
     mgc::platform::input::IButton& button_;
+    mgc::platform::input::IButton* active_button_;
     ITalkflowListener *listener_;
     mgc_talkflow_t talkflow_;
     SelectboxT selectbox_;
@@ -246,11 +261,15 @@ private:
     }
 
     enum mgc_talkflow_ui_state on_proc_message(mgc_talkflow_t *talkflow, mgc_node_idx_t tag, const mgc_node_message_t *message) {
+        
+        MGC_ASSERT(active_button_ != nullptr, "active_button_ must not be nullptr");
 
         dialoguebox_.advance_typing();
 
         if ( dialoguebox_.is_typing_complete() ) {
-            if ( button_.just_released(mgc::platform::input::Key::Enter) ) {
+            if ( active_button_->just_released(mgc::platform::input::Key::Enter) ||
+                 message->auto_next
+            ) {
                 if ( listener_ ) {
                     listener_->on_message_done(tag);
                 }
@@ -261,13 +280,16 @@ private:
     }
 
     enum mgc_talkflow_ui_state on_proc_choice(mgc_talkflow_t *talkflow, mgc_node_idx_t tag, const mgc_node_choice_t *choice) {
-        if ( button_.just_pressed(mgc::platform::input::Key::Up) ) {
+
+        MGC_ASSERT(active_button_ != nullptr, "active_button_ must not be nullptr");
+
+        if ( active_button_->just_pressed(mgc::platform::input::Key::Up) ) {
             selectbox_.select_previous();
 
-        } else if ( button_.just_pressed(mgc::platform::input::Key::Down) ) {
+        } else if ( active_button_->just_pressed(mgc::platform::input::Key::Down) ) {
             selectbox_.select_next();
 
-        } else if ( button_.just_released(mgc::platform::input::Key::Enter) ) {
+        } else if ( active_button_->just_released(mgc::platform::input::Key::Enter) ) {
             int32_t value = talkscript_get_item_value(choice, selectbox_.selected_index());
             if ( listener_ ) {
                 listener_->on_choice_done(tag, selectbox_.selected_index(), value);
