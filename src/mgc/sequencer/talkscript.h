@@ -37,6 +37,7 @@ typedef struct mgc_node_message {
     const char *text;
     bool format;
     mgc_node_idx_t next;
+    bool auto_next;
 } mgc_node_message_t;
 
 typedef struct mgc_node_decision {

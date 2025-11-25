@@ -267,7 +267,9 @@ private:
         dialoguebox_.advance_typing();
 
         if ( dialoguebox_.is_typing_complete() ) {
-            if ( active_button_->just_released(mgc::platform::input::Key::Enter) ) {
+            if ( active_button_->just_released(mgc::platform::input::Key::Enter) ||
+                 message->auto_next
+            ) {
                 if ( listener_ ) {
                     listener_->on_message_done(tag);
                 }
