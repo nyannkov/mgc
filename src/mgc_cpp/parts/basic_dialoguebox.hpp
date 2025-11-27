@@ -99,6 +99,7 @@ struct BasicDialoguebox : mgc::parts::interfaces::IDialoguebox<BasicDialoguebox>
     uint32_t scroll_threshold_line_impl() const;
     void set_line_spacing_impl(uint32_t line_spacing);
     uint32_t line_spacing_impl() const;
+    bool is_scrolling_impl() const;
 
     // [impl] WithTypingEffect
     void set_typing_speed_impl(uint32_t chars_per_frame);
