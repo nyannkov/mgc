@@ -25,6 +25,7 @@ struct SelectboxConfig {
 struct DialogueboxConfig {
     mgc::math::Vec2i position;
     mgc::parts::types::Size size;
+    mgc::parts::types::Padding padding;
     uint32_t scroll_speed;
     uint32_t scroll_threshold_line;
     uint32_t line_spacing;

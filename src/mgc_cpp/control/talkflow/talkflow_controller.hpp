@@ -9,6 +9,7 @@
 
 #include <type_traits>
 #include "talkflow_listener.hpp"
+#include "talkflow_effects.hpp"
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/drawable.hpp"
@@ -49,6 +50,14 @@ struct TalkflowController : mgc::features::Resettable,
         listener_ = nullptr;
     }
 
+    void bind_effects(ITalkflowEffects& effects) {
+        effects_ = &effects;
+    }
+
+    void unbind_effects() {
+        effects_ = nullptr;
+    }
+
     void set_font(const mgc::parts::assets::Font& font) {
         selectbox_.set_font(font);
         dialoguebox_.set_font(font);
@@ -75,6 +84,7 @@ struct TalkflowController : mgc::features::Resettable,
     void set_dialoguebox_config(const DialogueboxConfig& config) {
         dialoguebox_.set_position(config.position);
         dialoguebox_.set_size(config.size);
+        dialoguebox_.set_padding(config.padding);
         dialoguebox_.set_scroll_speed(config.scroll_speed);
         dialoguebox_.set_scroll_threshold_line(config.scroll_threshold_line);
         dialoguebox_.set_line_spacing(config.line_spacing);
@@ -84,6 +94,7 @@ struct TalkflowController : mgc::features::Resettable,
     void dialoguebox_config(DialogueboxConfig& out) const {
         out.position = dialoguebox_.position();
         out.size = dialoguebox_.size();
+        out.padding = dialoguebox_.padding();
         out.scroll_speed = dialoguebox_.scroll_speed();
         out.scroll_threshold_line = dialoguebox_.scroll_threshold_line();
         out.typing_speed = dialoguebox_.typing_speed();
@@ -141,6 +152,7 @@ struct TalkflowController : mgc::features::Resettable,
         talkflow_init(&talkflow_);
         bind_callbacks();
         listener_ = nullptr;
+        effects_ = nullptr;
     }
 
     // [feature] Drawable
@@ -165,6 +177,7 @@ private:
     mgc::platform::input::IButton& button_;
     mgc::platform::input::IButton* active_button_;
     ITalkflowListener *listener_;
+    ITalkflowEffects *effects_;
     mgc_talkflow_t talkflow_;
     SelectboxT selectbox_;
     DialogueboxT dialoguebox_;
@@ -275,6 +288,10 @@ private:
                 }
                 return MGC_TALKFLOW_UI_STATE_FINISHED;
             }
+        } else {
+            if ( effects_ ) {
+                effects_->play_typing_sound(tag, dialoguebox_.is_scrolling());
+            }
         }
         return MGC_TALKFLOW_UI_STATE_CONTINUE;
     }
@@ -285,14 +302,21 @@ private:
 
         if ( active_button_->just_pressed(mgc::platform::input::Key::Up) ) {
             selectbox_.select_previous();
-
+            if ( effects_ ) {
+                effects_->play_select_move_sound(tag);
+            }
         } else if ( active_button_->just_pressed(mgc::platform::input::Key::Down) ) {
             selectbox_.select_next();
-
+            if ( effects_ ) {
+                effects_->play_select_move_sound(tag);
+            }
         } else if ( active_button_->just_released(mgc::platform::input::Key::Enter) ) {
             int32_t value = talkscript_get_item_value(choice, selectbox_.selected_index());
             if ( listener_ ) {
                 listener_->on_choice_done(tag, selectbox_.selected_index(), value);
+            }
+            if ( effects_ ) {
+                effects_->play_choice_confirm_sound(tag);
             }
             talkflow_decide_choice(talkflow, selectbox_.selected_index());
             selectbox_.set_visible(false);
