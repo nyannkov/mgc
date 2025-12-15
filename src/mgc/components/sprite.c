@@ -6,6 +6,17 @@
  */
 #include "sprite.h"
 
+#define DRAW_LOOP(BODY) \
+    for ( x = x_s; x <= x_e; x++ ) { \
+        for ( y = y_s, wy = y_s*tile_width; y <= y_e; y++, wy+=tile_width ) { \
+            color_index = tile[(int32_t)x+wy]; \
+            if ( color_index != 0 ) { \
+                size_t idx = MGC_GET_PIXELBUF_INDEX(x+l0-l1, y+t0-t1, buf_width, buf_height); \
+                BODY; \
+            } \
+        } \
+    } \
+
 void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     if ( sprite == NULL ) {
         MGC_WARN("Invalid handler");
@@ -132,8 +143,6 @@ static inline bool draw_buffer(
         return false;
     }
 
-    (void)options;
-
     l0 = sprite->x;
     r0 = l0 + sprite->tileset->tile_width - 1;
     t0 = sprite->y;
@@ -166,7 +175,6 @@ static inline bool draw_buffer(
         int16_t x, y;
         int32_t wy;
         int16_t x_s, y_s, x_e, y_e;
-        mgc_color_t color;
         int16_t color_index;
         const uint8_t *tile;
         const mgc_color_t *palette_array;
@@ -182,16 +190,31 @@ static inline bool draw_buffer(
         y_s = (( t1 < t0 ) ? t0 : t1) - t0;
         y_e = (( b1 < b0 ) ? b1 : b0) - t0;
 
-        for ( x = x_s; x <= x_e; x++ ) {
-            for ( y = y_s, wy = y_s*tile_width; y <= y_e; y++, wy+=tile_width ) {
-                color_index = tile[(int32_t)x+wy];
-                if ( color_index != 0 ) {
-                    size_t idx = MGC_GET_PIXELBUF_INDEX(x+l0-l1, y+t0-t1, buf_width, buf_height);
-                    color = palette_array[color_index];
-                    draw_buf[idx] = MGC_COLOR_SWAP(color);
-                }
-            }
+
+        if ( options && ( options->eff_flags & DRAW_EFFECT_ALPHA_BLEND ) ) {
+            DRAW_LOOP(
+                mgc_color_t src = palette_array[color_index]; \
+                mgc_color_t dst = MGC_COLOR_SWAP(draw_buf[idx]); \
+                uint8_t a = options->alpha;
+                uint8_t sr = (src >> 11) & 0x1F; \
+                uint8_t sg = (src >>  5) & 0x3F; \
+                uint8_t sb =  src        & 0x1F; \
+                uint8_t dr = (dst >> 11) & 0x1F; \
+                uint8_t dg = (dst >>  5) & 0x3F; \
+                uint8_t db =  dst        & 0x1F; \
+                uint8_t r = (sr * a + dr * (255 - a) + 128) >> 8; \
+                uint8_t g = (sg * a + dg * (255 - a) + 128) >> 8; \
+                uint8_t b = (sb * a + db * (255 - a) + 128) >> 8; \
+                src = ((mgc_color_t)r<<11)|((mgc_color_t)g<<5)|((mgc_color_t)b<<0); \
+                draw_buf[idx] = MGC_COLOR_SWAP(src); \
+            );
+        } else {
+            DRAW_LOOP(
+                mgc_color_t src = palette_array[color_index]; \
+                draw_buf[idx] = MGC_COLOR_SWAP(src); \
+            );
         }
+
         return true;
     } else {
         return false;
