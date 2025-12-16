@@ -67,7 +67,7 @@ void textblock_init(mgc_textblock_t *textblock, mgc_id_t id, const mgc_font_t *f
     textblock->parallax_factor_y = 0.0F;
     textblock->width = MGC_CELL_LEN;
     textblock->height = MGC_CELL_LEN;
-    textblock->text = NULL;
+    textblock->text = "";
     textblock->fore_color = MGC_COLOR_WHITE;
     textblock->back_color = MGC_COLOR_BLACK;
     textblock->enable_back_color = false;
@@ -87,8 +87,7 @@ void textblock_init(mgc_textblock_t *textblock, mgc_id_t id, const mgc_font_t *f
     textblock->line_spacing = 0;
     textblock->state = MGC_DISPLAY_TEXT_STATE_INIT;
 
-    textblock->font = NULL;
-    textblock_set_font(textblock, font);
+    textblock->font = font;
 }
 
 void textblock_set_id(mgc_textblock_t *textblock, mgc_id_t id) {
@@ -123,6 +122,11 @@ void textblock_set_text(mgc_textblock_t *textblock, const char *text) {
 
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
+        return;
+    }
+
+    if ( text == NULL ) {
+        MGC_WARN("text is NULL");
         return;
     }
 
