@@ -11,8 +11,8 @@ Through the development of this game, we are iteratively improving mgc by adding
 
 |Rev. | Date       | Video | Description |
 |---|------------|-------| ----- |
-|0 | 2025-09-14 | [#1](https://youtu.be/wK57wLaQIZE) | Implemented a simple 2D platformer.　|
 |1 | 2025-12-19 | [#2](https://youtu.be/jxs_fwYP9mA) | Significantly redesigned the game based on Rev.0. Further development continues from this revision. |
+|0 | 2025-09-14 | [#1](https://youtu.be/wK57wLaQIZE) | Implemented a simple 2D platformer.　|
 
 ## Hardware Used
 
