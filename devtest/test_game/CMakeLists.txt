@@ -61,7 +61,7 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${CXX_SOURCES}
 )
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../mgc  mgc_build)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../  mgc_build)
 add_subdirectory(resources/generated/anim/player)
 add_subdirectory(resources/generated/anim/enemy/skyfish)
 add_subdirectory(resources/mml)

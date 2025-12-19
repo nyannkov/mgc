@@ -9,8 +9,8 @@ else
     exit 1
 fi
 
-TOOLS_PATH="../../mgc/tools"
-FONTS_PATH="../../mgc/assets/fonts"
+TOOLS_PATH="../../tools"
+FONTS_PATH="../../assets/fonts"
 
 rm -rf ./resources/generated/*
 
