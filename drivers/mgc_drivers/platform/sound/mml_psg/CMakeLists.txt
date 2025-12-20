@@ -63,12 +63,15 @@ endif()
 
 add_subdirectory(${MGC_EXTERNAL_DIR}/sound/Psgino psgino_build)
 
+target_link_libraries(mgc_sound_mml_psg
+    Psgino
+)
+
 if(MGC_USE_RP2040)
-    target_link_libraries(mgc_sound_mml_psg 
+    target_link_libraries(mgc_sound_mml_psg
         pico_stdlib
         hardware_pwm
         hardware_irq
-        Psgino
     )
 endif()
 
