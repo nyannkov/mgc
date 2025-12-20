@@ -159,8 +159,6 @@ void update(
         if ( scx.player.hp() <= 0 ) {
             scx.player.set_game_over();
         }
-    } else {
-        // TODO game over process
     }
 
     scx.player.update_animation(talkflow.in_progress());
