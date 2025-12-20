@@ -111,7 +111,7 @@ void dialoguebox_set_padding(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_
     dialoguebox->padding.left = left;
 
     textblock_set_width(&dialoguebox->textblock, dialoguebox->bg_box.width - ((uint16_t)left+right));
-    textblock_set_width(&dialoguebox->textblock, dialoguebox->bg_box.height- ((uint16_t)top+bottom));
+    textblock_set_height(&dialoguebox->textblock, dialoguebox->bg_box.height - ((uint16_t)top+bottom));
     textblock_set_position(&dialoguebox->textblock, dialoguebox->bg_box.x + left, dialoguebox->bg_box.y + top);
 }
 

@@ -40,6 +40,10 @@ struct WithAutoTextScroll {
     uint32_t line_spacing() const {
         return static_cast<const Derived*>(this)->line_spacing_impl();
     }
+
+    bool is_scrolling() const {
+        return static_cast<const Derived*>(this)->is_scrolling_impl();
+    }
 };
 
 }// namespace mixins

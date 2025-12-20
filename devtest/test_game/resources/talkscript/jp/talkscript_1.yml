@@ -1,0 +1,49 @@
+talkscript:
+  subject: "Talkscript_1"
+  description: "Talkscript_1"
+  talknodes:
+    tower_front_talk_1:
+      - { message: " * 「やあ、きみも観光かい？」", tag: POINT_1 }
+      - { message: " * 「すごいよね、この塔。思っていた以上の高さだよ。」" }
+      - { message: " * 「てっぺんがかすんで見えない。」" }
+      - { message: " * 「こんなに高くて大きいのに、まどやトビラがひとつもないなんて、ホント不思議だよね。」" , tag: POINT_2 }
+      - { message: " * 「あんなうわさが立つのもわかるね。」" }
+      - { message: " * 「あれ？ 知らない？」", tag: POINT_3 }
+      - { message: " * 「実はこの塔、中にすごく恐ろしい奴が眠っているらしいよ。」" }
+      - { message: " * 「うわさだと、そいつが起きそうになると塔にトビラがあらわれるんだって。」", tag: POINT_4 } 
+      - { message: " * 「怖い話だけど、なんかちょっとワクワクするよね！」", tag: POINT_5 }
+      - end: true
+
+    tower_front_talk_2:
+      - { message: " * 「・・・・・・・・・。」", tag: POINT_6 }
+      - { message: " * 「え？この中に入るの？」", tag: POINT_7 }
+      - { message: " * 「やるねぇ、きみ」", tag: POINT_8 }
+      - end: true
+
+    tower_front_talk_3:
+      - { message: " * 「気をつけて！」", end: true }
+
+    signboard_1:
+      - { message: "何かかいてある" }
+      - { message: "\\n            禍、塔の上にあり", end: true } 
+
+    gate_1:
+      - { message: "開かない・・・。", end: true }
+
+    game_over:
+    - message: "つづける？"
+    - choice:
+        tag: "TRY_AGAIN"
+        items:
+          - { item: "はい" , tag: "YES", next: game_retry }
+          - { item: "いいえ", tag: "NO", next: game_end }
+
+    game_retry:
+      - { message: "がんばって！", end: true }
+
+    game_end:
+      - { message: "", end: true }
+
+    preparing:
+      - { message: "準備中", end: true }
+

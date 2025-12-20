@@ -130,8 +130,14 @@ typedef struct mgc_point {
     int16_t y;
 } mgc_point_t;
 
+enum draw_effect_flags {
+    DRAW_EFFECT_NONE = 0,
+    DRAW_EFFECT_ALPHA_BLEND = (1 << 0),
+};
+
 typedef struct mgc_draw_options {
-    uint32_t reserved;
+    enum draw_effect_flags eff_flags;
+    uint8_t alpha;
 } mgc_draw_options_t;
 
 typedef struct mgc_parallax_factor {

@@ -182,6 +182,11 @@ uint32_t mgc::parts::BasicDialoguebox::line_spacing_impl() const {
     return dialoguebox_get_line_spacing(&dialoguebox_);
 }
 
+bool mgc::parts::BasicDialoguebox::is_scrolling_impl() const {
+    auto state = dialoguebox_get_display_text_state(&dialoguebox_);
+    return state == MGC_DISPLAY_TEXT_STATE_TEXT_SCROLLING;
+}
+
 // [impl] WithTypingEffect
 void mgc::parts::BasicDialoguebox::set_typing_speed_impl(uint32_t chars_per_frame) {
     if ( chars_per_frame > UINT8_MAX ) {
