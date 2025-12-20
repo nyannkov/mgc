@@ -4,12 +4,11 @@ mgc
 Overview
 --------
 
-mgc is a lightweight, game-oriented utility library designed for embedded systems.
-It is not a game engine, but a collection of reusable modules for building
-small games, interactive applications, and visual tools.
+**mgc** is a lightweight, embedded-friendly library for building small games and gadgets.
 
-mgc does not define a game loop or application framework.
-Users are expected to integrate mgc modules into their own update and render flow.
+Instead of being a full-fledged game engine, **mgc** provides a set of modular tools  
+designed to simplify graphics, input, and asset handling in embedded environments.
+
 ```
 +----------------------------------------------+
 |                    mgc                       |
