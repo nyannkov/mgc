@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(playground.elf LANGUAGES C CXX ASM)
+project(${EXEC_NAME} LANGUAGES C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,11 +13,10 @@ target_include_directories(app_headers INTERFACE
 set(CXX_SOURCES 
     main.cpp
     app_common.cpp
+    platform/platform.cpp
     game_context/default_talkflow_effects.cpp
     utils/game_over_effect/game_over_effect.cpp
     status/status.cpp
-    scene/scene.cpp
-    scene/scene_helper.cpp
     entity/player/player.cpp
     entity/prop/gate/gate.cpp
     entity/prop/entrance/entrance.cpp
@@ -56,6 +55,16 @@ set(C_SOURCES
     resources/generated/talkscript/talkscript_1.c
 )
 
+if (SIM_BUILD)
+    list(APPEND C_SOURCES
+        platform/simulation/drivers/ports/digital_gamepad_sdl2.c
+        platform/simulation/drivers/ports/mml_psg_sdl2.c
+    )
+    list(APPEND CXX_SOURCES
+        platform/simulation/drivers/ports/free_running_timer_sim.cpp
+    )
+endif()
+
 add_executable(${CMAKE_PROJECT_NAME}
     ${C_SOURCES}
     ${CXX_SOURCES}
@@ -75,6 +84,13 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
     scene
 )
 
+if (SIM_BUILD)
+    find_package(SDL2 REQUIRED)
+    target_link_libraries(${CMAKE_PROJECT_NAME}  PRIVATE ${SDL2_LIBRARIES})
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC MGC_SIMULATION)
+endif()
+
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -86,5 +102,7 @@ add_compile_options(-Wall
     -fno-exceptions
 )
 
-pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
+if(NOT SIM_BUILD)
+    pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
+endif()
 

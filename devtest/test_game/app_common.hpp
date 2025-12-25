@@ -3,7 +3,7 @@
 
 #include <type_traits>
 #include "mgc_cpp/mgc.hpp"
-#include "platform_conf.hpp"
+#include "platform/platform_conf.hpp"
 
 namespace app {
 

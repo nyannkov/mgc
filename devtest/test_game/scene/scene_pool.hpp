@@ -37,7 +37,7 @@ struct ScenePool {
     SceneBase* get() { return scene_base_; }
 
 private:
-    alignas(std::max_align_t) uint8_t storage_[1024*4];
+    alignas(std::max_align_t) uint8_t storage_[MGC_SCENE_POOL_SIZE];
     SceneBase* scene_base_;
 };
 

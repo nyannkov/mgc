@@ -1,13 +1,29 @@
 #!/bin/sh
 set -e  # Stop on error
 
-if [ -n "$PICO_SDK_PATH" ]; then
-    # RP2040 toolchain (GCC for Cortex-M0+)
-    TOOLCHAIN_FILE="${PICO_SDK_PATH}/cmake/preload/toolchains/pico_arm_cortex_m0plus_gcc.cmake"
+SIM="${SIM:-OFF}"
+
+if [ "$SIM" = "ON" ]; then
+    USE_RP2040=OFF
+    SCENE_POOL_SIZE=4096
+    NOSWAP=1
+    BUILD_DIR=${BUILD_DIR:-sim_build}
+    EXEC_NAME=test_game
 else
-    echo "Error: PICO_SDK_PATH is not set and TOOLCHAIN_FILE is not provided."
-    exit 1
+    USE_RP2040=ON
+    SCENE_POOL_SIZE=8192
+    NOSWAP=0
+    BUILD_DIR=${BUILD_DIR:-build}
+    EXEC_NAME=test_game.elf
+    if [ -n "$PICO_SDK_PATH" ]; then
+        # RP2040 toolchain (GCC for Cortex-M0+)
+        TOOLCHAIN_FILE="${PICO_SDK_PATH}/cmake/preload/toolchains/pico_arm_cortex_m0plus_gcc.cmake"
+    else
+        echo "Error: PICO_SDK_PATH is not set and TOOLCHAIN_FILE is not provided."
+        exit 1
+    fi
 fi
+
 
 TOOLS_PATH="../../tools"
 FONTS_PATH="../../assets/fonts"
@@ -70,12 +86,17 @@ python3 ${FONT_GEN}         ${FONTS_PATH}/k8x12/k8x12.bdf  --subset  ./resources
 python3 ${FONT_GEN}         ${FONTS_PATH}/misaki/misaki_gothic.bdf  --subset  ./resources/font/misaki_subset.txt  --dir ./resources/generated/font
 
 
-BUILD_DIR=${BUILD_DIR:-build}
 JOBS=${JOBS:-$(nproc)}
 
-cmake -S . -B "$BUILD_DIR" -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
+cmake -S . -B "$BUILD_DIR" -DEXEC_NAME="$EXEC_NAME" \
+                           -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
                            -DMGC_USE_DEFAULT_DIGITAL_GAMEPAD=ON \
+                           -DMGC_PIXELBUF_NOSWAP="$NOSWAP" \
                            -DMGC_PIXELBUF_ORDER=1 \
-                           -DMGC_MAP_TILESET_INDEX_OFFSET=1
+                           -DMGC_MAP_TILESET_INDEX_OFFSET=1 \
+                           -DMGC_USE_RP2040="$USE_RP2040" \
+                           -DSIM_BUILD="$SIM"
 
 cmake --build "$BUILD_DIR" --parallel "$JOBS"
+
+
