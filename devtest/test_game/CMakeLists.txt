@@ -56,9 +56,9 @@ set(C_SOURCES
 )
 
 if (SIM_BUILD)
+    add_subdirectory(platform/simulation/drivers/sound/ports)
     list(APPEND C_SOURCES
         platform/simulation/drivers/ports/digital_gamepad_sdl2.c
-        platform/simulation/drivers/ports/mml_psg_sdl2.c
     )
     list(APPEND CXX_SOURCES
         platform/simulation/drivers/ports/free_running_timer_sim.cpp

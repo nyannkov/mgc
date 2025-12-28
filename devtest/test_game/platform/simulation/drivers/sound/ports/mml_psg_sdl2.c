@@ -1,7 +1,5 @@
-#include <stdio.h>
-#include <stdbool.h>
 #include <SDL2/SDL.h>
-#include "mgc_drivers/platform/sound/mml_psg/mml_psg_local.h"
+#include "mml_psg_local.h"
 
 #define CHUNK_SAMPLES   512 
 #define LOW_WATERMARK   (Uint32)(CHUNK_SAMPLES * sizeof(int16_t) * 2)
