@@ -4,9 +4,7 @@ set(MML_PSG_SRC
 )
 
 if(MGC_USE_RP2040)
-    list(APPEND MML_PSG_SRC
-        "ports/rp2040/mml_psg_rp2040.c"
-    )
+    add_subdirectory("ports/rp2040")
 endif()
 
 add_library(mgc_sound_mml_psg STATIC ${MML_PSG_SRC})
@@ -67,11 +65,7 @@ target_link_libraries(mgc_sound_mml_psg
     Psgino
 )
 
-if(MGC_USE_RP2040)
-    target_link_libraries(mgc_sound_mml_psg
-        pico_stdlib
-        hardware_pwm
-        hardware_irq
-    )
-endif()
+target_link_libraries(mgc_sound_mml_psg
+    mml_psg_port
+)
 
