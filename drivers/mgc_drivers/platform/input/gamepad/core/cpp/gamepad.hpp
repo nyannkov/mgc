@@ -37,14 +37,6 @@ struct Gamepad : mgc::platform::input::IButton {
     Gamepad() {}
     ~Gamepad() = default;
 
-    void bind(mgc_gamepad_t& gamepad) {
-        gamepad_ = &gamepad;
-    }
-
-    void unbind() {
-        gamepad_ = nullptr;
-    }
-
     void poll() {
         gamepad_poll(gamepad_);
     }
@@ -63,6 +55,15 @@ struct Gamepad : mgc::platform::input::IButton {
 
     using mgc::platform::input::IButton::just_pressed;
     using mgc::platform::input::IButton::just_released;
+
+protected:
+    void bind(mgc_gamepad_t& gamepad) {
+        gamepad_ = &gamepad;
+    }
+
+    void unbind() {
+        gamepad_ = nullptr;
+    }
 
 private:
     mgc_gamepad_t* gamepad_;

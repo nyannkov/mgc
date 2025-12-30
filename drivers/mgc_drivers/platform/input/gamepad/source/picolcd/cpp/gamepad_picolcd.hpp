@@ -25,6 +25,7 @@ struct GamepadPicoLcd : Gamepad {
 
     void init() {
         gamepad_picolcd_init(&gamepad_);
+        bind(gamepad_);
     }
 
     using mgc::platform::input::IButton::just_pressed;
