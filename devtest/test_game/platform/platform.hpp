@@ -7,7 +7,7 @@ namespace app {
 
 inline DisplayDriverT display_driver;
 inline SoundControllerT sound_controller;
-inline GamepadT& gamepad = mgc::drivers::platform::input::default_gamepad();
+inline GamepadT gamepad;
 inline FrameTimerT frame_timer;
 
 extern void platform_init();

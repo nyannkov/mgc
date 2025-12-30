@@ -14,7 +14,7 @@ add_subdirectory(scenes/scene_003_stage_1_1)
 add_subdirectory(scenes/scene_999_game_over)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
-    mgc
+    mgc_appconf
     scene_000_title
     scene_001_tower_front
     scene_002_corridor
@@ -24,7 +24,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 if (SIM_BUILD)
     target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=8192)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC MGC_SIMULATION) #TODO
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=4096)
 endif()

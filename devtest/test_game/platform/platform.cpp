@@ -31,10 +31,7 @@ void platform_sleep(unsigned int ms) {
 }
 
 void platform_gamepad_proc() {
-#if defined(MGC_SIMULATION)
-    SDL_PumpEvents();
-#endif
-    app::gamepad.proc();
+    app::gamepad.poll();
 }
 
 void platform_sound_proc() {

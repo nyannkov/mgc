@@ -4,29 +4,28 @@
 #include "mgc_cpp/mgc.hpp"
 
 #if defined(MGC_SIMULATION)
-#include "simulation/drivers/display_sim.hpp"
+#include "display_sdl2.hpp"
+#include "gamepad_sdl2.hpp"
 #else
-#include "mgc_drivers/platform/display/st7789/cpp/st7789.hpp"
+#include "st7789.hpp"
+#include "gamepad_picolcd.hpp"
 #endif
 
-#include "mgc_drivers/platform/input/digital_gamepad/cpp/digital_gamepad.hpp"
-#include "mgc_drivers/platform/sound/mml_psg/cpp/sound_controller_mml_psg.hpp"
-#include "mgc_drivers/platform/timer/free_running_timer/cpp/free_running_timer_u32.hpp"
+#include "sound_controller_mml_psg.hpp"
+#include "free_running_timer_u32.hpp"
 
 namespace app {
 
-using GamepadT = std::remove_reference_t<decltype(mgc::drivers::platform::input::default_gamepad())>;
-
 #if defined(MGC_SIMULATION)
-using DisplayDriverT = mgc::drivers::platform::display::DisplaySim;
+using DisplayDriverT = mgc::drivers::platform::display::DisplaySDL2;
+using GamepadT = mgc::drivers::platform::input::GamepadSDL2;
 #else
 using DisplayDriverT = mgc::drivers::platform::display::ST7789;
+using GamepadT = mgc::drivers::platform::input::GamepadPicoLcd;
 #endif
 
 using SoundControllerT = mgc::drivers::platform::sound::MmlPsgSoundController;
-
 using HwTimerT = mgc::drivers::platform::timer::FreeRunningTimerU32;
-
 using FrameTimerT = mgc::platform::timer::FrameTimer<HwTimerT>;
 
 }// namespace app

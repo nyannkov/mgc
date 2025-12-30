@@ -4,8 +4,8 @@
  *
  * Copyright (c) 2025 nyannkov
  */
-#ifndef MGC_DRIVERS_DISPLAY_SIM_HPP
-#define MGC_DRIVERS_DISPLAY_SIM_HPP
+#ifndef MGC_DRIVERS_DISPLAY_SDL2_HPP
+#define MGC_DRIVERS_DISPLAY_SDL2_HPP
 
 #include <SDL2/SDL.h>
 #include "mgc_cpp/platform/display/display_driver.hpp"
@@ -15,13 +15,13 @@ namespace drivers {
 namespace platform {
 namespace display {
 
-struct DisplaySim : mgc::platform::display::DisplayDriver<DisplaySim> {
+struct DisplaySDL2 : mgc::platform::display::DisplayDriver<DisplaySDL2> {
 
-    DisplaySim() = default;
-    DisplaySim(const DisplaySim&) = delete;
-    DisplaySim& operator=(const DisplaySim&) = delete;
-    DisplaySim(DisplaySim&&) = default;
-    DisplaySim& operator=(DisplaySim&&) = default;
+    DisplaySDL2() = default;
+    DisplaySDL2(const DisplaySDL2&) = delete;
+    DisplaySDL2& operator=(const DisplaySDL2&) = delete;
+    DisplaySDL2(DisplaySDL2&&) = default;
+    DisplaySDL2& operator=(DisplaySDL2&&) = default;
 
     void init_impl(uint32_t clock_rate) {
         SDL_Init(SDL_INIT_VIDEO);
@@ -133,4 +133,4 @@ private:
 }// namespace drivers
 }// namespace mgc
 
-#endif/*MGC_DRIVERS_DISPLAYSIM_HPP*/
+#endif/*MGC_DRIVERS_DISPLAY_SDL2_HPP*/

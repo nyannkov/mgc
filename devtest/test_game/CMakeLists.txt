@@ -10,10 +10,12 @@ target_include_directories(app_headers INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+add_library(mgc_appconf INTERFACE)
+target_link_libraries(mgc_appconf INTERFACE mgc)
+
 set(CXX_SOURCES 
     main.cpp
     app_common.cpp
-    platform/platform.cpp
     game_context/default_talkflow_effects.cpp
     utils/game_over_effect/game_over_effect.cpp
     status/status.cpp
@@ -31,6 +33,13 @@ set(CXX_SOURCES
     entity/civilian/hen/hen.cpp
     entity/civilian/chick/chick.cpp
 )
+
+#TODO
+if (SIM_BUILD)
+    list(APPEND CXX_SOURCES
+        platform/simulation/drivers/ports/free_running_timer_sim.cpp
+    )
+endif()
 
 set(C_SOURCES 
     resources/generated/tileset/tileset_map_elements.c
@@ -55,16 +64,6 @@ set(C_SOURCES
     resources/generated/talkscript/talkscript_1.c
 )
 
-if (SIM_BUILD)
-    add_subdirectory(platform/simulation/drivers/sound/ports)
-    list(APPEND C_SOURCES
-        platform/simulation/drivers/ports/digital_gamepad_sdl2.c
-    )
-    list(APPEND CXX_SOURCES
-        platform/simulation/drivers/ports/free_running_timer_sim.cpp
-    )
-endif()
-
 add_executable(${CMAKE_PROJECT_NAME}
     ${C_SOURCES}
     ${CXX_SOURCES}
@@ -76,20 +75,16 @@ add_subdirectory(resources/generated/anim/enemy/skyfish)
 add_subdirectory(resources/mml)
 add_subdirectory(scene)
 
+add_subdirectory(platform)
+target_link_libraries(mgc_appconf INTERFACE platform)
+
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-    mgc
+    mgc_appconf
     anim_player
     anim_skyfish
     mml
     scene
 )
-
-if (SIM_BUILD)
-    find_package(SDL2 REQUIRED)
-    target_link_libraries(${CMAKE_PROJECT_NAME}  PRIVATE ${SDL2_LIBRARIES})
-    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC MGC_SIMULATION)
-endif()
 
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
