@@ -10,7 +10,7 @@ namespace platform {
 namespace input {
 
 struct GamepadSDL2 : Gamepad {
-    GamepadSDL2() {};
+    GamepadSDL2() : Gamepad(gamepad_) {};
     ~GamepadSDL2() = default;
     GamepadSDL2(const GamepadSDL2&) = delete;
     GamepadSDL2& operator=(const GamepadSDL2&) = delete;
@@ -19,7 +19,6 @@ struct GamepadSDL2 : Gamepad {
 
     void init() {
         gamepad_sdl2_init(&gamepad_);
-        bind(gamepad_);
     }
 
     using mgc::platform::input::IButton::just_pressed;
