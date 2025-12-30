@@ -18,9 +18,24 @@ if(MGC_ENABLE_SOUND)
 endif()
 
 if(MGC_ENABLE_INPUT)
-    if(MGC_INPUT_DEVICE STREQUAL "digital_gamepad")
-        add_subdirectory(input/digital_gamepad)
-        target_link_libraries(mgc_drivers INTERFACE mgc_input_digital_gamepad)
+    if(MGC_INPUT_DEVICE STREQUAL "gamepad")
+
+        add_library(mgc_gamepad_bundle INTERFACE)
+
+        add_subdirectory(input/gamepad/core)
+        target_link_libraries(mgc_gamepad_bundle INTERFACE
+            mgc_input_gamepad
+        )
+
+        if(MGC_USE_RP2040)
+            add_subdirectory(input/gamepad/source/picolcd)
+            target_link_libraries(mgc_gamepad_bundle INTERFACE
+                gamepad_picolcd
+            )
+        endif()
+
+        target_link_libraries(mgc_drivers INTERFACE mgc_gamepad_bundle)
+
     else()
         message(FATAL_ERROR "Unknown input device: ${MGC_INPUT_DEVICE}")
     endif()
