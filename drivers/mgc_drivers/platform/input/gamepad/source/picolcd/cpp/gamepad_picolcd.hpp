@@ -16,7 +16,7 @@ namespace platform {
 namespace input {
 
 struct GamepadPicoLcd : Gamepad {
-    GamepadPicoLcd() {};
+    GamepadPicoLcd() : Gamepad(gamepad_) {};
     ~GamepadPicoLcd() = default;
     GamepadPicoLcd(const GamepadPicoLcd&) = delete;
     GamepadPicoLcd& operator=(const GamepadPicoLcd&) = delete;
@@ -25,7 +25,6 @@ struct GamepadPicoLcd : Gamepad {
 
     void init() {
         gamepad_picolcd_init(&gamepad_);
-        bind(gamepad_);
     }
 
     using mgc::platform::input::IButton::just_pressed;
