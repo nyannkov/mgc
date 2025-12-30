@@ -34,39 +34,30 @@ struct GamepadKeyMapper {
 };
 
 struct Gamepad : mgc::platform::input::IButton {
-    Gamepad() {}
+    explicit Gamepad(mgc_gamepad_t& gamepad) : gamepad_(gamepad) {}
     ~Gamepad() = default;
 
     void poll() {
-        gamepad_poll(gamepad_);
+        gamepad_poll(&gamepad_);
     }
 
     uint16_t hold_counter(mgc::platform::input::Key key) const override {
-        return gamepad_get_hold_counter(gamepad_, GamepadKeyMapper::to_gamepad_key(key));
+        return gamepad_get_hold_counter(&gamepad_, GamepadKeyMapper::to_gamepad_key(key));
     }
 
     bool is_pressed(mgc::platform::input::Key key) const override {
-        return gamepad_is_pressed(gamepad_, GamepadKeyMapper::to_gamepad_key(key));
+        return gamepad_is_pressed(&gamepad_, GamepadKeyMapper::to_gamepad_key(key));
     }
 
     bool was_pressed(mgc::platform::input::Key key) const override {
-        return gamepad_was_pressed(gamepad_, GamepadKeyMapper::to_gamepad_key(key));
+        return gamepad_was_pressed(&gamepad_, GamepadKeyMapper::to_gamepad_key(key));
     }
 
     using mgc::platform::input::IButton::just_pressed;
     using mgc::platform::input::IButton::just_released;
 
-protected:
-    void bind(mgc_gamepad_t& gamepad) {
-        gamepad_ = &gamepad;
-    }
-
-    void unbind() {
-        gamepad_ = nullptr;
-    }
-
 private:
-    mgc_gamepad_t* gamepad_;
+    mgc_gamepad_t& gamepad_;
 };
 
 }// namespace input
