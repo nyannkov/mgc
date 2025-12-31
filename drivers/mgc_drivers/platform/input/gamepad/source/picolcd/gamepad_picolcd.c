@@ -14,7 +14,7 @@ typedef struct pin_config {
 * Reference:
 * https://www.waveshare.com/wiki/Pico-LCD-1.3
 ******************************************************************************/
-static pin_config_t pin_conf[TOTAL_PIN_CONFIG]  = {
+static const pin_config_t pin_conf[TOTAL_PIN_CONFIG]  = {
     { MGC_GAMEPAD_KEY_UP,       2 },
     { MGC_GAMEPAD_KEY_DOWN,    18 },
     { MGC_GAMEPAD_KEY_RIGHT,   20 },
@@ -45,7 +45,7 @@ static void picolcd_key_poll(void *ctx) {
     (void)ctx;
 }
 
-static mgc_gamepad_source_t source = {
+static const mgc_gamepad_source_t source = {
     .get = picolcd_key_get,
     .poll = picolcd_key_poll,
     .ctx = NULL 
