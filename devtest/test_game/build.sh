@@ -24,9 +24,11 @@ else
     fi
 fi
 
+MGC_PATH=${MGC_PATH:-../../}
+MGC_ABS_PATH=$(realpath ${MGC_PATH})
 
-TOOLS_PATH="../../tools"
-FONTS_PATH="../../assets/fonts"
+TOOLS_PATH="${MGC_PATH}/tools"
+FONTS_PATH="${MGC_PATH}/assets/fonts"
 
 rm -rf ./resources/generated/*
 
@@ -90,12 +92,12 @@ JOBS=${JOBS:-$(nproc)}
 
 cmake -S . -B "$BUILD_DIR" -DEXEC_NAME="$EXEC_NAME" \
                            -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
-                           -DMGC_USE_DEFAULT_DIGITAL_GAMEPAD=ON \
                            -DMGC_PIXELBUF_NOSWAP="$NOSWAP" \
                            -DMGC_PIXELBUF_ORDER=1 \
                            -DMGC_MAP_TILESET_INDEX_OFFSET=1 \
                            -DMGC_USE_RP2040="$USE_RP2040" \
-                           -DSIM_BUILD="$SIM"
+                           -DSIM_BUILD="$SIM" \
+                           -DMGC_ABS_PATH="$MGC_ABS_PATH"
 
 cmake --build "$BUILD_DIR" --parallel "$JOBS"
 
