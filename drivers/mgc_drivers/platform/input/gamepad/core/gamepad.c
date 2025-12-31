@@ -57,7 +57,7 @@ void gamepad_poll(mgc_gamepad_t *gamepad) {
         gamepad->source->poll(gamepad->source->ctx);
     }
 
-    mgc_gamepad_source_t *source = gamepad->source;
+    const mgc_gamepad_source_t *source = gamepad->source;
 
     for ( size_t i = 0; i < gamepad->key_count; i++ ) {
         mgc_gamepad_key_state_t *key_states;
