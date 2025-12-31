@@ -43,7 +43,7 @@ typedef struct mgc_gamepad_source {
 typedef struct mgc_gamepad {
     mgc_gamepad_key_state_t *key_states;
     size_t key_count;
-    mgc_gamepad_source_t *source;
+    const mgc_gamepad_source_t *source;
 } mgc_gamepad_t;
 
 void gamepad_init(
