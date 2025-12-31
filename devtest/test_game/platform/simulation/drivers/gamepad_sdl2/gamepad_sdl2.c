@@ -9,7 +9,7 @@ typedef struct key_pair {
     SDL_Scancode code;
 } key_pair_t;
 
-static key_pair_t key_pairs[TOTAL_KEY_PAIRS]  = {
+static const key_pair_t key_pairs[TOTAL_KEY_PAIRS]  = {
     {   MGC_GAMEPAD_KEY_UP      ,SDL_SCANCODE_UP     },
     {   MGC_GAMEPAD_KEY_DOWN    ,SDL_SCANCODE_DOWN   },
     {   MGC_GAMEPAD_KEY_RIGHT   ,SDL_SCANCODE_RIGHT  },
@@ -50,7 +50,7 @@ static void sdl2_key_poll(void *ctx) {
     SDL_PumpEvents();
 }
 
-static mgc_gamepad_source_t source = {
+static const mgc_gamepad_source_t source = {
     .get = sdl2_key_get,
     .poll = sdl2_key_poll,
     .ctx = NULL 
