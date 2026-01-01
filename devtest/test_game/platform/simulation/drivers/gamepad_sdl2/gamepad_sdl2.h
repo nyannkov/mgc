@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "mgc_drivers/platform/input/gamepad/core/gamepad.h"
+#include "gamepad.h"
 
 void gamepad_sdl2_init(mgc_gamepad_t *gamepad);
 

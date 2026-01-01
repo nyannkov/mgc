@@ -5,13 +5,13 @@ project(${EXEC_NAME} LANGUAGES C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(MGC_DIR "${MGC_ABS_PATH}" CACHE PATH "Path to MGC root directory")
+message(STATUS "MGC_DIR=${MGC_DIR}")
+
 add_library(app_headers INTERFACE)
 target_include_directories(app_headers INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-
-add_library(mgc_appconf INTERFACE)
-target_link_libraries(mgc_appconf INTERFACE mgc)
 
 set(CXX_SOURCES 
     main.cpp
@@ -33,13 +33,6 @@ set(CXX_SOURCES
     entity/civilian/hen/hen.cpp
     entity/civilian/chick/chick.cpp
 )
-
-#TODO
-if (SIM_BUILD)
-    list(APPEND CXX_SOURCES
-        platform/simulation/drivers/ports/free_running_timer_sim.cpp
-    )
-endif()
 
 set(C_SOURCES 
     resources/generated/tileset/tileset_map_elements.c
@@ -69,17 +62,16 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${CXX_SOURCES}
 )
 
-add_subdirectory(${MGC_ABS_PATH}  mgc_build)
+add_subdirectory("${MGC_DIR}"  mgc_build)
 add_subdirectory(resources/generated/anim/player)
 add_subdirectory(resources/generated/anim/enemy/skyfish)
 add_subdirectory(resources/mml)
 add_subdirectory(scene)
-
 add_subdirectory(platform)
-target_link_libraries(mgc_appconf INTERFACE platform)
+
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-    mgc_appconf
+    platform
     anim_player
     anim_skyfish
     mml

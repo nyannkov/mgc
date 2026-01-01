@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include "mml_psg_local.h"
+#include "ports/mml_psg_port.h"
 
 #define CHUNK_SAMPLES   512 
 #define LOW_WATERMARK   (Uint32)(CHUNK_SAMPLES * sizeof(int16_t) * 2)

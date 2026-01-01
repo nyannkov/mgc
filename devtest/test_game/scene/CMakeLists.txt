@@ -14,7 +14,7 @@ add_subdirectory(scenes/scene_003_stage_1_1)
 add_subdirectory(scenes/scene_999_game_over)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
-    mgc_appconf
+    platform
     scene_000_title
     scene_001_tower_front
     scene_002_corridor

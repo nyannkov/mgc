@@ -16,11 +16,11 @@ if (SIM_BUILD)
 
     add_subdirectory(simulation/drivers/mml_psg/ports)
 
-#    add_subdirectory(simulation/drivers/free_running_timer/ports)
+    add_subdirectory(simulation/drivers/free_running_timer/ports)
 endif()
 
 target_link_libraries(platform
     platform_bundle
-    mgc
+    mgc_drivers
 )
 
