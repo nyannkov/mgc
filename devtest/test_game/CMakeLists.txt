@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(playground.elf LANGUAGES C CXX ASM)
+project(${EXEC_NAME} LANGUAGES C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(MGC_DIR "${MGC_ABS_PATH}" CACHE PATH "Path to MGC root directory")
+message(STATUS "MGC_DIR=${MGC_DIR}")
 
 add_library(app_headers INTERFACE)
 target_include_directories(app_headers INTERFACE
@@ -16,8 +19,6 @@ set(CXX_SOURCES
     game_context/default_talkflow_effects.cpp
     utils/game_over_effect/game_over_effect.cpp
     status/status.cpp
-    scene/scene.cpp
-    scene/scene_helper.cpp
     entity/player/player.cpp
     entity/prop/gate/gate.cpp
     entity/prop/entrance/entrance.cpp
@@ -61,14 +62,16 @@ add_executable(${CMAKE_PROJECT_NAME}
     ${CXX_SOURCES}
 )
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../  mgc_build)
+add_subdirectory("${MGC_DIR}"  mgc_build)
 add_subdirectory(resources/generated/anim/player)
 add_subdirectory(resources/generated/anim/enemy/skyfish)
 add_subdirectory(resources/mml)
 add_subdirectory(scene)
+add_subdirectory(platform)
+
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
-    mgc
+    platform
     anim_player
     anim_skyfish
     mml
@@ -86,5 +89,7 @@ add_compile_options(-Wall
     -fno-exceptions
 )
 
-pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
+if(NOT SIM_BUILD)
+    pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
+endif()
 
