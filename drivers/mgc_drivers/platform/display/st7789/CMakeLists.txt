@@ -24,7 +24,6 @@ target_include_directories(mgc_display_st7789 PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cpp
     ${MGC_SRC_DIR}
-    ${MGC_DRIVERS_DIR}
 )
 
 target_link_libraries(mgc_display_st7789 
