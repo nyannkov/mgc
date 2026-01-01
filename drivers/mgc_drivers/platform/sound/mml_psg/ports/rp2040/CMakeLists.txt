@@ -18,8 +18,12 @@ foreach(OPTION
     endif()
 endforeach()
 
+target_include_directories(mml_psg_port PUBLIC
+    ${MGC_DIR}/src
+    ${MGC_DIR}/drivers/mgc_drivers/platform/sound/mml_psg
+)
+
 target_link_libraries(mml_psg_port
-    mgc_sound_mml_psg
     pico_stdlib
     hardware_pwm
     hardware_irq
