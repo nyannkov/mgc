@@ -27,19 +27,18 @@ foreach(OPTION
     endif()
 endforeach()
 
-target_include_directories(mgc_sound_mml_psg PUBLIC
+target_include_directories(mgc_sound_mml_psg
+PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/cpp
     ${MGC_SRC_DIR}
     ${MGC_DRIVERS_DIR}
+
+PRIVATE
     ${MGC_EXTERNAL_DIR}/sound/emu2149
     ${MGC_EXTERNAL_DIR}/sound/Psgino/src
 )
 
-if(MGC_ENABLE_CPP_INTERFACE)
-    target_include_directories(mgc_sound_mml_psg PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
-    )
-endif()
 
 add_subdirectory(${MGC_EXTERNAL_DIR}/sound/Psgino psgino_build)
 

@@ -9,7 +9,7 @@
 
 #include "mgc_cpp/internal/common.hpp"
 #include "mgc_cpp/platform/timer/timer.hpp"
-#include "mgc_drivers/platform/timer/free_running_timer/free_running_timer.h"
+#include "free_running_timer.h"
 
 namespace mgc {
 namespace drivers {

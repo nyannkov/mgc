@@ -18,7 +18,7 @@ foreach(OPTION
     endif()
 endforeach()
 
-target_include_directories(mml_psg_port PUBLIC
+target_include_directories(mml_psg_port PRIVATE
     ${MGC_DIR}/src
     ${MGC_DIR}/drivers/mgc_drivers/platform/sound/mml_psg
 )

@@ -28,9 +28,7 @@ foreach(RP2040_OPT
     endif()
 endforeach()
 
-target_include_directories(st7789_port PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/cpp
+target_include_directories(st7789_port PRIVATE
     ${MGC_SRC_DIR}
     ${MGC_DRIVERS_DIR}/mgc_drivers/platform/display/st7789
 )
