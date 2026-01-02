@@ -40,18 +40,33 @@ void mml_psg_set_master_volume(float volume);
 void mml_psg_set_background_music_volume(float volume);
 void mml_psg_set_sound_effect_volume(float volume);
 
-float mml_psg_get_master_volume();
-float mml_psg_get_background_music_volume();
-float mml_psg_get_sound_effect_volume();
+float mml_psg_get_master_volume(void);
+float mml_psg_get_background_music_volume(void);
+float mml_psg_get_sound_effect_volume(void);
 
 void mml_psg_set_psg_lpf_enabled(bool enabled);
+bool mml_psg_get_psg_lpf_enabled(void);
+
 void mml_psg_set_psg_lpf_alpha(float alpha);
+float mml_psg_get_psg_lpf_alpha(void);
+
 void mml_psg_set_background_music_list(const mgc_mml_record_t *records, size_t count);
 void mml_psg_set_sound_effect_list(const  mgc_mml_record_t *records, size_t count);
+
 void mml_psg_set_callback_background_music(void (*cb)(uint8_t ch, int32_t param, void * ctx));
 void mml_psg_set_callback_sound_effect(void (*cb)(uint8_t ch, int32_t param, void * ctx));
+
 void mml_psg_set_speed_factor(float factor);
+float mml_psg_get_speed_factor(void);
+
 void mml_psg_shift_pitch_by_degree(int16_t degree);
+int16_t mml_psg_get_pitch_shift_in_degree(void);
+
+void mml_psg_set_sound_effect_speed_factor(float factor);
+float mml_psg_get_sound_effect_speed_factor(void);
+
+void mml_psg_shift_sound_effect_pitch_by_degree(int16_t degree);
+int16_t mml_psg_get_sound_effect_pitch_shift_in_degree(void);
 
 #ifdef __cplusplus
 }/* extern "C" */

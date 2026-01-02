@@ -63,8 +63,16 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
         mml_psg_set_psg_lpf_enabled(enabled);
     }
 
+    bool lpf_enabled() const {
+        return mml_psg_get_psg_lpf_enabled();
+    }
+
     void set_lpf_alpha(float alpha) {
         mml_psg_set_psg_lpf_alpha(alpha);
+    }
+
+    float lpf_alpha() const {
+        return mml_psg_get_psg_lpf_alpha();
     }
 
     void set_background_music_list(const mgc_mml_record_t *records, size_t count) {
@@ -76,12 +84,35 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
     }
 
     void set_speed_factor(float factor) {
-        
         mml_psg_set_speed_factor(factor);
+    }
+
+    float speed_factor() const {
+        return mml_psg_get_speed_factor();
     }
 
     void shift_pitch_by_degree(int16_t degree) {
         mml_psg_shift_pitch_by_degree(degree);
+    }
+
+    int16_t pitch_shift_in_degree() const {
+        return mml_psg_get_pitch_shift_in_degree();
+    }
+
+    void set_sound_effect_speed_factor(float factor) {
+        mml_psg_set_sound_effect_speed_factor(factor);
+    }
+
+    float sound_effect_speed_factor() const {
+        return mml_psg_get_sound_effect_speed_factor();
+    }
+
+    void shift_sound_effect_pitch_by_degree(int16_t degree) {
+        mml_psg_shift_sound_effect_pitch_by_degree(degree);
+    }
+
+    int16_t sound_effect_pitch_shift_in_degree() const {
+        return mml_psg_get_sound_effect_pitch_shift_in_degree();
     }
 
     void bind_listener(IMmlPsgSoundControllerListener& listener) {
