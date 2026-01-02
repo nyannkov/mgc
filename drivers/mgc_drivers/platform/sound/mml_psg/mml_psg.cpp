@@ -155,6 +155,31 @@ bool mml_psg_play_sound_effect(int effect_id, float fade_in_sec) {
     return false;
 }
 
+bool mml_psg_play_background_music_direct(const char *mml, float fade_in_sec) {
+    // NOTE: Fade-in and fade-out are not supported.
+    (void)fade_in_sec;
+    if ( mml != nullptr ) {
+        psgino_z.SetMML(mml);
+        psgino_z.Play();
+        return true;
+    }
+
+    return false;
+}
+
+bool mml_psg_play_sound_effect_direct(const char *mml, float fade_in_sec) {
+    // NOTE: Fade-in and fade-out are not supported.
+    (void)fade_in_sec;
+    if ( mml != nullptr ) {
+        psgino_z.SetSeMML(mml);
+        psgino_z.PlaySe();
+        return true;
+    }
+
+    return false;
+}
+
+
 void mml_psg_stop_background_music(float fade_out_in_sec) {
     // NOTE: Fade-in and fade-out are not supported.
     (void)fade_out_in_sec;

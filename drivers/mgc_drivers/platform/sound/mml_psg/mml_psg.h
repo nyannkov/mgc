@@ -24,6 +24,9 @@ void mml_psg_deinit(void);
 bool mml_psg_play_background_music(int music_id, float fade_in_sec);
 bool mml_psg_play_sound_effect(int effect_id, float fade_in_sec);
 
+bool mml_psg_play_background_music_direct(const char *mml, float fade_in_sec);
+bool mml_psg_play_sound_effect_direct(const char *mml, float fade_in_sec);
+
 void mml_psg_stop_background_music(float fade_out_in_sec);
 void mml_psg_stop_all_sound_effects(float fade_out_in_sec);
 
