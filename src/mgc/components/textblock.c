@@ -253,7 +253,7 @@ void textblock_set_scroll_speed(mgc_textblock_t *textblock, uint8_t scroll_speed
         MGC_WARN("Invalid handler");
         return;
     }
-    textblock->scroll_speed = scroll_speed;
+    textblock->scroll_speed = (scroll_speed == 0) ? 1 : scroll_speed;
 }
 
 void textblock_set_scroll_line(mgc_textblock_t *textblock, uint8_t scroll_line) {
@@ -282,15 +282,23 @@ void textblock_set_parallax_factor(mgc_textblock_t *textblock, float factor_x, f
 }
 
 void textblock_display_update(mgc_textblock_t *textblock) {
-    enum mgc_display_text_state state;
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    for ( size_t n = 0; n < textblock->cursor_speed; n++ ) {
-        state = display_update(textblock);
-        if ( state != MGC_DISPLAY_TEXT_STATE_CURSOR_MOVING ) {
-            break;
+    if ( textblock->cursor_speed == 0 ) {
+        size_t guard = MGC_TEXTBLOCK_MAX_LINES * textblock->width;
+        while ( display_update(textblock) != MGC_DISPLAY_TEXT_STATE_TEXT_END ) {
+            guard--;
+            if ( guard == 0 ) {
+                break;
+            }
+        }
+    } else {
+        for ( size_t n = 0; n < textblock->cursor_speed; n++ ) {
+            if ( display_update(textblock) != MGC_DISPLAY_TEXT_STATE_CURSOR_MOVING ) {
+                break;
+            }
         }
     }
 }
