@@ -154,6 +154,7 @@ bool tilemap_draw_raw(
     if ( ( tilemap == NULL ) ||
          ( tilemap->map == NULL ) ||
          ( tilemap->tileset == NULL ) ||
+         ( tilemap->tileset->tile_count == 0 ) ||
          ( tilemap->tileset->tile_width  != MGC_CELL_LEN ) ||
          ( tilemap->tileset->tile_height != MGC_CELL_LEN ) ||
          ( buffer == NULL )
@@ -185,7 +186,7 @@ bool tilemap_draw_raw(
     b0 = t0 + tilemap->map->map_height * MGC_CELL_LEN - 1;
 
     if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
-        const uint8_t tile_count = tilemap->tileset->tile_count;
+        const uint8_t max_map_tile_idx = MGC_GET_MAP_TILE_INDEX(tilemap->tileset->tile_count-1);
         const mgc_color_t *palette_array = tilemap->tileset->palette_array;
         const uint8_t **tile_array = tilemap->tileset->tile_array;
         const mgc_map_t *map = tilemap->map;
@@ -202,7 +203,7 @@ bool tilemap_draw_raw(
                     map_cell_value = tilemap->callbacks.on_get_map_cell_value(map_cell_value, j, i, tilemap->callbacks.context);
                 }
                 map_cell_value &= 0x7F;
-                if ( (0 < map_cell_value ) && ( map_cell_value < tile_count ) ) {
+                if ( (0 < map_cell_value ) && ( map_cell_value <= max_map_tile_idx ) ) {
                     const uint8_t *tile = tile_array[MGC_GET_MAP_TILESET_INDEX(map_cell_value)];
                     int16_t l2 = l0 + (i * MGC_CELL_LEN);
                     int16_t r2 = l2 + MGC_CELL_LEN - 1;
@@ -251,6 +252,7 @@ bool tilemap_draw_cell_raw(
          ( cell_buffer == NULL ) ||
          ( tilemap->map == NULL ) ||
          ( tilemap->tileset == NULL ) ||
+         ( tilemap->tileset->tile_count == 0 ) ||
          ( tilemap->tileset->tile_width  != MGC_CELL_LEN ) ||
          ( tilemap->tileset->tile_height != MGC_CELL_LEN )
     ) {
@@ -279,6 +281,7 @@ bool tilemap_draw_cell_raw(
         int16_t i, j;
         uint8_t cell_lt, cell_rt, cell_lb, cell_rb;
         const mgc_tileset_t *tileset;
+        const uint8_t max_map_tile_idx = MGC_GET_MAP_TILE_INDEX(tilemap->tileset->tile_count-1);
         const mgc_map_t *map;
         const uint8_t *tile;
         const mgc_color_t *palette_array; 
@@ -305,7 +308,7 @@ bool tilemap_draw_cell_raw(
                 cell_lt = tilemap->callbacks.on_get_map_cell_value(cell_lt, j, i, tilemap->callbacks.context);
             }
             cell_lt &= 0x7F;
-            if ( cell_lt >= tileset->tile_count ) cell_lt = 0;
+            if ( cell_lt > max_map_tile_idx ) cell_lt = 0;
         } else {
             cell_lt = 0;
         }
@@ -325,7 +328,7 @@ bool tilemap_draw_cell_raw(
                 cell_rt = tilemap->callbacks.on_get_map_cell_value(cell_rt, j, i, tilemap->callbacks.context);
             }
             cell_rt &= 0x7F;
-            if ( cell_rt >= tileset->tile_count ) cell_rt = 0;
+            if ( cell_rt > max_map_tile_idx ) cell_rt = 0;
         } else {
             cell_rt = 0;
         }
@@ -345,7 +348,7 @@ bool tilemap_draw_cell_raw(
                 cell_lb = tilemap->callbacks.on_get_map_cell_value(cell_lb, j, i, tilemap->callbacks.context);
             }
             cell_lb &= 0x7F;
-            if ( cell_lb >= tileset->tile_count ) cell_lb = 0;
+            if ( cell_lb > max_map_tile_idx ) cell_lb = 0;
         } else {
             cell_lb = 0;
         }
@@ -365,7 +368,7 @@ bool tilemap_draw_cell_raw(
                 cell_rb = tilemap->callbacks.on_get_map_cell_value(cell_rb, j, i, tilemap->callbacks.context);
             }
             cell_rb &= 0x7F;
-            if ( cell_rb >= tileset->tile_count ) cell_rb = 0;
+            if ( cell_rb > max_map_tile_idx ) cell_rb = 0;
         } else {
             cell_rb = 0;
         }
