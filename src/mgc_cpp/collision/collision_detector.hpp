@@ -110,13 +110,14 @@ struct CollisionDetectorBoxToMap {
         }
         const auto& obj_hitboxes = obj.hitboxes();
 
-        this->init();
-
         for ( size_t h_index = 0; h_index < obj_hitboxes.size(); h_index++ ) {
             auto& h = obj_hitboxes[h_index];
             if ( !h.enabled ) {
                 continue;
             }
+
+            this->init();
+
             ql_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.offset.x - map.position().x);
             qr_ = MGC_DIV_CELL_LEN((int32_t)obj.position().x + h.offset.x + h.size.width() - 1 - map.position().x);
             qt_ = MGC_DIV_CELL_LEN((int32_t)obj.position().y + h.offset.y - map.position().y);
