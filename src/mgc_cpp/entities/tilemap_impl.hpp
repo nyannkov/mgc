@@ -117,7 +117,7 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
     const TilegridT& tilegrid() const { return tilegrid_; }
 
 protected:
-    TilegridT& tilegrid() { return tilegrid_; }
+    TilegridT& mut_tilegrid() { return tilegrid_; }
     void set_collision_map(const mgc::collision::CollisionMap* map) { collision_map_ = map; }
     void set_collision_enabled(bool enabled) { hit_enabled_ = enabled; }
 

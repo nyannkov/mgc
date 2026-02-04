@@ -182,8 +182,8 @@ struct ActorImpl
     }
 
 protected:
-    SpriteT& sprite() { return sprite_; }
-    Hitboxes& hitboxes() { return hitboxes_; }
+    SpriteT& mut_sprite() { return sprite_; }
+    Hitboxes& mut_hitboxes() { return hitboxes_; }
     mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) {
         for (auto& h : hitboxes_) {
             if (h.id == hitbox_id) return &h;
