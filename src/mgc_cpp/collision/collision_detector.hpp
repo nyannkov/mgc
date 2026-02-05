@@ -191,8 +191,8 @@ struct CollisionDetectorBoxToMap {
 private:
     bool is_hit_r_, is_hit_l_, is_hit_t_, is_hit_b_;
     bool is_hit_tr_, is_hit_tl_, is_hit_br_, is_hit_bl_;
-    uint16_t hit_count_;
-    int16_t qr_, ql_, qt_, qb_;
+    size_t hit_count_;
+    mgc_world_t qr_, ql_, qt_, qb_;
 
     void init() {
         is_hit_r_ = false;
@@ -295,9 +295,9 @@ private:
             const MapT& map,
             CornerPushDirection push_dir
     ) const {
-        int32_t dx, dy;
+        mgc_world_t dx, dy;
         int8_t n_x, n_y;
-        int16_t p_x, p_y;
+        mgc_world_t p_x, p_y;
 
         dx = MGC_MOD_CELL_LEN(obj.position().x + obj_hitbox.offset.x - map.position().x);
         dy = MGC_MOD_CELL_LEN(obj.position().y + obj_hitbox.offset.y - map.position().y);

@@ -45,7 +45,7 @@ void label_set_visible(mgc_label_t *label, bool v) {
     label->visible = v;
 }
 
-void label_set_position(mgc_label_t *label, int16_t x, int16_t y) {
+void label_set_position(mgc_label_t *label, mgc_world_t x, mgc_world_t y) {
     if ( label == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -142,8 +142,8 @@ void label_set_fontsize2x(mgc_label_t *label, bool fontsize2x) {
 
 void label_resize_to_fit(mgc_label_t *label) {
     const char * p;
-    int16_t total_dwx0;
-    int16_t scale;
+    uint16_t total_dwx0;
+    uint16_t scale;
 
     if ( ( label == NULL ) ||
          ( label->font == NULL )
@@ -192,15 +192,15 @@ static inline bool draw_buffer(
         const mgc_draw_options_t *options
 ) {
     // 0: label, 1:camera
-    int16_t l0, l1;
-    int16_t r0, r1, r0_w;
-    int16_t t0, t1;
-    int16_t b0, b1;
+    mgc_world_t l0, l1;
+    mgc_world_t r0, r1, r0_w;
+    mgc_world_t t0, t1;
+    mgc_world_t b0, b1;
     const char *p;
     const char *tmp_p;
-    int16_t dx;
-    int16_t scale;
-    int16_t shift;
+    mgc_world_t dx;
+    uint16_t scale;
+    uint16_t shift;
     mgc_color_t fore_color;
     mgc_color_t back_color;
 
@@ -269,21 +269,21 @@ static inline bool draw_buffer(
             r0 = l0 + dx - 1;
             if ( r0 >= r0_w ) r0 = r0_w;
             if (l1<=r0) {
-                int16_t x_s, y_s, x_e, y_e;
+                int32_t x_s, y_s, x_e, y_e;
                 uint32_t bitmap[MGC_FONT_MAX_FONT_SIZE] = {0};
                 font_load_bitmap(label->font, glyph, bitmap, MGC_FONT_MAX_FONT_SIZE);
                 x_s = (( l1 < l0 ) ? l0 : l1) - l0;
                 x_e = (( r1 < r0 ) ? r1 : r0) - l0;
                 y_s = (( t1 < t0 ) ? t0 : t1) - t0;
                 y_e = (( b1 < b0 ) ? b1 : b0) - t0;
-                for ( int16_t X = x_s; X <= x_e; X++ ) {
+                for ( int32_t X = x_s; X <= x_e; X++ ) {
                     uint32_t mask_x;
                     if (glyph->bb_w <= 8 ) {
                         mask_x = 0x00010000>>(X>>shift);
                     } else {
                         mask_x = 0x01000000>>(X>>shift);
                     }
-                    for ( int16_t Y = y_s; Y <= y_e; Y++ ) {
+                    for ( int32_t Y = y_s; Y <= y_e; Y++ ) {
                         if ( (bitmap[Y>>shift] & mask_x ) != 0 ) {
                             size_t idx;
                             idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);

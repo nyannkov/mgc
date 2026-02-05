@@ -197,8 +197,8 @@ private:
     mgc::math::Vec2f real_pos_;
     Hitboxes hitboxes_;
 
-    static constexpr int16_t floor_cast(float v) {
-        int16_t i = static_cast<int16_t>(v);
+    static constexpr mgc_world_t floor_cast(float v) {
+        mgc_world_t i = static_cast<mgc_world_t>(v);
         return (v < 0.0f && static_cast<float>(i) != v) ? (i - 1) : i;
     }
     static constexpr mgc::math::Vec2i floor_cast(const mgc::math::Vec2f& v) {

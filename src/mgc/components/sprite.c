@@ -30,12 +30,14 @@ void sprite_init(mgc_sprite_t *sprite, mgc_id_t id) {
     sprite->visible = MGC_DEFAULT_VISIBLE;
     sprite->tileset = NULL;
     sprite->tile_idx = 0;
-    sprite->hitbox_array = NULL;
-    sprite->hitbox_count = 0;
     sprite->trim_left = 0;
     sprite->trim_right = 0;
     sprite->trim_top = 0;
     sprite->trim_bottom = 0;
+
+    // Legacy
+    sprite->hitbox_array = NULL;
+    sprite->hitbox_count = 0;
 }
 
 void sprite_set_id(mgc_sprite_t *sprite, mgc_id_t id) {
@@ -54,7 +56,7 @@ void sprite_set_visible(mgc_sprite_t *sprite, bool v) {
     sprite->visible = v;
 }
 
-void sprite_set_position(mgc_sprite_t *sprite, int16_t x, int16_t y) {
+void sprite_set_position(mgc_sprite_t *sprite, mgc_world_t x, mgc_world_t y) {
     if ( sprite == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -84,15 +86,6 @@ void sprite_set_tile_idx(mgc_sprite_t *sprite, size_t tile_idx) {
         return;
     }
     sprite->tile_idx = tile_idx;
-}
-
-void sprite_set_hitbox_array(mgc_sprite_t *sprite, const mgc_hitbox_t *hitbox_array, size_t hitbox_count) {
-    if ( sprite == NULL ) {
-        MGC_WARN("Invalid handler");
-        return;
-    }
-    sprite->hitbox_array = hitbox_array;
-    sprite->hitbox_count = hitbox_count;
 }
 
 void sprite_set_parallax_factor(mgc_sprite_t *sprite, float factor_x, float factor_y) {
@@ -125,10 +118,10 @@ static inline bool draw_buffer(
         const mgc_draw_options_t *options
 ) {
     // 0: sprite, 1: camera
-    int16_t l0, l1;
-    int16_t r0, r1;
-    int16_t t0, t1;
-    int16_t b0, b1;
+    mgc_world_t l0, l1;
+    mgc_world_t r0, r1;
+    mgc_world_t t0, t1;
+    mgc_world_t b0, b1;
 
     if ( ( sprite == NULL ) ||
          ( sprite->tileset == NULL ) ||
@@ -172,13 +165,13 @@ static inline bool draw_buffer(
     b1 = t1 + buf_height - 1;
 
     if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
-        int16_t x, y;
+        int32_t x, y;
         int32_t wy;
-        int16_t x_s, y_s, x_e, y_e;
-        int16_t color_index;
+        int32_t x_s, y_s, x_e, y_e;
+        size_t color_index;
         const uint8_t *tile;
         const mgc_color_t *palette_array;
-        int16_t tile_width;
+        uint16_t tile_width;
 
         tile_width = sprite->tileset->tile_width;
         tile = sprite->tileset->tile_array[sprite->tile_idx];
@@ -294,5 +287,14 @@ void sprite_set_r_cell_offset(mgc_sprite_t *sprite, uint8_t r_cell_x_ofs, uint8_
 
     sprite->parallax_factor_x = (r_cell_x_ofs != 0) ? (1.0F / r_cell_x_ofs) : 0.0F;
     sprite->parallax_factor_y = (r_cell_y_ofs != 0) ? (1.0F / r_cell_y_ofs) : 0.0F;
+}
+
+void sprite_set_hitbox_array(mgc_sprite_t *sprite, const mgc_hitbox_t *hitbox_array, size_t hitbox_count) {
+    if ( sprite == NULL ) {
+        MGC_WARN("Invalid handler");
+        return;
+    }
+    sprite->hitbox_array = hitbox_array;
+    sprite->hitbox_count = hitbox_count;
 }
 

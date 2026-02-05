@@ -25,10 +25,10 @@ enum mgc_sprhit_state {
 typedef struct mgc_sprhit {
     mgc_id_t hit_opp_hitbox_id;
     enum mgc_sprhit_state state;
-    int32_t l0;
-    int32_t r0;
-    int32_t t0;
-    int32_t b0;
+    mgc_world_t l0;
+    mgc_world_t r0;
+    mgc_world_t t0;
+    mgc_world_t b0;
     const mgc_sprite_t *opponent;
     size_t opp_hitbox_idx;
 } mgc_sprhit_t;

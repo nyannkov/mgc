@@ -125,9 +125,12 @@ typedef mgc_color_rgb565_t mgc_color_t;
 #define MGC_MAP_CELL_VALUE(hit_flag, tileset_index) \
     (((hit_flag) ? 0x80 : 0x00) | ((tileset_index) + (MGC_MAP_TILESET_INDEX_OFFSET)))
     
+
+typedef int16_t mgc_world_t;
+
 typedef struct mgc_point {
-    int16_t x;
-    int16_t y;
+    mgc_world_t x;
+    mgc_world_t y;
 } mgc_point_t;
 
 enum draw_effect_flags {

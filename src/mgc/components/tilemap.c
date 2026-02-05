@@ -76,7 +76,7 @@ void tilemap_set_hit_visible(mgc_tilemap_t *tilemap, bool v) {
     tilemap->visible = v;
 }
 
-void tilemap_set_position(mgc_tilemap_t *tilemap, int16_t x, int16_t y) {
+void tilemap_set_position(mgc_tilemap_t *tilemap, mgc_world_t x, mgc_world_t y) {
     if ( tilemap == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -146,10 +146,10 @@ bool tilemap_draw_raw(
         const mgc_draw_options_t *options
 ) {
     // 0: tilemap, 1: camera
-    int16_t l0, l1;
-    int16_t r0, r1;
-    int16_t t0, t1;
-    int16_t b0, b1;
+    mgc_world_t l0, l1;
+    mgc_world_t r0, r1;
+    mgc_world_t t0, t1;
+    mgc_world_t b0, b1;
 
     if ( ( tilemap == NULL ) ||
          ( tilemap->map == NULL ) ||
@@ -205,19 +205,19 @@ bool tilemap_draw_raw(
                 map_cell_value &= 0x7F;
                 if ( (0 < map_cell_value ) && ( map_cell_value <= max_map_tile_idx ) ) {
                     const uint8_t *tile = tile_array[MGC_GET_MAP_TILESET_INDEX(map_cell_value)];
-                    int16_t l2 = l0 + (i * MGC_CELL_LEN);
-                    int16_t r2 = l2 + MGC_CELL_LEN - 1;
-                    int16_t t2 = t0 + (j * MGC_CELL_LEN);
-                    int16_t b2 = t2 + MGC_CELL_LEN - 1;
-                    int16_t x_s = (( l1 < l2 ) ? l2 : l1) - l2;
-                    int16_t x_e = (( r1 < r2 ) ? r1 : r2) - l2;
-                    int16_t y_s = (( t1 < t2 ) ? t2 : t1) - t2;
-                    int16_t y_e = (( b1 < b2 ) ? b1 : b2) - t2;
-                    int16_t x, y;
+                    mgc_world_t l2 = l0 + (i * MGC_CELL_LEN);
+                    mgc_world_t r2 = l2 + MGC_CELL_LEN - 1;
+                    mgc_world_t t2 = t0 + (j * MGC_CELL_LEN);
+                    mgc_world_t b2 = t2 + MGC_CELL_LEN - 1;
+                    int32_t x_s = (( l1 < l2 ) ? l2 : l1) - l2;
+                    int32_t x_e = (( r1 < r2 ) ? r1 : r2) - l2;
+                    int32_t y_s = (( t1 < t2 ) ? t2 : t1) - t2;
+                    int32_t y_e = (( b1 < b2 ) ? b1 : b2) - t2;
+                    int32_t x, y;
                     int32_t wy;
                     for ( x = x_s; x <= x_e; x++ ) {
                         for ( y = y_s, wy = y_s*MGC_CELL_LEN; y <= y_e; y++, wy+=MGC_CELL_LEN ) {
-                            int16_t color_index = tile[x + wy];
+                            size_t color_index = tile[x + wy];
                             if ( color_index != 0 ) {
                                 size_t idx = MGC_GET_PIXELBUF_INDEX(x+l2-l1, y+t2-t1, width, height);
                                 buffer[idx] = MGC_COLOR_SWAP(palette_array[color_index]);
@@ -241,10 +241,10 @@ bool tilemap_draw_cell_raw(
         const mgc_point_t *cam_pos,
         const mgc_draw_options_t *options
 ) {
-    int16_t l0, l1;
-    int16_t r0, r1;
-    int16_t t0, t1;
-    int16_t b0, b1;
+    mgc_world_t l0, l1;
+    mgc_world_t r0, r1;
+    mgc_world_t t0, t1;
+    mgc_world_t b0, b1;
 
     (void)options;
 
@@ -278,16 +278,16 @@ bool tilemap_draw_cell_raw(
     b1 = t1 + MGC_CELL_LEN - 1;
 
     if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
-        int16_t i, j;
+        mgc_world_t i, j;
         uint8_t cell_lt, cell_rt, cell_lb, cell_rb;
         const mgc_tileset_t *tileset;
         const uint8_t max_map_tile_idx = MGC_GET_MAP_TILE_INDEX(tilemap->tileset->tile_count-1);
         const mgc_map_t *map;
         const uint8_t *tile;
         const mgc_color_t *palette_array; 
-        int16_t x, y, wy;
-        int16_t x_s, x_e, y_s, y_e;
-        int16_t color_index;
+        int32_t x, y, wy;
+        int32_t x_s, x_e, y_s, y_e;
+        size_t color_index;
 
         tileset = tilemap->tileset;
         palette_array = tileset->palette_array;

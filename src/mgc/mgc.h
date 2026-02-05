@@ -22,14 +22,14 @@ extern "C" {
 #include "render/pixelbuffer.h"
 #include "render/framebuffer.h"
 #include "render/camera.h"
-#include "detector/maphit.h"
-#include "detector/sprhit.h"
 #include "sequencer/talkflow.h"
 #include "sequencer/btctrl.h"
 #include "sequencer/animctrl.h"
 
 //////////////////////////////// Legacy ////////////////////////////////
 #include "sequencer/dlgflow.h"
+#include "detector/maphit.h"
+#include "detector/sprhit.h"
 
 #ifdef __cplusplus
 }/* extern "C" */

@@ -30,8 +30,8 @@ enum mgc_corner_escape_type {
 };
 
 typedef struct mgc_maphit {
-    int16_t hit_x;
-    int16_t hit_y;
+    mgc_world_t hit_x;
+    mgc_world_t hit_y;
     uint8_t hit_map_cell_value;
     uint8_t hit_count;
     bool is_hit_r;
@@ -42,14 +42,14 @@ typedef struct mgc_maphit {
     bool is_hit_tl;
     bool is_hit_br;
     bool is_hit_bl;
-    int16_t dx;
-    int16_t dy;
-    int16_t qr;
-    int16_t ql;
-    int16_t qt;
-    int16_t qb;
-    int16_t map_i;
-    int16_t map_j;
+    int32_t dx;
+    int32_t dy;
+    int32_t qr;
+    int32_t ql;
+    int32_t qt;
+    int32_t qb;
+    int32_t map_i;
+    int32_t map_j;
     enum mgc_maphit_state state;
     const mgc_sprite_t *target;
     const mgc_hitbox_t *target_hitbox;
@@ -64,7 +64,7 @@ typedef struct mgc_maphit {
 extern void maphit_init(mgc_maphit_t *maphit);
 extern void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *target, mgc_id_t target_hitbox_id, const mgc_tilemap_t *tilemap);
 extern bool maphit_detect(mgc_maphit_t *maphit);
-extern void maphit_calc_wall_pushback(const mgc_maphit_t *maphit, int16_t *pushback_x, int16_t *pushback_y, enum mgc_corner_escape_type escape_type);
+extern void maphit_calc_wall_pushback(const mgc_maphit_t *maphit, mgc_world_t *pushback_x, mgc_world_t *pushback_y, enum mgc_corner_escape_type escape_type);
 
 //////////////////////////////// Legacy ////////////////////////////////
 #define MAPHIT_GET_HIT_TILE_ID  MAPHIT_GET_HIT_MAP_CELL_VALUE

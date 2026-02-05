@@ -13,7 +13,7 @@
 namespace mgc {
 namespace collision {
 
-using HitboxOffset = mgc::math::Vec2<int16_t>;
+using HitboxOffset = mgc::math::Vec2<mgc_world_t>;
 struct HitboxSize {
     using ValueType = uint16_t;
     constexpr HitboxSize() : size_(0, 0) {}
