@@ -51,6 +51,14 @@ typedef uint16_t mgc_id_t;
 #define MGC_ABS(x)              (((x) >= 0) ? (x) : ((x)*-1))
 #endif/*MGC_ABS*/
 
+#ifndef MGC_MIN
+#define MGC_MIN(x,y)            (((x) >= (y)) ? (y) : (x))
+#endif/*MGC_MIN*/
+
+#ifndef MGC_MAX
+#define MGC_MAX(x,y)            (((x) >= (y)) ? (x) : (y))
+#endif/*MGC_MAX*/
+
 #define MGC_CELL_LEN_LOG2       (4)
 #define MGC_CELL_LEN            (1<<MGC_CELL_LEN_LOG2)
 #define MGC_CELL_LEN_MOD        (MGC_CELL_LEN-1)

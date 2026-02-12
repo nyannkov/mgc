@@ -128,11 +128,11 @@ static inline bool draw_buffer(
          ( sprite->tileset->tile_count == 0 ) ||
          ( draw_buf == NULL )
     ) {
-        MGC_WARN("Invalid handler")
+        MGC_WARN("Invalid handler");
         return false;
     }
     if ( sprite->visible == false ) {
-        MGC_INFO("Handler is not visible")
+        MGC_INFO("Handler is not visible");
         return false;
     }
 

@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+//////////////////////////////// Legacy ////////////////////////////////
 #include "mgc/common/common.h"
 #include "mgc/components/sprite.h"
 

@@ -22,6 +22,8 @@ extern "C" {
 #include "render/pixelbuffer.h"
 #include "render/framebuffer.h"
 #include "render/camera.h"
+#include "detector/collision_boxbox.h"
+#include "detector/collision_boxmap.h"
 #include "sequencer/talkflow.h"
 #include "sequencer/btctrl.h"
 #include "sequencer/animctrl.h"

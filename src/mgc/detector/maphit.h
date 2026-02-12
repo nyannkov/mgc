@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+//////////////////////////////// Legacy ////////////////////////////////
 #include "mgc/common/common.h"
 #include "mgc/components/sprite.h"
 #include "mgc/components/tilemap.h"
@@ -66,7 +67,6 @@ extern void maphit_setup_detection(mgc_maphit_t *maphit, const mgc_sprite_t *tar
 extern bool maphit_detect(mgc_maphit_t *maphit);
 extern void maphit_calc_wall_pushback(const mgc_maphit_t *maphit, mgc_world_t *pushback_x, mgc_world_t *pushback_y, enum mgc_corner_escape_type escape_type);
 
-//////////////////////////////// Legacy ////////////////////////////////
 #define MAPHIT_GET_HIT_TILE_ID  MAPHIT_GET_HIT_MAP_CELL_VALUE
 
 #ifdef __cplusplus
