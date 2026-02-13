@@ -86,10 +86,10 @@ struct BoxMapDetector {
                             h, hitbox_idx, map_cell_value, row, col 
                         };
 
-                        if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToMapResponse<ObjT>, ObjT>) {
+                        if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<ObjT>::value) {
                             obj.on_hit_box_to_map(obj, map, info);
                         }
-                        if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToMapResponse<MapT>, MapT>) {
+                        if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<MapT>::value) {
                             map.on_hit_box_to_map(obj, map, info);
                         }
                     }
@@ -115,11 +115,11 @@ struct BoxMapDetector {
 
                 MapPushbackInfo info = { h, hitbox_idx, {pushback.x, pushback.y} };
 
-                if constexpr (std::is_base_of_v<mgc::entities::mixins::WithHandleMapPushbackResult<ObjT>, ObjT>) {
+                if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<ObjT>::value) {
                     obj.handle_map_pushback_result(obj, map, info);
                 }
 
-                if constexpr (std::is_base_of_v<mgc::entities::mixins::WithHandleMapPushbackResult<MapT>, MapT>) {
+                if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<MapT>::value) {
                     map.handle_map_pushback_result(obj, map, info);
                 }
             }

@@ -25,7 +25,6 @@ struct has_hitboxes<
     >
 > : std::true_type {};
 
-
 template <typename Derived, size_t MaxHitboxCount>
 struct WithHitboxes {
     using Hitboxes = std::array<mgc::collision::Hitbox, MaxHitboxCount>; 

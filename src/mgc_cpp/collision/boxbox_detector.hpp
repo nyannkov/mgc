@@ -159,12 +159,12 @@ struct BoxBoxDetector {
 
         if ( result.hit ) {
             if ( has_flag(flags, DetectFlag::Callback) ) {
-                if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T1>, T1>) {
+                if constexpr (mgc::entities::mixins::has_on_hit_box_to_box<T1>::value) {
                     auto signed_overlap = result.query_penetration;
                     const BoxCollisionInfo info = {h1, h2, hitbox_idx1, hitbox_idx2, {signed_overlap}};
                     obj1.on_hit_box_to_box(obj2, info);
                 }
-                if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T2>, T2>) {
+                if constexpr (mgc::entities::mixins::has_on_hit_box_to_box<T2>::value) {
                     auto signed_overlap = result.query_penetration * -1;
                     const BoxCollisionInfo info = {h2, h1, hitbox_idx2, hitbox_idx1, {signed_overlap}};
                     obj2.on_hit_box_to_box(obj1, info);
@@ -289,14 +289,6 @@ struct BoxBoxDetector {
 
                 result.hit = true;
 
-                if ( has_flag(config.flags, DetectFlag::Callback) ) {
-
-                    if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T1>, T1>) {
-                        const mgc::collision::BoxCollisionInfo info = {h1, h2, hitbox_idx1, hitbox_idx2};
-                        obj1.on_hit_box_to_box(obj2, info);
-                    }
-                }
-
                 collision_boxbox_accumulate_pushback(
                     &boxbox,
                     h2.c_ptr(),
@@ -322,7 +314,7 @@ struct BoxBoxDetector {
 
         if ( has_flag(config.flags, DetectFlag::Callback) ) {
 
-            if constexpr (std::is_base_of_v<mgc::entities::mixins::WithHandleBoxPushbackResult<T1>, T1>) {
+            if constexpr (mgc::entities::mixins::has_handle_box_pushback_result<T1>::value) {
                 
                 BoxPushbackInfo info = { {result.pushback}, {result.max_overlap}, result.is_fully_blocked };
                 obj1.handle_box_pushback_result(info, obj2_view);
