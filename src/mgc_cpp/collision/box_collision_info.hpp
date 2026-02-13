@@ -18,6 +18,7 @@ struct BoxCollisionInfo {
     const mgc::collision::Hitbox& other_hitbox;
     size_t self_hitbox_index;
     size_t other_hitbox_index;
+    mgc::math::Vec2i signed_overlap;
 };
 
 }// namespace collision

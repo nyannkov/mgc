@@ -151,28 +151,23 @@ void collision_boxbox_accumulate_pushback(
         return;
     }
 
-    mgc_world_t overlap_x = MGC_MIN(boxbox->aa.r, bb.r) - MGC_MAX(boxbox->aa.l, bb.l) + 1;
-
-    boxbox->max_overlap_x = MGC_MAX(boxbox->max_overlap_x, overlap_x);
+    mgc_world_t signed_overlap_x, signed_overlap_y;
+    collision_calc_signed_overlap(
+        &boxbox->aa, &bb, &signed_overlap_x, &signed_overlap_y
+    );
 
     // Intentionally truncate pushback to avoid leaving a persistent 1px offset.
     // In the future, this may be replaced with an epsilon-based threshold.
-    mgc_world_t n_x = (mgc_world_t)((float)overlap_x * boxbox->damping);
-
-    if ( bb.l <= boxbox->aa.r && boxbox->aa.r < bb.r) {
-        n_x *= -1;
-    }
-
-    mgc_world_t overlap_y = MGC_MIN(boxbox->aa.b, bb.b) - MGC_MAX(boxbox->aa.t, bb.t) + 1;
-    boxbox->max_overlap_y = MGC_MAX(boxbox->max_overlap_y, overlap_y);
-
-    mgc_world_t n_y = (mgc_world_t)((float)overlap_y * boxbox->damping);
-
-    if ( bb.t <= boxbox->aa.b && boxbox->aa.b < bb.b ) {
-        n_y *= -1;
-    }
+    mgc_world_t n_x = (mgc_world_t)((float)signed_overlap_x * boxbox->damping);
+    mgc_world_t n_y = (mgc_world_t)((float)signed_overlap_y * boxbox->damping);
 
     mgc_pushback_t *pushback = &boxbox->pushback;
+
+    mgc_world_t overlap_x = MGC_ABS(signed_overlap_x);
+    mgc_world_t overlap_y = MGC_ABS(signed_overlap_y);
+
+    boxbox->max_overlap_x = MGC_MAX(boxbox->max_overlap_x, MGC_ABS(overlap_x));
+    boxbox->max_overlap_y = MGC_MAX(boxbox->max_overlap_y, MGC_ABS(overlap_y));
 
     switch ( boxbox->flags & MGC_MASK_CONTACT_ALL_CORNER ) {
     case MGC_CONTACT_LT:/*@fall-through@*/

@@ -91,11 +91,15 @@ struct BoxBoxDetector {
         if ( r ) {
             if ( has_flag(flags, DetectFlag::Callback) ) {
                 if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T1>, T1>) {
-                    const BoxCollisionInfo info = {h1, h2, hitbox_idx1, hitbox_idx2};
+                    mgc::math::Vec2i signed_overlap = {0, 0};
+                    collision_calc_signed_overlap(&aa, &bb, &signed_overlap.x, &signed_overlap.y);
+                    const BoxCollisionInfo info = {h1, h2, hitbox_idx1, hitbox_idx2, {signed_overlap}};
                     obj1.on_hit_box_to_box(obj2, info);
                 }
                 if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T2>, T2>) {
-                    const BoxCollisionInfo info = {h2, h1, hitbox_idx2, hitbox_idx1};
+                    mgc::math::Vec2i signed_overlap = {0, 0};
+                    collision_calc_signed_overlap(&bb, &aa, &signed_overlap.x, &signed_overlap.y);
+                    const BoxCollisionInfo info = {h2, h1, hitbox_idx2, hitbox_idx1, {signed_overlap}};
                     obj2.on_hit_box_to_box(obj1, info);
                 }
             }
@@ -271,7 +275,8 @@ struct BoxBoxDetector {
         mgc::math::Vec2f obj1_velocity,
         const BoxBoxPtrArrayView<T2>& obj2_view,
         size_t hitbox_idx2,
-        const BoxBoxDetectConfig& config = {}) {
+        const BoxBoxDetectConfig& config = {}
+    ) {
 
         return detect_primary_core(
                 obj1,
@@ -290,7 +295,8 @@ struct BoxBoxDetector {
         mgc::math::Vec2f obj1_velocity,
         const BoxBoxArrayView<T2>& obj2_view,
         size_t hitbox_idx2,
-        const BoxBoxDetectConfig& config = {}) {
+        const BoxBoxDetectConfig& config = {}
+    ) {
 
         return detect_primary_core(
                 obj1,

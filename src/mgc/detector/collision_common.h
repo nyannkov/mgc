@@ -77,6 +77,14 @@ bool collision_test_hit(
     const mgc_aabb_t* bb
 );
 
+bool collision_calc_signed_overlap(
+    const mgc_aabb_t *aa,
+    const mgc_aabb_t *bb,
+    mgc_world_t *out_x,
+    mgc_world_t *out_y
+);
+
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif
