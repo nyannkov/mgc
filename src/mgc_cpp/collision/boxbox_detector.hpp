@@ -62,22 +62,22 @@ struct BoxBoxDetectConfig {
     float pushback_damping = 0.8;
 };
 
+using BoxMargin = mgc_aabb_margin_t;
+
 struct BoxBoxDetector {
     
     template <typename T1, typename T2>
     static BoxBoxQueryResult query_pair(
         const T1& obj1,
         size_t hitbox_idx1,
-        mgc_world_t obj1_margin,
+        const BoxMargin& obj1_margin,
         const T2& obj2,
         size_t hitbox_idx2,
-        mgc_world_t obj2_margin
+        const BoxMargin& obj2_margin
     ) {
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T1, T1::HitboxCount>, T1>,
-                      "T1 must inherit from WithHitboxes<T1, N>");
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T2, T2::HitboxCount>, T2>,
-                      "T2 must inherit from WithHitboxes<T2, N>");
 
+        static_assert(mgc::entities::mixins::has_hitboxes<T1>::value, "T1 must have hitboxes()");
+        static_assert(mgc::entities::mixins::has_hitboxes<T2>::value, "T2 must have hitboxes()");
 
         BoxBoxQueryResult result = { false, {0, 0} };
 
@@ -100,10 +100,10 @@ struct BoxBoxDetector {
 
         mgc_aabb_t base_aa, base_bb, aa, bb;
         collision_calc_aabb_from_hitbox(obj1.position().x, obj1.position().y, h1.c_ptr(), &base_aa);
-        collision_expand_aabb(&base_aa, obj1_margin, &aa);
+        collision_expand_aabb_margin(&base_aa, &obj1_margin, &aa);
 
         collision_calc_aabb_from_hitbox(obj2.position().x, obj2.position().y, h2.c_ptr(), &base_bb);
-        collision_expand_aabb(&base_bb, obj2_margin, &bb);
+        collision_expand_aabb_margin(&base_bb, &obj2_margin, &bb);
 
         bool r = collision_test_hit(&aa, &bb);
         
@@ -128,11 +128,8 @@ struct BoxBoxDetector {
         size_t hitbox_idx2,
         DetectFlag flags = DetectFlag::Callback
     ) {
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T1, T1::HitboxCount>, T1>,
-                      "T1 must inherit from WithHitboxes<T1, N>");
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T2, T2::HitboxCount>, T2>,
-                      "T2 must inherit from WithHitboxes<T2, N>");
-
+        static_assert(mgc::entities::mixins::has_hitboxes<T1>::value, "T1 must have hitboxes()");
+        static_assert(mgc::entities::mixins::has_hitboxes<T2>::value, "T2 must have hitboxes()");
 
         const auto& obj1_hitboxes = obj1.hitboxes();
         if ( hitbox_idx1 >= obj1_hitboxes.size() ) {
@@ -151,7 +148,14 @@ struct BoxBoxDetector {
             return false;
         }
 
-        auto result = query_pair(obj1, hitbox_idx1, 0, obj2, hitbox_idx2, 0);
+        auto result = query_pair(
+            obj1,
+            hitbox_idx1,
+            { 0, 0, 0, 0 },
+            obj2,
+            hitbox_idx2,
+            { 0, 0, 0, 0 }
+        );
 
         if ( result.hit ) {
             if ( has_flag(flags, DetectFlag::Callback) ) {
@@ -231,14 +235,11 @@ struct BoxBoxDetector {
         size_t hitbox_idx2,
         const BoxBoxDetectConfig& config = {}
     ) {
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T1, T1::HitboxCount>, T1>,
-                      "T1 must inherit from WithHitboxes<T1, N>");
-
+        static_assert(mgc::entities::mixins::has_hitboxes<T1>::value, "T1 must have hitboxes()");
 
         using RawT2 = typename View::raw_type; 
 
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<RawT2, RawT2::HitboxCount>, RawT2>,
-                    "View::raw_type must inherit from WithHitboxes<View::raw_type, N>");
+        static_assert(mgc::entities::mixins::has_hitboxes<RawT2>::value, "RawT2 must have hitboxes()");
 
         BoxBoxResult result = {false, false, {0,0}, {0,0}};
         const auto& obj1_hitboxes = obj1.hitboxes();

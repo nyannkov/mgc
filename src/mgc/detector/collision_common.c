@@ -32,19 +32,24 @@ void collision_calc_aabb_from_hitbox(
     out->b = out->t + hitbox->height - 1;
 }
 
-void collision_expand_aabb(
+void collision_expand_aabb_margin(
     const mgc_aabb_t* src,
-    mgc_world_t margin,
+    const mgc_aabb_margin_t* m,
     mgc_aabb_t* out
 ) {
     MGC_ASSERT(src != NULL, "`src` must not be NULL");
+    MGC_ASSERT(m != NULL, "`m` must not be NULL");
     MGC_ASSERT(out != NULL, "`out` must not be NULL");
-    MGC_ASSERT(margin >= 0, "`margin` must be greater equal to 0");
 
-    out->l = src->l - margin;
-    out->r = src->r + margin;
-    out->t = src->t - margin;
-    out->b = src->b + margin;
+    MGC_ASSERT(m->l >= 0, "`m->l` must be >= 0");
+    MGC_ASSERT(m->r >= 0, "`m->r` must be >= 0");
+    MGC_ASSERT(m->t >= 0, "`m->t` must be >= 0");
+    MGC_ASSERT(m->b >= 0, "`m->b` must be >= 0");
+
+    out->l = src->l - m->l;
+    out->r = src->r + m->r;
+    out->t = src->t - m->t;
+    out->b = src->b + m->b;
 }
 
 bool collision_test_hit(const mgc_aabb_t* aa, const mgc_aabb_t* bb) {

@@ -14,6 +14,17 @@ namespace mgc {
 namespace entities {
 namespace mixins {
 
+template <typename, typename = void>
+struct has_collision_map : std::false_type {};
+
+template <typename T>
+struct has_collision_map<
+    T,
+    std::void_t<
+        decltype(std::declval<const T&>().collision_map())
+    >
+> : std::true_type {};
+
 template <typename Derived>
 struct WithCollisionMap {
 

@@ -48,6 +48,13 @@ typedef struct mgc_aabb {
     mgc_world_t b;
 } mgc_aabb_t;
 
+typedef struct mgc_aabb_margin {
+    mgc_world_t l;
+    mgc_world_t r;
+    mgc_world_t t;
+    mgc_world_t b;
+} mgc_aabb_margin_t;
+
 typedef struct mgc_pushback {
     mgc_world_t x;
     mgc_world_t y;
@@ -72,9 +79,9 @@ void collision_calc_aabb_from_hitbox(
     mgc_aabb_t *out
 );
 
-void collision_expand_aabb(
+void collision_expand_aabb_margin(
     const mgc_aabb_t* src,
-    mgc_world_t margin,
+    const mgc_aabb_margin_t* m,
     mgc_aabb_t* out
 );
 

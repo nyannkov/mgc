@@ -37,10 +37,9 @@ struct BoxMapDetector {
         size_t hitbox_idx,
         MapT& map,
         const BoxMapDetectConfig& config = {}) {
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<ObjT, ObjT::HitboxCount>, ObjT>,
-                      "ObjT must inherit from WithHitboxes<ObjT, N>");
-        static_assert(std::is_base_of_v<mgc::entities::mixins::WithCollisionMap<MapT>, MapT>,
-                      "MapT must inherit from WithCollisionMap<MapT>");
+
+        static_assert(mgc::entities::mixins::has_hitboxes<ObjT>::value, "ObjT must have hitboxes()");
+        static_assert(mgc::entities::mixins::has_collision_map<MapT>::value, "MapT must have collision_map()");
 
         BoxMapResult result = {false, {0, 0}};
 
