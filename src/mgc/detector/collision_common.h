@@ -72,6 +72,12 @@ void collision_calc_aabb_from_hitbox(
     mgc_aabb_t *out
 );
 
+void collision_expand_aabb(
+    const mgc_aabb_t* src,
+    mgc_world_t margin,
+    mgc_aabb_t* out
+);
+
 bool collision_test_hit(
     const mgc_aabb_t* aa,
     const mgc_aabb_t* bb

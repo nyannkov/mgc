@@ -50,6 +50,12 @@ struct BoxBoxResult {
     mgc::math::Vec2i max_overlap;
 };
 
+// Query-only collision result (no side effects)
+struct BoxBoxQueryResult {
+    bool hit;
+    mgc::math::Vec2i query_penetration;
+};
+
 struct BoxBoxDetectConfig {
     DetectFlag flags = DetectFlag::Callback;
     CornerPushDirection push_dir = CornerPushDirection::PreferY;
@@ -57,13 +63,76 @@ struct BoxBoxDetectConfig {
 };
 
 struct BoxBoxDetector {
-
+    
     template <typename T1, typename T2>
-    static bool detect_pair(T1& obj1, size_t hitbox_idx1, T2& obj2, size_t hitbox_idx2, DetectFlag flags = DetectFlag::Callback) {
+    static BoxBoxQueryResult query_pair(
+        const T1& obj1,
+        size_t hitbox_idx1,
+        mgc_world_t obj1_margin,
+        const T2& obj2,
+        size_t hitbox_idx2,
+        mgc_world_t obj2_margin
+    ) {
         static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T1, T1::HitboxCount>, T1>,
                       "T1 must inherit from WithHitboxes<T1, N>");
         static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T2, T2::HitboxCount>, T2>,
                       "T2 must inherit from WithHitboxes<T2, N>");
+
+
+        BoxBoxQueryResult result = { false, {0, 0} };
+
+        const auto& obj1_hitboxes = obj1.hitboxes();
+        if ( hitbox_idx1 >= obj1_hitboxes.size() ) {
+            return result;
+        }
+
+        const auto& obj2_hitboxes = obj2.hitboxes();
+        if ( hitbox_idx2 >= obj2_hitboxes.size() ) {
+            return result;
+        }
+
+        const auto& h1 = obj1_hitboxes[hitbox_idx1];
+        const auto& h2 = obj2_hitboxes[hitbox_idx2];
+
+        if ( !h1.enabled() || !h2.enabled() ) {
+            return result;
+        }
+
+        mgc_aabb_t base_aa, base_bb, aa, bb;
+        collision_calc_aabb_from_hitbox(obj1.position().x, obj1.position().y, h1.c_ptr(), &base_aa);
+        collision_expand_aabb(&base_aa, obj1_margin, &aa);
+
+        collision_calc_aabb_from_hitbox(obj2.position().x, obj2.position().y, h2.c_ptr(), &base_bb);
+        collision_expand_aabb(&base_bb, obj2_margin, &bb);
+
+        bool r = collision_test_hit(&aa, &bb);
+        
+        if ( r ) {
+            collision_calc_signed_overlap(
+                &aa,
+                &bb,
+                &result.query_penetration.x, 
+                &result.query_penetration.y
+            );
+            result.hit = true;
+        }
+
+        return result;
+    }
+
+    template <typename T1, typename T2>
+    static bool detect_pair(
+        T1& obj1,
+        size_t hitbox_idx1,
+        T2& obj2,
+        size_t hitbox_idx2,
+        DetectFlag flags = DetectFlag::Callback
+    ) {
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T1, T1::HitboxCount>, T1>,
+                      "T1 must inherit from WithHitboxes<T1, N>");
+        static_assert(std::is_base_of_v<mgc::entities::mixins::WithHitboxes<T2, T2::HitboxCount>, T2>,
+                      "T2 must inherit from WithHitboxes<T2, N>");
+
 
         const auto& obj1_hitboxes = obj1.hitboxes();
         if ( hitbox_idx1 >= obj1_hitboxes.size() ) {
@@ -82,30 +151,24 @@ struct BoxBoxDetector {
             return false;
         }
 
-        mgc_aabb_t aa, bb;
-        collision_calc_aabb_from_hitbox(obj1.position().x, obj1.position().y, h1.c_ptr(), &aa);
-        collision_calc_aabb_from_hitbox(obj2.position().x, obj2.position().y, h2.c_ptr(), &bb);
+        auto result = query_pair(obj1, hitbox_idx1, 0, obj2, hitbox_idx2, 0);
 
-        bool r = collision_test_hit(&aa, &bb);
-
-        if ( r ) {
+        if ( result.hit ) {
             if ( has_flag(flags, DetectFlag::Callback) ) {
                 if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T1>, T1>) {
-                    mgc::math::Vec2i signed_overlap = {0, 0};
-                    collision_calc_signed_overlap(&aa, &bb, &signed_overlap.x, &signed_overlap.y);
+                    auto signed_overlap = result.query_penetration;
                     const BoxCollisionInfo info = {h1, h2, hitbox_idx1, hitbox_idx2, {signed_overlap}};
                     obj1.on_hit_box_to_box(obj2, info);
                 }
                 if constexpr (std::is_base_of_v<mgc::entities::mixins::WithOnHitBoxToBoxResponse<T2>, T2>) {
-                    mgc::math::Vec2i signed_overlap = {0, 0};
-                    collision_calc_signed_overlap(&bb, &aa, &signed_overlap.x, &signed_overlap.y);
+                    auto signed_overlap = result.query_penetration * -1;
                     const BoxCollisionInfo info = {h2, h1, hitbox_idx2, hitbox_idx1, {signed_overlap}};
                     obj2.on_hit_box_to_box(obj1, info);
                 }
             }
         }
 
-        return r;
+        return result.hit;
     }
 
     template <typename T1, typename T2>
