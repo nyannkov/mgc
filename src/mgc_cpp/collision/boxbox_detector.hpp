@@ -50,19 +50,23 @@ struct BoxBoxResult {
     mgc::math::Vec2i max_overlap;
 };
 
-// Query-only collision result (no side effects)
-struct BoxBoxQueryResult {
-    bool hit;
-    mgc::math::Vec2i query_penetration;
-};
-
 struct BoxBoxDetectConfig {
     DetectFlag flags = DetectFlag::Callback;
     CornerPushDirection push_dir = CornerPushDirection::PreferY;
     float pushback_damping = 0.8;
 };
 
+// Query-only collision result (no side effects)
+struct BoxBoxQueryResult { 
+    bool hit;
+    mgc::math::Vec2i query_penetration;
+};
+
 using BoxMargin = mgc_aabb_margin_t;
+struct BoxBoxQueryConfig {
+    BoxMargin obj1_margin;
+    BoxMargin obj2_margin;
+};
 
 struct BoxBoxDetector {
     
@@ -70,16 +74,14 @@ struct BoxBoxDetector {
     static BoxBoxQueryResult query_pair(
         const T1& obj1,
         size_t hitbox_idx1,
-        const BoxMargin& obj1_margin,
         const T2& obj2,
         size_t hitbox_idx2,
-        const BoxMargin& obj2_margin
+        const BoxBoxQueryConfig& config = {}
     ) {
-
         static_assert(mgc::entities::mixins::has_hitboxes<T1>::value, "T1 must have hitboxes()");
         static_assert(mgc::entities::mixins::has_hitboxes<T2>::value, "T2 must have hitboxes()");
 
-        BoxBoxQueryResult result = { false, {0, 0} };
+        BoxBoxQueryResult result{};
 
         const auto& obj1_hitboxes = obj1.hitboxes();
         if ( hitbox_idx1 >= obj1_hitboxes.size() ) {
@@ -100,10 +102,10 @@ struct BoxBoxDetector {
 
         mgc_aabb_t base_aa, base_bb, aa, bb;
         collision_calc_aabb_from_hitbox(obj1.position().x, obj1.position().y, h1.c_ptr(), &base_aa);
-        collision_expand_aabb_margin(&base_aa, &obj1_margin, &aa);
+        collision_expand_aabb_margin(&base_aa, &config.obj1_margin, &aa);
 
         collision_calc_aabb_from_hitbox(obj2.position().x, obj2.position().y, h2.c_ptr(), &base_bb);
-        collision_expand_aabb_margin(&base_bb, &obj2_margin, &bb);
+        collision_expand_aabb_margin(&base_bb, &config.obj2_margin, &bb);
 
         bool r = collision_test_hit(&aa, &bb);
         
@@ -151,10 +153,8 @@ struct BoxBoxDetector {
         auto result = query_pair(
             obj1,
             hitbox_idx1,
-            { 0, 0, 0, 0 },
             obj2,
-            hitbox_idx2,
-            { 0, 0, 0, 0 }
+            hitbox_idx2
         );
 
         if ( result.hit ) {
@@ -241,7 +241,7 @@ struct BoxBoxDetector {
 
         static_assert(mgc::entities::mixins::has_hitboxes<RawT2>::value, "RawT2 must have hitboxes()");
 
-        BoxBoxResult result = {false, false, {0,0}, {0,0}};
+        BoxBoxResult result{};
         const auto& obj1_hitboxes = obj1.hitboxes();
         if ( hitbox_idx1 >= obj1_hitboxes.size() ) {
             return result;
