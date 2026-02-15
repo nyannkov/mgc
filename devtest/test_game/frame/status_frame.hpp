@@ -14,17 +14,16 @@
 
 namespace app {
 
-template <uint16_t Width, uint16_t Height, typename DisplayDriverT>
+template <uint16_t Width, uint16_t Height>
 struct StatusFrame {
 
     StatusFrame(
         uint16_t x,
         uint16_t y,
-        DisplayDriverT& display_driver,
         GameContext& ctx
     ) : x_(x),
        y_(y),
-       cell_renderer_(cb_, display_driver, nullptr),
+       cell_renderer_(cb_, ctx.display_driver(), nullptr),
        status_(ctx) {
 
         cell_renderer_.cell_buffer().set_back_color(MGC_COLOR_BLACK);

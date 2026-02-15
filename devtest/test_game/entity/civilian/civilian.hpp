@@ -5,6 +5,7 @@
 #include "entity/stage/layer/layer_block.hpp"
 #include "app_common.hpp"
 #include "scene/request/talkflow_request.hpp"
+#include "entity/player/player_hitbox_index.hpp"
 
 namespace app {
 namespace civilian {
@@ -35,7 +36,11 @@ struct Civilian :
         if constexpr (std::is_same_v<Other, Player>) {
             switch( info.self_hitbox_index) {
             case static_cast<size_t>(CivilHitboxId::Body):
-                on_player_hit(other, info);
+                if ( info.other_hitbox_index == 
+                    static_cast<size_t>(PlayerHitboxIndex::Body) 
+                ) {
+                    on_player_hit(other, info);
+                }
                 break;
             case static_cast<size_t>(CivilHitboxId::View):
                 on_player_in_view(other, info);

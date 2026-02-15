@@ -16,9 +16,13 @@ enum class AttackDirection {
     Left
 };
 
-constexpr size_t ATTACK_HITBOX_COUNT_MAX = 2;
-
-struct Attack : mgc::entities::ActorImpl<Attack, ATTACK_HITBOX_COUNT_MAX> {
+enum class AttackHitboxId : size_t {
+    Body = 0,
+    Count
+};
+struct Attack : mgc::entities::ActorImpl<
+        Attack, static_cast<size_t>(AttackHitboxId::Count)
+    > {
 
     virtual ~Attack() = default;
 

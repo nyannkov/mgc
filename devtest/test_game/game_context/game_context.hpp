@@ -33,6 +33,7 @@ struct GameContext {
     const FrameTimerT& frame_timer() { return frame_timer_; }
     GamepadT& gamepad() { return gamepad_; }
     SoundControllerT& sound_controller() { return sound_controller_; }
+    DisplayDriverT& display_driver() { return display_driver_; }
 
     SceneInfo& scene_info() { return scene_info_; }
     CheckpointInfo& checkpoint_info() { return checkpoint_info_; }

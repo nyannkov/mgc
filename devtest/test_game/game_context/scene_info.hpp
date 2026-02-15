@@ -11,7 +11,7 @@ struct SceneInfo {
     SceneId prev_scene_id() const { return prev_scene_id_; }
     
 private:
-    SceneId prev_scene_id_ = SceneId::Id_000;
+    SceneId prev_scene_id_ = SceneId::Title;
 };
 
 }// namespace app

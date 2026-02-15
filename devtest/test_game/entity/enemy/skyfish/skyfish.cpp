@@ -1,6 +1,5 @@
 #include "skyfish.hpp"
 #include "entity/player/player.hpp"
-#include "skyfish_hitbox.hpp"
 #include "resources/mml/mml.h"
 
 namespace app {
@@ -38,33 +37,30 @@ void SkyFish::spawn(const mgc::math::Vec2i& pos, bool is_right) {
     anim_.set_anim_frames(get_anim_frames(anim_state_));
     anim_.start_animation();
     anim_.set_loop(true);
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
     this->set_position(pos);
 
     velocity_ = {0.0f, 0.0f};
 
-    auto& hitboxes = this->hitboxes();
+    auto& hitboxes = this->mut_hitboxes();
 
     // body
-    auto& hitbox_body = at(hitboxes, SkyFishHitboxIndex::Body);
-    hitbox_body.id = static_cast<mgc_id_t>(SkyFishHitboxIndex::Body);
-    hitbox_body.offset = mgc::collision::HitboxOffset(0, 0);
-    hitbox_body.size = mgc::collision::HitboxSize(16, 16);
-    hitbox_body.enabled = true;
+    auto& hitbox_body = at(hitboxes, EnemyHitboxIndex::Body);
+    hitbox_body.set_offset({0, 0});
+    hitbox_body.set_size({16, 16});
+    hitbox_body.set_enabled(true);
 
     // view left
-    auto& hitbox_view_left = at(hitboxes, SkyFishHitboxIndex::ViewLeft);
-    hitbox_view_left.id = static_cast<mgc_id_t>(SkyFishHitboxIndex::ViewLeft);
-    hitbox_view_left.offset = mgc::collision::HitboxOffset(8-16*7, 8-16*5);
-    hitbox_view_left.size = mgc::collision::HitboxSize(16*7, 16*10);
-    hitbox_view_left.enabled = true;
+    auto& hitbox_view_left = at(hitboxes, EnemyHitboxIndex::ViewLeft);
+    hitbox_view_left.set_offset({8-16*7, 8-16*5});
+    hitbox_view_left.set_size({16*7, 16*10});
+    hitbox_view_left.set_enabled(true);
 
     // view right
-    auto& hitbox_view_right = at(hitboxes, SkyFishHitboxIndex::ViewRight);
-    hitbox_view_right.id = static_cast<mgc_id_t>(SkyFishHitboxIndex::ViewRight);
-    hitbox_view_right.offset = mgc::collision::HitboxOffset(8, 8-16*5);
-    hitbox_view_right.size = mgc::collision::HitboxSize(16*7, 16*10);
-    hitbox_view_right.enabled = false;
+    auto& hitbox_view_right = at(hitboxes, EnemyHitboxIndex::ViewRight);
+    hitbox_view_right.set_offset({8, 8-16*5});
+    hitbox_view_right.set_size({16*7, 16*10});
+    hitbox_view_right.set_enabled(false);
 
     // Behavior Tree
     bt_listener_.clear_all_hit_flags();
@@ -77,8 +73,8 @@ void SkyFish::spawn(const mgc::math::Vec2i& pos, bool is_right) {
 
 void SkyFish::despawn() {
 
-    auto& hitboxes = this->hitboxes();
-    for ( auto& h : hitboxes ) { h.enabled = false; }
+    auto& hitboxes = this->mut_hitboxes();
+    for ( auto& h : hitboxes ) { h.set_enabled(false); }
 
     this->set_enemy_state(EnemyState::Despawning);
 
@@ -112,11 +108,11 @@ void SkyFish::update_movement() {
 
         } else {
             if ( behavior_state == SkyFishBehaviorState::LookRight ) {
-                at(hitboxes(), SkyFishHitboxIndex::ViewRight).enabled = true;
-                at(hitboxes(), SkyFishHitboxIndex::ViewLeft).enabled = false;
+                at(this->mut_hitboxes(), EnemyHitboxIndex::ViewRight).set_enabled(true);
+                at(this->mut_hitboxes(), EnemyHitboxIndex::ViewLeft).set_enabled(false);
             } else if (behavior_state == SkyFishBehaviorState::LookLeft ) {
-                at(hitboxes(), SkyFishHitboxIndex::ViewRight).enabled = false;
-                at(hitboxes(), SkyFishHitboxIndex::ViewLeft).enabled = true;
+                at(this->mut_hitboxes(), EnemyHitboxIndex::ViewRight).set_enabled(false);
+                at(this->mut_hitboxes(), EnemyHitboxIndex::ViewLeft).set_enabled(true);
             } else { }
         }
 
@@ -181,7 +177,7 @@ void SkyFish::update_animation() {
     }
 
     anim_.proc();
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
 }
 
 int32_t SkyFish::apply_damage_to(
@@ -189,7 +185,7 @@ int32_t SkyFish::apply_damage_to(
     size_t enemy_hitbox_index
 ) const {
     int32_t amount = 0;
-    if ( enemy_hitbox_index == static_cast<size_t>(SkyFishHitboxIndex::Body) ) {
+    if ( enemy_hitbox_index == static_cast<size_t>(EnemyHitboxIndex::Body) ) {
         amount = 1;
         player.receive_damage(amount);
         if ( this->is_direction_right() ) {
@@ -224,7 +220,7 @@ void SkyFish::on_attack_hit(
     const Attack& attack,
     const mgc::collision::BoxCollisionInfo& info
 ) { 
-    if ( info.self_hitbox_index == static_cast<size_t>(SkyFishHitboxIndex::Body)) {
+    if ( info.self_hitbox_index == static_cast<size_t>(EnemyHitboxIndex::Body)) {
         
         size_t attack_hitbox_index = info.other_hitbox_index;
 
@@ -238,7 +234,7 @@ void SkyFish::on_collision_resolved(
     const stage::LayerBlock& layer,
     const mgc::collision::MapPushbackInfo& info
 ) {
-    if ( info.obj_hitbox_index == static_cast<size_t>(SkyFishHitboxIndex::Body)) {
+    if ( info.obj_hitbox_index == static_cast<size_t>(EnemyHitboxIndex::Body)) {
         auto pos = this->position();
         pos += info.pushback;
 

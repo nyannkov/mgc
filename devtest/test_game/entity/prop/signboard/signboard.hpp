@@ -27,4 +27,4 @@ private:
 } // namespace prop
 } // namespace app
 
-#endif // MGC_ENTRANCE_HPP
+#endif // MGC_SIGNBOARD_HPP

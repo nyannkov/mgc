@@ -17,7 +17,7 @@ struct LayerBack : mgc::entities::TilemapImpl<LayerBack> {
     explicit LayerBack(const FrameTimerT& frame_timer)
         : tile_draw_hook_(frame_timer) {
         this->set_collision_enabled(false);
-        this->tilegrid().bind_listener(tile_draw_hook_);
+        this->mut_tilegrid().bind_listener(tile_draw_hook_);
     }
     ~LayerBack() = default;
 
@@ -25,17 +25,17 @@ struct LayerBack : mgc::entities::TilemapImpl<LayerBack> {
         const TileIndexMap& tile_idx_map,
         const Tileset& tile_set
     ) {
-        this->tilegrid().set_tile_index_map(tile_idx_map);
-        this->tilegrid().set_tileset(tile_set);
+        this->mut_tilegrid().set_tile_index_map(tile_idx_map);
+        this->mut_tilegrid().set_tileset(tile_set);
     }
 
     void set_all_enabled(bool enable) {
-        this->tilegrid().set_visible(enable);
+        this->mut_tilegrid().set_visible(enable);
         tile_draw_hook_.set_tile_draw_hook_id(TileDrawHookId::None);
     }
 
     void set_parallax_factor(const mgc::graphics::ParallaxFactor &factor) {
-        this->tilegrid().set_parallax_factor(factor);
+        this->mut_tilegrid().set_parallax_factor(factor);
     }
 
     mgc::graphics::ParallaxFactor parallax_factor() const {

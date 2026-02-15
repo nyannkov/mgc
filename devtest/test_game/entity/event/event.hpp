@@ -5,11 +5,15 @@
 #include "app_common.hpp"
 #include "scene/request/talkflow_request.hpp"
 #include "scene/request/scene_transition_request.hpp"
+#include "entity/player/player_hitbox_index.hpp"
 
 namespace app {
 namespace event {
 
-constexpr size_t EVENT_HITBOX_COUNT_MAX = 1;
+enum class EventHitboxId : size_t {
+    Body = 0,
+    Count
+};
 
 enum class EventState {
     NotStarted,
@@ -17,7 +21,9 @@ enum class EventState {
     Finished
 };
 
-struct Event : mgc::entities::ActorImpl<Event, EVENT_HITBOX_COUNT_MAX> {
+struct Event : mgc::entities::ActorImpl<
+        Event, static_cast<size_t>(EventHitboxId::Count)
+    > {
 
     virtual ~Event() = default;
 
@@ -31,7 +37,11 @@ struct Event : mgc::entities::ActorImpl<Event, EVENT_HITBOX_COUNT_MAX> {
             const mgc::collision::BoxCollisionInfo& info
     ) { 
         if constexpr (std::is_same_v<Other, Player>) {
-            on_player_hit(other, info);
+            if ( info.other_hitbox_index == 
+                static_cast<size_t>(PlayerHitboxIndex::Body) 
+            ) {
+                on_player_hit(other, info);
+            }
         }
     }
 

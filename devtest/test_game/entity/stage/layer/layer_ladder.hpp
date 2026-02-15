@@ -20,13 +20,13 @@ struct LayerLadder : mgc::entities::TilemapImpl<LayerLadder> {
         const Tileset& tile_set,
         const CollisionMap *col_map
     ) {
-        this->tilegrid().set_tile_index_map(tile_idx_map);
-        this->tilegrid().set_tileset(tile_set);
+        this->mut_tilegrid().set_tile_index_map(tile_idx_map);
+        this->mut_tilegrid().set_tileset(tile_set);
         this->set_collision_map(col_map);
     }
 
     void set_all_enabled(bool enable) {
-        this->tilegrid().set_visible(enable);
+        this->mut_tilegrid().set_visible(enable);
         this->set_collision_enabled(enable);
     }
 };

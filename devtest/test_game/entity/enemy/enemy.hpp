@@ -5,13 +5,15 @@
 #include "enemy_state.hpp"
 #include "entity/stage/layer/layer_block.hpp"
 #include "app_common.hpp"
+#include "entity/player/player_hitbox_index.hpp"
+#include "enemy_hitbox_index.hpp"
 
 namespace app {
 namespace enemy {
 
-constexpr size_t ENEMY_HITBOX_COUNT_MAX = 3;
-
-struct Enemy : mgc::entities::ActorImpl<Enemy, ENEMY_HITBOX_COUNT_MAX> {
+struct Enemy : mgc::entities::ActorImpl<
+        Enemy, static_cast<size_t>(EnemyHitboxIndex::Count)
+    > {
 
     virtual ~Enemy() = default;
 
@@ -36,9 +38,11 @@ struct Enemy : mgc::entities::ActorImpl<Enemy, ENEMY_HITBOX_COUNT_MAX> {
     ) { 
         if ( enemy_state_ == EnemyState::Active ) {
             if constexpr (std::is_same_v<Other, Player>) {
-
-                on_player_hit(other, info);
-
+                if ( info.other_hitbox_index == 
+                    static_cast<size_t>(PlayerHitboxIndex::Body) 
+                ) {
+                    on_player_hit(other, info);
+                }
             } else if constexpr (std::is_same_v<Other, Attack>) {
                 
                 on_attack_hit(other, info);
