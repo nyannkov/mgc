@@ -1,10 +1,12 @@
 #include "scene.hpp"
 #include "scene_pool.hpp"
-#include "scenes/scene_000_title/scene_000.hpp"
-#include "scenes/scene_001_tower_front/scene_001_tower_front.hpp"
-#include "scenes/scene_002_corridor/scene_002_corridor.hpp"
-#include "scenes/scene_003_stage_1_1/scene_003_stage_1_1.hpp"
-#include "scenes/scene_999_game_over/scene_999_game_over.hpp"
+#include "scenes/scene_title/scene_title.hpp"
+#include "scenes/scene_tower_front/scene_tower_front.hpp"
+#include "scenes/scene_corridor/scene_corridor.hpp"
+#include "scenes/scene_stage_1_1/scene_stage_1_1.hpp"
+#include "scenes/scene_stage_1_2/scene_stage_1_2.hpp"
+#include "scenes/scene_stage_1_3/scene_stage_1_3.hpp"
+#include "scenes/scene_game_over/scene_game_over.hpp"
 
 namespace app {
 
@@ -12,20 +14,26 @@ ScenePool pool;
 
 IScene* create_scene(SceneId id, GameContext& ctx) {
     switch ( id ) {
-    case SceneId::Id_000:
-        pool.create<Scene000>(ctx);
+    case SceneId::Title:
+        pool.create<Scene_Title>(ctx);
         break;
-    case SceneId::Id_001_TowerFront:
-        pool.create<Scene001_TowerFront>(ctx);
+    case SceneId::TowerFront:
+        pool.create<Scene_TowerFront>(ctx);
         break;
-    case SceneId::Id_002_Corridor:
-        pool.create<Scene002_Corridor>(ctx);
+    case SceneId::Corridor:
+        pool.create<Scene_Corridor>(ctx);
         break;
-    case SceneId::Id_003_Stage1_1:
-        pool.create<Scene003_Stage1_1>(ctx);
+    case SceneId::Stage1_1:
+        pool.create<Scene_Stage1_1>(ctx);
         break;
-    case SceneId::Id_999_GameOver:
-        pool.create<Scene999_GameOver>(ctx);
+    case SceneId::Stage1_2:
+        pool.create<Scene_Stage1_2>(ctx);
+        break;
+    case SceneId::Stage1_3:
+        pool.create<Scene_Stage1_3>(ctx);
+        break;
+    case SceneId::GameOver:
+        pool.create<Scene_GameOver>(ctx);
         break;
     default:
         return nullptr;

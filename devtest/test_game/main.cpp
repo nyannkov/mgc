@@ -11,8 +11,8 @@ app::Player player(app::frame_timer, app::gamepad, app::sound_controller);
 app::GameContext ctx(app::display_driver, app::sound_controller, app::gamepad, app::frame_timer, player);
 app::StopwatchT sw(app::frame_timer);
 
-app::MainFrame<224, 192, app::DisplayDriverT> main_frame(8, 48, app::display_driver);
-app::StatusFrame<224, 32, app::DisplayDriverT> status_frame(8, 8, app::display_driver, ctx);
+app::MainFrame<224, 192> main_frame(8, 48, ctx);
+app::StatusFrame<224, 32> status_frame(8, 8, ctx);
 
 void status_display_draw_blocking() {
 
@@ -78,7 +78,7 @@ int main() {
 
     sw.start();
 
-    main_frame.set_scene(app::SceneId::Id_000, ctx);
+    main_frame.init();
 
     status_frame.clear_display_blocking();
 
@@ -91,9 +91,7 @@ int main() {
             sw.restart();
             app::platform_gamepad_proc();
             
-            if ( main_frame.update_scene() ) {
-                main_frame.change_next_scene(ctx);
-            }
+            main_frame.update_screen();
 
             main_frame.draw_to_buffer();
 

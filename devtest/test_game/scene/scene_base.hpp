@@ -32,30 +32,49 @@ struct SceneBase : IScene {
     }
     virtual ~SceneBase() = default;
 
-    virtual SceneId id() const override {
+    SceneId id() const override {
         return id_;
     }
-    virtual SceneId id_next() const override {
+
+    SceneId id_next() const override {
         return id_next_;
     }
 
-    virtual void set_id_next(SceneId id) override {
-        id_next_ = id;
-    }
-
-    virtual bool has_scene_change_request() const {
+    bool has_scene_change_request() const override {
         return scene_change_request_;
     }
 
+    void set_menu_request() override {
+        menu_request_ = true;
+    }
+
+    void clear_menu_request() override {
+        menu_request_ = false;
+    }
+
+    bool has_menu_request() const override {
+        return menu_request_;
+    }
+
 protected:
-    SceneId id_ = SceneId::Id_000;
-    SceneId id_next_ = SceneId::Id_000;
-    bool scene_change_request_ = false;
-    const SceneId id_prev_;
+    SceneId id_prev() const { return id_prev_; }
     SceneContext scx_;
     TalkflowControllerT talkflow_;
     StatusDisplayRequest& status_display_request_;
     GameOverEffect game_over_effect_;
+
+    void set_id(SceneId id) { id_ = id; }
+    void set_scene_change_request(SceneId id_next) { 
+        id_next_ = id_next;
+        scene_change_request_ = true;
+    }
+
+private:
+    const SceneId id_prev_;
+    bool menu_request_ = false;
+    bool scene_change_request_ = false;
+    SceneId id_ = SceneId::Title;
+    SceneId id_next_ = SceneId::Title;
 };
 
 } // namespace app

@@ -40,7 +40,7 @@ void rect_set_visible(mgc_rect_t *rect, bool v) {
     rect->visible = v;
 }
 
-void rect_set_position(mgc_rect_t *rect, int16_t x, int16_t y) {
+void rect_set_position(mgc_rect_t *rect, mgc_world_t x, mgc_world_t y) {
     if ( rect == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -108,10 +108,10 @@ static inline bool draw_buffer(
         const mgc_draw_options_t *options
 ) {
     // 0: rect, 1: camera
-    int16_t l0, l1;
-    int16_t r0, r1;
-    int16_t t0, t1;
-    int16_t b0, b1;
+    mgc_world_t l0, l1;
+    mgc_world_t r0, r1;
+    mgc_world_t t0, t1;
+    mgc_world_t b0, b1;
 
     if ( ( rect == NULL ) ||
          ( draw_buf == NULL )
@@ -146,8 +146,8 @@ static inline bool draw_buffer(
     b1 = t1 + buf_height - 1;
 
     if ( (l0<=r1) && (l1<=r0) && (t0<=b1) && (t1<=b0) ) {
-        int16_t x, y;
-        int16_t x_s, y_s, x_e, y_e;
+        int32_t x, y;
+        int32_t x_s, y_s, x_e, y_e;
         mgc_color_t color;
 
         if ( rect->border_width > 0 ) {

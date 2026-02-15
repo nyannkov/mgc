@@ -19,7 +19,9 @@ set(CXX_SOURCES
     game_context/default_talkflow_effects.cpp
     utils/game_over_effect/game_over_effect.cpp
     status/status.cpp
+    menu/equipment_menu.cpp
     entity/player/player.cpp
+    entity/block/pushable_block/pushable_block.cpp
     entity/prop/gate/gate.cpp
     entity/prop/entrance/entrance.cpp
     entity/prop/signboard/signboard.cpp
@@ -38,11 +40,14 @@ set(C_SOURCES
     resources/generated/tileset/tileset_map_elements.c
     resources/generated/tileset/tileset_items.c
     resources/generated/tileset/tileset_attack.c
+    resources/generated/tileset/tileset_block.c
     resources/generated/tileset/tileset_hen.c
     resources/generated/tileset/tileset_chick.c
     resources/generated/tileset/tileset_static_objects.c
     resources/generated/tileset/tileset_static_objects_16x48.c
     resources/generated/tileset/tileset_light_rays.c
+    resources/generated/tileset/tileset_menu_items.c
+    resources/generated/tileset/tileset_menu_weapon.c
     resources/generated/map/map_tower_front_bg_back.c
     resources/generated/map/map_tower_front_back_tower.c
     resources/generated/map/map_tower_front_block.c
@@ -51,10 +56,22 @@ set(C_SOURCES
     resources/generated/map/map_stage_1_1_block.c
     resources/generated/map/map_stage_1_1_ladder.c
     resources/generated/map/map_stage_1_1_one_way_block.c
+    resources/generated/map/map_stage_1_2_block.c
+    resources/generated/map/map_stage_1_2_ladder.c
+    resources/generated/map/map_stage_1_2_one_way_block.c
+    resources/generated/map/map_stage_1_2_needle.c
+    resources/generated/map/map_stage_1_3_block.c
+    resources/generated/map/map_stage_1_3_ladder.c
+    resources/generated/map/map_stage_1_3_one_way_block.c
+    resources/generated/map/map_stage_1_3_needle.c
+
+    resources/generated/map/item_name_plate.c
     resources/generated/btree/btree_chase.c
     resources/generated/font/k8x12.c
     resources/generated/font/misaki_gothic.c
     resources/generated/talkscript/talkscript_1.c
+    resources/item_descriptors/item_descriptors_menu.c
+    resources/generated/tileset/tileset_menu_display.c
 )
 
 add_executable(${CMAKE_PROJECT_NAME}

@@ -9,7 +9,7 @@
 #define MGC_SELECTBOX_DEFAULT_FBB_Y   (16)
 
 static inline
-void set_position_all(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
+void set_position_all(mgc_selectbox_t *selectbox, mgc_world_t x, mgc_world_t y) {
 
     selectbox->x = x;
     selectbox->y = y;
@@ -18,8 +18,8 @@ void set_position_all(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
 
     for ( size_t idx = 0; idx < MGC_SELECTBOX_MAX_SELECT_NUM; idx++ ) {
         struct mgc_label *item = &selectbox->item[idx];
-        int16_t x_item, y_item;
-        int16_t item_height;
+        mgc_world_t x_item, y_item;
+        uint16_t item_height;
         item_height = ( selectbox->font != NULL ) ? item->font->fbb_y : MGC_SELECTBOX_DEFAULT_FBB_Y;
         if ( selectbox->fontsize2x == true ) {
             item_height *= 2;
@@ -137,7 +137,7 @@ void selectbox_resize_to_fit(mgc_selectbox_t *selectbox) {
 
 void selectbox_append_item(mgc_selectbox_t *selectbox, const char *text) {
     struct mgc_label *item;
-    int16_t item_height;
+    uint16_t item_height;
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -183,7 +183,7 @@ void selectbox_set_visible(mgc_selectbox_t *selectbox, bool v) {
     selectbox->visible = v;
 }
 
-void selectbox_set_position(mgc_selectbox_t *selectbox, int16_t x, int16_t y) {
+void selectbox_set_position(mgc_selectbox_t *selectbox, mgc_world_t x, mgc_world_t y) {
     if ( selectbox == NULL ) {
         MGC_WARN("Invalid handler");
         return;

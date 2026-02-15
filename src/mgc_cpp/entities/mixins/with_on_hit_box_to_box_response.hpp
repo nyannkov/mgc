@@ -15,6 +15,17 @@ namespace mgc {
 namespace entities {
 namespace mixins {
 
+template <typename, typename = void>
+struct has_on_hit_box_to_box : std::false_type {};
+
+template <typename T>
+struct has_on_hit_box_to_box<
+    T,
+    std::void_t<
+        decltype(std::declval<const T&>().hitboxes())
+    >
+> : std::true_type {};
+
 template <typename Derived>
 struct WithOnHitBoxToBoxResponse {
     template <typename Other>

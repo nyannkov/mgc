@@ -8,6 +8,14 @@
 #include "resources/generated/map/map_stage_1_1_block.h"
 #include "resources/generated/map/map_stage_1_1_ladder.h"
 #include "resources/generated/map/map_stage_1_1_one_way_block.h"
+#include "resources/generated/map/map_stage_1_2_block.h"
+#include "resources/generated/map/map_stage_1_2_ladder.h"
+#include "resources/generated/map/map_stage_1_2_needle.h"
+#include "resources/generated/map/map_stage_1_2_one_way_block.h"
+#include "resources/generated/map/map_stage_1_3_block.h"
+#include "resources/generated/map/map_stage_1_3_ladder.h"
+#include "resources/generated/map/map_stage_1_3_needle.h"
+#include "resources/generated/map/map_stage_1_3_one_way_block.h"
 
 
 #include "resources/generated/tileset/tileset_map_elements.h"
@@ -22,24 +30,27 @@ Stage::Stage(const FrameTimerT& frame_timer)
       back_1_(frame_timer) { 
 }
 
+void Stage::resource_init() {
+    block_.set_all_enabled(false);
+    ladder_.set_all_enabled(false);
+    one_way_block_.set_all_enabled(false);
+    needle_.set_all_enabled(false);
+    back_0_.set_all_enabled(false);
+    back_1_.set_all_enabled(false);
+}
+
 void Stage::setup(StageId id) {
     stage_id_ = id;
+
+    resource_init();
+
     switch (id) {
     case StageId::None:
-        block_.set_all_enabled(false);
-        ladder_.set_all_enabled(false);
-        one_way_block_.set_all_enabled(false);
-        back_0_.set_all_enabled(false);
-        back_1_.set_all_enabled(false);
         break;
 
     case StageId::TowerFront:
         block_.set_maps(map_tower_front_block, tileset_map_elements, &map_tower_front_block);
         block_.set_all_enabled(true);
-
-        ladder_.set_all_enabled(false);
-
-        one_way_block_.set_all_enabled(false);
 
         back_0_.set_maps(map_tower_front_bg_back, tileset_map_elements);
         back_0_.set_all_enabled(true);
@@ -55,14 +66,8 @@ void Stage::setup(StageId id) {
         block_.set_maps(map_corridor_block, tileset_map_elements, &map_corridor_block);
         block_.set_all_enabled(true);
 
-        one_way_block_.set_all_enabled(false);
-
-        back_0_.set_all_enabled(false);
-
-        ladder_.set_all_enabled(false);
-
-        back_1_.set_all_enabled(true);
         back_1_.set_maps(map_corridor_back, tileset_map_elements);
+        back_1_.set_all_enabled(true);
         break;
 
     case StageId::Stage1_1:
@@ -74,9 +79,34 @@ void Stage::setup(StageId id) {
 
         ladder_.set_maps(map_stage_1_1_ladder, tileset_map_elements, &map_stage_1_1_ladder);
         ladder_.set_all_enabled(true);
+        break;
 
-        back_0_.set_all_enabled(false);
-        back_1_.set_all_enabled(false);
+    case StageId::Stage1_2:
+        block_.set_maps(map_stage_1_2_block, tileset_map_elements, &map_stage_1_2_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_1_2_one_way_block, tileset_map_elements, &map_stage_1_2_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_1_2_ladder, tileset_map_elements, &map_stage_1_2_ladder);
+        ladder_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_1_2_needle, tileset_map_elements, &map_stage_1_2_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage1_3:
+        block_.set_maps(map_stage_1_3_block, tileset_map_elements, &map_stage_1_3_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_1_3_one_way_block, tileset_map_elements, &map_stage_1_3_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_1_3_ladder, tileset_map_elements, &map_stage_1_3_ladder);
+        ladder_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_1_3_needle, tileset_map_elements, &map_stage_1_3_needle);
+        needle_.set_all_enabled(true);
         break;
 
     default:

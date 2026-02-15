@@ -9,6 +9,8 @@ enum class StageId {
     TowerFront,
     Corridor,
     Stage1_1,
+    Stage1_2,
+    Stage1_3,
     Count
 };
 

@@ -32,11 +32,11 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
         target_ = &target;
     }
 
-    void set_x_follow_setting(int16_t start_line, int16_t end_line, uint16_t deadzone) {
+    void set_x_follow_setting(mgc_world_t start_line, mgc_world_t end_line, uint16_t deadzone) {
         camera_set_x_follow_settings(&camera_, start_line, end_line, deadzone);
     }
 
-    void set_y_follow_setting(int16_t start_line, int16_t end_line, uint16_t deadzone) {
+    void set_y_follow_setting(mgc_world_t start_line, mgc_world_t end_line, uint16_t deadzone) {
         camera_set_y_follow_settings(&camera_, start_line, end_line, deadzone);
     }
 

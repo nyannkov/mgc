@@ -18,12 +18,12 @@ SkyFishBehaviorState SkyFishBTListener::behavior_state() const {
     return behavior_state_;
 }
 
-void SkyFishBTListener::set_hit_flag(SkyFishHitboxIndex index) {
+void SkyFishBTListener::set_hit_flag(EnemyHitboxIndex index) {
     at(hit_flags_, index) = true;
 }
 
 void SkyFishBTListener::set_hit_flag(size_t index) {
-    if ( index < static_cast<size_t>(SkyFishHitboxIndex::Count) ) {
+    if ( index < static_cast<size_t>(EnemyHitboxIndex::Count) ) {
         hit_flags_[index] = true;
     }
 }
@@ -43,8 +43,8 @@ SkyFishBTListener::LeafResult SkyFishBTListener::on_proc_leaf(
 ) {
     if ( id == "cond/player/visible" ) {
         const bool in_view = 
-            at(hit_flags_, SkyFishHitboxIndex::ViewLeft) ||
-            at(hit_flags_, SkyFishHitboxIndex::ViewRight);
+            at(hit_flags_, EnemyHitboxIndex::ViewLeft) ||
+            at(hit_flags_, EnemyHitboxIndex::ViewRight);
 
         if ( in_view ) {
             return LeafResult::Success;

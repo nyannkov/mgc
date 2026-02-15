@@ -13,8 +13,8 @@
 #include "mgc_cpp/entities/mixins/with_collision_map.hpp"
 #include "mgc_cpp/entities/mixins/with_on_hit_box_to_box_response.hpp"
 #include "mgc_cpp/entities/mixins/with_on_hit_box_to_map_response.hpp"
+#include "mgc_cpp/entities/mixins/with_handle_box_pushback_result.hpp"
 #include "mgc_cpp/entities/mixins/with_handle_map_pushback_result.hpp"
-#include "mgc_cpp/collision/collision_detector.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 
@@ -27,15 +27,13 @@ struct ActorImpl
     : mgc::entities::mixins::WithHitboxes<Derived, MaxHitboxCount>,
       mgc::entities::mixins::WithOnHitBoxToBoxResponse<Derived>,
       mgc::entities::mixins::WithOnHitBoxToMapResponse<Derived>,
+      mgc::entities::mixins::WithHandleBoxPushbackResult<Derived>,
       mgc::entities::mixins::WithHandleMapPushbackResult<Derived>,
       mgc::features::HasId,
       mgc::features::HasPosition<mgc::math::Vec2i>,
       mgc::features::Visible,
       mgc::features::Drawable,
       mgc::features::CellDrawable {
-
-    friend mgc::collision::CollisionDetectorBoxToBox;
-    friend mgc::collision::CollisionDetectorBoxToMap;
 
     using SpriteT = mgc::parts::BasicSprite;
     using Hitboxes = std::array<mgc::collision::Hitbox, MaxHitboxCount>; 
@@ -45,10 +43,10 @@ struct ActorImpl
         sprite_.reset();
         sprite_.set_position(floor_cast(real_pos_));
         for ( auto& h : hitboxes_ ) {
-            h.enabled = false;
+            h.set_enabled(false);
         }
     }
-    ~ActorImpl() = default;
+    virtual ~ActorImpl() = default;
     ActorImpl(const ActorImpl&) = delete;
     ActorImpl& operator=(const ActorImpl&) = delete;
     ActorImpl(ActorImpl&&) = default;
@@ -106,7 +104,7 @@ struct ActorImpl
 
     const mgc::collision::Hitbox* get_hitbox_by_id_impl(mgc_id_t hitbox_id) const {
         for (const auto& h : hitboxes_) {
-            if (h.id == hitbox_id) return &h;
+            if (h.id() == hitbox_id) return &h;
         }
         return nullptr;
     }
@@ -146,6 +144,12 @@ struct ActorImpl
             const mgc::collision::BoxCollisionInfo& info
     ) { }
 
+    // [impl] WithHandleBoxPushbackResult
+    template <typename View>
+    void handle_box_pushback_result_impl(
+            const mgc::collision::BoxPushbackInfo& info,
+            const View& others
+    ) { }
 
     // [impl] WithOnHitBoxToMapResponse
     // Called when a collision occurs between an object and the map.
@@ -158,7 +162,6 @@ struct ActorImpl
             const MapT& map,
             const mgc::collision::MapCollisionInfo& info
     ) { }
-
 
     // [impl] WithPostHitBoxToMapResponse
     // Called after a pushback correction has been applied due to map collision.
@@ -186,7 +189,7 @@ protected:
     Hitboxes& mut_hitboxes() { return hitboxes_; }
     mgc::collision::Hitbox* get_hitbox_by_id(mgc_id_t hitbox_id) {
         for (auto& h : hitboxes_) {
-            if (h.id == hitbox_id) return &h;
+            if (h.id() == hitbox_id) return &h;
         }
         return nullptr;
     }
@@ -197,8 +200,8 @@ private:
     mgc::math::Vec2f real_pos_;
     Hitboxes hitboxes_;
 
-    static constexpr int16_t floor_cast(float v) {
-        int16_t i = static_cast<int16_t>(v);
+    static constexpr mgc_world_t floor_cast(float v) {
+        mgc_world_t i = static_cast<mgc_world_t>(v);
         return (v < 0.0f && static_cast<float>(i) != v) ? (i - 1) : i;
     }
     static constexpr mgc::math::Vec2i floor_cast(const mgc::math::Vec2f& v) {

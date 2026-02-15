@@ -6,6 +6,7 @@
 #include "entity/civilian/civilian.hpp"
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
+#include "entity/block/block.hpp"
 
 namespace app {
 
@@ -16,6 +17,7 @@ struct ISceneObjects {
     virtual ArrayViewer<civilian::Civilian*> civils() = 0;
     virtual ArrayViewer<enemy::Enemy*> enemies() = 0;
     virtual ArrayViewer<item::Item*> items() = 0;
+    virtual ArrayViewer<block::Block*> blocks() = 0;
 
     virtual void draw(
         FramebufferT& fb,
@@ -32,6 +34,9 @@ struct ISceneObjects {
         }
         for ( auto* item : items() ) {
             item->draw(fb, cam_pos);
+        }
+        for ( auto* block : blocks() ) {
+            block->draw(fb, cam_pos);
         }
     }
 

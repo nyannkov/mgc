@@ -11,7 +11,6 @@
 #include "mgc_cpp/entities/mixins/with_collision_map.hpp"
 #include "mgc_cpp/entities/mixins/with_on_hit_box_to_map_response.hpp"
 #include "mgc_cpp/entities/mixins/with_handle_map_pushback_result.hpp"
-#include "mgc_cpp/collision/collision_detector.hpp"
 #include "mgc_cpp/features/resettable.hpp"
 #include "mgc_cpp/features/has_position.hpp"
 
@@ -28,13 +27,12 @@ struct TilemapImpl : mgc::entities::mixins::WithCollisionMap<Derived>,
                      mgc::features::Drawable,
                      mgc::features::CellDrawable {
                       
-    friend mgc::collision::CollisionDetectorBoxToMap;
     using TilegridT = mgc::parts::BasicTilegrid;
 
     TilemapImpl() : id_(0), hit_enabled_(false), collision_map_(nullptr) { 
         tilegrid_.reset();
     }
-    ~TilemapImpl() = default;
+    virtual ~TilemapImpl() = default;
     TilemapImpl(const TilemapImpl&) = delete;
     TilemapImpl& operator=(const TilemapImpl&) = delete;
     TilemapImpl(TilemapImpl&&) = default;

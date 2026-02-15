@@ -21,7 +21,7 @@ void camera_init(mgc_camera_t *camera) {
     camera->y = 0;
 }
 
-void camera_set_x_follow_settings(mgc_camera_t *camera, int16_t start_line, int16_t end_line, uint16_t deadzone) {
+void camera_set_x_follow_settings(mgc_camera_t *camera, mgc_world_t start_line, mgc_world_t end_line, uint16_t deadzone) {
     if ( camera == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -32,7 +32,7 @@ void camera_set_x_follow_settings(mgc_camera_t *camera, int16_t start_line, int1
     camera->x_follow_line = start_line;
 }
 
-void camera_set_y_follow_settings(mgc_camera_t *camera, int16_t start_line, int16_t end_line, uint16_t deadzone) {
+void camera_set_y_follow_settings(mgc_camera_t *camera, mgc_world_t start_line, mgc_world_t end_line, uint16_t deadzone) {
     if ( camera == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -60,9 +60,9 @@ void camera_set_y_follow_enabled(mgc_camera_t *camera, bool enabled) {
 }
 
 void camera_follow_target_position(mgc_camera_t *camera, mgc_point_t target_pos) {
-    int16_t dx, dy;
-    int16_t next_follow_line;
-    int16_t target_x, target_y;
+    mgc_world_t dx, dy;
+    mgc_world_t next_follow_line;
+    mgc_world_t target_x, target_y;
 
     if ( camera == NULL ) {
         MGC_WARN("Invalid handler");

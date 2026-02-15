@@ -16,9 +16,9 @@ extern "C" {
 #include "pixelbuffer.h"
 
 typedef struct mgc_follow_settings {
-    int16_t follow_line;
-    int16_t start_line;
-    int16_t end_line;
+    mgc_world_t follow_line;
+    mgc_world_t start_line;
+    mgc_world_t end_line;
     uint16_t deadzone;
 } mgc_follow_settings_t;
 
@@ -27,15 +27,15 @@ typedef struct mgc_camera {
     mgc_follow_settings_t y_settings;
     bool x_enabled;
     bool y_enabled;
-    int16_t x_follow_line;
-    int16_t y_follow_line;
-    int16_t x;
-    int16_t y;
+    mgc_world_t x_follow_line;
+    mgc_world_t y_follow_line;
+    mgc_world_t x;
+    mgc_world_t y;
 } mgc_camera_t;
 
 void camera_init(mgc_camera_t *camera);
-void camera_set_x_follow_settings(mgc_camera_t *camera, int16_t start_line, int16_t end_line, uint16_t deadzone);
-void camera_set_y_follow_settings(mgc_camera_t *camera, int16_t start_line, int16_t end_line, uint16_t deadzone);
+void camera_set_x_follow_settings(mgc_camera_t *camera, mgc_world_t start_line, mgc_world_t end_line, uint16_t deadzone);
+void camera_set_y_follow_settings(mgc_camera_t *camera, mgc_world_t start_line, mgc_world_t end_line, uint16_t deadzone);
 void camera_set_x_follow_enabled(mgc_camera_t *camera, bool enabled);
 void camera_set_y_follow_enabled(mgc_camera_t *camera, bool enabled);
 void camera_follow_target_position(mgc_camera_t *camera, mgc_point_t target_pos);

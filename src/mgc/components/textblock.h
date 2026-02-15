@@ -30,8 +30,8 @@ enum mgc_display_text_state {
 
 typedef struct mgc_textblock {
     mgc_id_t id;
-    int16_t x;
-    int16_t y;
+    mgc_world_t x;
+    mgc_world_t y;
     float parallax_factor_x;
     float parallax_factor_y;
     uint16_t width;
@@ -59,7 +59,7 @@ typedef struct mgc_textblock {
 void textblock_init(mgc_textblock_t *textblock, mgc_id_t id, const mgc_font_t *font, bool fontsize2x);
 void textblock_set_id(mgc_textblock_t *textblock, mgc_id_t id);
 void textblock_set_visible(mgc_textblock_t *textblock, bool v);
-void textblock_set_position(mgc_textblock_t *textblock, int16_t x, int16_t y);
+void textblock_set_position(mgc_textblock_t *textblock, mgc_world_t x, mgc_world_t y);
 void textblock_set_text(mgc_textblock_t *textblock, const char *text);
 void textblock_set_height(mgc_textblock_t *textblock, uint16_t height);
 void textblock_set_width(mgc_textblock_t *textblock, uint16_t width);

@@ -4,7 +4,8 @@
 namespace app {
 
 enum class PlayerHitboxIndex : size_t {
-    Body = 0,
+    Hand = 0,
+    Body,
     Count
 };
 
