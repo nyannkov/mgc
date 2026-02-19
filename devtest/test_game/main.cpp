@@ -6,9 +6,9 @@
 
 namespace {
 
-
-app::Player player(app::frame_timer, app::gamepad, app::sound_controller);
-app::GameContext ctx(app::display_driver, app::sound_controller, app::gamepad, app::frame_timer, player);
+app::EquipmentInfo equipment_info{};
+app::Player player(app::frame_timer, app::gamepad, app::sound_controller, equipment_info);
+app::GameContext ctx(app::display_driver, app::sound_controller, app::gamepad, app::frame_timer, player, equipment_info);
 app::StopwatchT sw(app::frame_timer);
 
 app::MainFrame<224, 192> main_frame(8, 48, ctx);

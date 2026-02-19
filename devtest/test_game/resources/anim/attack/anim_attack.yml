@@ -1,0 +1,27 @@
+animations:
+  - name: scratch_left
+    description: "Scratch left"
+    frames:
+      - { file: frame_001.bmp, time_ms: 100 }
+
+  - name: scratch_right
+    description: "Scratch right"
+    frames:
+      - { file: frame_000.bmp, time_ms: 100 }
+
+  - name: boomerang_left
+    description: "Boomerang left"
+    frames:
+      - { file: frame_006.bmp, time_ms: 50 }
+      - { file: frame_005.bmp, time_ms: 50 }
+      - { file: frame_004.bmp, time_ms: 50 }
+      - { file: frame_007.bmp, time_ms: 50 }
+
+  - name: boomerang_right
+    description: "Boomerang right"
+    frames:
+      - { file: frame_004.bmp, time_ms: 50 }
+      - { file: frame_005.bmp, time_ms: 50 }
+      - { file: frame_006.bmp, time_ms: 50 }
+      - { file: frame_007.bmp, time_ms: 50 }
+

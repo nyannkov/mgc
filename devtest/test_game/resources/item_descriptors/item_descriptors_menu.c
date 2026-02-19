@@ -1,33 +1,44 @@
 #include "item_descriptors_menu.h"
 #include "resources/generated/tileset/tileset_menu_items.h"
+#include "resources/generated/tileset/tileset_menu_weapon.h"
 
-static const item_descriptor_t descriptors[COUNT_ITEM_DESCRIPTOR_MENU] = {
-    {"test1", "テストアイテムその1", 1},
-    {"test2", "テストアイテムその2", 2},
-    {"test3", "テストアイテムその3", 3},
-    {"test4", "テストアイテムその4", 4},
-    {"test5", "テストアイテムその5", 5},
-    {"test6", "テストアイテムその6", 6},
-    {"test7", "テストアイテムその7", 7},
-    {"test8", "テストアイテムその8", 8},
-    {"test9", "テストアイテムその9", 9},
-    {"test10", "テストアイテムその10", 10},
-    {"test11", "テストアイテムその11", 11},
-    {"test12", "テストアイテムその12", 12},
-    {"test13", "テストアイテムその13", 13},
-    {"test14", "テストアイテムその14", 14},
-    {"test15", "テストアイテムその15", 15},
-    {"test16", "テストアイテムその16", 16},
-    {"test17", "テストアイテムその17", 17},
-    {"test18", "テストアイテムその18", 18},
-    {"test19", "テストアイテムその19", 19},
-    {"test20", "テストアイテムその20", 20},
+static const item_descriptor_t descriptors_items[COUNT_ITEM_DESCRIPTOR_MENU] = {
+    {"test1", "テストアイテムその1", 0},
+    {"test2", "テストアイテムその2", 1},
+    {"test3", "テストアイテムその3", 2},
+    {"test4", "テストアイテムその4", 3},
+    {"test5", "テストアイテムその5", 4},
+    {"test6", "テストアイテムその6", 5},
+    {"test7", "テストアイテムその7", 6},
+    {"test8", "テストアイテムその8", 7},
+    {"test9", "テストアイテムその9", 8},
+    {"test10", "テストアイテムその10", 9},
+    {"test11", "テストアイテムその11", 10},
+    {"test12", "テストアイテムその12", 11},
+    {"test13", "テストアイテムその13", 12},
+    {"test14", "テストアイテムその14", 13},
+    {"test15", "テストアイテムその15", 14},
+    {"test16", "テストアイテムその16", 15},
+    {"test17", "テストアイテムその17", 16},
+    {"test18", "テストアイテムその18", 17},
+    {"test19", "テストアイテムその19", 18},
+    {"test20", "テストアイテムその20", 19},
 };
 
 const item_descriptors_t item_descriptors_menu = {
     .tileset = &tileset_menu_items,
-    .descriptors = descriptors,
+    .descriptors = descriptors_items,
     .descriptor_count = COUNT_ITEM_DESCRIPTOR_MENU
 };
 
+static const item_descriptor_t descriptors_weapons[COUNT_WEAPON_DESCRIPTOR_MENU] = {
+    {"Claw", "テスト1", 0},
+    {"Boomerang", "テスト2", 1},
+};
+
+const item_descriptors_t weapon_descriptors_menu = {
+    .tileset = &tileset_menu_weapon,
+    .descriptors = descriptors_weapons,
+    .descriptor_count = COUNT_WEAPON_DESCRIPTOR_MENU
+};
 

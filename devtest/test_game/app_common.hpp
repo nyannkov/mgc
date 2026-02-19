@@ -43,6 +43,7 @@ namespace app {
 struct Player;
 struct Attack;
 struct GameContext;
+struct EquipmentInfo;
 }
 
 namespace app::enemy {

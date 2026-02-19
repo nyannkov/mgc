@@ -7,11 +7,15 @@ namespace app {
 
 using mgc::platform::input::Key;
 
-Player::Player(const FrameTimerT& frame_timer, const GamepadT& gamepad, SoundControllerT& sound_controller)
-    : gamepad_(gamepad),
+Player::Player(
+    const FrameTimerT& frame_timer,
+    const GamepadT& gamepad,
+    SoundControllerT& sound_controller,
+    const EquipmentInfo& equipment_info
+)   : gamepad_(gamepad),
       frame_timer_(frame_timer),
       sound_controller_(sound_controller),
-      attack_(frame_timer, gamepad),
+      attack_(frame_timer, gamepad, sound_controller),
       anim_(frame_timer), 
       velocity_({0.0f, 0.0f}),
       force_ex_({0.0f, 0.0f}),
@@ -28,7 +32,8 @@ Player::Player(const FrameTimerT& frame_timer, const GamepadT& gamepad, SoundCon
       input_enabled_(true),
       gold_(100),
       attack_state_(AttackState::Stop),
-      blink_animator_(frame_timer) {
+      blink_animator_(frame_timer),
+      equipment_info_(equipment_info) {
 
       init();
 }
@@ -200,6 +205,8 @@ void Player::update_movement() {
     is_grounded_ = false;
 
     force_ex_ *= 0.5;
+
+    attack_.update_movement();
 }
 
 void Player::update_animation(bool is_talking) {
@@ -232,6 +239,8 @@ void Player::update_animation(bool is_talking) {
         anim_.proc();
         anim_.set_current_frame(this->mut_sprite());
     }
+
+    attack_.update_animation();
 }
 
 void Player::receive_damage(int32_t amount) {
@@ -298,15 +307,26 @@ void Player::update_anim_attacking() {
 
     anim_.set_loop(false);
 
+    //TODO
+    switch ( equipment_info_.weapon_selected_index() ) {
+    case 0:
+        current_attack_type_ = AttackType::Scratch;
+        break;
+    case 1:
+        current_attack_type_ = AttackType::Boomerang;
+        break;
+    default:
+        break;
+    }
+
     if ( attack_state_ == AttackState::Start ) {
         attack_state_ = AttackState::InProgress;
-        sound_controller_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH, 0.0);
 
         if ( is_right_ ) {
-            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), AttackOwner::Player, AttackDirection::Right);
+            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  AttackOwner::Player, AttackDirection::Right);
             anim_state_ = PlayerAnimState::AttackRight;
         } else {
-            attack_.spawn(this->position() + mgc::math::Vec2i(-10, 0), AttackOwner::Player, AttackDirection::Left);
+            attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, AttackOwner::Player, AttackDirection::Left);
             anim_state_ = PlayerAnimState::AttackLeft;
         }
 
@@ -316,7 +336,6 @@ void Player::update_anim_attacking() {
     } else if ( attack_state_ == AttackState::InProgress ) {
         if ( anim_.is_finished() ) {
             attack_state_ = AttackState::Stop;
-            attack_.despawn();
         }
 
     } else { }

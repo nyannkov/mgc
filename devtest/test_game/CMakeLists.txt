@@ -25,7 +25,7 @@ set(CXX_SOURCES
     entity/prop/gate/gate.cpp
     entity/prop/entrance/entrance.cpp
     entity/prop/signboard/signboard.cpp
-    entity/attack/scratch/scratch.cpp
+    entity/attack/attack.cpp
     entity/item/potion/potion.cpp
     entity/item/elixir/elixir.cpp
     entity/enemy/skyfish/skyfish.cpp
@@ -39,7 +39,6 @@ set(CXX_SOURCES
 set(C_SOURCES 
     resources/generated/tileset/tileset_map_elements.c
     resources/generated/tileset/tileset_items.c
-    resources/generated/tileset/tileset_attack.c
     resources/generated/tileset/tileset_block.c
     resources/generated/tileset/tileset_hen.c
     resources/generated/tileset/tileset_chick.c
@@ -48,6 +47,7 @@ set(C_SOURCES
     resources/generated/tileset/tileset_light_rays.c
     resources/generated/tileset/tileset_menu_items.c
     resources/generated/tileset/tileset_menu_weapon.c
+    resources/generated/tileset/tileset_menu_cursor.c
     resources/generated/map/map_tower_front_bg_back.c
     resources/generated/map/map_tower_front_back_tower.c
     resources/generated/map/map_tower_front_block.c
@@ -81,6 +81,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 add_subdirectory("${MGC_DIR}"  mgc_build)
 add_subdirectory(resources/generated/anim/player)
+add_subdirectory(resources/generated/anim/attack)
 add_subdirectory(resources/generated/anim/enemy/skyfish)
 add_subdirectory(resources/mml)
 add_subdirectory(scene)
@@ -90,6 +91,7 @@ add_subdirectory(platform)
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
     platform
     anim_player
+    anim_attack
     anim_skyfish
     mml
     scene

@@ -20,13 +20,14 @@ KANJI_SUBSET_GEN="tools/kanji_subset_gen/kanji_subset_gen.py"
 
 #python3 ${ANIM_FRAME_SPLITTER}    ./resources/tileset/tileset_skyfish.bmp --width 16 --height 16 --dir ./resources/anim/enemy/skyfish
 #python3 ${ANIM_FRAME_SPLITTER}    ./resources/tileset/tileset_player.bmp --width 16 --height 16 --dir ./resources/anim/player
+#python3 ${ANIM_FRAME_SPLITTER}    ./resources/tileset/tileset_attack.bmp --width 16 --height 16 --dir ./resources/anim/attack
 
 python3 ${ANIM_GEN}         ./resources/anim/player/anim_player.yml  --dir ./resources/generated/anim/player
 python3 ${ANIM_GEN}         ./resources/anim/enemy/skyfish/anim_skyfish.yml  --dir ./resources/generated/anim/enemy/skyfish
+python3 ${ANIM_GEN}         ./resources/anim/attack/anim_attack.yml  --dir ./resources/generated/anim/attack
 
 python3 ${TILESET_GEN}      ./resources/stage/tileset/tileset_map_elements.bmp --count 100 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_items.bmp --count 16 --width 8 --height 8 --dir ./resources/generated/tileset
-python3 ${TILESET_GEN}      ./resources/tileset/tileset_attack.bmp --count 2 --width 8 --height 16 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_block.bmp --count 1 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_static_objects.bmp --count 7 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_static_objects_16x48.bmp --count 2 --width 16 --height 48 --dir ./resources/generated/tileset
@@ -36,6 +37,7 @@ python3 ${TILESET_GEN}      ./resources/tileset/tileset_light_rays.bmp --count 3
 
 python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_items.bmp --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_weapon.bmp --dir ./resources/generated/tileset
+python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_cursor.bmp --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_display.bmp --dir ./resources/generated/tileset
 python3 ${MAP_GEN}          ./resources/menu/map/item_name_plate.csv --compression runlength --dir ./resources/generated/map
 

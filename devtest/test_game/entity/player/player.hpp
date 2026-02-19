@@ -6,12 +6,13 @@
 #include "entity/stage/layer/layer_ladder.hpp"
 #include "entity/stage/layer/layer_one_way_block.hpp"
 #include "entity/stage/layer/layer_needle.hpp"
-#include "entity/attack/scratch/scratch.hpp"
+#include "entity/attack/attack.hpp"
 #include "entity/enemy/enemy_state.hpp"
 #include "entity/prop/prop.hpp"
 #include "entity/block/block.hpp"
 #include "player_anim.hpp"
 #include "player_hitbox_index.hpp"
+#include "game_context/equipment_info.hpp"
 
 namespace app {
 
@@ -29,7 +30,12 @@ enum class PlayerAnimMode {
 
 struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitboxIndex::Count)> {
 
-    Player(const FrameTimerT& frame_timer, const GamepadT& gamepad, SoundControllerT& sound_controller);
+    Player(
+        const FrameTimerT& frame_timer,
+        const GamepadT& gamepad,
+        SoundControllerT& sound_controller,
+        const EquipmentInfo& equipment_info
+    );
     ~Player() = default;
     Player(const Player&) = delete;
     Player& operator=(const Player&) = delete;
@@ -135,6 +141,7 @@ private:
     const GamepadT& gamepad_;
     const FrameTimerT& frame_timer_;
     SoundControllerT& sound_controller_;
+    const EquipmentInfo& equipment_info_;
     mgc::control::anim::AnimController<FrameTimerT> anim_;
     mgc::math::Vec2f velocity_;
     bool hit_lt_, hit_rt_, hit_lb_, hit_rb_;
@@ -143,6 +150,7 @@ private:
     PlayerAnimState anim_state_;
     PlayerAnimState anim_state_manual_;
     PlayerState player_state_;
+    AttackType current_attack_type_ = AttackType::Boomerang;
     bool is_right_;
     int32_t hp_;
     int32_t full_hp_;
@@ -150,7 +158,7 @@ private:
     enum class AttackState {
         Stop, Start, InProgress
     } attack_state_;
-    Scratch attack_;
+    Attack attack_;
     BlinkAnimatorT blink_animator_;
     mgc::math::Vec2f force_ex_;
     bool hit_ladder_;

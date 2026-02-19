@@ -31,7 +31,14 @@ enum item_decriptors_menu_index {
     COUNT_ITEM_DESCRIPTOR_MENU
 };
 
+enum weapon_decriptors_menu_index {
+    WEAPON_DESCRIPTORS_MENU_WEAPON1 = 0,
+    WEAPON_DESCRIPTORS_MENU_WEAPON2,
+    COUNT_WEAPON_DESCRIPTOR_MENU
+};
+
 extern const item_descriptors_t item_descriptors_menu;
+extern const item_descriptors_t weapon_descriptors_menu;
 
 #ifdef __cplusplus
 }

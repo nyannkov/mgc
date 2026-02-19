@@ -16,13 +16,15 @@ struct GameContext {
         SoundControllerT& sound_controller,
         GamepadT& gamepad,
         FrameTimerT& frame_timer,
-        Player& player
+        Player& player,
+        EquipmentInfo& equipment_info
     ) : display_driver_(display_driver),
         sound_controller_(sound_controller),
         gamepad_(gamepad),
         frame_timer_(frame_timer),
         default_talkflow_effects_(sound_controller),
-        player_(player) { }
+        player_(player),
+        equipment_info_(equipment_info) { }
     GameContext(const GameContext&) = delete;
     GameContext& operator=(const GameContext&) = delete;
     GameContext(GameContext&&) = default;
@@ -37,6 +39,7 @@ struct GameContext {
 
     SceneInfo& scene_info() { return scene_info_; }
     CheckpointInfo& checkpoint_info() { return checkpoint_info_; }
+    EquipmentInfo&  equipment_info() { return equipment_info_; }
 
     StatusDisplayRequest& status_display_request() { return status_display_request_; }
     DefaultTalkflowEffects& default_talkflow_effects() { return default_talkflow_effects_; }
@@ -46,6 +49,7 @@ private:
     GamepadT& gamepad_;
     FrameTimerT& frame_timer_;
     Player& player_;
+    EquipmentInfo& equipment_info_;
 
     SceneInfo scene_info_;
     CheckpointInfo checkpoint_info_;

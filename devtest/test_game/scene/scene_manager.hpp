@@ -20,7 +20,10 @@ struct SceneManager {
 
     void init() {
         set_scene(app::SceneId::Title);
-        menu_.init();
+        menu_.init(
+            ctx_.equipment_info().item_selected_index(),
+            ctx_.equipment_info().weapon_selected_index()
+        );
     }
 
     void update() {
@@ -31,11 +34,20 @@ struct SceneManager {
         if ( menu_mode_ ) {
             if ( menu_.is_exit() ) {
                 menu_mode_ = false;
+                ctx_.equipment_info().set_item_selected_index(
+                    menu_.item_selected_index()
+                );
+                ctx_.equipment_info().set_weapon_selected_index(
+                    menu_.weapon_selected_index()
+                );
             }
         } else {
             if ( scene_->has_menu_request() ) {
                 scene_->clear_menu_request();
-                menu_.init();
+                menu_.init(
+                    ctx_.equipment_info().item_selected_index(),
+                    ctx_.equipment_info().weapon_selected_index()
+                );
                 menu_mode_ = true;
             }
         }
