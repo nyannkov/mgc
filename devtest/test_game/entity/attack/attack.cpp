@@ -22,8 +22,6 @@ Attack::Attack(
     hitboxes[0].set_offset({0, 0});
     hitboxes[0].set_size({8, 16});
     hitboxes[0].set_enabled(false);
-
-    sound_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH, 0.0);
 }
 
 void Attack::spawn(
@@ -143,6 +141,7 @@ void Attack::spawn_scratch(
     set_lifecycle(AttackLifeCycle::Spawned);
     anim_.set_current_frame(this->mut_sprite());
     anim_.start_animation();
+    sound_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH, 0.0);
 }
 
 void Attack::despawn_scratch() {
