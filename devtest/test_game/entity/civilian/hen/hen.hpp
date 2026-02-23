@@ -44,7 +44,7 @@ private:
     bool talking_flag_ = false;
 };
 
-}// namespace enemy
+}// namespace civilian
 }// namespace app
 
 #endif/*MGC_CIVILIAN_HEN_HPP*/

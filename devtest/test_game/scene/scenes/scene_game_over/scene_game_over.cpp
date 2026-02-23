@@ -7,7 +7,7 @@ using mgc::platform::input::Key;
 
 Scene_GameOver::Scene_GameOver(GameContext& ctx)
                 : SceneBase(ctx),
-                  player_(ctx.player()) {
+                  player_(ctx.world_state.player) {
       set_id(SceneId::GameOver);
 }
 

@@ -217,7 +217,7 @@ void SkyFish::on_player_hit(
 }
 
 void SkyFish::on_attack_hit(
-    const Attack& attack,
+    const attack::Attack& attack,
     const mgc::collision::BoxCollisionInfo& info
 ) { 
     if ( info.self_hitbox_index == static_cast<size_t>(EnemyHitboxIndex::Body)) {

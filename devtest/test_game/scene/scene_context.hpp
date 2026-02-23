@@ -3,7 +3,8 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "app_common.hpp"
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
+#include "default_talkflow_effects.hpp"
 #include "entity/stage/stage.hpp"
 #include "interface/iscene_objects.hpp"
 #include "interface/ievent_objects.hpp"

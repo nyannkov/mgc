@@ -10,7 +10,7 @@
 #include "mgc_cpp/mgc.hpp"
 #include "resources/generated/tileset/tileset_items.h"
 #include "status/status.hpp"
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
 
 namespace app {
 
@@ -23,7 +23,7 @@ struct StatusFrame {
         GameContext& ctx
     ) : x_(x),
        y_(y),
-       cell_renderer_(cb_, ctx.display_driver(), nullptr),
+       cell_renderer_(cb_, ctx.platform.display_driver, nullptr),
        status_(ctx) {
 
         cell_renderer_.cell_buffer().set_back_color(MGC_COLOR_BLACK);

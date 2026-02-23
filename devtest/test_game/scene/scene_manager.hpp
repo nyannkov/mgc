@@ -2,10 +2,10 @@
 #define MGC_SCENE_MANAGER_HPP
 
 #include "mgc_cpp/mgc.hpp"
-#include "scene/scene.hpp"
+#include "scene/scene_factory.hpp"
 #include "utils/screen_fader/screen_fader.hpp"
-#include "game_context/game_context.hpp"
 #include "menu/equipment_menu.hpp"
+#include "game_context.hpp"
 
 namespace app {
 
@@ -13,16 +13,18 @@ struct SceneManager {
 
     explicit SceneManager(GameContext& ctx) 
         : ctx_(ctx),
-          menu_(ctx.sound_controller(),
-                ctx.gamepad(),
-                ctx.player()
+          equipment_info_(ctx.world_state.equipment_info),
+          scene_info_(ctx.world_state.scene_info),
+          menu_(ctx.platform.sound_controller,
+                ctx.platform.gamepad,
+                ctx.world_state.player
           ) { }
 
     void init() {
         set_scene(app::SceneId::Title);
         menu_.init(
-            ctx_.equipment_info().item_selected_index(),
-            ctx_.equipment_info().weapon_selected_index()
+            equipment_info_.item_selected_index(),
+            equipment_info_.weapon_selected_index()
         );
     }
 
@@ -34,10 +36,10 @@ struct SceneManager {
         if ( menu_mode_ ) {
             if ( menu_.is_exit() ) {
                 menu_mode_ = false;
-                ctx_.equipment_info().set_item_selected_index(
+                equipment_info_.set_item_selected_index(
                     menu_.item_selected_index()
                 );
-                ctx_.equipment_info().set_weapon_selected_index(
+                equipment_info_.set_weapon_selected_index(
                     menu_.weapon_selected_index()
                 );
             }
@@ -45,8 +47,8 @@ struct SceneManager {
             if ( scene_->has_menu_request() ) {
                 scene_->clear_menu_request();
                 menu_.init(
-                    ctx_.equipment_info().item_selected_index(),
-                    ctx_.equipment_info().weapon_selected_index()
+                    equipment_info_.item_selected_index(),
+                    equipment_info_.weapon_selected_index()
                 );
                 menu_mode_ = true;
             }
@@ -77,6 +79,8 @@ struct SceneManager {
 private:
     IScene *scene_ = nullptr;
     ScreenFader screen_fader_;
+    EquipmentInfo& equipment_info_;
+    SceneInfo& scene_info_;
     GameContext& ctx_;
     EquipmentMenu menu_;
     bool menu_mode_ = false;
@@ -104,7 +108,7 @@ private:
 
     void change_next_scene() {
         if ( scene_ && scene_->has_scene_change_request() ) {
-            ctx_.scene_info().set_prev_scene_id(scene_->id());
+            scene_info_.set_prev_scene_id(scene_->id());
             set_scene(scene_->id_next());
             screen_fader_.request_fade_in();
         }
@@ -113,9 +117,9 @@ private:
     bool set_scene(SceneId id) {
         bool r = true;
         if ( scene_ ) {
-            destroy_current_scene();
+            SceneFactory::destroy_current_scene();
         }
-        scene_ = create_scene(id, ctx_);
+        scene_ = SceneFactory::create_scene(id, ctx_);
         if ( scene_ ) {
             scene_->init();
         } else {

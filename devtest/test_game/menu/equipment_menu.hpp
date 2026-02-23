@@ -1,7 +1,7 @@
 #ifndef MGC_EQUIPMENT_MENU_HPP
 #define MGC_EQUIPMENT_MENU_HPP
 
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
 #include "resources/item_descriptors/item_descriptors_menu.h"
 
 namespace app {

@@ -12,7 +12,7 @@
 #include "entity/block/block.hpp"
 #include "player_anim.hpp"
 #include "player_hitbox_index.hpp"
-#include "game_context/equipment_info.hpp"
+#include "world_state/equipment_info.hpp"
 
 namespace app {
 
@@ -46,7 +46,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state);
     void update_movement();
     void update_animation(bool is_talking);
-    Attack& attack() { return attack_; }
+    attack::Attack& attack() { return attack_; }
 
     void reset_state_for_placement(
         const mgc::math::Vec2i& pos,
@@ -150,7 +150,7 @@ private:
     PlayerAnimState anim_state_;
     PlayerAnimState anim_state_manual_;
     PlayerState player_state_;
-    AttackType current_attack_type_ = AttackType::Boomerang;
+    attack::AttackType current_attack_type_ = attack::AttackType::Boomerang;
     bool is_right_;
     int32_t hp_;
     int32_t full_hp_;
@@ -158,7 +158,7 @@ private:
     enum class AttackState {
         Stop, Start, InProgress
     } attack_state_;
-    Attack attack_;
+    attack::Attack attack_;
     BlinkAnimatorT blink_animator_;
     mgc::math::Vec2f force_ex_;
     bool hit_ladder_;

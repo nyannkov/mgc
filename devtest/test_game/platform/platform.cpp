@@ -9,14 +9,13 @@
 extern "C" void mml_psg_sim_proc(void);
 #endif
 
-
 namespace app {
 
 void platform_init() {
-    display_driver.init(50*1000*1000); // over-clock
-    sound_controller.init();
-    gamepad.init();
-    frame_timer.reset();
+    platform.display_driver.init(50*1000*1000); // over-clock
+    platform.sound_controller.init();
+    platform.gamepad.init();
+    platform.frame_timer.reset();
 }
 
 void platform_sleep(unsigned int ms) {
@@ -31,7 +30,7 @@ void platform_sleep(unsigned int ms) {
 }
 
 void platform_gamepad_proc() {
-    app::gamepad.poll();
+    platform.gamepad.poll();
 }
 
 void platform_sound_proc() {
@@ -41,7 +40,7 @@ void platform_sound_proc() {
 }
 
 void platform_tick() {
-    frame_timer.tick();
+    platform.frame_timer.tick();
 }
 
 bool platform_is_continue() {

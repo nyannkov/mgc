@@ -5,6 +5,7 @@
 #include "app_common.hpp"
 
 namespace app {
+namespace attack {
 
 enum class AttackType {
     Scratch,
@@ -121,7 +122,7 @@ private:
 
 };
 
-
+}// namespace attack
 }// namespace app
 
 #endif/*MGC_ATTACK_HPP*/

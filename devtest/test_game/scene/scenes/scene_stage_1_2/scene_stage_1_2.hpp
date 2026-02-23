@@ -3,7 +3,7 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "scene/scene_base.hpp"
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
 #include "utils/game_over_effect/game_over_effect.hpp"
 #include "entity/player/player.hpp"
 #include "entity/stage/stage.hpp"

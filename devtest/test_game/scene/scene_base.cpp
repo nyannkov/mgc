@@ -1,9 +1,10 @@
-#include "app_common.hpp"
+#include "scene_base.hpp"
 #include "resources/generated/font/k8x12.h"
 
 namespace app {
 
-void load_default_config(TalkflowControllerT& talkflow) {
+
+void SceneBase::load_default_config(TalkflowControllerT& talkflow) {
     talkflow.set_font(k8x12);
     talkflow.set_selectbox_config(
         {
@@ -26,14 +27,5 @@ void load_default_config(TalkflowControllerT& talkflow) {
     );
 }
 
-bool point_in_box(
-    int32_t x, int32_t y,
-    int32_t l, int32_t r,
-    int32_t t, int32_t b
-) {
-    return (x >= l && x <= r &&
-            y >= t && y <= b);
-}
-
-}
+} // namespace app
 

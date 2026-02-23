@@ -43,7 +43,7 @@ struct Enemy : mgc::entities::ActorImpl<
                 ) {
                     on_player_hit(other, info);
                 }
-            } else if constexpr (std::is_same_v<Other, Attack>) {
+            } else if constexpr (std::is_same_v<Other, attack::Attack>) {
                 
                 on_attack_hit(other, info);
 
@@ -78,7 +78,7 @@ protected:
     ) { }
 
     virtual void on_attack_hit(
-        const Attack& attack,
+        const attack::Attack& attack,
         const mgc::collision::BoxCollisionInfo& info
     ) { }
 

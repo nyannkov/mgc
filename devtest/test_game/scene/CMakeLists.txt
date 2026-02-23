@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.14)
 project(scene CXX)
 
 add_library(${PROJECT_NAME} STATIC
-    scene.cpp
+    scene_factory.cpp
     scene_core.cpp
+    scene_base.cpp
+    default_talkflow_effects.cpp
 )
 
 add_subdirectory(scenes/scene_title)

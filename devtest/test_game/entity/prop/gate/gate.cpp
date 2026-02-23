@@ -1,5 +1,4 @@
 #include "gate.hpp"
-#include "game_context/game_context.hpp"
 #include "resources/generated/tileset/tileset_static_objects.h"
 
 namespace app {

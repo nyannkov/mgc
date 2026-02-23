@@ -15,8 +15,6 @@ target_include_directories(app_headers INTERFACE
 
 set(CXX_SOURCES 
     main.cpp
-    app_common.cpp
-    game_context/default_talkflow_effects.cpp
     utils/game_over_effect/game_over_effect.cpp
     status/status.cpp
     menu/equipment_menu.cpp

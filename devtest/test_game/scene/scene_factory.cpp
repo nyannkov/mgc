@@ -1,4 +1,4 @@
-#include "scene.hpp"
+#include "scene_factory.hpp"
 #include "scene_pool.hpp"
 #include "scenes/scene_title/scene_title.hpp"
 #include "scenes/scene_tower_front/scene_tower_front.hpp"
@@ -9,10 +9,11 @@
 #include "scenes/scene_game_over/scene_game_over.hpp"
 
 namespace app {
-
+namespace {
 ScenePool pool;
+}
 
-IScene* create_scene(SceneId id, GameContext& ctx) {
+IScene* SceneFactory::create_scene(SceneId id, GameContext& ctx) {
     switch ( id ) {
     case SceneId::Title:
         pool.create<Scene_Title>(ctx);
@@ -42,7 +43,7 @@ IScene* create_scene(SceneId id, GameContext& ctx) {
     return pool.get();
 }
 
-void destroy_current_scene() {
+void SceneFactory::destroy_current_scene() {
     pool.destroy();
 }
 

@@ -310,10 +310,10 @@ void Player::update_anim_attacking() {
     //TODO
     switch ( equipment_info_.weapon_selected_index() ) {
     case 0:
-        current_attack_type_ = AttackType::Scratch;
+        current_attack_type_ = attack::AttackType::Scratch;
         break;
     case 1:
-        current_attack_type_ = AttackType::Boomerang;
+        current_attack_type_ = attack::AttackType::Boomerang;
         break;
     default:
         break;
@@ -323,10 +323,10 @@ void Player::update_anim_attacking() {
         attack_state_ = AttackState::InProgress;
 
         if ( is_right_ ) {
-            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  AttackOwner::Player, AttackDirection::Right);
+            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
             anim_state_ = PlayerAnimState::AttackRight;
         } else {
-            attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, AttackOwner::Player, AttackDirection::Left);
+            attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
             anim_state_ = PlayerAnimState::AttackLeft;
         }
 

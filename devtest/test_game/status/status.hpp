@@ -2,7 +2,7 @@
 #define MGC_STATUS_HPP
 
 #include "mgc_cpp/mgc.hpp"
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
 
 namespace app {
 

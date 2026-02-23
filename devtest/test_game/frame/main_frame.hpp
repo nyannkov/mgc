@@ -1,7 +1,7 @@
 #ifndef MGC_MAIN_FRAME_HPP
 #define MGC_MAIN_FRAME_HPP
 
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
 #include "scene/scene_manager.hpp"
 
 namespace app {
@@ -12,7 +12,7 @@ struct MainFrame {
         : x_(x),
           y_(y),
           dfb_(buffer_0_, buffer_1_, Width, Height),
-          renderer_(dfb_, ctx.display_driver(), nullptr),
+          renderer_(dfb_, ctx.platform.display_driver, nullptr),
           scene_manager_(ctx) { }
     ~MainFrame() = default;
     MainFrame(const MainFrame&) = delete;

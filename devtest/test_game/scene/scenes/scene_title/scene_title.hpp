@@ -3,7 +3,7 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "scene/scene_base.hpp"
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
 
 namespace app {
 

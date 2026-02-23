@@ -5,6 +5,7 @@
 #include "entity/enemy/enemy.hpp"
 
 namespace app {
+namespace attack {
 
 Attack::Attack(
     const FrameTimerT& frame_timer, 
@@ -241,4 +242,6 @@ void Attack::update_movement_boomerang() {
     set_precise_position(pos);
 }
 
+}// namespace attack
 }// namespace app
+

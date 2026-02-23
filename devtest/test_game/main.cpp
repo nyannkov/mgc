@@ -6,10 +6,10 @@
 
 namespace {
 
-app::EquipmentInfo equipment_info{};
-app::Player player(app::frame_timer, app::gamepad, app::sound_controller, equipment_info);
-app::GameContext ctx(app::display_driver, app::sound_controller, app::gamepad, app::frame_timer, player, equipment_info);
-app::StopwatchT sw(app::frame_timer);
+app::RequestHub request_hub;
+app::WorldState world_state(app::platform);
+app::GameContext ctx(app::platform, world_state, request_hub);
+app::StopwatchT sw(app::platform.frame_timer);
 
 app::MainFrame<224, 192> main_frame(8, 48, ctx);
 app::StatusFrame<224, 32> status_frame(8, 8, ctx);
@@ -26,7 +26,9 @@ void status_display_draw_blocking() {
 
     status_frame.update();
 
-    auto request_type = ctx.status_display_request().request();
+    auto& status_display_request = request_hub.status_display_request;
+
+    auto request_type = status_display_request.request();
     if ( show_status_flag ) {
         if ( request_type == app::StatusDisplayRequestType::Hide ) {
             control = StatusDisplayControl::Hide;
@@ -47,7 +49,7 @@ void status_display_draw_blocking() {
             control = StatusDisplayControl::None;
         }
     }
-    ctx.status_display_request().clear_request();
+    status_display_request.clear_request();
 
     switch (control) {
     case StatusDisplayControl::Show:/*fall-through*/
@@ -70,11 +72,11 @@ int main() {
 
     app::platform_init();
 
-    app::sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
-    app::sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
-    app::sound_controller.set_lpf_enabled(true);
-    app::sound_controller.set_lpf_alpha(0.5);
-    app::sound_controller.set_master_volume(0.5);
+    app::platform.sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
+    app::platform.sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
+    app::platform.sound_controller.set_lpf_enabled(true);
+    app::platform.sound_controller.set_lpf_alpha(0.5);
+    app::platform.sound_controller.set_master_volume(0.5);
 
     sw.start();
 

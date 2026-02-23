@@ -8,7 +8,7 @@ namespace app {
 static constexpr char FormatGold[]  = "GOLD : %d";
 
 Status::Status(GameContext& ctx)
-    : player_(ctx.player()) {
+    : player_(ctx.world_state.player) {
 
     bool success = false;
 
