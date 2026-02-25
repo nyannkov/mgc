@@ -110,6 +110,14 @@ void mgc::parts::BasicLabel::set_fontsize2x(bool fontsize2x) {
     label_set_fontsize2x(&label_, fontsize2x);
 }
 
+bool mgc::parts::BasicLabel::fontsize2x() const {
+    return label_get_fontsize2x(&label_);
+}
+
+void mgc::parts::BasicLabel::set_back_color(mgc::graphics::Color color) {
+    label_set_back_color(&label_, color);
+}
+
 Color mgc::parts::BasicLabel::back_color() const {
     return label_get_back_color(&label_);
 }
