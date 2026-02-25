@@ -80,6 +80,8 @@ struct BasicLabel : mgc::parts::interfaces::ILabel<BasicLabel>,
 
     //// WithFont-related
     void set_fontsize2x(bool fontsize2x);
+    bool fontsize2x() const;
+    void set_back_color(mgc::graphics::Color color);
     mgc::graphics::Color back_color() const;
     void set_enabled_back_color(bool enabled);
     bool is_back_enabled() const;
