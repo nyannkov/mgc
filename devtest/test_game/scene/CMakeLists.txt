@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} STATIC
 )
 
 add_subdirectory(scenes/scene_title)
+add_subdirectory(scenes/scene_password)
 add_subdirectory(scenes/scene_tower_front)
 add_subdirectory(scenes/scene_corridor)
 add_subdirectory(scenes/scene_stage_1_1)
@@ -20,6 +21,7 @@ add_subdirectory(scenes/scene_game_over)
 target_link_libraries(${PROJECT_NAME} PUBLIC 
     platform
     scene_title
+    scene_password
     scene_tower_front
     scene_corridor
     scene_stage_1_1

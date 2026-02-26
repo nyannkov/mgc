@@ -15,10 +15,18 @@ struct Scene_Title : SceneBase {
     void draw(mgc::graphics::Framebuffer& fb) override;
 
 private:
+    enum class SelectedState {
+        None,
+        Start,
+        Password
+    } selected_state_ = SelectedState::None;
     mgc::parts::BasicLabel label_title_;
     mgc::parts::BasicLabel label_title_en_;
     mgc::parts::BasicSelectbox selectbox_menu_;
-    bool change_wait_ = false;
+    static constexpr size_t SELECT_INDEX_START = 0;
+    static constexpr size_t SELECT_INDEX_PASSWORD = 1;
+
+    void update_select();
 };
 
 } // namespace app

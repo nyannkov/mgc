@@ -42,24 +42,19 @@ void Scene_Title::init() {
 }
 
 void Scene_Title::update() {
-    if ( scx_.gamepad.just_pressed(Key::Up) ) {
-        selectbox_menu_.select_previous();
 
-    } else if ( scx_.gamepad.just_pressed(Key::Down) ) {
-        selectbox_menu_.select_next();
-
-    } else if ( scx_.gamepad.just_pressed(Key::Enter) ) {
-        if ( selectbox_menu_.selected_index() == 0 ) {
-            scx_.sound.play_sound_effect(MML_SE_0_MEOW, 0.0);
-            change_wait_ = true;
-        }
-
-    } else { }
-
-    if ( change_wait_ ) {
+    switch (selected_state_) {
+    case SelectedState::Start:
         if ( scx_.sound.have_all_sound_effects_finished() ) {
             set_scene_change_request(SceneId::TowerFront);
         }
+        break;
+    case SelectedState::Password:
+        set_scene_change_request(SceneId::Password);
+        break;
+    default:
+        update_select();
+        break;
     }
 }
 
@@ -68,6 +63,26 @@ void Scene_Title::draw(mgc::graphics::Framebuffer& fb) {
     label_title_.draw(fb);    
     label_title_en_.draw(fb);    
     selectbox_menu_.draw(fb);    
+}
+
+void Scene_Title::update_select() {
+    if ( scx_.gamepad.just_pressed(Key::Up) ) {
+        selectbox_menu_.select_previous();
+    } else if ( scx_.gamepad.just_pressed(Key::Down) ) {
+        selectbox_menu_.select_next();
+    } else if ( scx_.gamepad.just_pressed(Key::Enter) ) {
+        switch (selectbox_menu_.selected_index()) {
+        case SELECT_INDEX_START:
+            scx_.sound.play_sound_effect(MML_SE_0_MEOW, 0.0);
+            selected_state_ = SelectedState::Start;
+            break;
+        case SELECT_INDEX_PASSWORD:
+            selected_state_ = SelectedState::Password;
+            break;
+        default:
+            break;
+        }
+    } else { }
 }
 
 } // namespace app

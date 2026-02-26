@@ -5,6 +5,7 @@ namespace app {
 
 enum class SceneId : int {
     Title = 0,
+    Password,
     TowerFront,
     Corridor,
     Stage1_1,

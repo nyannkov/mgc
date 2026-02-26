@@ -1,6 +1,7 @@
 #include "scene_factory.hpp"
 #include "scene_pool.hpp"
 #include "scenes/scene_title/scene_title.hpp"
+#include "scenes/scene_password/scene_password.hpp"
 #include "scenes/scene_tower_front/scene_tower_front.hpp"
 #include "scenes/scene_corridor/scene_corridor.hpp"
 #include "scenes/scene_stage_1_1/scene_stage_1_1.hpp"
@@ -17,6 +18,9 @@ IScene* SceneFactory::create_scene(SceneId id, GameContext& ctx) {
     switch ( id ) {
     case SceneId::Title:
         pool.create<Scene_Title>(ctx);
+        break;
+    case SceneId::Password:
+        pool.create<Scene_Password>(ctx);
         break;
     case SceneId::TowerFront:
         pool.create<Scene_TowerFront>(ctx);

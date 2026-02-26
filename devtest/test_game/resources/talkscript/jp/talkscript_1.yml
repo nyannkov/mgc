@@ -27,17 +27,35 @@ talkscript:
       - { message: "何かかいてある" }
       - { message: "\\n            禍、塔の上にあり", end: true } 
 
+    signboard_1_2:
+      - { message: "何かかいてある" }
+      - { message: "\\n            WELCOME!", end: true }
+
     gate_1:
       - { message: "開かない・・・。", end: true }
 
-    game_over:
-    - message: "つづける？"
-    - choice:
-        tag: "TRY_AGAIN"
-        items:
-          - { item: "はい" , tag: "YES", next: game_retry }
-          - { item: "いいえ", tag: "NO", next: game_end }
+    password_success:
+      - { message: "LOAD COMPLETE!", end: true }
 
+    password_failure:
+      - { message: "LOAD ERROR!", end: true }
+
+    password_exit:
+      - { message: "タイトル画面に戻りますか？", auto_next: true }
+      - choice:
+          tag: "CONFIRM_PASSWORD_EXIT"
+          items:
+            - { item: "はい" , tag: "YES" }
+            - { item: "いいえ", tag: "NO" }
+      - end: true
+
+    game_over:
+      - message: "つづける？"
+      - choice:
+          tag: "TRY_AGAIN"
+          items:
+            - { item: "はい" , tag: "YES", next: game_retry }
+            - { item: "いいえ", tag: "NO", next: game_end }
     game_retry:
       - { message: "がんばって！", end: true }
 
