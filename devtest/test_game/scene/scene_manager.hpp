@@ -15,17 +15,11 @@ struct SceneManager {
         : ctx_(ctx),
           equipment_info_(ctx.world_state.equipment_info),
           scene_info_(ctx.world_state.scene_info),
-          menu_(ctx.platform.sound_controller,
-                ctx.platform.gamepad,
-                ctx.world_state.player
-          ) { }
+          menu_(ctx) { }
 
     void init() {
         set_scene(app::SceneId::Title);
-        menu_.init(
-            equipment_info_.item_selected_index(),
-            equipment_info_.weapon_selected_index()
-        );
+        menu_.init();
     }
 
     void update() {
@@ -36,20 +30,11 @@ struct SceneManager {
         if ( menu_mode_ ) {
             if ( menu_.is_exit() ) {
                 menu_mode_ = false;
-                equipment_info_.set_item_selected_index(
-                    menu_.item_selected_index()
-                );
-                equipment_info_.set_weapon_selected_index(
-                    menu_.weapon_selected_index()
-                );
             }
         } else {
             if ( scene_->has_menu_request() ) {
                 scene_->clear_menu_request();
-                menu_.init(
-                    equipment_info_.item_selected_index(),
-                    equipment_info_.weapon_selected_index()
-                );
+                menu_.init();
                 menu_mode_ = true;
             }
         }

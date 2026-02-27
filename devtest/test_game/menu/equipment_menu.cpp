@@ -9,6 +9,7 @@ namespace app {
 using mgc::platform::input::Key;
 
 void EquipmentMenu::init_components() {
+
     name_plate_.set_position({16*3+8, 8});
     name_plate_.set_tileset(tileset_menu_display);
     name_plate_.set_tile_index_map(item_name_plate);
@@ -49,25 +50,23 @@ void EquipmentMenu::init_components() {
     active_cursor_.set_tile_index(1);
 }
 
-void EquipmentMenu::init(size_t item_selected_idx, size_t weapon_selected_idx) {
+void EquipmentMenu::init() {
 
     init_components();
-
     is_exit_ = false;
 
-    item_selected_index_ = item_selected_idx;
-    active_cursor_index_ = item_selected_idx; // Item mode
-    weapon_selected_index_ = weapon_selected_idx;
+    // The default mode is item select mode.
+    active_cursor_index_ = equip_info_.item_selected_index();
 
-    cursor_state_ = CursorState::Confirmed;
+    selection_state_ = SelectionState::Confirmed;
     active_cursor_.set_visible(false);
 
     set_menu_select_mode(MenuSelectMode::Item);
-    update_description(item_descriptors_menu, item_selected_index_);
+    update_description();
 
-    update_cursor(active_cursor_, {5, 48}, item_selected_index_);
-    update_cursor(confirmed_cursor_item_, {5, 48}, item_selected_index_);
-    update_cursor(confirmed_cursor_weapon_, {5, 112}, weapon_selected_index_);
+    update_cursor(active_cursor_, {5, 48}, active_cursor_index_);
+    update_cursor(confirmed_cursor_item_, {5, 48}, equip_info_.item_selected_index());
+    update_cursor(confirmed_cursor_weapon_, {5, 112}, equip_info_.weapon_selected_index());
 }
 
 void EquipmentMenu::set_menu_select_mode(MenuSelectMode mode) {
@@ -81,7 +80,20 @@ void EquipmentMenu::set_menu_select_mode(MenuSelectMode mode) {
     }
 }
 
-void EquipmentMenu::update_description(const item_descriptors_t& desc, size_t selected_index) {
+void EquipmentMenu::update_description() {
+    const auto& desc = (select_mode_ == MenuSelectMode::Item) 
+               ? item_descriptors_menu 
+               : weapon_descriptors_menu;
+
+    size_t selected_index;
+    if ( selection_state_ == SelectionState::Selecting ) {
+        selected_index = active_cursor_index_;
+    } else {
+        selected_index = (select_mode_ == MenuSelectMode::Item)
+                              ? equip_info_.item_selected_index()
+                              : equip_info_.weapon_selected_index();
+    }
+
     description_.set_text(desc.descriptors[selected_index].description);
     item_name_.set_text(desc.descriptors[selected_index].name);
     item_name_.adjust_size_to_fit();
@@ -101,111 +113,97 @@ void EquipmentMenu::update_cursor(
     cursor.set_position(cursor_pos);
 }
 
-CursorResult EquipmentMenu::update_menu_state() {
-    
-    bool mode_changed = false;
-    auto cursor_result = CursorResult::None;
+void EquipmentMenu::toggle_mode() {
+    if ( select_mode_ == MenuSelectMode::Item ) {
+        set_menu_select_mode(MenuSelectMode::Weapon);
+    } else {
+        set_menu_select_mode(MenuSelectMode::Item);
+    }
+}
 
+void EquipmentMenu::set_selection_state(SelectionState state) {
+    active_cursor_.set_visible(state == SelectionState::Selecting);
+    selection_state_ = state;
+}
+
+void EquipmentMenu::restore_cursor_position() {
+    if ( select_mode_ == MenuSelectMode::Item ) {
+       active_cursor_index_ = equip_info_.item_selected_index();
+    } else {
+       active_cursor_index_ = equip_info_.weapon_selected_index();
+    }
+}
+
+void EquipmentMenu::update_cursor_position() {
+    if ( select_mode_ == MenuSelectMode::Item ) {
+        active_cursor_index_ = select_object(
+            item_descriptors_menu,
+            ITEM_ROW_COUNT,
+            ITEM_COL_COUNT,
+            active_cursor_index_
+        );
+        update_cursor(active_cursor_, {5, 48}, active_cursor_index_);
+    } else {
+        active_cursor_index_ = select_object(
+            weapon_descriptors_menu,
+            WEAPON_ROW_COUNT,
+            WEAPON_COL_COUNT,
+            active_cursor_index_
+        );
+        update_cursor(active_cursor_, {5, 112}, active_cursor_index_);
+    }
+}
+
+void EquipmentMenu::confirm_selection() {
+    if ( select_mode_ == MenuSelectMode::Item ) {
+        equip_info_.set_item_selected_index(active_cursor_index_);
+        update_cursor(confirmed_cursor_item_, {5, 48}, equip_info_.item_selected_index());
+    } else {
+        equip_info_.set_weapon_selected_index(active_cursor_index_);
+        update_cursor(confirmed_cursor_weapon_, {5, 112}, equip_info_.weapon_selected_index());
+    }
+}
+
+void EquipmentMenu::update() {
+
+    bool mode_changed = false;
     if ( gamepad_.just_pressed(Key::Menu) ) {
         mode_changed = true;
     }
 
     if ( mode_changed ) {
-        if ( select_mode_ == MenuSelectMode::Item ) {
-            set_menu_select_mode(MenuSelectMode::Weapon);
-            active_cursor_index_ = item_selected_index_;
-        } else {
-            set_menu_select_mode(MenuSelectMode::Item);
-            active_cursor_index_ = weapon_selected_index_;
-        }
-
-        if ( cursor_state_ == CursorState::Editing ) {
-            cursor_state_ = CursorState::Confirmed;
-            cursor_result = CursorResult::Cancel;
-        }
-    } else {
-        if ( cursor_state_ == CursorState::Confirmed ) {
-            if (  gamepad_.just_pressed(Key::Right) || 
-                  gamepad_.just_pressed(Key::Left) || 
-                  gamepad_.just_pressed(Key::Up) || 
-                  gamepad_.just_pressed(Key::Down) 
-            ) {
-                cursor_state_ = CursorState::Editing;
-            } else if ( gamepad_.just_pressed(Key::Cancel) ) {
-                is_exit_ = true;
-            }
-        } else {
-            if ( gamepad_.just_pressed(Key::Enter) ) {
-                cursor_state_ = CursorState::Confirmed;
-                cursor_result = CursorResult::Confirm;
-
-            } else if ( gamepad_.just_pressed(Key::Cancel) ) {
-                cursor_state_ = CursorState::Confirmed;
-                cursor_result = CursorResult::Cancel;
-            } else { }
-        }
+        toggle_mode();
+        set_selection_state(SelectionState::Cancelled);
     }
 
-    return cursor_result;
-}
-
-void EquipmentMenu::update() {
-    
-    auto cursor_result = update_menu_state();
-    if ( cursor_state_ == CursorState::Editing ) {
-        active_cursor_.set_visible(true);
-        if ( select_mode_ == MenuSelectMode::Item ) {
-            active_cursor_index_ = select_object(
-                item_descriptors_menu,
-                ITEM_ROW_COUNT,
-                ITEM_COL_COUNT,
-                active_cursor_index_
-            );
-            update_description(item_descriptors_menu, active_cursor_index_);
-            update_cursor(active_cursor_, {5, 48}, active_cursor_index_);
-        } else {
-            active_cursor_index_ = select_object(
-                weapon_descriptors_menu,
-                WEAPON_ROW_COUNT,
-                WEAPON_COL_COUNT,
-                active_cursor_index_
-            );
-            update_description(weapon_descriptors_menu, active_cursor_index_);
-            update_cursor(active_cursor_, {5, 112}, active_cursor_index_);
+    if ( selection_state_ != SelectionState::Selecting ) {
+        if (  gamepad_.just_pressed(Key::Right) || 
+              gamepad_.just_pressed(Key::Left) || 
+              gamepad_.just_pressed(Key::Up) || 
+              gamepad_.just_pressed(Key::Down) 
+        ) {
+            set_selection_state(SelectionState::Selecting);
+        } else if ( gamepad_.just_pressed(Key::Cancel) ) {
+            is_exit_ = true;
         }
     } else {
-        active_cursor_.set_visible(false);
-        if ( select_mode_ == MenuSelectMode::Item ) {
-            if ( cursor_result == CursorResult::Confirm ) {
-                item_selected_index_ = active_cursor_index_;
-            } else if ( cursor_result == CursorResult::Cancel ) {
-                active_cursor_index_ = item_selected_index_;
-            }
-            item_selected_index_ = select_object(
-                item_descriptors_menu,
-                ITEM_ROW_COUNT,
-                ITEM_COL_COUNT,
-                item_selected_index_
-            );
-            update_description(item_descriptors_menu, item_selected_index_);
-            update_cursor(confirmed_cursor_item_, {5, 48}, item_selected_index_);
-        } else {
-            if ( cursor_result == CursorResult::Confirm ) {
-                weapon_selected_index_ = active_cursor_index_;
-            } else if ( cursor_result == CursorResult::Cancel ) {
-                active_cursor_index_ = weapon_selected_index_;
-            }
-            weapon_selected_index_ = select_object(
-                weapon_descriptors_menu,
-                ITEM_ROW_COUNT,
-                ITEM_COL_COUNT,
-                weapon_selected_index_
-            );
-            update_description(weapon_descriptors_menu, weapon_selected_index_);
-            update_cursor(confirmed_cursor_weapon_, {5, 112}, weapon_selected_index_);
-        }
+        if ( gamepad_.just_pressed(Key::Enter) ) {
+            set_selection_state(SelectionState::Confirmed);
+        } else if ( gamepad_.just_pressed(Key::Cancel) ) {
+            set_selection_state(SelectionState::Cancelled);
+        } else { }
     }
 
+    if ( selection_state_ == SelectionState::Selecting ) {
+        update_cursor_position();
+    } else if ( selection_state_ == SelectionState::Confirmed ) {
+        confirm_selection();
+    } else if ( selection_state_ == SelectionState::Cancelled ) {
+        restore_cursor_position();
+    } else {
+    }
+
+    update_description();
     description_.advance_typing();
 }
 

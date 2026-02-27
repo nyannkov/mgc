@@ -13,7 +13,7 @@ struct Scene_Password : SceneBase {
     explicit Scene_Password(GameContext& ctx);
     void init() override;
     void update() override;
-    void draw(mgc::graphics::Framebuffer& fb) override;
+    void draw(FramebufferT& fb) override;
 
 private:
     struct TalkflowListener : ITalkflowListenerT {

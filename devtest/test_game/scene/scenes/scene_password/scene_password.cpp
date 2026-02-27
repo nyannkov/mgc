@@ -2,7 +2,6 @@
 #include "resources/generated/font/k8x12.h"
 #include "resources/generated/talkscript/talkscript_1.h"
 #include "resources/mml/mml.h"
-#include <stdio.h>
 
 namespace app {
 
@@ -132,7 +131,7 @@ void Scene_Password::update_input() {
     diag_input_.advance_typing();
 }
 
-void Scene_Password::draw(mgc::graphics::Framebuffer& fb) {
+void Scene_Password::draw(FramebufferT& fb) {
     fb.clear(MGC_COLOR_BLACK);
     size_t char_set_index = 0;
     for ( size_t i = 0; i < 4; ++i ) {

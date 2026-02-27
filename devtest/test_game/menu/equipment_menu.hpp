@@ -11,42 +11,32 @@ enum class MenuSelectMode {
     Weapon
 };
 
-enum class CursorState {
-    Editing,
-    Confirmed
+enum class SelectionState {
+    Selecting,
+    Confirmed,
+    Cancelled,
 };
 
-enum class CursorResult {
-    None,
-    Confirm,
-    Cancel
-};
 
 struct EquipmentMenu {
-    explicit EquipmentMenu(
-        SoundControllerT& sound,
-        GamepadT& gamepad,
-        Player& player
-    ) : sound_(sound),
-        gamepad_(gamepad),
-        player_(player) { }
+    explicit EquipmentMenu(GameContext& ctx) 
+        : sound_(ctx.platform.sound_controller),
+          gamepad_(ctx.platform.gamepad),
+          equip_info_(ctx.world_state.equipment_info) { }
 
-    void init(size_t item_selected_idx, size_t weapon_selected_idx);
+    void init();
     void update();
     void draw(FramebufferT& fb);
     bool is_exit() const { return is_exit_; }
-
-    size_t item_selected_index() const { return item_selected_index_; }
-    size_t weapon_selected_index() const { return weapon_selected_index_; }
 
 private:
     static constexpr size_t ITEM_COL_COUNT = 10;
     static constexpr size_t ITEM_ROW_COUNT = 2;
     static constexpr size_t WEAPON_COL_COUNT = 5;
     static constexpr size_t WEAPON_ROW_COUNT = 1;
+    EquipmentInfo& equip_info_;
+    const GamepadT& gamepad_;
     SoundControllerT& sound_;
-    GamepadT& gamepad_;
-    Player& player_;
     LabelT title_items_;
     LabelT title_weapons_;
     LabelT item_name_;
@@ -58,20 +48,23 @@ private:
     SpriteT object_;
     DialogueboxT description_;
     bool is_exit_ = false;
-    int item_selected_index_ = 0;
-    int weapon_selected_index_ = 0;
     int active_cursor_index_ = 0;
     MenuSelectMode select_mode_ = MenuSelectMode::Item;
-    CursorState cursor_state_ = CursorState::Confirmed;
+    SelectionState selection_state_ = SelectionState::Cancelled;
 
     void init_components();
-    CursorResult update_menu_state();
+    void toggle_mode();
+    void set_selection_state(SelectionState state);
+    void restore_cursor_position();
+    void update_cursor_position();
+    void confirm_selection();
+    void update_description();
+
     void update_cursor(
         SpriteT& cursor,
         const mgc::math::Vec2i pos_orig,
         size_t selected_index
     );
-    void update_description(const item_descriptors_t& desc, size_t selected_index);
     size_t select_object(
         const item_descriptors_t& desc,
         size_t row_count,
@@ -86,7 +79,6 @@ private:
         size_t row_count,
         size_t col_count
     );
-
 };
 
 }// namespace app

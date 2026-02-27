@@ -1,7 +1,6 @@
 #ifndef MGC_SAVE_DATA_HPP
 #define MGC_SAVE_DATA_HPP
 
-//#include "mgc_cpp/mgc.hpp"
 #include <array>
 #include <cstdint>
 
