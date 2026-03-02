@@ -1,8 +1,7 @@
-#include "item_descriptors_menu.h"
+#include "item_descriptors_item.h"
 #include "resources/generated/tileset/tileset_menu_items.h"
-#include "resources/generated/tileset/tileset_menu_weapon.h"
 
-static const item_descriptor_t descriptors_items[COUNT_ITEM_DESCRIPTOR_MENU] = {
+static const item_descriptor_t descriptors_items[COUNT_ITEM_DESCRIPTOR_ITEM] = {
     {"test1", "テストアイテムその1", 0},
     {"test2", "テストアイテムその2", 1},
     {"test3", "テストアイテムその3", 2},
@@ -25,20 +24,10 @@ static const item_descriptor_t descriptors_items[COUNT_ITEM_DESCRIPTOR_MENU] = {
     {"test20", "テストアイテムその20", 19},
 };
 
-const item_descriptors_t item_descriptors_menu = {
+const item_descriptors_t item_descriptors_item = {
+    .title = "ITEM:",
     .tileset = &tileset_menu_items,
     .descriptors = descriptors_items,
-    .descriptor_count = COUNT_ITEM_DESCRIPTOR_MENU
-};
-
-static const item_descriptor_t descriptors_weapons[COUNT_WEAPON_DESCRIPTOR_MENU] = {
-    {"Claw", "テスト1", 0},
-    {"Boomerang", "テスト2", 1},
-};
-
-const item_descriptors_t weapon_descriptors_menu = {
-    .tileset = &tileset_menu_weapon,
-    .descriptors = descriptors_weapons,
-    .descriptor_count = COUNT_WEAPON_DESCRIPTOR_MENU
+    .descriptor_count = COUNT_ITEM_DESCRIPTOR_ITEM
 };
 

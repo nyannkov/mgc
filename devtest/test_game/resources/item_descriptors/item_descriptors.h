@@ -10,6 +10,7 @@ typedef struct item_descriptor {
 } item_descriptor_t;
 
 typedef struct item_descriptors {
+    const char *title;
     const mgc_tileset_t* tileset;
     const item_descriptor_t* descriptors;
     size_t descriptor_count;

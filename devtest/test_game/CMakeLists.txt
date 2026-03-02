@@ -68,7 +68,8 @@ set(C_SOURCES
     resources/generated/font/k8x12.c
     resources/generated/font/misaki_gothic.c
     resources/generated/talkscript/talkscript_1.c
-    resources/item_descriptors/item_descriptors_menu.c
+    resources/item_descriptors/item_descriptors_item.c
+    resources/item_descriptors/item_descriptors_weapon.c
     resources/generated/tileset/tileset_menu_display.c
 )
 

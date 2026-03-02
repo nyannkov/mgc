@@ -308,11 +308,11 @@ void Player::update_anim_attacking() {
     anim_.set_loop(false);
 
     //TODO
-    switch ( equipment_info_.weapon_selected_index() ) {
-    case 0:
+    switch ( equipment_info_.weapon.equipped_id() ) {
+    case static_cast<uint32_t>(WeaponId::Claw):
         current_attack_type_ = attack::AttackType::Scratch;
         break;
-    case 1:
+    case static_cast<uint32_t>(WeaponId::Boomerang):
         current_attack_type_ = attack::AttackType::Boomerang;
         break;
     default:
