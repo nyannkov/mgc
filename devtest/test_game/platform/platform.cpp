@@ -11,7 +11,13 @@ extern "C" void mml_psg_sim_proc(void);
 
 namespace app {
 
+Platform& get_platform_ref() {
+    static Platform platform;
+    return platform;
+}
+
 void platform_init() {
+    auto& platform = get_platform_ref();
     platform.display_driver.init(50*1000*1000); // over-clock
     platform.sound_controller.init();
     platform.gamepad.init();
@@ -30,6 +36,7 @@ void platform_sleep(unsigned int ms) {
 }
 
 void platform_gamepad_proc() {
+    auto& platform = get_platform_ref();
     platform.gamepad.poll();
 }
 
@@ -40,6 +47,7 @@ void platform_sound_proc() {
 }
 
 void platform_tick() {
+    auto& platform = get_platform_ref();
     platform.frame_timer.tick();
 }
 
@@ -62,7 +70,6 @@ void platform_deinit() {
     SDL_Quit();
 #endif
 }
-
 
 } // namespace app
 

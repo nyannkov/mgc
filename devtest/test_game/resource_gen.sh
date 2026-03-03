@@ -17,6 +17,7 @@ ANIM_GEN="${TOOLS_PATH}/anim_gen/anim_gen.py"
 ANIM_FRAME_SPLITTER="${TOOLS_PATH}/anim_frame_splitter/anim_frame_splitter.py"
 STAGE_GEN="tools/stage_gen/stage_gen.py"
 KANJI_SUBSET_GEN="tools/kanji_subset_gen/kanji_subset_gen.py"
+ITEM_DESCRIPTORS_GEN="tools/item_descriptors_gen/item_descriptors_gen.py"
 
 #python3 ${ANIM_FRAME_SPLITTER}    ./resources/tileset/tileset_skyfish.bmp --width 16 --height 16 --dir ./resources/anim/enemy/skyfish
 #python3 ${ANIM_FRAME_SPLITTER}    ./resources/tileset/tileset_player.bmp --width 16 --height 16 --dir ./resources/anim/player
@@ -35,7 +36,7 @@ python3 ${TILESET_GEN}      ./resources/tileset/tileset_hen.bmp --width 6 --heig
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_chick.bmp --width 6 --height 10 --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/tileset/tileset_light_rays.bmp --count 3 --dir ./resources/generated/tileset
 
-python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_items.bmp --dir ./resources/generated/tileset
+python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_item.bmp --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_weapon.bmp --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_cursor.bmp --dir ./resources/generated/tileset
 python3 ${TILESET_GEN}      ./resources/menu/tileset/tileset_menu_display.bmp --dir ./resources/generated/tileset
@@ -84,7 +85,16 @@ python3 ${TALKSCRIPT_GEN}   ./resources/talkscript/jp/talkscript_1.yml --dir ./r
 python3 ${BTREE_GEN}        ./resources/btree/test_btree.yaml --dir ./resources/generated/btree
 python3 ${BTREE_GEN}        ./resources/btree/btree_chase.yml --dir ./resources/generated/btree
 
-python3 ${KANJI_SUBSET_GEN} -s ./resources/talkscript/jp/talkscript_1.yml -d ./resources/font/k8x12_subset.txt
+python3 ${KANJI_SUBSET_GEN} -s ./resources/talkscript/jp/talkscript_1.yml \
+                            -s ./resources/item_descriptors/item_descriptors_item.yml \
+                            -s ./resources/item_descriptors/item_descriptors_weapon.yml \
+                            -d ./resources/font/k8x12_subset.txt
+
 python3 ${FONT_GEN}         ${FONTS_PATH}/k8x12/k8x12.bdf  --subset  ./resources/font/k8x12_subset.txt  --dir ./resources/generated/font
 python3 ${FONT_GEN}         ${FONTS_PATH}/misaki/misaki_gothic.bdf  --subset  ./resources/font/misaki_subset.txt  --dir ./resources/generated/font
+
+python3 ${ITEM_DESCRIPTORS_GEN} ./resources/item_descriptors/item_descriptors_item.yml --dir ./resources/generated/item_descriptors
+python3 ${ITEM_DESCRIPTORS_GEN} ./resources/item_descriptors/item_descriptors_weapon.yml --dir ./resources/generated/item_descriptors
+
+
 

@@ -6,10 +6,12 @@
 
 namespace {
 
+auto& platform = app::get_platform_ref();
+
 app::RequestHub request_hub;
-app::WorldState world_state(app::platform);
-app::GameContext ctx(app::platform, world_state, request_hub);
-app::StopwatchT sw(app::platform.frame_timer);
+app::WorldState world_state(platform);
+app::GameContext ctx(platform, world_state, request_hub);
+app::StopwatchT sw(platform.frame_timer);
 
 app::MainFrame<224, 192> main_frame(8, 48, ctx);
 app::StatusFrame<224, 32> status_frame(8, 8, ctx);
@@ -72,11 +74,11 @@ int main() {
 
     app::platform_init();
 
-    app::platform.sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
-    app::platform.sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
-    app::platform.sound_controller.set_lpf_enabled(true);
-    app::platform.sound_controller.set_lpf_alpha(0.5);
-    app::platform.sound_controller.set_master_volume(0.5);
+    platform.sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
+    platform.sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
+    platform.sound_controller.set_lpf_enabled(true);
+    platform.sound_controller.set_lpf_alpha(0.5);
+    platform.sound_controller.set_master_volume(0.5);
 
     sw.start();
 

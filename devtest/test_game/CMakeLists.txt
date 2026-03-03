@@ -43,7 +43,7 @@ set(C_SOURCES
     resources/generated/tileset/tileset_static_objects.c
     resources/generated/tileset/tileset_static_objects_16x48.c
     resources/generated/tileset/tileset_light_rays.c
-    resources/generated/tileset/tileset_menu_items.c
+    resources/generated/tileset/tileset_menu_item.c
     resources/generated/tileset/tileset_menu_weapon.c
     resources/generated/tileset/tileset_menu_cursor.c
     resources/generated/map/map_tower_front_bg_back.c
@@ -68,8 +68,8 @@ set(C_SOURCES
     resources/generated/font/k8x12.c
     resources/generated/font/misaki_gothic.c
     resources/generated/talkscript/talkscript_1.c
-    resources/item_descriptors/item_descriptors_item.c
-    resources/item_descriptors/item_descriptors_weapon.c
+    resources/generated/item_descriptors/item_descriptors_item.c
+    resources/generated/item_descriptors/item_descriptors_weapon.c
     resources/generated/tileset/tileset_menu_display.c
 )
 

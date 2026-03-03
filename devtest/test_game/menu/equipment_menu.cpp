@@ -3,8 +3,8 @@
 #include "resources/generated/tileset/tileset_menu_display.h"
 #include "resources/generated/tileset/tileset_menu_cursor.h"
 #include "resources/generated/map/item_name_plate.h"
-#include "resources/item_descriptors/item_descriptors_item.h"
-#include "resources/item_descriptors/item_descriptors_weapon.h"
+#include "resources/generated/item_descriptors/item_descriptors_item.h"
+#include "resources/generated/item_descriptors/item_descriptors_weapon.h"
 
 namespace app {
 

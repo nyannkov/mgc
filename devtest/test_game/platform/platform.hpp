@@ -12,6 +12,7 @@ struct Platform {
     FrameTimerT frame_timer;
 };
 
+extern Platform& get_platform_ref();
 extern void platform_init();
 extern void platform_sleep(unsigned int ms);
 extern void platform_gamepad_proc();
@@ -19,8 +20,6 @@ extern void platform_sound_proc();
 extern void platform_tick();
 extern bool platform_is_continue();
 extern void platform_deinit();
-
-inline Platform platform;
 
 }// namespace app
 

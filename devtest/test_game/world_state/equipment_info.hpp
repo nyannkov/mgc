@@ -1,22 +1,10 @@
 #ifndef MGC_EQUIPMENT_INFO_HPP
 #define MGC_EQUIPMENT_INFO_HPP
 
+#include "resources/generated/item_descriptors/item_descriptors_item.hpp"
+#include "resources/generated/item_descriptors/item_descriptors_weapon.hpp"
+
 namespace app {
-
-enum class ItemId : uint32_t {
-    Test1 = 0,
-    Test2,
-    Test3,
-    Count,
-    None
-};
-
-enum class WeaponId : uint32_t {
-    Claw = 0,
-    Boomerang,
-    Count,
-    None
-};
 
 template <typename IdT>
 struct EquipSlot {
