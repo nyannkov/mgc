@@ -141,12 +141,6 @@ void Event_TowerFront1::update() {
 
     case Event_TowerFront1::State::Scene10:
         if ( event == EventName::Point7 ) {
-            state_ = Event_TowerFront1::State::Scene11;
-        }
-        break;
-
-    case Event_TowerFront1::State::Scene11:
-        if ( event == EventName::Point8 ) {
             state_ = Event_TowerFront1::State::End;
             if ( !player_.input_enabled() ) {
                 player_.set_input_enabled(true);
@@ -154,6 +148,13 @@ void Event_TowerFront1::update() {
             }
             set_event_state(EventState::Finished);
             cp_info_.advance_checkpoint(Checkpoint::TowerFrontEvent_Finished);
+
+            hen_.set_talkflow_request({
+                &talkscript_1,
+                MGC_TALKSCRIPT_1_TOWER_FRONT_TALK_3,
+                nullptr,
+                TalkflowEffectType::Default
+            });
         }
         break;
 
@@ -196,9 +197,6 @@ void Event_TowerFront1::TalkflowListener::on_message_done(mgc_node_idx_t tag) {
         break;
     case MGC_TALKSCRIPT_1_TAG_MESSAGE__POINT_7:
         event_name_ = EventName::Point7;
-        break;
-    case MGC_TALKSCRIPT_1_TAG_MESSAGE__POINT_8:
-        event_name_ = EventName::Point8;
         break;
     default:
         event_name_ = EventName::None;

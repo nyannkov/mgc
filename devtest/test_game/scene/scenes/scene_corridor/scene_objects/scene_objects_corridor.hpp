@@ -29,7 +29,7 @@ struct SceneObjects_Corridor : ISceneObjects {
         signboard_.spawn({MGC_CELL2PIXEL(35), MGC_CELL2PIXEL(10)});
         signboard_.set_talkflow_request({
             &talkscript_1,
-            MGC_TALKSCRIPT_1_SIGNBOARD_1,
+            MGC_TALKSCRIPT_1_SIGNBOARD_1_2,
             nullptr,
             TalkflowEffectType::Mute
         });

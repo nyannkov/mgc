@@ -2,7 +2,6 @@ import os
 import sys
 import yaml
 import argparse
-from PIL import Image
 
 def load_yaml(path):
     with open(path, "r", encoding="utf-8") as f:

@@ -27,7 +27,7 @@ struct SceneObjects_TowerFront : ISceneObjects {
         if ( cp_info_.has_reached(Checkpoint::TowerFrontEvent_Finished) ) {
             hen_.set_talkflow_request({
                 &talkscript_1,
-                MGC_TALKSCRIPT_1_TOWER_FRONT_TALK_3,
+                MGC_TALKSCRIPT_1_TOWER_FRONT_TALK_4,
                 nullptr,
                 TalkflowEffectType::Default
             });

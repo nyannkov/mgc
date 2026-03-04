@@ -21,7 +21,6 @@ struct Event_TowerFront1 : event::Event {
         Point5,
         Point6,
         Point7,
-        Point8,
     };
 
     enum class State {
@@ -36,7 +35,6 @@ struct Event_TowerFront1 : event::Event {
         Scene8,
         Scene9,
         Scene10,
-        Scene11,
         End,
     };
 

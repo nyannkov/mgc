@@ -86,15 +86,15 @@ python3 ${BTREE_GEN}        ./resources/btree/test_btree.yaml --dir ./resources/
 python3 ${BTREE_GEN}        ./resources/btree/btree_chase.yml --dir ./resources/generated/btree
 
 python3 ${KANJI_SUBSET_GEN} -s ./resources/talkscript/jp/talkscript_1.yml \
-                            -s ./resources/item_descriptors/item_descriptors_item.yml \
-                            -s ./resources/item_descriptors/item_descriptors_weapon.yml \
+                            -s ./resources/item_descriptors/jp/item_descriptors_item.yml \
+                            -s ./resources/item_descriptors/jp/item_descriptors_weapon.yml \
                             -d ./resources/font/k8x12_subset.txt
 
 python3 ${FONT_GEN}         ${FONTS_PATH}/k8x12/k8x12.bdf  --subset  ./resources/font/k8x12_subset.txt  --dir ./resources/generated/font
 python3 ${FONT_GEN}         ${FONTS_PATH}/misaki/misaki_gothic.bdf  --subset  ./resources/font/misaki_subset.txt  --dir ./resources/generated/font
 
-python3 ${ITEM_DESCRIPTORS_GEN} ./resources/item_descriptors/item_descriptors_item.yml --dir ./resources/generated/item_descriptors
-python3 ${ITEM_DESCRIPTORS_GEN} ./resources/item_descriptors/item_descriptors_weapon.yml --dir ./resources/generated/item_descriptors
+python3 ${ITEM_DESCRIPTORS_GEN} ./resources/item_descriptors/jp/item_descriptors_item.yml --dir ./resources/generated/item_descriptors
+python3 ${ITEM_DESCRIPTORS_GEN} ./resources/item_descriptors/jp/item_descriptors_weapon.yml --dir ./resources/generated/item_descriptors
 
 
 

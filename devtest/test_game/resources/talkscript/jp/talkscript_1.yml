@@ -17,10 +17,12 @@ talkscript:
     tower_front_talk_2:
       - { message: " * 「・・・・・・・・・。」", tag: POINT_6 }
       - { message: " * 「え？この中に入るの？」", tag: POINT_7 }
-      - { message: " * 「やるねぇ、君。」", tag: POINT_8 }
       - end: true
 
     tower_front_talk_3:
+      - { message: " * 「やるねぇ、君。」", end: true }
+
+    tower_front_talk_4:
       - { message: " * 「気をつけて！」", end: true }
 
     signboard_1:

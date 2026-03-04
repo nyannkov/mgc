@@ -24,7 +24,6 @@ Event_Corridor1::Event_Corridor1(
 void Event_Corridor1::spawn(const mgc::math::Vec2i& pos) {
     set_event_state(EventState::Playing);
 
-    //TODO
     signboard_.set_talkflow_request({
         &talkscript_1,
         MGC_TALKSCRIPT_1_SIGNBOARD_1,
@@ -53,6 +52,13 @@ void Event_Corridor1::update() {
         gate_.open();
         set_event_state(EventState::Finished);
         cp_info_.advance_checkpoint(Checkpoint::Corridor_OpenedTheDoor);
+
+        signboard_.set_talkflow_request({
+            &talkscript_1,
+            MGC_TALKSCRIPT_1_SIGNBOARD_1_2,
+            nullptr,
+            TalkflowEffectType::Mute
+        });
     }
 }
 
