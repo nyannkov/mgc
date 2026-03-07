@@ -5,8 +5,9 @@ project(${EXEC_NAME} LANGUAGES C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(MGC_DIR "${MGC_ABS_PATH}" CACHE PATH "Path to MGC root directory")
+set(MGC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../" CACHE PATH "Path to MGC root directory")
 message(STATUS "MGC_DIR=${MGC_DIR}")
+set(TEST_GAME_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Path to test_game root directory")
 
 add_library(app_headers INTERFACE)
 target_include_directories(app_headers INTERFACE
@@ -34,65 +35,19 @@ set(CXX_SOURCES
     entity/civilian/chick/chick.cpp
 )
 
-set(C_SOURCES 
-    resources/generated/tileset/tileset_map_elements.c
-    resources/generated/tileset/tileset_items.c
-    resources/generated/tileset/tileset_block.c
-    resources/generated/tileset/tileset_hen.c
-    resources/generated/tileset/tileset_chick.c
-    resources/generated/tileset/tileset_static_objects.c
-    resources/generated/tileset/tileset_static_objects_16x48.c
-    resources/generated/tileset/tileset_light_rays.c
-    resources/generated/tileset/tileset_menu_item.c
-    resources/generated/tileset/tileset_menu_weapon.c
-    resources/generated/tileset/tileset_menu_cursor.c
-    resources/generated/map/map_tower_front_bg_back.c
-    resources/generated/map/map_tower_front_back_tower.c
-    resources/generated/map/map_tower_front_block.c
-    resources/generated/map/map_corridor_back.c
-    resources/generated/map/map_corridor_block.c
-    resources/generated/map/map_stage_1_1_block.c
-    resources/generated/map/map_stage_1_1_ladder.c
-    resources/generated/map/map_stage_1_1_one_way_block.c
-    resources/generated/map/map_stage_1_2_block.c
-    resources/generated/map/map_stage_1_2_ladder.c
-    resources/generated/map/map_stage_1_2_one_way_block.c
-    resources/generated/map/map_stage_1_2_needle.c
-    resources/generated/map/map_stage_1_3_block.c
-    resources/generated/map/map_stage_1_3_ladder.c
-    resources/generated/map/map_stage_1_3_one_way_block.c
-    resources/generated/map/map_stage_1_3_needle.c
-
-    resources/generated/map/item_name_plate.c
-    resources/generated/btree/btree_chase.c
-    resources/generated/font/k8x12.c
-    resources/generated/font/misaki_gothic.c
-    resources/generated/talkscript/talkscript_1.c
-    resources/generated/item_descriptors/item_descriptors_item.c
-    resources/generated/item_descriptors/item_descriptors_weapon.c
-    resources/generated/tileset/tileset_menu_display.c
-)
 
 add_executable(${CMAKE_PROJECT_NAME}
-    ${C_SOURCES}
     ${CXX_SOURCES}
 )
 
 add_subdirectory("${MGC_DIR}"  mgc_build)
-add_subdirectory(resources/generated/anim/player)
-add_subdirectory(resources/generated/anim/attack)
-add_subdirectory(resources/generated/anim/enemy/skyfish)
-add_subdirectory(resources/mml)
 add_subdirectory(scene)
 add_subdirectory(platform)
-
+add_subdirectory(resources)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
     platform
-    anim_player
-    anim_attack
-    anim_skyfish
-    mml
+    resources
     scene
 )
 

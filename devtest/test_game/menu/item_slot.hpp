@@ -2,7 +2,7 @@
 #define MGC_ITEM_SLOT_HPP
 
 #include "game_context.hpp"
-#include "item_descriptors.h"
+#include "resources/menu/item_descriptors.h"
 #include "resources/generated/tileset/tileset_menu_cursor.h"
 #include "resources/generated/font/k8x12.h"
 

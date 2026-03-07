@@ -1,6 +1,6 @@
 item_descriptors:
     title: 'ITEM:'
-    tileset_path: 'resources/generated/tileset/tileset_menu_item.h'
+    tileset_path: 'generated/tileset/tileset_menu_item.h'
     id_group_name: ItemId
     descriptors:
         - { id: Test1, name: 'test1', description: '魚', tile_index: 0 }

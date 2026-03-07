@@ -1,9 +1,6 @@
 #!/bin/sh
 set -e  # Stop on error
 
-MGC_PATH=${MGC_PATH:-../../}
-MGC_ABS_PATH=$(realpath ${MGC_PATH})
-
 SIM="${SIM:-OFF}"
 
 if [ "$SIM" = "ON" ]; then
@@ -40,8 +37,7 @@ cmake -S . -B "$BUILD_DIR" -DEXEC_NAME="$EXEC_NAME" \
                            -DMGC_MAP_TILESET_INDEX_OFFSET=1 \
                            -DMGC_USE_RP2040="$USE_RP2040" \
                            -DMGC_ENABLE_DISPLAY="$MGC_ENABLE_DISPLAY" \
-                           -DSIM_BUILD="$SIM" \
-                           -DMGC_ABS_PATH="$MGC_ABS_PATH"
+                           -DSIM_BUILD="$SIM" 
 
 cmake --build "$BUILD_DIR" --parallel "$JOBS"
 

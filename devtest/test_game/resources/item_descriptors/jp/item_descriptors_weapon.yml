@@ -1,6 +1,6 @@
 item_descriptors:
     title: 'WEAPON:'
-    tileset_path: 'resources/generated/tileset/tileset_menu_weapon.h'
+    tileset_path: 'generated/tileset/tileset_menu_weapon.h'
     id_group_name: WeaponId
     descriptors:
         - id: Claw

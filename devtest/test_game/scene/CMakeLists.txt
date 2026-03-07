@@ -20,6 +20,7 @@ add_subdirectory(scenes/scene_game_over)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
     platform
+    resources
     scene_title
     scene_password
     scene_tower_front
