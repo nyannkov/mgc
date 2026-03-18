@@ -19,13 +19,12 @@ struct SceneManager {
 
     void init() {
         set_scene(app::SceneId::Title);
+        //set_scene(app::SceneId::Shop);
+        //set_scene(app::SceneId::Stage1_3);
+        //set_scene(app::SceneId::Stage1_4);
 
         equipment_info_.weapon.add(WeaponId::Claw);
-        equipment_info_.weapon.add(WeaponId::Boomerang);
-        equipment_info_.weapon.equip(WeaponId::Boomerang);
-
-        equipment_info_.item.add(ItemId::Test3);
-        equipment_info_.item.equip(ItemId::Test3);
+        equipment_info_.weapon.equip(WeaponId::Claw);
 
         menu_.init();
     }

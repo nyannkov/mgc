@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(resources CXX)
+project(resources C)
 
 include(resource_gen.cmake)
 
@@ -75,6 +75,30 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_1_3/csv"
     --tile-or128 block one_way_block ladder needle
 )
+set(STAGE_MAP_STAGE_1_4_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_1_4/csv/map_stage_1_4_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_4/csv/map_stage_1_4_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_4/csv/map_stage_1_4_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_4/csv/map_stage_1_4_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_4/csv/map_stage_1_4_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_1_4/map_stage_1_4.tmx"
+    "${STAGE_MAP_STAGE_1_4_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_1_4/csv"
+    --tile-or128 block one_way_block ladder needle
+)
+set(STAGE_MAP_SHOP_CSVS
+    "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
+    "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_1.csv"
+    "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/shop/map_shop.tmx"
+    "${STAGE_MAP_SHOP_CSVS}"
+    "${RESOURCE_DIR}/stage/map/shop/csv"
+    --border block
+)
 
 set(STAGE_MAP_CSVS
     ${STAGE_MAP_TOWER_FONT_CSVS}
@@ -83,6 +107,8 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_1_1_CSVS}
     ${STAGE_MAP_STAGE_1_2_CSVS}
     ${STAGE_MAP_STAGE_1_3_CSVS}
+    ${STAGE_MAP_STAGE_1_4_CSVS}
+    ${STAGE_MAP_SHOP_CSVS}
 )
 
 foreach(CSV_FILE ${STAGE_MAP_CSVS})
@@ -92,12 +118,15 @@ endforeach()
 add_map_gen("${RESOURCE_DIR}/menu/map/item_name_plate.csv" "${GEN_DIR}/map" --compression runlength)
 
 add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_map_elements.bmp" "${GEN_DIR}/tileset" --count 100)
+add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_shop_elements.bmp" "${GEN_DIR}/tileset" --count 100)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_items.bmp" "${GEN_DIR}/tileset" --count 16 --width 8 --height 8)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_block.bmp" "${GEN_DIR}/tileset" --count 1)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 7)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x48.bmp" "${GEN_DIR}/tileset" --count 2 --width 16 --height 48)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_hen.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_chick.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_florist.bmp" "${GEN_DIR}/tileset" --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_light_rays.bmp" "${GEN_DIR}/tileset" --count 3)
 add_tileset_gen("${RESOURCE_DIR}/menu/tileset/tileset_menu_item.bmp" "${GEN_DIR}/tileset")
 add_tileset_gen("${RESOURCE_DIR}/menu/tileset/tileset_menu_weapon.bmp" "${GEN_DIR}/tileset")
@@ -113,7 +142,7 @@ add_item_descriptors_gen("${RESOURCE_DIR}/item_descriptors/jp/item_descriptors_i
 add_item_descriptors_gen("${RESOURCE_DIR}/item_descriptors/jp/item_descriptors_weapon.yml" "${GEN_DIR}/item_descriptors")
 
 set(K8X12_SUBSET "${RESOURCE_DIR}/font/k8x12_subset.txt")
-add_kanji_subset_gen("${K8X12_SUBSET}"
+add_font_subset_gen("${K8X12_SUBSET}"
     "${RESOURCE_DIR}/talkscript/jp/talkscript_1.yml"
     "${RESOURCE_DIR}/item_descriptors/jp/item_descriptors_item.yml"
     "${RESOURCE_DIR}/item_descriptors/jp/item_descriptors_weapon.yml"
@@ -143,6 +172,12 @@ anim_cmake_list_gen(
     "${GEN_DIR}/anim/enemy/skyfish"
     --width 16 --height 16
 )
+anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/prop/portal/anim_portal.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp"
+    "${GEN_DIR}/anim/prop/portal"
+    --width 16 --height 24
+)
 
 add_subdirectory(mml)
 
@@ -151,6 +186,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_player
     anim_attack
     anim_skyfish
+    anim_portal
     mml
 )
 

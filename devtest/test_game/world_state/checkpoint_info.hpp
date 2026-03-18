@@ -9,6 +9,8 @@ enum class Checkpoint : uint32_t {
     Initial = 0,
     TowerFrontEvent_Finished,
     Corridor_OpenedTheDoor,
+    Shop_FirstVisit,
+    Shop_FirstTalk,
 };
 
 struct CheckpointInfo {

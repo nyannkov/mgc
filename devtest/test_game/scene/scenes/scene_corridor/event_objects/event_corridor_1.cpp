@@ -10,7 +10,7 @@ Event_Corridor1::Event_Corridor1(
     SceneContext& scx,
     SceneObjects_Corridor& objs
 ) : sound_(scx.sound),
-    cp_info_(scx.checkpoint_info),
+    cp_info_(scx.world_state.checkpoint_info),
     signboard_(objs.signboard()),
     gate_(objs.gate()) {
 
@@ -23,6 +23,7 @@ Event_Corridor1::Event_Corridor1(
 
 void Event_Corridor1::spawn(const mgc::math::Vec2i& pos) {
     set_event_state(EventState::Playing);
+    unlock_control();
 
     signboard_.set_talkflow_request({
         &talkscript_1,

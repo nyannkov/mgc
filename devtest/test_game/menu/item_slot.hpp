@@ -245,5 +245,5 @@ private:
 
 }// namespace app
 
-#endif/*MGC_ITEM_MENU_HPP*/
+#endif/*MGC_ITEM_SLOT_HPP*/
 

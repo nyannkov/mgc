@@ -36,7 +36,7 @@ void Scene_Title::init() {
 
     scx_.sound.stop_background_music(0.0);
 
-    scx_.checkpoint_info.set_checkpoint(Checkpoint::Initial);
+    scx_.world_state.checkpoint_info.set_checkpoint(Checkpoint::Initial);
 
     scx_.player.init();
 }

@@ -31,6 +31,12 @@ void Scene_Stage1_3::init() {
             PlayerAnimState::StandRight
         );
         break;
+    case SceneId::Stage1_4:
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(21), MGC_CELL2PIXEL(22)},
+            PlayerAnimState::StandRight
+        );
+        break;
     default:
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(18)},

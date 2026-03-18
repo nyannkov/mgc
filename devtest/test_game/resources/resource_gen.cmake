@@ -15,7 +15,7 @@ set(BTREE_GEN            "${TOOLS_PATH}/btree_gen/btree_gen.py")
 set(ANIM_GEN             "${TOOLS_PATH}/anim_gen/anim_gen.py")
 set(ANIM_FRAME_SPLITTER  "${TOOLS_PATH}/anim_frame_splitter/anim_frame_splitter.py")
 set(STAGE_GEN            "${TOOLS_EX_PATH}/stage_gen/stage_gen.py")
-set(KANJI_SUBSET_GEN     "${TOOLS_EX_PATH}/kanji_subset_gen/kanji_subset_gen.py")
+set(FONT_SUBSET_GEN     "${TOOLS_EX_PATH}/font_subset_gen/font_subset_gen.py")
 set(ITEM_DESCRIPTORS_GEN "${TOOLS_EX_PATH}/item_descriptors_gen/item_descriptors_gen.py")
 
 find_package(Python3 REQUIRED)
@@ -90,7 +90,7 @@ function(add_item_descriptors_gen INPUT_YAML OUT_DIR)
     set(RESOURCE_SOURCES "${RESOURCE_SOURCES}" PARENT_SCOPE)
 endfunction()
 
-function(add_kanji_subset_gen OUTPUT_TXT)
+function(add_font_subset_gen OUTPUT_TXT)
     set(YAML_INPUTS "")
     set(PY_ARGS "")
 
@@ -101,9 +101,9 @@ function(add_kanji_subset_gen OUTPUT_TXT)
 
     add_custom_command(
         OUTPUT "${OUTPUT_TXT}"
-        COMMAND "${PY3}" "${KANJI_SUBSET_GEN}" ${PY_ARGS} -d "${OUTPUT_TXT}"
-        DEPENDS ${YAML_INPUTS} "${KANJI_SUBSET_GEN}"
-        COMMENT "Generating kanji subset: ${OUTPUT_TXT}"
+        COMMAND "${PY3}" "${FONT_SUBSET_GEN}" ${PY_ARGS} -d "${OUTPUT_TXT}"
+        DEPENDS ${YAML_INPUTS} "${FONT_SUBSET_GEN}"
+        COMMENT "Generating subset: ${OUTPUT_TXT}"
         VERBATIM
     )
 endfunction()

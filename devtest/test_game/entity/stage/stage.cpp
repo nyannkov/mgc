@@ -16,9 +16,15 @@
 #include "resources/generated/map/map_stage_1_3_ladder.h"
 #include "resources/generated/map/map_stage_1_3_needle.h"
 #include "resources/generated/map/map_stage_1_3_one_way_block.h"
-
-
+#include "resources/generated/map/map_stage_1_4_block.h"
+#include "resources/generated/map/map_stage_1_4_ladder.h"
+#include "resources/generated/map/map_stage_1_4_needle.h"
+#include "resources/generated/map/map_stage_1_4_one_way_block.h"
+#include "resources/generated/map/map_shop_back_0.h"
+#include "resources/generated/map/map_shop_back_1.h"
+#include "resources/generated/map/map_shop_block.h"
 #include "resources/generated/tileset/tileset_map_elements.h"
+#include "resources/generated/tileset/tileset_shop_elements.h"
 
 namespace app {
 namespace stage {
@@ -43,6 +49,7 @@ void Stage::setup(StageId id) {
     stage_id_ = id;
 
     resource_init();
+    back_0_.set_parallax_factor({1.0, 1.0});
 
     switch (id) {
     case StageId::None:
@@ -107,6 +114,31 @@ void Stage::setup(StageId id) {
 
         needle_.set_maps(map_stage_1_3_needle, tileset_map_elements, &map_stage_1_3_needle);
         needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage1_4:
+        block_.set_maps(map_stage_1_4_block, tileset_map_elements, &map_stage_1_4_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_1_4_one_way_block, tileset_map_elements, &map_stage_1_4_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_1_4_ladder, tileset_map_elements, &map_stage_1_4_ladder);
+        ladder_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_1_4_needle, tileset_map_elements, &map_stage_1_4_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Shop:
+        block_.set_maps(map_shop_block, tileset_shop_elements, &map_shop_block);
+        block_.set_all_enabled(true);
+
+        back_1_.set_maps(map_shop_back_1, tileset_shop_elements);
+        back_1_.set_all_enabled(true);
+
+        back_0_.set_maps(map_shop_back_0, tileset_shop_elements);
+        back_0_.set_all_enabled(true);
         break;
 
     default:

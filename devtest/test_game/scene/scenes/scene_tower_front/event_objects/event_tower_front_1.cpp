@@ -16,7 +16,7 @@ Event_TowerFront1::Event_TowerFront1(
     SceneObjects_TowerFront& objs
 ) : sound_(scx.sound),
     sw_(scx.timer),
-    cp_info_(scx.checkpoint_info),
+    cp_info_(scx.world_state.checkpoint_info),
     player_(scx.player),
     hen_(objs.hen()),
     chick_(objs.chick()),
@@ -36,6 +36,7 @@ void Event_TowerFront1::spawn(const mgc::math::Vec2i& pos) {
     this->set_position(pos);
     auto& hitboxes = this->mut_hitboxes();
     hitboxes[0].set_enabled(true);
+    unlock_control();
 }
 
 void Event_TowerFront1::despawn() {

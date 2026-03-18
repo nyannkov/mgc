@@ -11,7 +11,7 @@ namespace prop {
 
 enum class GateType {
     Type1,
-    Type2
+    Type2,
 };
 
 struct Gate : Prop {
@@ -43,4 +43,4 @@ private:
 } // namespace prop
 } // namespace app
 
-#endif // MGC_ENTRANCE_HPP
+#endif // MGC_GATE_HPP

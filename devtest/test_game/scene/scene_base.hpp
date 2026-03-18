@@ -12,14 +12,14 @@ namespace app {
 struct SceneBase : IScene {
     explicit SceneBase(GameContext& ctx)
         : id_prev_(ctx.world_state.scene_info.prev_scene_id()),
-          default_talkflow_effects_(ctx.platform.sound_controller),
+          talkflow_effects_(ctx.platform.sound_controller),
           scx_ {
             ctx.platform.sound_controller,
             ctx.platform.gamepad,
             ctx.platform.frame_timer,
             ctx.world_state.player,
-            default_talkflow_effects_,
-            ctx.world_state.checkpoint_info,
+            talkflow_effects_,
+            ctx.world_state,
             nullptr,
             nullptr,
             nullptr
@@ -64,7 +64,7 @@ struct SceneBase : IScene {
 protected:
     SceneId id_prev() const { return id_prev_; }
     TalkflowControllerT talkflow_;
-    DefaultTalkflowEffects default_talkflow_effects_;
+    TalkflowEffects talkflow_effects_;
     StatusDisplayRequest& status_display_request_;
     GameOverEffect game_over_effect_;
     SceneContext scx_;

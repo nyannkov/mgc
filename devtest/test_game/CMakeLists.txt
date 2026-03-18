@@ -22,8 +22,12 @@ set(CXX_SOURCES
     entity/player/player.cpp
     entity/block/pushable_block/pushable_block.cpp
     entity/prop/gate/gate.cpp
+    entity/prop/door/door.cpp
+    entity/prop/portal/portal.cpp
     entity/prop/entrance/entrance.cpp
     entity/prop/signboard/signboard.cpp
+    entity/prop/teleporter/teleporter.cpp
+    entity/event/warp/warp.cpp
     entity/attack/attack.cpp
     entity/item/potion/potion.cpp
     entity/item/elixir/elixir.cpp
@@ -32,6 +36,7 @@ set(CXX_SOURCES
     entity/stage/stage.cpp
     entity/stage/layer/tile_draw_hook.cpp
     entity/civilian/hen/hen.cpp
+    entity/civilian/florist/florist.cpp
     entity/civilian/chick/chick.cpp
 )
 

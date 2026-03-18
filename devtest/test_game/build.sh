@@ -6,14 +6,12 @@ SIM="${SIM:-OFF}"
 if [ "$SIM" = "ON" ]; then
     USE_RP2040=OFF
     MGC_ENABLE_DISPLAY=OFF
-    SCENE_POOL_SIZE=4096
     NOSWAP=1
     BUILD_DIR=${BUILD_DIR:-sim_build}
     EXEC_NAME=test_game
 else
     USE_RP2040=ON
     MGC_ENABLE_DISPLAY=ON
-    SCENE_POOL_SIZE=8192
     NOSWAP=0
     BUILD_DIR=${BUILD_DIR:-build}
     EXEC_NAME=test_game.elf

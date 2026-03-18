@@ -1,0 +1,47 @@
+#ifndef MML_BGM_SHOP_H
+#define MML_BGM_SHOP_H
+
+static const char * const mml_bgm_shop = 
+"T90V15"
+"$B0I0"
+"$E1$A0$H20$D100$S80$F1000"
+"[0"
+    "[2"
+         "L4O5 G#8 A#8 >C. C#8 D#"
+         "L4O5 >C#8 C8 <A#. G8 D#"
+         "L4O5 F8 G8 G#. A#8 >C"
+         "L4O5 A#8 G#8 G2. F8"
+         "L4O5 D#8 F. G8 G#"
+         "L4O5 G8 F8 D# G#8 A#8 > C"
+    "|"
+         "L4O5 G#8 A#8 >C. C#8 <A#8 >C8 <G#8 F8 G2."
+    "]"
+     "L4O5 G#8 A#8 >C. < G#8 A# G#8 G8 G#2."
+"]"
+","
+"T90V15"
+"$B0I0"
+"$E1$A0$H20$D100$S80$F1000"
+"L4 R4"
+"[0"
+    "[2"
+         "L4 [2 O3 G#8 >C8 D#8 G#8 ]"
+         "L4 [2 O3 D#8 G8 A#8 >D#8 ]"
+         "L4 [2 O3 F8 G#8 >C8 F8 ]"
+         "L4 [2 O3 C8 D#8 G8 >C8 ]"
+         "L4 [2 O3 C#8 F8 G#8 >C#8 ]"
+         "L4 O3 C8 D#8 G8 >C8"
+         "L4 O3 F8 G#8 >C8 F8"
+     "|"
+          "L4 O3 G#8 >C8 D#8 G#8"
+          "L4 O3 A#8 >C#8 F8 A#8"
+          "L4 O3 D#8 G8 A#8 >D#8 > D#2"
+     "]"
+     "L4 O3 G#8 >C8 D#8 G#8"
+     "L4 O3 D#8 G8 A#8 >D#8"
+     "L4 O3 G#8 >C8 D#8 G#8 > C2"
+"]"
+;
+
+#endif // MML_BGM_SHOP_H
+

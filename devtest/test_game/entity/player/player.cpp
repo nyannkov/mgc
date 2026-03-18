@@ -11,7 +11,7 @@ Player::Player(
     const FrameTimerT& frame_timer,
     const GamepadT& gamepad,
     SoundControllerT& sound_controller,
-    const EquipmentInfo& equipment_info
+    EquipmentInfo& equipment_info
 )   : gamepad_(gamepad),
       frame_timer_(frame_timer),
       sound_controller_(sound_controller),
@@ -51,8 +51,8 @@ void Player::init() {
     body.set_enabled(true);
 
     auto& hand = at(this->mut_hitboxes(), PlayerHitboxIndex::Hand);
-    hand.set_offset({1, 6});
-    hand.set_size({14, 3});
+    hand.set_offset({1, 1});
+    hand.set_size({14, 1});
     hand.set_enabled(true);
 }
 
@@ -67,11 +67,6 @@ void Player::spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state) {
 
     is_grounded_ = true;
     velocity_ = {0.0f, 0.0f};
-
-    hit_lt_ = false;
-    hit_rt_ = false;
-    hit_lb_ = false;
-    hit_rb_ = false;
 
     player_state_ = PlayerState::Normal;
 }
@@ -101,20 +96,19 @@ void Player::reset_state_for_placement(
     anim_.set_current_frame(this->mut_sprite());
     this->set_position(pos);
     velocity_ = {0.0f, 0.0f};
-    hit_lt_ = false;
-    hit_rt_ = false;
-    hit_lb_ = false;
-    hit_rb_ = false;
     player_state_ = PlayerState::Normal;
 }
 
 void Player::update_movement() {
 
     velocity_.x = 0;//TODO
-    hit_lt_ = false;
-    hit_rt_ = false;
-    hit_lb_ = false;
-    hit_rb_ = false;
+
+    pushback_box_.x = 0;
+    pushback_box_.y = 0;
+    pushback_map_.x = 0;
+    pushback_map_.y = 0;
+    box_overlap_.x = 0;
+    box_overlap_.y = 0;
 
     auto real_pos = this->precise_position();
 
@@ -207,6 +201,18 @@ void Player::update_movement() {
     force_ex_ *= 0.5;
 
     attack_.update_movement();
+}
+
+void Player::resolve_movement() {
+    if ( ( pushback_box_.x != 0 ) && ( pushback_map_.x != 0 ) ) {
+        auto real_pos = this->precise_position();
+        if ( box_overlap_.y > 0 )  {
+            real_pos.y -= ( box_overlap_.y - 1 );
+        }
+        this->set_precise_position(real_pos);
+        is_grounded_ = true;
+        velocity_.y = 0;
+    }
 }
 
 void Player::update_animation(bool is_talking) {
@@ -431,6 +437,9 @@ void Player::on_collision_resolved(
         velocity_.y = 0.1f;
     } else { 
     }
+
+    pushback_map_ = info.pushback;
+
     pos += info.pushback;
 
     this->set_position(pos);
@@ -500,6 +509,8 @@ void Player::on_collision_resolved(
     auto pos = this->position();
 
     auto pushback = info.pushback;
+    pushback_box_ = info.pushback;
+    box_overlap_ = info.max_overlap;
 
     if ( info.is_fully_blocked ) {
         //pushback.x = info.max_overlap.x;

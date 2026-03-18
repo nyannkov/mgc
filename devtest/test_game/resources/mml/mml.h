@@ -19,6 +19,8 @@ enum {
     MML_SE_8_OPEN,
     MML_SE_9_SELECT,
     MML_SE_10_OPEN_2,
+    MML_SE_11_SELECT_2,
+    MML_SE_12_SILENT,
     MML_SE_COUNT
 };
 
@@ -27,6 +29,7 @@ enum {
     MML_BGM_1_THE_FLEA_WALTZ_END,
     MML_BGM_2_WATER_FALL,
     MML_BGM_3_STAGE1,
+    MML_BGM_4_SHOP,
     MML_BGM_COUNT
 };
 

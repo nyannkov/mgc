@@ -15,7 +15,7 @@ namespace app {
 struct SceneObjects_Stage1_3 : ISceneObjects {
 
     explicit SceneObjects_Stage1_3(SceneContext& scx)
-        : cp_info_(scx.checkpoint_info),
+        : cp_info_(scx.world_state.checkpoint_info),
           skyfish_1_(scx.timer, scx.sound, scx.player),
           skyfish_2_(scx.timer, scx.sound, scx.player),
           skyfish_3_(scx.timer, scx.sound, scx.player),
@@ -23,8 +23,9 @@ struct SceneObjects_Stage1_3 : ISceneObjects {
           items_ { &potion_, &elixir_ },
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
+          gate_3_(scx.gamepad),
           signboard_(scx.gamepad),
-          props_ { &gate_1_, &gate_2_, &signboard_ },
+          props_ { &gate_1_, &gate_2_, &gate_3_, &signboard_ },
           blocks_{ &pushable_block_, &pushable_block2_, &pushable_block3_, &pushable_block4_ } {
     }
 
@@ -65,8 +66,9 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
+    prop::Gate gate_3_;
     prop::Signboard signboard_;
-    std::array<prop::Prop*, 3> props_;
+    std::array<prop::Prop*, 4> props_;
 
     // Block
     block::PushableBlock pushable_block_{};

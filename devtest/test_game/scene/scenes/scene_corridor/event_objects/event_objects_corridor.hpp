@@ -10,7 +10,7 @@ namespace app {
 struct EventObjects_Corridor : IEventObjects {
 
     EventObjects_Corridor(SceneContext& scx, SceneObjects_Corridor& objs)
-        : cp_info_(scx.checkpoint_info),
+        : cp_info_(scx.world_state.checkpoint_info),
           event_1_(scx, objs),
           events_ { &event_1_ } {
     }
@@ -24,6 +24,8 @@ struct EventObjects_Corridor : IEventObjects {
     ArrayViewer<event::Event*> events() override {
         return { events_.data(), events_.size() };
     }
+
+    void draw_effect(FramebufferT& fb, mgc::math::Vec2i& cam_pos) override {}
 
 private:
     CheckpointInfo& cp_info_;

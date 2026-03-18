@@ -2,9 +2,34 @@
 #include "entity/enemy/enemy.hpp"
 #include "entity/player/player_hitbox_index.hpp"
 #include "entity/block/block.hpp"
+#include "resources/mml/mml.h"
 
 namespace app {
 namespace scene {
+
+namespace {
+
+void set_talkflow_effect(TalkflowControllerT& talkflow, TalkflowEffects& talkflow_effects, TalkflowEffectType effect_type) {
+    switch ( effect_type ) {
+    case TalkflowEffectType::Mute:
+        talkflow.unbind_effects();
+        break;
+    case TalkflowEffectType::Type1:
+        talkflow_effects.set_typing_sound_id(MML_SE_11_SELECT_2);
+        talkflow_effects.set_select_sound_id(MML_SE_9_SELECT);
+        talkflow_effects.set_confirm_sound_id(MML_SE_12_SILENT);
+        talkflow.bind_effects(talkflow_effects);
+        break;
+    default:
+        talkflow_effects.set_typing_sound_id(MML_SE_9_SELECT);
+        talkflow_effects.set_select_sound_id(MML_SE_9_SELECT);
+        talkflow_effects.set_confirm_sound_id(MML_SE_9_SELECT);
+        talkflow.bind_effects(talkflow_effects);
+        break;
+    }
+}
+
+}
 
 void setup_scene_context(
     SceneContext& scx, 
@@ -17,34 +42,51 @@ void setup_scene_context(
     scx.evts = evts;
 }
 
-const TalkflowRequest* event_update(
-    IEventObjects& events
+bool event_update(
+    IEventObjects& events,
+    const TalkflowRequest** out
 ) {
     event::Event* current = nullptr;
     const TalkflowRequest* request = nullptr;
+    bool is_control_locked = false;
+
+//    for ( auto* evt : events.events() ) {
+//        if ( evt->event_state() == event::EventState::Playing ) {
+//            current = evt;
+//            is_control_locked = evt->is_control_locked();
+//            break;
+//        }
+//    }
+//
+//    if ( current ) {
+//        current->update();
+//        request = current->take_talkflow_request();
+//    } else {
+//        for( auto* evt : events.events() ) {
+//            if ( evt->event_state() != event::EventState::Playing ) {
+//                evt->update();
+//                request = evt->take_talkflow_request();
+//            }
+//            if ( evt->event_state() == event::EventState::Playing ) {
+//                is_control_locked = evt->is_control_locked();
+//                break;
+//            }
+//        }
+//    }
 
     for ( auto* evt : events.events() ) {
-        if ( evt->event_state() == event::EventState::Playing ) {
-            current = evt;
+        evt->update();
+        is_control_locked = is_control_locked || evt->is_control_locked();
+        request = evt->take_talkflow_request();
+        if ( request ) {
             break;
         }
     }
 
-    if ( current ) {
-        current->update();
-        request = current->take_talkflow_request();
-    } else {
-        for( auto* evt : events.events() ) {
-            if ( evt->event_state() == event::EventState::NotStarted ) {
-                evt->update();
-                request = evt->take_talkflow_request();
-            }
-            if ( evt->event_state() == event::EventState::Playing ) {
-                break;
-            }
-        }
+    if ( out ) {
+        *out = request;
     }
-    return request;
+    return is_control_locked;
 }
 
 void update(
@@ -52,20 +94,17 @@ void update(
     TalkflowControllerT& talkflow,
     CameraT* camera
 ) {
-
+    bool is_control_locked = false;
     if ( scx.evts ) {
-        auto* talkflow_req = scene::event_update(*scx.evts);
+        const TalkflowRequest* talkflow_req = nullptr;
+        is_control_locked = scene::event_update(*scx.evts, &talkflow_req);
         if ( talkflow_req ) {
             if ( talkflow_req->listener ) {
                 talkflow.bind_listener(*talkflow_req->listener);
             } else {
                 talkflow.unbind_listener();
             }
-            if ( talkflow_req->effect_type == TalkflowEffectType::Mute ) {
-                talkflow.unbind_effects();
-            } else {
-                talkflow.bind_effects(scx.talkflow_effects);
-            }
+            set_talkflow_effect(talkflow, scx.talkflow_effects, talkflow_req->effect_type);
             talkflow.set_talkscript(*talkflow_req->talkscript);
             talkflow.begin(talkflow_req->start_label);
         }
@@ -76,16 +115,9 @@ void update(
         talkflow.reset_state();
     }
 
-    if ( !talkflow.in_progress() ) {
+    if ( !( talkflow.in_progress() || is_control_locked ) ) {
 
         scx.player.update_movement();
-
-        if ( scx.stage ) {
-            scx.stage->detect_hit(
-                scx.player,
-                static_cast<size_t>(PlayerHitboxIndex::Body)
-            );
-        }
 
         if ( scx.objs ) {
             for ( auto* block : scx.objs->blocks() ) {
@@ -120,14 +152,14 @@ void update(
                 ColBox2BoxT::detect_pair(*block, scx.player, static_cast<size_t>(PlayerHitboxIndex::Hand));
             }
 
-            for ( auto* block : scx.objs->blocks() ) {
-                if ( block->player_push_direction() != app::block::Block::PlayerPushDirection::None ) {
-                    if ( block->can_move_group(scx.objs->blocks()) ) {
-                        block->resolve_movement();
-                        break;
-                    }
-                }
-            }
+//            for ( auto* block : scx.objs->blocks() ) {
+//                if ( block->player_push_direction() != app::block::Block::PlayerPushDirection::None ) {
+//                    if ( block->can_move_group(scx.objs->blocks()) ) {
+//                        block->resolve_movement();
+//                        break;
+//                    }
+//                }
+//            }
             for ( auto* block : scx.objs->blocks() ) {
                 ColBox2BoxT::detect_pair(*block, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
             }
@@ -168,9 +200,28 @@ void update(
             }
         }
 
+        if ( scx.stage ) {
+            scx.stage->detect_hit(
+                scx.player,
+                static_cast<size_t>(PlayerHitboxIndex::Body)
+            );
+        }
+
         if ( scx.evts ) {
             for ( auto* cs : scx.evts->events() ) {
                 ColBox2BoxT::detect_pair(*cs, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+            }
+        }
+
+        scx.player.resolve_movement();
+        if ( scx.objs ) {
+            for ( auto* block : scx.objs->blocks() ) {
+                if ( block->player_push_direction() != app::block::Block::PlayerPushDirection::None ) {
+                    if ( block->can_move_group(scx.objs->blocks()) ) {
+                        block->resolve_movement();
+                        break;
+                    }
+                }
             }
         }
 
@@ -198,11 +249,7 @@ void update(
                 } else {
                     talkflow.unbind_listener();
                 }
-                if ( talkflow_req->effect_type == TalkflowEffectType::Mute ) {
-                    talkflow.unbind_effects();
-                } else {
-                    talkflow.bind_effects(scx.talkflow_effects);
-                }
+                set_talkflow_effect(talkflow, scx.talkflow_effects, talkflow_req->effect_type);
                 talkflow.set_talkscript(*talkflow_req->talkscript);
                 talkflow.begin(talkflow_req->start_label);
             }
@@ -222,6 +269,9 @@ void update(
         }
         for ( auto* block : scx.objs->blocks() ) {
             block->update_animation();
+        }
+        for ( auto* prop : scx.objs->props() ) {
+            prop->update_animation();
         }
     }
 
@@ -294,6 +344,10 @@ void draw(
 
     if ( scx.objs ) {
         scx.objs->draw_after(fb, pos);
+    }
+
+    if ( scx.evts ) {
+        scx.evts->draw_effect(fb, pos);
     }
 
     talkflow.draw(fb);

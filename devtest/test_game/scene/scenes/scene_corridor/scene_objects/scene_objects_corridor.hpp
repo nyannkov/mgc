@@ -14,7 +14,7 @@ namespace app {
 struct SceneObjects_Corridor : ISceneObjects {
 
     explicit SceneObjects_Corridor(SceneContext& scx)
-        : cp_info_(scx.checkpoint_info),
+        : cp_info_(scx.world_state.checkpoint_info),
           signboard_(scx.gamepad),
           gate_(scx.gamepad),
           props_ { &entrance_, &signboard_, &gate_ } {

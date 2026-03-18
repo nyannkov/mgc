@@ -34,7 +34,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
         const FrameTimerT& frame_timer,
         const GamepadT& gamepad,
         SoundControllerT& sound_controller,
-        const EquipmentInfo& equipment_info
+        EquipmentInfo& equipment_info
     );
     ~Player() = default;
     Player(const Player&) = delete;
@@ -45,6 +45,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void init();
     void spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state);
     void update_movement();
+    void resolve_movement();
     void update_animation(bool is_talking);
     attack::Attack& attack() { return attack_; }
 
@@ -60,7 +61,38 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
 
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
-    void add_gold(int32_t amount) { gold_ += amount; }
+    void add_gold(int32_t amount) { 
+        if ( amount < 0 ) {
+            return;
+        }
+        if ( MAX_GOLD < amount ) {
+            amount = MAX_GOLD;
+        }
+
+        if ( ( gold_ + amount ) < 0 ) {
+            gold_ = 0;
+        } else if ( MAX_GOLD < ( gold_ + amount ) ) {
+            gold_ = MAX_GOLD;
+        } else {
+            gold_ += amount; 
+        }
+    }
+    void sub_gold(int32_t amount) {
+        if ( amount < 0 ) {
+            return;
+        }
+        if ( MAX_GOLD < amount ) {
+            amount = MAX_GOLD;
+        }
+
+        if ( ( gold_ - amount ) < 0 ) {
+            gold_ = 0;
+        } else if ( MAX_GOLD < ( gold_ - amount ) ) {
+            gold_ = MAX_GOLD;
+        } else {
+            gold_ -= amount; 
+        }
+    }
     void set_gold(int32_t amount) { gold_ = amount; }
     int32_t gold() const { return gold_; }
 
@@ -137,14 +169,15 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void set_game_over();
     auto velocity() const { return velocity_; }
 
+    auto& equipment_info() { return equipment_info_; }
+
 private:
     const GamepadT& gamepad_;
     const FrameTimerT& frame_timer_;
     SoundControllerT& sound_controller_;
-    const EquipmentInfo& equipment_info_;
+    EquipmentInfo& equipment_info_;
     mgc::control::anim::AnimController<FrameTimerT> anim_;
     mgc::math::Vec2f velocity_;
-    bool hit_lt_, hit_rt_, hit_lb_, hit_rb_;
     bool is_grounded_;
     PlayerAnimMode anim_mode_;
     PlayerAnimState anim_state_;
@@ -166,6 +199,11 @@ private:
     bool one_way_block_falling_;
     bool input_enabled_;
     int32_t gold_;
+    mgc::math::Vec2i pushback_box_ {};
+    mgc::math::Vec2i pushback_map_ {};
+    mgc::math::Vec2i box_overlap_ {};
+
+    static constexpr int32_t MAX_GOLD = 99999;
 
     void set_hp(int32_t hp) { hp_ = hp; };
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };

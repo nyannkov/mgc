@@ -13,7 +13,7 @@ namespace app {
 struct SceneObjects_Stage1_2 : ISceneObjects {
 
     explicit SceneObjects_Stage1_2(SceneContext& scx)
-        : cp_info_(scx.checkpoint_info),
+        : cp_info_(scx.world_state.checkpoint_info),
           skyfish_1_(scx.timer, scx.sound, scx.player),
           skyfish_2_(scx.timer, scx.sound, scx.player),
           skyfish_3_(scx.timer, scx.sound, scx.player),

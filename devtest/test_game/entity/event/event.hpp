@@ -30,6 +30,7 @@ struct Event : mgc::entities::ActorImpl<
     virtual void spawn(const mgc::math::Vec2i& pos) = 0;
     virtual void despawn() = 0;
     virtual void update() = 0;
+    virtual void draw_effect(FramebufferT& fb, mgc::math::Vec2i& cam_pos) { }
 
     template <typename Other>
     void on_hit_box_to_box_impl(
@@ -46,6 +47,7 @@ struct Event : mgc::entities::ActorImpl<
     }
 
     EventState event_state() const { return event_state_; }
+    bool is_control_locked() const { return is_control_locked_; }
 
     const auto* take_talkflow_request() {
         const TalkflowRequest* r = talkflow_req_;
@@ -109,7 +111,13 @@ protected:
         trigger_scene_transition_request();
     }
 
+    void lock_control() {
+        is_control_locked_ = true;
+    }
 
+    void unlock_control() {
+        is_control_locked_ = false;
+    }
 
 private:
     EventState event_state_ = EventState::NotStarted;
@@ -121,6 +129,8 @@ private:
     SceneTransitionRequest scene_trans_req_buf_ {};
     SceneTransitionRequest* scene_trans_req_ = nullptr;
     bool scene_trans_req_set_flag_ = false;
+
+    bool is_control_locked_ = false;
 };
 
 }// namespace event

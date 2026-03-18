@@ -21,7 +21,6 @@ struct PushableBlock : Block {
 
 private:
     static constexpr int32_t MOVE_UNIT = 1;
-    PlayerPushDirection player_push_direction_ = PlayerPushDirection::None;
 
     void on_player_hand_hit(
         const Player& player,

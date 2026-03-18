@@ -14,7 +14,7 @@ namespace app {
 struct SceneObjects_TowerFront : ISceneObjects {
 
     explicit SceneObjects_TowerFront(SceneContext& scx) 
-        : cp_info_(scx.checkpoint_info),
+        : cp_info_(scx.world_state.checkpoint_info),
           props_ { &entrance_ },
           hen_(scx.gamepad),
           chick_(scx.gamepad),
