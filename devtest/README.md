@@ -5,54 +5,76 @@ Through the development of this game, we are iteratively improving mgc by adding
 
 ![](img/screenshot1.png)
 ![](img/screenshot2.png)
+![](img/screenshot3.png)
 ![](img/image1.jpeg)
 
-## Development Log
+## Environment
 
-|Rev. | Date       | Video | Description |
-|---|------------|-------| ----- |
-|1 | 2025-12-19 | [#2](https://youtu.be/jxs_fwYP9mA) | Significantly redesigned the game based on Rev.0. Further development continues from this revision. |
-|0 | 2025-09-14 | [#1](https://youtu.be/wK57wLaQIZE) | Implemented a simple 2D platformer.　|
-
-## Hardware Used
-
-The game runs on the Waveshare LCD module [Pico-LCD-1.3](https://www.waveshare.com/wiki/Pico-LCD-1.3), driven by a Raspberry Pi Pico microcontroller (RP2040, no Wi-Fi).
-
-Background music (BGM) and sound effects (SE) are played through a PAM8012-based
-amplifier module connected to a PWM output pin of the RP2040, with an external speaker.
+### Hardware
+* **Microcontroller:** Raspberry Pi Pico (RP2040, non-Wi-Fi)
+* **Display:** [Waveshare Pico-LCD-1.3](https://www.waveshare.com/wiki/Pico-LCD-1.3)
+* **Audio:** External speaker connected via a **PAM8012** amplifier module to the RP2040's PWM output pin.
 
 ![](img/front.jpg)
 ![](img/back.jpg)
 
-## Setup Instructions (in Ubuntu 24.04)
+### Simulation
+The game supports a simulation environment on PC using **SDL2**.
+
+---
+## Setup Instructions (Ubuntu 24.04)
+
+### Common repository setup
 
 ```bash
 # Install dependencies
 apt update
-apt install -y python3 python3-venv git wget
+apt install -y python3 python3-venv git
 
 # Set up Python environment
 python3 -m venv .venv
 source .venv/bin/activate
 pip install pyyaml pillow
 
-# Set up Pico SDK (optional script)
-wget https://raw.githubusercontent.com/raspberrypi/pico-setup/master/pico_setup.sh
-chmod +x pico_setup.sh
-./pico_setup.sh
-
 # Clone the repository
 git clone https://github.com/nyannkov/mgc.git
 cd mgc
 git submodule update --init --recursive
 python3 scripts/setup_assets.py
+```
 
-# Build
-cd devtest/playground/test_game
+### Hardware Environment Setup and Execution
+
+To build for the Raspberry Pi Pico, the Pico SDK is required.
+
+```bash
+apt install -y wget
+
+# Set up Pico SDK (optional script)
+wget https://raw.githubusercontent.com/raspberrypi/pico-setup/master/pico_setup.sh
+chmod +x pico_setup.sh
+./pico_setup.sh
+
+# Build the project
+cd devtest/test_game
 ./build.sh
 ```
-Copy ./build/playground.elf.uf2 to your Raspberry Pi Pico by dragging and dropping it into the USB mass storage device that appears when the Pico is in boot mode.
+Copy ./build/test_game.elf.uf2 to your Raspberry Pi Pico by dragging and dropping it into the USB mass storage device that appears when the Pico is in boot mode.
 
+### Simulation Environment Setup and Execution
+
+To run the game on your PC, install the SDL2 development libraries.
+
+```bash
+apt install -y libsdl2-dev g++ cmake
+
+# Build with simulation flag
+cd devtest/test_game
+SIM=ON ./build.sh
+
+# Execute the simulation
+./sim_build/test_game
+```
 ## Tools Used
 
 - Map editing: Tiled
@@ -75,6 +97,11 @@ All music and sound effects are written in MML (Music Macro Language).
 For details on the MML syntax, please refer to the following specification:
  - [MML Specification (Psgino)](https://github.com/nyannkov/Psgino/blob/main/MML.md).
  
- 
- 
+## Development Log
+
+|Rev. | Date       | Video | Description |
+|---|------------|-------| ----- |
+|2 | 2026-03-20 | - | Added SDL2 simulation support and expanded the game content. |
+|1 | 2025-12-19 | [#2](https://youtu.be/jxs_fwYP9mA) | Significantly redesigned the game based on Rev.0. Further development continues from this revision. |
+|0 | 2025-09-14 | [#1](https://youtu.be/wK57wLaQIZE) | Implemented a simple 2D platformer.　|
 
