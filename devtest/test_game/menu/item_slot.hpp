@@ -11,8 +11,7 @@ namespace app {
 enum class SelectionState {
     Selecting,
     Confirmed,
-    Cancelled,
-    Exit
+    Cancelled
 };
 
 using mgc::platform::input::Key;
@@ -55,9 +54,9 @@ struct ItemSlot {
     }
 
     void update(const GamepadT& gamepad) {
+
         if ( !focused_ ) return;
         if ( slot_.is_empty() ) return;
-
 
         if ( ( selection_state_ == SelectionState::Confirmed ) ||
              ( selection_state_ == SelectionState::Cancelled )
@@ -68,9 +67,7 @@ struct ItemSlot {
                   gamepad.just_pressed(Key::Down) 
             ) {
                 set_selection_state(SelectionState::Selecting);
-            } else if ( gamepad.just_pressed(Key::Cancel) ) {
-                set_selection_state(SelectionState::Exit);
-            } else { }
+            }
 
         } else if ( selection_state_ == SelectionState::Selecting ) {
             if ( gamepad.just_pressed(Key::Enter) ) {
@@ -228,6 +225,7 @@ private:
     void confirm_item() {
         if ( slot_.equip(selecting_item_cursor_id_) ) {
             set_cursor_position(equipped_item_cursor_, selecting_item_cursor_id_);
+            equipped_item_cursor_.set_visible(true);
         }
     }
 

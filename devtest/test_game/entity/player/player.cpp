@@ -226,6 +226,7 @@ void Player::update_animation(bool is_talking) {
                     update_anim_attacking();
                 } else {
                     attack_state_ = AttackState::Stop;
+                    attack_.despawn();
                     update_anim_normal();
                 }
             } else {
@@ -279,6 +280,12 @@ void Player::update_anim_normal() {
 
     PlayerAnimState state_next = anim_state_;
     anim_.set_loop(true);
+
+    if ( is_right_ ) {
+        state_next = PlayerAnimState::StandRight;
+    } else {
+        state_next = PlayerAnimState::StandLeft;
+    }
 
     if ( is_grounded_ ) {
         if ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) {
@@ -343,6 +350,10 @@ void Player::update_anim_attacking() {
         if ( anim_.is_finished() ) {
             attack_state_ = AttackState::Stop;
         }
+
+    } else if ( attack_state_ == AttackState::Stop ) {
+        attack_.despawn();
+        anim_.reset_animation();
 
     } else { }
 

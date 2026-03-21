@@ -29,7 +29,154 @@ void set_talkflow_effect(TalkflowControllerT& talkflow, TalkflowEffects& talkflo
     }
 }
 
+bool event_update(IEventObjects* events) {
+    bool is_control_locked = false;
+    if ( events ) {
+        for ( auto* evt : events->events() ) {
+            evt->update();
+            is_control_locked = is_control_locked || evt->is_control_locked();
+        }
+    }
+
+    return is_control_locked;
 }
+
+void update_movement(SceneContext& scx) {
+
+    scx.player.update_movement();
+
+    if ( scx.objs ) {
+        for ( auto* block : scx.objs->blocks() ) {
+            block->update_movement();
+        }
+        for ( auto* block : scx.objs->blocks() ) {
+            scx.stage->detect_hit(
+                *block,
+                static_cast<size_t>(block::BlockHitboxIndex::Body)
+            );
+        }
+        for ( size_t i = 0; i < scx.objs->blocks().size; ++i ) {
+            auto* a = scx.objs->blocks().data[i];
+            for ( size_t j = i + 1; j < scx.objs->blocks().size; ++j ) {
+                auto* b = scx.objs->blocks().data[j];
+                ColBox2BoxT::detect_pair(
+                    *a,
+                    static_cast<size_t>(block::BlockHitboxIndex::Body),
+                    *b,
+                    static_cast<size_t>(block::BlockHitboxIndex::Body)
+                );
+            }
+        } 
+        for ( auto* block : scx.objs->blocks() ) {
+            scx.stage->detect_hit(
+                *block,
+                static_cast<size_t>(block::BlockHitboxIndex::Body)
+            );
+        }
+
+        for ( auto* block : scx.objs->blocks() ) {
+            ColBox2BoxT::detect_pair(*block, scx.player, static_cast<size_t>(PlayerHitboxIndex::Hand));
+        }
+
+        for ( auto* block : scx.objs->blocks() ) {
+            ColBox2BoxT::detect_pair(*block, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+        }
+        ColBox2BoxT::detect_primary_ptr(    
+            scx.player,
+            static_cast<size_t>(PlayerHitboxIndex::Body),
+            scx.player.velocity(),
+            mgc::collision::BoxBoxPtrArrayView<block::Block>{ scx.objs->blocks().begin(), scx.objs->blocks().size },
+            static_cast<size_t>(block::BlockHitboxIndex::Body)
+        );
+
+        for ( auto* enemy : scx.objs->enemies() ) {
+            enemy->update_movement();
+            scx.stage->detect_hit(
+                *enemy,
+                static_cast<size_t>(enemy::EnemyHitboxIndex::Body)
+            );
+            ColBox2BoxT::detect_pair(*enemy, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+            ColBox2BoxT::detect_pair(*enemy, scx.player.attack());
+            if ( ( enemy->enemy_state() == enemy::EnemyState::Active ) &&
+                 ( enemy->hp() <= 0 )
+            ) {
+                enemy->despawn();
+                scx.player.add_gold(enemy->gold());
+            }
+        }
+        for ( auto* prop : scx.objs->props() ) {
+            ColBox2BoxT::detect_pair(*prop, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+        }
+        for ( auto* civil : scx.objs->civils() ) {
+            ColBox2BoxT::detect_pair(*civil, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+        }
+        for ( auto* item : scx.objs->items() ) {
+            ColBox2BoxT::detect_pair(*item, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+            if ( item->collected() ) {
+                item->despawn();
+            }
+        }
+    }
+
+    if ( scx.stage ) {
+        scx.stage->detect_hit(
+            scx.player,
+            static_cast<size_t>(PlayerHitboxIndex::Body)
+        );
+    }
+
+    if ( scx.evts ) {
+        for ( auto* cs : scx.evts->events() ) {
+            ColBox2BoxT::detect_pair(*cs, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+        }
+    }
+
+    scx.player.resolve_movement();
+    if ( scx.objs ) {
+        for ( auto* block : scx.objs->blocks() ) {
+            if ( block->player_push_direction() != app::block::Block::PlayerPushDirection::None ) {
+                if ( block->can_move_group(scx.objs->blocks()) ) {
+                    block->resolve_movement();
+                    break;
+                }
+            }
+        }
+    }
+}
+
+const TalkflowRequest* take_talkflow_request(SceneContext& scx) {
+
+    const TalkflowRequest* talkflow_req = nullptr;
+    if ( scx.evts ) {
+        for ( auto* evt : scx.evts->events() ) {
+            talkflow_req = evt->take_talkflow_request();
+            if ( talkflow_req ) {
+                return talkflow_req;
+            }
+        }
+    }
+
+    if ( scx.objs ) {
+        for ( auto* civil : scx.objs->civils() ) {
+            talkflow_req = civil->take_talkflow_request();
+            if ( talkflow_req ) {
+                return talkflow_req;
+            }
+        }
+
+        for ( auto* prop : scx.objs->props() ) {
+            talkflow_req = prop->take_talkflow_request();
+            if ( talkflow_req ) {
+                return talkflow_req;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+} // namespace
+
 
 void setup_scene_context(
     SceneContext& scx, 
@@ -42,62 +189,21 @@ void setup_scene_context(
     scx.evts = evts;
 }
 
-bool event_update(
-    IEventObjects& events,
-    const TalkflowRequest** out
-) {
-    event::Event* current = nullptr;
-    const TalkflowRequest* request = nullptr;
-    bool is_control_locked = false;
-
-//    for ( auto* evt : events.events() ) {
-//        if ( evt->event_state() == event::EventState::Playing ) {
-//            current = evt;
-//            is_control_locked = evt->is_control_locked();
-//            break;
-//        }
-//    }
-//
-//    if ( current ) {
-//        current->update();
-//        request = current->take_talkflow_request();
-//    } else {
-//        for( auto* evt : events.events() ) {
-//            if ( evt->event_state() != event::EventState::Playing ) {
-//                evt->update();
-//                request = evt->take_talkflow_request();
-//            }
-//            if ( evt->event_state() == event::EventState::Playing ) {
-//                is_control_locked = evt->is_control_locked();
-//                break;
-//            }
-//        }
-//    }
-
-    for ( auto* evt : events.events() ) {
-        evt->update();
-        is_control_locked = is_control_locked || evt->is_control_locked();
-        request = evt->take_talkflow_request();
-        if ( request ) {
-            break;
-        }
-    }
-
-    if ( out ) {
-        *out = request;
-    }
-    return is_control_locked;
-}
-
 void update(
     SceneContext& scx, 
     TalkflowControllerT& talkflow,
     CameraT* camera
 ) {
     bool is_control_locked = false;
-    if ( scx.evts ) {
-        const TalkflowRequest* talkflow_req = nullptr;
-        is_control_locked = scene::event_update(*scx.evts, &talkflow_req);
+
+    is_control_locked = scene::event_update(scx.evts);
+
+    if ( !( talkflow.in_progress() || is_control_locked ) ) {
+
+        update_movement(scx);
+
+        const auto* talkflow_req = take_talkflow_request(scx);
+
         if ( talkflow_req ) {
             if ( talkflow_req->listener ) {
                 talkflow.bind_listener(*talkflow_req->listener);
@@ -115,147 +221,6 @@ void update(
         talkflow.reset_state();
     }
 
-    if ( !( talkflow.in_progress() || is_control_locked ) ) {
-
-        scx.player.update_movement();
-
-        if ( scx.objs ) {
-            for ( auto* block : scx.objs->blocks() ) {
-                block->update_movement();
-            }
-            for ( auto* block : scx.objs->blocks() ) {
-                scx.stage->detect_hit(
-                    *block,
-                    static_cast<size_t>(block::BlockHitboxIndex::Body)
-                );
-            }
-            for ( size_t i = 0; i < scx.objs->blocks().size; ++i ) {
-                auto* a = scx.objs->blocks().data[i];
-                for ( size_t j = i + 1; j < scx.objs->blocks().size; ++j ) {
-                    auto* b = scx.objs->blocks().data[j];
-                    ColBox2BoxT::detect_pair(
-                        *a,
-                        static_cast<size_t>(block::BlockHitboxIndex::Body),
-                        *b,
-                        static_cast<size_t>(block::BlockHitboxIndex::Body)
-                    );
-                }
-            } 
-            for ( auto* block : scx.objs->blocks() ) {
-                scx.stage->detect_hit(
-                    *block,
-                    static_cast<size_t>(block::BlockHitboxIndex::Body)
-                );
-            }
-
-            for ( auto* block : scx.objs->blocks() ) {
-                ColBox2BoxT::detect_pair(*block, scx.player, static_cast<size_t>(PlayerHitboxIndex::Hand));
-            }
-
-//            for ( auto* block : scx.objs->blocks() ) {
-//                if ( block->player_push_direction() != app::block::Block::PlayerPushDirection::None ) {
-//                    if ( block->can_move_group(scx.objs->blocks()) ) {
-//                        block->resolve_movement();
-//                        break;
-//                    }
-//                }
-//            }
-            for ( auto* block : scx.objs->blocks() ) {
-                ColBox2BoxT::detect_pair(*block, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
-            }
-            ColBox2BoxT::detect_primary_ptr(    
-                scx.player,
-                static_cast<size_t>(PlayerHitboxIndex::Body),
-                scx.player.velocity(),
-                mgc::collision::BoxBoxPtrArrayView<block::Block>{ scx.objs->blocks().begin(), scx.objs->blocks().size },
-                static_cast<size_t>(block::BlockHitboxIndex::Body)
-            );
-
-            for ( auto* enemy : scx.objs->enemies() ) {
-                enemy->update_movement();
-                scx.stage->detect_hit(
-                    *enemy,
-                    static_cast<size_t>(enemy::EnemyHitboxIndex::Body)
-                );
-                ColBox2BoxT::detect_pair(*enemy, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
-                ColBox2BoxT::detect_pair(*enemy, scx.player.attack());
-                if ( ( enemy->enemy_state() == enemy::EnemyState::Active ) &&
-                     ( enemy->hp() <= 0 )
-                ) {
-                    enemy->despawn();
-                    scx.player.add_gold(enemy->gold());
-                }
-            }
-            for ( auto* prop : scx.objs->props() ) {
-                ColBox2BoxT::detect_pair(*prop, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
-            }
-            for ( auto* civil : scx.objs->civils() ) {
-                ColBox2BoxT::detect_pair(*civil, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
-            }
-            for ( auto* item : scx.objs->items() ) {
-                ColBox2BoxT::detect_pair(*item, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
-                if ( item->collected() ) {
-                    item->despawn();
-                }
-            }
-        }
-
-        if ( scx.stage ) {
-            scx.stage->detect_hit(
-                scx.player,
-                static_cast<size_t>(PlayerHitboxIndex::Body)
-            );
-        }
-
-        if ( scx.evts ) {
-            for ( auto* cs : scx.evts->events() ) {
-                ColBox2BoxT::detect_pair(*cs, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
-            }
-        }
-
-        scx.player.resolve_movement();
-        if ( scx.objs ) {
-            for ( auto* block : scx.objs->blocks() ) {
-                if ( block->player_push_direction() != app::block::Block::PlayerPushDirection::None ) {
-                    if ( block->can_move_group(scx.objs->blocks()) ) {
-                        block->resolve_movement();
-                        break;
-                    }
-                }
-            }
-        }
-
-        if ( scx.objs ) {
-            const TalkflowRequest* talkflow_req = nullptr;
-            for ( auto* civil : scx.objs->civils() ) {
-                talkflow_req = civil->take_talkflow_request();
-                if ( talkflow_req ) {
-                    break;
-                }
-            }
-
-            if ( !talkflow_req ) {
-                for ( auto* prop : scx.objs->props() ) {
-                    talkflow_req = prop->take_talkflow_request();
-                    if ( talkflow_req ) {
-                        break;
-                    }
-                }
-            }
-
-            if ( talkflow_req ) {
-                if ( talkflow_req->listener ) {
-                    talkflow.bind_listener(*talkflow_req->listener);
-                } else {
-                    talkflow.unbind_listener();
-                }
-                set_talkflow_effect(talkflow, scx.talkflow_effects, talkflow_req->effect_type);
-                talkflow.set_talkscript(*talkflow_req->talkscript);
-                talkflow.begin(talkflow_req->start_label);
-            }
-        }
-    }
-
     if ( !scx.player.is_game_over() ) {
         if ( scx.player.hp() <= 0 ) {
             scx.player.set_game_over();
@@ -263,6 +228,7 @@ void update(
     }
 
     scx.player.update_animation(talkflow.in_progress());
+
     if ( scx.objs ) {
         for ( auto* enemy : scx.objs->enemies() ) {
             enemy->update_animation();

@@ -52,22 +52,18 @@ void EquipmentMenu::init() {
 
 void EquipmentMenu::update() {
     
-    SelectionState selection_state = SelectionState::Cancelled;
-
-    if ( gamepad_.just_pressed(Key::Menu) ) {
+    if ( gamepad_.just_pressed(Key::Home) ) {
         toggle_mode();
     }
 
-    if ( select_mode_ == MenuSelectMode::Item ) {
-        item_slot_.update(gamepad_);
-        selection_state = item_slot_.selection_state();
-    } else {
-        weapon_slot_.update(gamepad_);
-        selection_state = weapon_slot_.selection_state();
-    }
-
-    if ( selection_state == SelectionState::Exit ) {
+    if ( gamepad_.just_pressed(Key::Menu) ) {
         is_exit_ = true;
+    } else {
+        if ( select_mode_ == MenuSelectMode::Item ) {
+            item_slot_.update(gamepad_);
+        } else {
+            weapon_slot_.update(gamepad_);
+        }
     }
 
     update_description();
