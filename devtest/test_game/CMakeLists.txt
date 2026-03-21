@@ -17,6 +17,7 @@ target_include_directories(app_headers INTERFACE
 set(CXX_SOURCES 
     main.cpp
     utils/game_over_effect/game_over_effect.cpp
+    utils/screen_fader/screen_fader.cpp
     status/status.cpp
     menu/equipment_menu.cpp
     entity/player/player.cpp
