@@ -66,7 +66,7 @@ Copy ./build/test_game.elf.uf2 to your Raspberry Pi Pico by dragging and droppin
 To run the game on your PC, install the SDL2 development libraries.
 
 ```bash
-apt install -y libsdl2-dev g++ cmake
+apt install -y libsdl2-dev build-essential cmake
 
 # Build with simulation flag
 cd devtest/test_game
