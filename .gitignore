@@ -1,5 +1,6 @@
 # Directory
 build/
+sim_build/
 generated/
 .venv/
 /assets/

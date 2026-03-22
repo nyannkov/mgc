@@ -42,7 +42,7 @@ struct SkyFish: Enemy {
     ) override;
 
     void on_attack_hit(
-        const Attack& attack,
+        const attack::Attack& attack,
         const mgc::collision::BoxCollisionInfo& info
     ) override;
 

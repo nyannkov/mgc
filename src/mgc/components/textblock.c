@@ -8,7 +8,7 @@
 
 static inline enum mgc_display_text_state display_update(mgc_textblock_t *textblock) {
     const char *next_cursor;
-    int16_t scale;
+    uint16_t scale;
     switch (textblock->state) {
     case MGC_DISPLAY_TEXT_STATE_INIT:
         textblock->cursor = textblock->text;
@@ -98,7 +98,7 @@ void textblock_set_id(mgc_textblock_t *textblock, mgc_id_t id) {
     textblock->id = id;
 }
 
-void textblock_set_position(mgc_textblock_t *textblock, int16_t x, int16_t y) {
+void textblock_set_position(mgc_textblock_t *textblock, mgc_world_t x, mgc_world_t y) {
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
         return;
@@ -117,8 +117,8 @@ void textblock_set_visible(mgc_textblock_t *textblock, bool v) {
 
 void textblock_set_text(mgc_textblock_t *textblock, const char *text) {
     const char * p;
-    int16_t total_dwx0;
-    int16_t scale;
+    uint16_t total_dwx0;
+    uint16_t scale;
 
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
@@ -253,7 +253,7 @@ void textblock_set_scroll_speed(mgc_textblock_t *textblock, uint8_t scroll_speed
         MGC_WARN("Invalid handler");
         return;
     }
-    textblock->scroll_speed = scroll_speed;
+    textblock->scroll_speed = (scroll_speed == 0) ? 1 : scroll_speed;
 }
 
 void textblock_set_scroll_line(mgc_textblock_t *textblock, uint8_t scroll_line) {
@@ -282,15 +282,23 @@ void textblock_set_parallax_factor(mgc_textblock_t *textblock, float factor_x, f
 }
 
 void textblock_display_update(mgc_textblock_t *textblock) {
-    enum mgc_display_text_state state;
     if ( textblock == NULL ) {
         MGC_WARN("Invalid handler");
         return;
     }
-    for ( size_t n = 0; n < textblock->cursor_speed; n++ ) {
-        state = display_update(textblock);
-        if ( state != MGC_DISPLAY_TEXT_STATE_CURSOR_MOVING ) {
-            break;
+    if ( textblock->cursor_speed == 0 ) {
+        size_t guard = MGC_TEXTBLOCK_MAX_LINES * textblock->width;
+        while ( display_update(textblock) != MGC_DISPLAY_TEXT_STATE_TEXT_END ) {
+            guard--;
+            if ( guard == 0 ) {
+                break;
+            }
+        }
+    } else {
+        for ( size_t n = 0; n < textblock->cursor_speed; n++ ) {
+            if ( display_update(textblock) != MGC_DISPLAY_TEXT_STATE_CURSOR_MOVING ) {
+                break;
+            }
         }
     }
 }
@@ -314,15 +322,15 @@ static inline bool draw_buffer(
 ) {
 
     // 0: textblock, 1:camera
-    int16_t l0, l1;
-    int16_t r0, r1;
-    int16_t t0, t1;
-    int16_t b0, b1;
+    mgc_world_t l0, l1;
+    mgc_world_t r0, r1;
+    mgc_world_t t0, t1;
+    mgc_world_t b0, b1;
     const char *p;
     const char *tmp_p;
-    int16_t dx, dy;
-    int16_t scale;
-    int16_t shift;
+    int32_t dx, dy;
+    uint16_t scale;
+    uint16_t shift;
     mgc_color_t fore_color;
     mgc_color_t back_color;
 
@@ -376,7 +384,7 @@ static inline bool draw_buffer(
     dy = textblock->font->fbb_y*scale;
     t0 = textblock->y - textblock->scroll_y;
     b0 = t0+dy-1;
-    for ( uint16_t index = textblock->line_ofs; index < MGC_TEXTBLOCK_MAX_LINES; index++ ) {
+    for ( size_t index = textblock->line_ofs; index < MGC_TEXTBLOCK_MAX_LINES; index++ ) {
         if ( b0 >= (t0 + textblock->height) ) {
             break;
         }
@@ -409,21 +417,21 @@ static inline bool draw_buffer(
                     break;
                 }
                 if ( (l1<=r0) && (l0<=r1) ) {
-                    int16_t x_s, y_s, x_e, y_e;
+                    int32_t x_s, y_s, x_e, y_e;
                     uint32_t bitmap[MGC_FONT_MAX_FONT_SIZE] = {0};
                     font_load_bitmap(textblock->font, glyph, bitmap, MGC_FONT_MAX_FONT_SIZE);
                     x_s = (( l1 < l0 ) ? l0 : l1) - l0;
                     x_e = (( r1 < r0 ) ? r1 : r0) - l0;
                     y_s = (( t1 < t0 ) ? t0 : t1) - t0;
                     y_e = (( b1 < b0 ) ? b1 : b0) - t0;
-                    for ( int16_t X = x_s; X <= x_e; X++ ) {
+                    for ( int32_t X = x_s; X <= x_e; X++ ) {
                         uint32_t mask_x;
                         if (glyph->bb_w <= 8 ) {
                             mask_x = 0x00010000>>(X>>shift);
                         } else {
                             mask_x = 0x01000000>>(X>>shift);
                         }
-                        for ( int16_t Y = y_s; Y <= y_e; Y++ ) {
+                        for ( int32_t Y = y_s; Y <= y_e; Y++ ) {
                             if ( (bitmap[Y>>shift] & mask_x ) != 0 ) {
                                 size_t idx = MGC_GET_PIXELBUF_INDEX(X+l0-l1, Y+t0-t1, buf_width, buf_height);
                                 draw_buf[idx] = fore_color;

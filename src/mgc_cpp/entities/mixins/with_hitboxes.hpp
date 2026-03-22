@@ -14,6 +14,16 @@ namespace mgc {
 namespace entities {
 namespace mixins {
 
+template <typename, typename = void>
+struct has_hitboxes : std::false_type {};
+
+template <typename T>
+struct has_hitboxes<
+    T,
+    std::void_t<
+        decltype(std::declval<const T&>().hitboxes())
+    >
+> : std::true_type {};
 
 template <typename Derived, size_t MaxHitboxCount>
 struct WithHitboxes {

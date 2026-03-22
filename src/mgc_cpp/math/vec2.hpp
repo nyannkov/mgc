@@ -80,7 +80,7 @@ struct Vec2 {
 
 using Vec2f = Vec2<float>;
 using Vec2i16 = Vec2<int16_t>;
-using Vec2i= Vec2i16;
+using Vec2i= Vec2<mgc_world_t>;
 
 }// namespace math
 }// namespace mgc

@@ -1,0 +1,14 @@
+item_descriptors:
+    title: 'WEAPON:'
+    tileset_path: 'generated/tileset/tileset_menu_weapon.h'
+    id_group_name: WeaponId
+    descriptors:
+        - id: Claw
+          name: '爪'
+          description: '爪' 
+          tile_index: 0
+        - id: Boomerang
+          name: 'ブーメラン'
+          description: '投げると戻ってくる。'
+          tile_index: 1
+

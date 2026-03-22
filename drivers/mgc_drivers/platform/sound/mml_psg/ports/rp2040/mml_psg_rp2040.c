@@ -17,7 +17,8 @@
 #include <hardware/gpio.h>
 #include <hardware/pwm.h>
 #include <hardware/irq.h>
-#include "mgc_drivers/platform/sound/mml_psg/mml_psg_local.h"
+#include "mml_psg_local.h"
+#include "ports/mml_psg_port.h"
 
 #ifndef MGC_DRIVERS_MML_PSG_RP2040_ALARM_NUM
 #define MGC_DRIVERS_MML_PSG_RP2040_ALARM_NUM                1

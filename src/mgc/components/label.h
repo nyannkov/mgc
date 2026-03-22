@@ -19,8 +19,8 @@ extern "C" {
 
 typedef struct mgc_label {
     mgc_id_t id;
-    int16_t x;
-    int16_t y;
+    mgc_world_t x;
+    mgc_world_t y;
     uint16_t width;
     uint16_t height;
     bool visible;
@@ -37,7 +37,7 @@ typedef struct mgc_label {
 void label_init(mgc_label_t *label, mgc_id_t id, const mgc_font_t *font, bool fontsize2x);
 void label_set_id(mgc_label_t *label, mgc_id_t id);
 void label_set_visible(mgc_label_t *label, bool v);
-void label_set_position(mgc_label_t *label, int16_t x, int16_t y);
+void label_set_position(mgc_label_t *label, mgc_world_t x, mgc_world_t y);
 void label_set_size(mgc_label_t *label, uint16_t width, uint16_t height);
 void label_set_width(mgc_label_t *label, uint16_t width);
 void label_set_height(mgc_label_t *label, uint16_t height);

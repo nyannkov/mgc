@@ -18,8 +18,8 @@ extern "C" {
 typedef struct mgc_rect {
     mgc_id_t id;
     bool visible;
-    int16_t x;
-    int16_t y;
+    mgc_world_t x;
+    mgc_world_t y;
     float parallax_factor_x;
     float parallax_factor_y;
     uint16_t width;
@@ -32,7 +32,7 @@ typedef struct mgc_rect {
 void rect_init(mgc_rect_t *rect, mgc_id_t id);
 void rect_set_id(mgc_rect_t *rect, mgc_id_t id);
 void rect_set_visible(mgc_rect_t *rect, bool v);
-void rect_set_position(mgc_rect_t *rect, int16_t x, int16_t y);
+void rect_set_position(mgc_rect_t *rect, mgc_world_t x, mgc_world_t y);
 void rect_set_width(mgc_rect_t *rect, uint16_t width);
 void rect_set_height(mgc_rect_t *rect, uint16_t height);
 void rect_set_border_width(mgc_rect_t *rect, uint16_t border_width);

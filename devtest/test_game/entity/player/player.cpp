@@ -7,11 +7,15 @@ namespace app {
 
 using mgc::platform::input::Key;
 
-Player::Player(const FrameTimerT& frame_timer, const GamepadT& gamepad, SoundControllerT& sound_controller)
-    : gamepad_(gamepad),
+Player::Player(
+    const FrameTimerT& frame_timer,
+    const GamepadT& gamepad,
+    SoundControllerT& sound_controller,
+    EquipmentInfo& equipment_info
+)   : gamepad_(gamepad),
       frame_timer_(frame_timer),
       sound_controller_(sound_controller),
-      attack_(frame_timer, gamepad),
+      attack_(frame_timer, gamepad, sound_controller),
       anim_(frame_timer), 
       velocity_({0.0f, 0.0f}),
       force_ex_({0.0f, 0.0f}),
@@ -28,7 +32,8 @@ Player::Player(const FrameTimerT& frame_timer, const GamepadT& gamepad, SoundCon
       input_enabled_(true),
       gold_(100),
       attack_state_(AttackState::Stop),
-      blink_animator_(frame_timer) {
+      blink_animator_(frame_timer),
+      equipment_info_(equipment_info) {
 
       init();
 }
@@ -40,10 +45,15 @@ void Player::init() {
     gold_ = 100;
     blink_animator_.set_target(*this);
 
-    auto& body = at(this->hitboxes(), PlayerHitboxIndex::Body);
-    body.offset = mgc::collision::HitboxOffset(1, 0);
-    body.size = mgc::collision::HitboxSize(14, 16);
-    body.enabled = true;
+    auto& body = at(this->mut_hitboxes(), PlayerHitboxIndex::Body);
+    body.set_offset({1, 0});
+    body.set_size({14, 16});
+    body.set_enabled(true);
+
+    auto& hand = at(this->mut_hitboxes(), PlayerHitboxIndex::Hand);
+    hand.set_offset({1, 1});
+    hand.set_size({14, 1});
+    hand.set_enabled(true);
 }
 
 void Player::spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state) {
@@ -52,7 +62,7 @@ void Player::spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state) {
     anim_.set_anim_frames(get_anim_frames(anim_state_));
     anim_.start_animation();
     anim_.set_loop(true);
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
     this->set_position(pos);
 
     is_grounded_ = true;
@@ -64,17 +74,41 @@ void Player::spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state) {
 void Player::reset_state_for_placement(
     const mgc::math::Vec2i& pos, PlayerAnimState anim_state
 ) {
+
+    switch (anim_state) {
+    case PlayerAnimState::StandRight:
+    case PlayerAnimState::WalkRight:
+    case PlayerAnimState::JumpRight:
+    case PlayerAnimState::AttackRight:
+    case PlayerAnimState::GameOverRight:
+    case PlayerAnimState::LookupRight:
+        is_right_ = true;
+        break;
+    default:
+        is_right_ = false;
+        break;
+    }
+
     anim_state_ = anim_state;
     anim_.set_anim_frames(get_anim_frames(anim_state_));
     anim_.start_animation();
     anim_.set_loop(true);
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
     this->set_position(pos);
     velocity_ = {0.0f, 0.0f};
     player_state_ = PlayerState::Normal;
 }
 
 void Player::update_movement() {
+
+    velocity_.x = 0;//TODO
+
+    pushback_box_.x = 0;
+    pushback_box_.y = 0;
+    pushback_map_.x = 0;
+    pushback_map_.y = 0;
+    box_overlap_.x = 0;
+    box_overlap_.y = 0;
 
     auto real_pos = this->precise_position();
 
@@ -104,10 +138,12 @@ void Player::update_movement() {
                 if ( gamepad_.just_pressed(Key::Enter) ) {
                     attack_state_ = AttackState::Start;
                 } else if ( gamepad_.is_pressed(Key::Left) ) {
-                    real_pos.x -= 4;
+                    velocity_.x = -4;
+                    real_pos.x += velocity_.x;
                     is_right_ = false;
                 } else if ( gamepad_.is_pressed(Key::Right) ) {
-                    real_pos.x += 4;
+                    velocity_.x = 4;
+                    real_pos.x += velocity_.x;
                     is_right_ = true;
                 } else { }
             }
@@ -134,10 +170,12 @@ void Player::update_movement() {
             } else { }
 
             if ( gamepad_.is_pressed(Key::Left) ) {
-                real_pos.x -= 4;
+                velocity_.x = -4;
+                real_pos.x += velocity_.x;
                 is_right_ = false;
             } else if ( gamepad_.is_pressed(Key::Right) ) {
-                real_pos.x += 4;
+                velocity_.x = 4;
+                real_pos.x += velocity_.x;
                 is_right_ = true;
             } else { }
         }
@@ -161,6 +199,20 @@ void Player::update_movement() {
     is_grounded_ = false;
 
     force_ex_ *= 0.5;
+
+    attack_.update_movement();
+}
+
+void Player::resolve_movement() {
+    if ( ( pushback_box_.x != 0 ) && ( pushback_map_.x != 0 ) ) {
+        auto real_pos = this->precise_position();
+        if ( box_overlap_.y > 0 )  {
+            real_pos.y -= ( box_overlap_.y - 1 );
+        }
+        this->set_precise_position(real_pos);
+        is_grounded_ = true;
+        velocity_.y = 0;
+    }
 }
 
 void Player::update_animation(bool is_talking) {
@@ -174,6 +226,7 @@ void Player::update_animation(bool is_talking) {
                     update_anim_attacking();
                 } else {
                     attack_state_ = AttackState::Stop;
+                    attack_.despawn();
                     update_anim_normal();
                 }
             } else {
@@ -191,8 +244,10 @@ void Player::update_animation(bool is_talking) {
         }
     } else if ( anim_mode_ == PlayerAnimMode::Manual ) {
         anim_.proc();
-        anim_.set_current_frame(this->sprite());
+        anim_.set_current_frame(this->mut_sprite());
     }
+
+    attack_.update_animation();
 }
 
 void Player::receive_damage(int32_t amount) {
@@ -226,6 +281,12 @@ void Player::update_anim_normal() {
     PlayerAnimState state_next = anim_state_;
     anim_.set_loop(true);
 
+    if ( is_right_ ) {
+        state_next = PlayerAnimState::StandRight;
+    } else {
+        state_next = PlayerAnimState::StandLeft;
+    }
+
     if ( is_grounded_ ) {
         if ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) {
             state_next = is_right_ ? PlayerAnimState::WalkRight
@@ -252,22 +313,33 @@ void Player::update_anim_normal() {
     }
 
     anim_.proc();
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
 }
 
 void Player::update_anim_attacking() {
 
     anim_.set_loop(false);
 
+    //TODO
+    switch ( equipment_info_.weapon.equipped_id() ) {
+    case static_cast<uint32_t>(WeaponId::Claw):
+        current_attack_type_ = attack::AttackType::Scratch;
+        break;
+    case static_cast<uint32_t>(WeaponId::Boomerang):
+        current_attack_type_ = attack::AttackType::Boomerang;
+        break;
+    default:
+        break;
+    }
+
     if ( attack_state_ == AttackState::Start ) {
         attack_state_ = AttackState::InProgress;
-        sound_controller_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH, 0.0);
 
         if ( is_right_ ) {
-            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), AttackOwner::Player, AttackDirection::Right);
+            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
             anim_state_ = PlayerAnimState::AttackRight;
         } else {
-            attack_.spawn(this->position() + mgc::math::Vec2i(-10, 0), AttackOwner::Player, AttackDirection::Left);
+            attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
             anim_state_ = PlayerAnimState::AttackLeft;
         }
 
@@ -277,13 +349,16 @@ void Player::update_anim_attacking() {
     } else if ( attack_state_ == AttackState::InProgress ) {
         if ( anim_.is_finished() ) {
             attack_state_ = AttackState::Stop;
-            attack_.despawn();
         }
+
+    } else if ( attack_state_ == AttackState::Stop ) {
+        attack_.despawn();
+        anim_.reset_animation();
 
     } else { }
 
     anim_.proc();
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
 }
 
 void Player::set_anim_manually(PlayerAnimState state) {
@@ -303,7 +378,7 @@ void Player::update_anim_game_over() {
     anim_.start_animation();
 
     anim_.proc();
-    anim_.set_current_frame(this->sprite());
+    anim_.set_current_frame(this->mut_sprite());
 }
 
 void Player::set_game_over() { 
@@ -354,7 +429,6 @@ void Player::on_item_hit(
     }
 }
 
-
 void Player::on_collision_resolved(
     const stage::LayerBlock& block,
     const mgc::collision::MapPushbackInfo& info
@@ -362,12 +436,21 @@ void Player::on_collision_resolved(
     auto pos = this->position();
     // Pushback response logic: stop falling or bounce depending on direction
     if ( info.pushback.y < 0 ) {
-        velocity_.y = 0.0f;
-        is_grounded_ = true;
+//        velocity_.y = 0.0f;
+//        is_grounded_ = true;
+        if ( velocity_.y >= 0 ) {
+            velocity_.y = 0.0f;
+            is_grounded_ = true;
+        }
     } else if ( info.pushback.y > 0 ) {
-        velocity_.y *= -1;
+        //velocity_.y *= -1;
+        //velocity_.y = 1;
+        velocity_.y = 0.1f;
     } else { 
     }
+
+    pushback_map_ = info.pushback;
+
     pos += info.pushback;
 
     this->set_position(pos);
@@ -396,15 +479,72 @@ void Player::on_collision_resolved(
 
     auto pos = this->position();
     if ( info.pushback.y < 0 ) {
-        velocity_.y = 0.0f;
-        is_grounded_ = true;
+//        velocity_.y = 0.0f;
+//        is_grounded_ = true;
+        if ( velocity_.y >= 0 ) {
+            velocity_.y = 0.0f;
+            is_grounded_ = true;
+        }
     } else if ( info.pushback.y > 0 ) {
-        velocity_.y *= -1;
+        //velocity_.y *= -1;
+        velocity_.y = 0.1;
     } else { 
     }
     pos.y += info.pushback.y;
 
     this->set_position(pos);
+}
+
+void Player::on_collision_resolved(
+    const stage::LayerNeedle& block,
+    const mgc::collision::MapPushbackInfo& info
+) {
+    if ( !is_invulnerable_ && !this->is_game_over() ) {
+
+        this->receive_damage(1);
+
+        if ( this->hp() > 0 ) {
+            sound_controller_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+            is_invulnerable_ = true;
+            blink_animator_.set_blink_half_period(50);
+            blink_animator_.set_blink_count_max(40);
+            blink_animator_.set_end_state(mgc::utils::BlinkEndState::Visible);
+            blink_animator_.start();
+        }
+    }
+}
+
+void Player::on_collision_resolved(
+    const mgc::collision::BoxPushbackInfo& info
+) {
+    auto pos = this->position();
+
+    auto pushback = info.pushback;
+    pushback_box_ = info.pushback;
+    box_overlap_ = info.max_overlap;
+
+    if ( info.is_fully_blocked ) {
+        //pushback.x = info.max_overlap.x;
+        pushback.y = info.max_overlap.y * -1;
+    }
+
+    pos += pushback;
+
+    this->set_position(pos);
+ 
+    if ( pushback.y < 0 ) {
+        if ( velocity_.y >= 0 ) {
+            velocity_.y = 0.0f;
+            is_grounded_ = true;
+        } else if ( pushback.y > 0 ) {
+            velocity_.y = 0.1f;
+        }
+    } else if ( info.pushback.y > 0 ) {
+        //velocity_.y *= -1;
+        //velocity_.y = 1;
+        velocity_.y = 0.1f;
+    } else { 
+    }
 }
 
 }// namespace app

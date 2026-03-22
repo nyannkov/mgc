@@ -1,88 +1,35 @@
 #ifndef MGC_MAIN_FRAME_HPP
 #define MGC_MAIN_FRAME_HPP
 
-#include "mgc_cpp/mgc.hpp"
-#include "scene/scene.hpp"
-#include "utils/screen_fader/screen_fader.hpp"
-#include "game_context/game_context.hpp"
+#include "game_context.hpp"
+#include "scene/scene_manager.hpp"
 
 namespace app {
 
-template <uint16_t Width, uint16_t Height, typename DisplayDriverT>
+template <uint16_t Width, uint16_t Height>
 struct MainFrame {
-    MainFrame(uint16_t x, uint16_t y, DisplayDriverT& display_driver) 
-        : scene_(nullptr),
-          x_(x),
+    MainFrame(uint16_t x, uint16_t y, GameContext& ctx) 
+        : x_(x),
           y_(y),
           dfb_(buffer_0_, buffer_1_, Width, Height),
-          renderer_(dfb_, display_driver, nullptr) { }
+          renderer_(dfb_, ctx.platform.display_driver, nullptr),
+          scene_manager_(ctx) { }
     ~MainFrame() = default;
     MainFrame(const MainFrame&) = delete;
     MainFrame& operator = (const MainFrame&) = delete;
     MainFrame(MainFrame&&) = default;
     MainFrame& operator = (MainFrame&&) = default;
 
-    bool set_scene(SceneId id, GameContext& ctx) {
-        if ( scene_ ) {
-            destroy_current_scene();
-        }
-        scene_ = create_scene(id, ctx);
-        if ( scene_ ) {
-            scene_->init();
-            return true;
-        } else {
-            return false;
-        }
+    void init() {
+        scene_manager_.init();
     }
 
-    void change_next_scene(GameContext& ctx) {
-        if ( scene_ && scene_->has_scene_change_request() ) {
-            ctx.scene_info().set_prev_scene_id(scene_->id());
-            set_scene(scene_->id_next(), ctx);
-            screen_fader_.request_fade_in();
-        }
-    }
-
-    bool update_scene() {
-        if ( scene_ ) {
-
-            ScreenFaderState fade_state = screen_fader_.fade_state();
-
-            if ( fade_state == ScreenFaderState::None ) {
-                scene_->update();
-                if ( scene_->has_scene_change_request() ) {
-                    screen_fader_.request_fade_out();
-                }
-                return false;
-            } else {
-                if ( fade_state == ScreenFaderState::FadeOutComplete ) {
-                    screen_fader_.clear();
-                    return true;// Change into next scene.
-                } else if ( fade_state == ScreenFaderState::FadeInComplete ) {
-                    screen_fader_.clear();
-                    return false;
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-    }
-
-    SceneId scene_id_next() const {
-        if ( scene_ ) {
-            return scene_->id_next();
-        } else {
-            return SceneId::Id_000;
-        }
+    void update_screen() {
+        scene_manager_.update();
     }
 
     void draw_to_buffer() {
-        if ( scene_ ) {
-            scene_->draw(dfb_.back());
-            screen_fader_.update(dfb_.back());
-        }
+        scene_manager_.draw(dfb_.back());
     }
 
     void flush() {
@@ -94,14 +41,13 @@ struct MainFrame {
     }
 
 private:
-    IScene *scene_;
     const uint16_t x_;
     const uint16_t y_;
     mgc::graphics::Color buffer_0_[Width*Height];
     mgc::graphics::Color buffer_1_[Width*Height];
     mgc::graphics::DoubleFramebuffer dfb_;
     mgc::render::DoubleBufferedRenderer<DisplayDriverT> renderer_;
-    ScreenFader screen_fader_;
+    SceneManager scene_manager_;
 };
 
 } // namespace app

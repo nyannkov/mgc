@@ -87,8 +87,8 @@ void dialoguebox_set_height(mgc_dialoguebox_t *dialoguebox, uint16_t height) {
     textblock_set_height(&dialoguebox->textblock, text_height);
 }
 
-void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, int16_t x, int16_t y) {
-    int16_t text_x, text_y;
+void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, mgc_world_t x, mgc_world_t y) {
+    mgc_world_t text_x, text_y;
     if ( dialoguebox == NULL ) {
         MGC_WARN("Invalid handler");
         return;

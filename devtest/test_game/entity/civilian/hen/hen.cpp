@@ -9,24 +9,24 @@ using mgc::platform::input::Key;
 Hen::Hen(const GamepadT& gamepad) 
     : gamepad_(gamepad) {
 
-    this->sprite().set_visible(false);
-    this->sprite().set_tileset(tileset_hen);
-    auto& hitboxes = this->hitboxes();
-    at(hitboxes, CivilHitboxId::Body).offset = mgc::collision::HitboxOffset(0, 0);
-    at(hitboxes, CivilHitboxId::Body).size = mgc::collision::HitboxSize(6, 10);
-    at(hitboxes, CivilHitboxId::Body).enabled = false;
+    this->mut_sprite().set_visible(false);
+    this->mut_sprite().set_tileset(tileset_hen);
+    auto& hitboxes = this->mut_hitboxes();
+    at(hitboxes, CivilHitboxIndex::Body).set_offset({0, 0});
+    at(hitboxes, CivilHitboxIndex::Body).set_size({6, 10});
+    at(hitboxes, CivilHitboxIndex::Body).set_enabled(false);
 
-    at(hitboxes, CivilHitboxId::View).offset = mgc::collision::HitboxOffset(-16, 0);
-    at(hitboxes, CivilHitboxId::View).size = mgc::collision::HitboxSize(38, 10);
-    at(hitboxes, CivilHitboxId::View).enabled = false;
+    at(hitboxes, CivilHitboxIndex::View).set_offset({-16, 0});
+    at(hitboxes, CivilHitboxIndex::View).set_size({38, 10});
+    at(hitboxes, CivilHitboxIndex::View).set_enabled(false);
 }
 
 void Hen::spawn(const mgc::math::Vec2i& pos) {
     this->set_position(pos);
-    auto& hitboxes = this->hitboxes();
-    at(hitboxes, CivilHitboxId::Body).enabled = true;
-    at(hitboxes, CivilHitboxId::View).enabled = true;
-    this->sprite().set_visible(true);
+    auto& hitboxes = this->mut_hitboxes();
+    at(hitboxes, CivilHitboxIndex::Body).set_enabled(true);
+    at(hitboxes, CivilHitboxIndex::View).set_enabled(true);
+    this->mut_sprite().set_visible(true);
 }
 
 void Hen::spawn(const mgc::math::Vec2i& pos, HenAnimState anim_state) {
@@ -35,10 +35,10 @@ void Hen::spawn(const mgc::math::Vec2i& pos, HenAnimState anim_state) {
 }
 
 void Hen::despawn() {
-    auto& hitboxes = this->hitboxes();
-    at(hitboxes, CivilHitboxId::Body).enabled = false;
-    at(hitboxes, CivilHitboxId::View).enabled = false;
-    this->sprite().set_visible(false);
+    auto& hitboxes = this->mut_hitboxes();
+    at(hitboxes, CivilHitboxIndex::Body).set_enabled(false);
+    at(hitboxes, CivilHitboxIndex::View).set_enabled(false);
+    this->mut_sprite().set_visible(false);
 }
 
 void Hen::update_movement() {
@@ -50,10 +50,10 @@ void Hen::update_animation() {
 void Hen::set_anim_state(HenAnimState anim_state) {
     switch (anim_state) {
     case HenAnimState::Stand_Left:
-        this->sprite().set_tile_index(1);
+        this->mut_sprite().set_tile_index(1);
         break;
     case HenAnimState::Stand_Right:
-        this->sprite().set_tile_index(3);
+        this->mut_sprite().set_tile_index(3);
         break;
 //    case HenAnimState::Crouch_Left:
 //        break;
@@ -62,7 +62,7 @@ void Hen::set_anim_state(HenAnimState anim_state) {
 //    case HenAnimState::LookUp_Left:
 //        break;
     case HenAnimState::LookUp_Right:
-        this->sprite().set_tile_index(4);
+        this->mut_sprite().set_tile_index(4);
         break;
     default:
         break;

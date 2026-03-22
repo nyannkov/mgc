@@ -8,28 +8,28 @@ namespace item {
 Potion::Potion() {
 
     this->set_position({0, 0});
-    this->sprite().set_visible(false);
-    this->sprite().set_tileset(tileset_items);
-    this->sprite().set_tile_index(3);
+    this->mut_sprite().set_visible(false);
+    this->mut_sprite().set_tileset(tileset_items);
+    this->mut_sprite().set_tile_index(3);
 
-    auto& hitboxes = this->hitboxes();
-    hitboxes[0].offset = mgc::collision::HitboxOffset(0, 0);
-    hitboxes[0].size = mgc::collision::HitboxSize(8, 8);
-    hitboxes[0].enabled = false;
+    auto& hitboxes = this->mut_hitboxes();
+    hitboxes[0].set_offset({0, 0});
+    hitboxes[0].set_size({8, 8});
+    hitboxes[0].set_enabled(false);
 }
 
 void Potion::spawn(const mgc::math::Vec2i& pos) {
-    auto& hitboxes = this->hitboxes();
-    hitboxes[0].enabled = true;
+    auto& hitboxes = this->mut_hitboxes();
+    hitboxes[0].set_enabled(true);
     this->set_position(pos);
-    this->sprite().set_visible(true);
+    this->mut_sprite().set_visible(true);
     this->set_collected(false);
 }
 
 void Potion::despawn() {
-    auto& hitboxes = this->hitboxes();
-    hitboxes[0].enabled = false;
-    this->sprite().set_visible(false);
+    auto& hitboxes = this->mut_hitboxes();
+    hitboxes[0].set_enabled(false);
+    this->mut_sprite().set_visible(false);
 }
 
 int32_t Potion::apply_effect_to(Player& player, size_t item_hitbox_index) const {

@@ -225,12 +225,12 @@ bool maphit_detect(mgc_maphit_t *maphit) {
 
 void maphit_calc_wall_pushback(
     const mgc_maphit_t *maphit,
-    int16_t *pushback_x,
-    int16_t *pushback_y,
+    mgc_world_t *pushback_x,
+    mgc_world_t *pushback_y,
     enum mgc_corner_escape_type escape_type
 ) {
     int8_t n_x, n_y;
-    int16_t p_x, p_y;
+    mgc_world_t p_x, p_y;
 
     if ( ( maphit == NULL ) ||
          ( maphit->state != MGC_MAPHIT_STATE_END )

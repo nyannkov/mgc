@@ -3,7 +3,7 @@
 
 #include <type_traits>
 #include "mgc_cpp/mgc.hpp"
-#include "platform_conf.hpp"
+#include "platform/platform_conf.hpp"
 
 namespace app {
 
@@ -17,11 +17,24 @@ using TalkflowControllerT = mgc::control::talkflow::DefaultTalkflowController;
 using ITalkflowListenerT = mgc::control::talkflow::ITalkflowListener;
 using ITalkflowEffectsT = mgc::control::talkflow::ITalkflowEffects;
 using CameraT = mgc::camera::SimpleCameraFollower;
-using ColBox2BoxT = mgc::collision::CollisionDetectorBoxToBox;
-using ColBox2MapT = mgc::collision::CollisionDetectorBoxToMap;
+using ColBox2BoxT = mgc::collision::BoxBoxDetector;
+using ColBox2MapT = mgc::collision::BoxMapDetector;
 using ColorT = mgc::graphics::Color;
 using FramebufferT = mgc::graphics::Framebuffer;
 using SpriteT = mgc::parts::BasicSprite;
+using LabelT = mgc::parts::BasicLabel;
+using DialogueboxT = mgc::parts::BasicDialoguebox;
+using TilegridT = mgc::parts::BasicTilegrid;
+
+struct Player;
+namespace attack { struct Attack; }
+namespace enemy { struct Enemy; }
+namespace item { struct Item; }
+namespace prop { struct Prop; }
+namespace block { struct Block; }
+namespace civilian { struct Civilian; }
+namespace event { struct Event; }
+namespace stage { struct Stage; }
 
 template <typename T, typename IndexT, size_t N>
 constexpr T& at(std::array<T, N>& arr, IndexT index) noexcept {
@@ -32,43 +45,6 @@ template <typename T, typename IndexT, size_t N>
 constexpr const T& at(const std::array<T, N>& arr, IndexT index) noexcept {
     return arr[static_cast<size_t>(index)];
 }
-
-
-} // namespace app
-
-namespace app {
-struct Player;
-struct Attack;
-struct GameContext;
-}
-
-namespace app::enemy {
-struct Enemy;
-}
-
-namespace app::item {
-struct Item;
-}
-
-namespace app::prop {
-struct Prop;
-}
-
-namespace app::civilian {
-struct Civilian;
-}
-
-namespace app::event {
-struct Event;
-}
-
-namespace app::stage {
-struct Stage;
-}
-
-namespace app {
-
-void load_default_config(TalkflowControllerT& talkflow);
 
 template<typename T>
 struct ArrayViewer {
@@ -82,8 +58,7 @@ struct ArrayViewer {
     const T* end() const { return data + size; }
 };
 
-}
-
+} // namespace app
 
 #endif/*MGC_APP_COMMON_HPP*/
 

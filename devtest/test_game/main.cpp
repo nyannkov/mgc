@@ -2,40 +2,19 @@
 #include "frame/main_frame.hpp"
 #include "frame/status_frame.hpp"
 #include "resources/mml/mml.h"
+#include "platform/platform.hpp"
 
 namespace {
 
-app::DisplayDriverT display_driver;
-app::SoundControllerT sound_controller;
-app::GamepadT& gamepad = mgc::drivers::platform::input::default_gamepad();
-app::FrameTimerT frame_timer;
+auto& platform = app::get_platform_ref();
 
-app::Player player(frame_timer, gamepad, sound_controller);
-app::GameContext ctx(display_driver, sound_controller, gamepad, frame_timer, player);
+app::RequestHub request_hub;
+app::WorldState world_state(platform);
+app::GameContext ctx(platform, world_state, request_hub);
+app::StopwatchT sw(platform.frame_timer);
 
-app::MainFrame<224, 192, app::DisplayDriverT> main_frame(8, 48, display_driver);
-app::StatusFrame<224, 32, app::DisplayDriverT> status_frame(8, 8, display_driver, ctx);
-
-void platform_init() {
-
-    display_driver.init(50*1000*1000); // over-clock
-    sound_controller.init();
-    gamepad.init();
-    frame_timer.reset();
-
-    sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
-    sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
-    sound_controller.set_lpf_enabled(true);
-    sound_controller.set_lpf_alpha(0.5);
-    sound_controller.set_master_volume(0.5);
-
-    //sound_controller.play_background_music(MML_BGM_2_BGM_TOWER, 0.0);
-}
-
-void platform_proc() {
-    gamepad.proc();
-    frame_timer.tick();
-}
+app::MainFrame<224, 192> main_frame(8, 48, ctx);
+app::StatusFrame<224, 32> status_frame(8, 8, ctx);
 
 void status_display_draw_blocking() {
 
@@ -49,7 +28,9 @@ void status_display_draw_blocking() {
 
     status_frame.update();
 
-    auto request_type = ctx.status_display_request().request();
+    auto& status_display_request = request_hub.status_display_request;
+
+    auto request_type = status_display_request.request();
     if ( show_status_flag ) {
         if ( request_type == app::StatusDisplayRequestType::Hide ) {
             control = StatusDisplayControl::Hide;
@@ -70,7 +51,7 @@ void status_display_draw_blocking() {
             control = StatusDisplayControl::None;
         }
     }
-    ctx.status_display_request().clear_request();
+    status_display_request.clear_request();
 
     switch (control) {
     case StatusDisplayControl::Show:/*fall-through*/
@@ -91,30 +72,49 @@ void status_display_draw_blocking() {
 
 int main() {
 
-    platform_init();
+    app::platform_init();
 
-    main_frame.set_scene(app::SceneId::Id_000, ctx);
-    //main_frame.set_scene(app::SceneId::Id_001_TowerFront, ctx);
-    //main_frame.set_scene(app::SceneId::Id_003_Stage1_1, ctx);
+    platform.sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
+    platform.sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
+    platform.sound_controller.set_lpf_enabled(true);
+    platform.sound_controller.set_lpf_alpha(0.5);
+    platform.sound_controller.set_master_volume(0.5);
+
+    sw.start();
+
+    main_frame.init();
 
     status_frame.clear_display_blocking();
 
     while (1) {
+
+        app::platform_tick();
+        app::platform_sound_proc();
         
-        platform_proc();
-        
-        if ( main_frame.update_scene() ) {
-            main_frame.change_next_scene(ctx);
+        if ( sw.elapsed_ms() >= 25 ) {
+            sw.restart();
+            app::platform_gamepad_proc();
+            
+            main_frame.update_screen();
+
+            main_frame.draw_to_buffer();
+
+            main_frame.sync();
+
+            status_display_draw_blocking();
+
+            main_frame.flush();
+
+            if ( !app::platform_is_continue() ) {
+                break;
+            }
+
+        } else {
+            app::platform_sleep(1);
         }
-
-        main_frame.draw_to_buffer();
-
-        main_frame.sync();
-
-        status_display_draw_blocking();
-
-        main_frame.flush();
     }
+
+    app::platform_deinit();
 
     return 0;
 }

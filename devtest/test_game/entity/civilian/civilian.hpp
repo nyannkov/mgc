@@ -5,11 +5,12 @@
 #include "entity/stage/layer/layer_block.hpp"
 #include "app_common.hpp"
 #include "scene/request/talkflow_request.hpp"
+#include "entity/player/player_hitbox_index.hpp"
 
 namespace app {
 namespace civilian {
 
-enum class CivilHitboxId : size_t {
+enum class CivilHitboxIndex : size_t {
     Body = 0,
     View,
     Count
@@ -17,7 +18,7 @@ enum class CivilHitboxId : size_t {
 
 struct Civilian : 
     mgc::entities::ActorImpl<
-        Civilian, static_cast<size_t>(CivilHitboxId::Count)
+        Civilian, static_cast<size_t>(CivilHitboxIndex::Count)
     > {
 
     virtual ~Civilian() = default;
@@ -34,10 +35,14 @@ struct Civilian :
     ) { 
         if constexpr (std::is_same_v<Other, Player>) {
             switch( info.self_hitbox_index) {
-            case static_cast<size_t>(CivilHitboxId::Body):
-                on_player_hit(other, info);
+            case static_cast<size_t>(CivilHitboxIndex::Body):
+                if ( info.other_hitbox_index == 
+                    static_cast<size_t>(PlayerHitboxIndex::Body) 
+                ) {
+                    on_player_hit(other, info);
+                }
                 break;
-            case static_cast<size_t>(CivilHitboxId::View):
+            case static_cast<size_t>(CivilHitboxIndex::View):
                 on_player_in_view(other, info);
                 break;
             default:

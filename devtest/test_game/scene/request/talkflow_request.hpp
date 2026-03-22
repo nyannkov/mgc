@@ -8,6 +8,7 @@ namespace app {
 enum class TalkflowEffectType {
     Default,
     Mute,
+    Type1,
 };
 
 struct TalkflowRequest {

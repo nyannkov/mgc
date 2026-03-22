@@ -3,21 +3,42 @@ cmake_minimum_required(VERSION 3.14)
 project(scene CXX)
 
 add_library(${PROJECT_NAME} STATIC
-    scene.cpp
+    scene_factory.cpp
+    scene_core.cpp
+    scene_base.cpp
+    talkflow_effects.cpp
 )
 
-add_subdirectory(scenes/scene_000_title)
-add_subdirectory(scenes/scene_001_tower_front)
-add_subdirectory(scenes/scene_002_corridor)
-add_subdirectory(scenes/scene_003_stage_1_1)
-add_subdirectory(scenes/scene_999_game_over)
+add_subdirectory(scenes/scene_title)
+add_subdirectory(scenes/scene_password)
+add_subdirectory(scenes/scene_tower_front)
+add_subdirectory(scenes/scene_corridor)
+add_subdirectory(scenes/scene_stage_1_1)
+add_subdirectory(scenes/scene_stage_1_2)
+add_subdirectory(scenes/scene_stage_1_3)
+add_subdirectory(scenes/scene_stage_1_4)
+add_subdirectory(scenes/scene_shop)
+add_subdirectory(scenes/scene_game_over)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
-    mgc
-    scene_000_title
-    scene_001_tower_front
-    scene_002_corridor
-    scene_003_stage_1_1
-    scene_999_game_over
+    platform
+    resources
+    scene_title
+    scene_password
+    scene_tower_front
+    scene_corridor
+    scene_stage_1_1
+    scene_stage_1_2
+    scene_stage_1_3
+    scene_stage_1_4
+    scene_shop
+    scene_game_over
 )
+
+if (SIM_BUILD)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=16384)
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=8192)
+endif()
+
 

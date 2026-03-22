@@ -4,9 +4,7 @@ set(MML_PSG_SRC
 )
 
 if(MGC_USE_RP2040)
-    list(APPEND MML_PSG_SRC
-        "ports/rp2040/mml_psg_rp2040.c"
-    )
+    add_subdirectory("ports/rp2040")
 endif()
 
 add_library(mgc_sound_mml_psg STATIC ${MML_PSG_SRC})
@@ -29,37 +27,18 @@ foreach(OPTION
     endif()
 endforeach()
 
-if(MGC_USE_RP2040)
-    set(MGC_MML_PSG_RP2040_ALARM_NUM       "" CACHE STRING "Override: Alarm number for MML PSG")
-    set(MGC_MML_PSG_RP2040_ALARM_IRQ_PRI   "" CACHE STRING "Override: Alarm IRQ priority")
-    set(MGC_MML_PSG_RP2040_PWM_IRQ_PRI     "" CACHE STRING "Override: PWM IRQ priority")
-    set(MGC_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT "" CACHE STRING "Override: GPIO pin for PSG output")
-
-    foreach(OPTION
-        MGC_MML_PSG_RP2040_ALARM_NUM
-        MGC_MML_PSG_RP2040_ALARM_IRQ_PRI
-        MGC_MML_PSG_RP2040_PWM_IRQ_PRI
-        MGC_MML_PSG_RP2040_PIN_PSG_EMU_OUTPUT
-    )
-        if(NOT "${${OPTION}}" STREQUAL "")
-            target_compile_definitions(mgc_drivers_mml_psg PUBLIC ${OPTION}=${${OPTION}})
-        endif()
-    endforeach()
-endif()
-
-target_include_directories(mgc_sound_mml_psg PUBLIC
+target_include_directories(mgc_sound_mml_psg
+PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/cpp
     ${MGC_SRC_DIR}
     ${MGC_DRIVERS_DIR}
+
+PRIVATE
     ${MGC_EXTERNAL_DIR}/sound/emu2149
     ${MGC_EXTERNAL_DIR}/sound/Psgino/src
 )
 
-if(MGC_ENABLE_CPP_INTERFACE)
-    target_include_directories(mgc_sound_mml_psg PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp
-    )
-endif()
 
 add_subdirectory(${MGC_EXTERNAL_DIR}/sound/Psgino psgino_build)
 
@@ -67,11 +46,7 @@ target_link_libraries(mgc_sound_mml_psg
     Psgino
 )
 
-if(MGC_USE_RP2040)
-    target_link_libraries(mgc_sound_mml_psg
-        pico_stdlib
-        hardware_pwm
-        hardware_irq
-    )
-endif()
+target_link_libraries(mgc_sound_mml_psg
+    mml_psg_port
+)
 

@@ -17,7 +17,7 @@
 #include <hardware/dma.h>
 #include <hardware/irq.h>
 #include <hardware/sync.h>
-#include "mgc_drivers/platform/display/st7789/ports/st7789_port.h"
+#include "ports/st7789_port.h"
 
 #ifndef MGC_DRIVERS_ST7789_RP2040_SPI_PORT
 #define MGC_DRIVERS_ST7789_RP2040_SPI_PORT              spi1

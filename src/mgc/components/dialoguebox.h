@@ -26,7 +26,7 @@ typedef struct mgc_dialoguebox {
 void dialoguebox_init(mgc_dialoguebox_t *dialoguebox, mgc_id_t id, const mgc_font_t *font, bool fontsize2x);
 void dialoguebox_set_id(mgc_dialoguebox_t *dialoguebox, mgc_id_t id);
 void dialoguebox_set_visible(mgc_dialoguebox_t *dialoguebox, bool v);
-void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, int16_t x, int16_t y);
+void dialoguebox_set_position(mgc_dialoguebox_t *dialoguebox, mgc_world_t x, mgc_world_t y);
 void dialoguebox_set_width(mgc_dialoguebox_t *dialoguebox, uint16_t width);
 void dialoguebox_set_height(mgc_dialoguebox_t *dialoguebox, uint16_t height);
 void dialoguebox_set_padding(mgc_dialoguebox_t *dialoguebox, uint8_t top, uint8_t bottom, uint8_t left, uint8_t right);

@@ -5,11 +5,14 @@
 #include "entity/stage/layer/layer_block.hpp"
 #include "entity/stage/layer/layer_ladder.hpp"
 #include "entity/stage/layer/layer_one_way_block.hpp"
-#include "entity/attack/scratch/scratch.hpp"
+#include "entity/stage/layer/layer_needle.hpp"
+#include "entity/attack/attack.hpp"
 #include "entity/enemy/enemy_state.hpp"
 #include "entity/prop/prop.hpp"
+#include "entity/block/block.hpp"
 #include "player_anim.hpp"
 #include "player_hitbox_index.hpp"
+#include "world_state/equipment_info.hpp"
 
 namespace app {
 
@@ -27,7 +30,12 @@ enum class PlayerAnimMode {
 
 struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitboxIndex::Count)> {
 
-    Player(const FrameTimerT& frame_timer, const GamepadT& gamepad, SoundControllerT& sound_controller);
+    Player(
+        const FrameTimerT& frame_timer,
+        const GamepadT& gamepad,
+        SoundControllerT& sound_controller,
+        EquipmentInfo& equipment_info
+    );
     ~Player() = default;
     Player(const Player&) = delete;
     Player& operator=(const Player&) = delete;
@@ -37,8 +45,9 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void init();
     void spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state);
     void update_movement();
+    void resolve_movement();
     void update_animation(bool is_talking);
-    Attack& attack() { return attack_; }
+    attack::Attack& attack() { return attack_; }
 
     void reset_state_for_placement(
         const mgc::math::Vec2i& pos,
@@ -52,7 +61,38 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
 
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
-    void add_gold(int32_t amount) { gold_ += amount; }
+    void add_gold(int32_t amount) { 
+        if ( amount < 0 ) {
+            return;
+        }
+        if ( MAX_GOLD < amount ) {
+            amount = MAX_GOLD;
+        }
+
+        if ( ( gold_ + amount ) < 0 ) {
+            gold_ = 0;
+        } else if ( MAX_GOLD < ( gold_ + amount ) ) {
+            gold_ = MAX_GOLD;
+        } else {
+            gold_ += amount; 
+        }
+    }
+    void sub_gold(int32_t amount) {
+        if ( amount < 0 ) {
+            return;
+        }
+        if ( MAX_GOLD < amount ) {
+            amount = MAX_GOLD;
+        }
+
+        if ( ( gold_ - amount ) < 0 ) {
+            gold_ = 0;
+        } else if ( MAX_GOLD < ( gold_ - amount ) ) {
+            gold_ = MAX_GOLD;
+        } else {
+            gold_ -= amount; 
+        }
+    }
     void set_gold(int32_t amount) { gold_ = amount; }
     int32_t gold() const { return gold_; }
 
@@ -62,13 +102,19 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
             const MapT& map,
             const mgc::collision::MapPushbackInfo& info
     ) { 
-        if constexpr (std::is_same_v<MapT, stage::LayerBlock>) {
-            on_collision_resolved(map, info);
-        } else if constexpr (std::is_same_v<MapT, stage::LayerLadder>) {
-            hit_ladder_ = true;
-        } else if constexpr (std::is_same_v<MapT, stage::LayerOneWayBlock>) {
-            hit_one_way_block_ = true;
-            on_collision_resolved(map, info);
+        if ( info.obj_hitbox_index == 
+            static_cast<size_t>(PlayerHitboxIndex::Body) 
+        ) {
+            if constexpr (std::is_same_v<MapT, stage::LayerBlock>) {
+                on_collision_resolved(map, info);
+            } else if constexpr (std::is_same_v<MapT, stage::LayerLadder>) {
+                hit_ladder_ = true;
+            } else if constexpr (std::is_same_v<MapT, stage::LayerNeedle>) {
+                on_collision_resolved(map, info);
+            } else if constexpr (std::is_same_v<MapT, stage::LayerOneWayBlock>) {
+                hit_one_way_block_ = true;
+                on_collision_resolved(map, info);
+            }
         }
     }
 
@@ -77,14 +123,28 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
     ) { 
-        if constexpr (std::is_same_v<Other, enemy::Enemy>) {
-            if ( other.enemy_state() == enemy::EnemyState::Active ) {
-                on_enemy_hit(other, info);
+        if ( info.self_hitbox_index == 
+            static_cast<size_t>(PlayerHitboxIndex::Body) 
+        ) {
+            if constexpr (std::is_same_v<Other, enemy::Enemy>) {
+                if ( other.enemy_state() == enemy::EnemyState::Active ) {
+                    on_enemy_hit(other, info);
+                }
+            } else if constexpr (std::is_same_v<Other, item::Item>) {
+                on_item_hit(other, info);
             }
-        } else if constexpr (std::is_same_v<Other, item::Item>) {
-            on_item_hit(other, info);
         }
     }
+
+    template <typename View>
+    void handle_box_pushback_result_impl(                                              
+            const mgc::collision::BoxPushbackInfo& info,                               
+            const View& others
+    ) { 
+        if constexpr (std::is_same_v<View, mgc::collision::BoxBoxPtrArrayView<block::Block>>) {
+            on_collision_resolved(info);
+        }
+    }   
 
     bool is_game_over() const { return player_state_ == PlayerState::GameOver; }
     void set_power_pose_in_game_over() { anim_state_ = PlayerAnimState::PowerPose; }
@@ -107,11 +167,15 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void set_input_enabled(bool enabled) { input_enabled_ = enabled; }
     bool input_enabled() const { return input_enabled_; }
     void set_game_over();
+    auto velocity() const { return velocity_; }
+
+    auto& equipment_info() { return equipment_info_; }
 
 private:
     const GamepadT& gamepad_;
     const FrameTimerT& frame_timer_;
     SoundControllerT& sound_controller_;
+    EquipmentInfo& equipment_info_;
     mgc::control::anim::AnimController<FrameTimerT> anim_;
     mgc::math::Vec2f velocity_;
     bool is_grounded_;
@@ -119,6 +183,7 @@ private:
     PlayerAnimState anim_state_;
     PlayerAnimState anim_state_manual_;
     PlayerState player_state_;
+    attack::AttackType current_attack_type_ = attack::AttackType::Boomerang;
     bool is_right_;
     int32_t hp_;
     int32_t full_hp_;
@@ -126,7 +191,7 @@ private:
     enum class AttackState {
         Stop, Start, InProgress
     } attack_state_;
-    Scratch attack_;
+    attack::Attack attack_;
     BlinkAnimatorT blink_animator_;
     mgc::math::Vec2f force_ex_;
     bool hit_ladder_;
@@ -134,6 +199,11 @@ private:
     bool one_way_block_falling_;
     bool input_enabled_;
     int32_t gold_;
+    mgc::math::Vec2i pushback_box_ {};
+    mgc::math::Vec2i pushback_map_ {};
+    mgc::math::Vec2i box_overlap_ {};
+
+    static constexpr int32_t MAX_GOLD = 99999;
 
     void set_hp(int32_t hp) { hp_ = hp; };
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };
@@ -155,6 +225,13 @@ private:
     void on_collision_resolved(
         const stage::LayerOneWayBlock& block,
         const mgc::collision::MapPushbackInfo& info
+    );
+    void on_collision_resolved(
+        const stage::LayerNeedle& block,
+        const mgc::collision::MapPushbackInfo& info
+    );
+    void on_collision_resolved(
+        const mgc::collision::BoxPushbackInfo& info
     );
 };
 

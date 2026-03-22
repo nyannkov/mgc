@@ -102,6 +102,11 @@ def main():
         help="Apply OR-128 to border for specified layer names.",
         default=[]
     )
+    parser.add_argument(
+        "--list-outputs",
+        action="store_true",
+        help="Only list the paths of files that would be generated."
+    )
 
     args = parser.parse_args()
 
@@ -110,6 +115,15 @@ def main():
 
     base = os.path.splitext(os.path.basename(tmx_file))[0]
     layers = parse_tmx(tmx_file)
+
+    if args.list_outputs:
+        output_paths = []
+        for name, _ in layers:
+            out_name = f"{base}_{name}.csv"
+            out_path = os.path.abspath(os.path.join(args.dir, out_name))
+            output_paths.append(out_path)
+        print(";".join(output_paths))
+        return
 
     for name, rows in layers:
         write_csv(base, name, rows, out_dir,

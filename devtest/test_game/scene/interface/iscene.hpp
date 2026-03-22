@@ -10,8 +10,10 @@ struct IScene {
     virtual ~IScene() = default;
     virtual SceneId id() const = 0;
     virtual SceneId id_next() const = 0;
-    virtual void set_id_next(SceneId id) = 0;
     virtual bool has_scene_change_request() const = 0;
+    virtual void set_menu_request() = 0;
+    virtual void clear_menu_request() = 0;
+    virtual bool has_menu_request() const = 0;
     virtual void init() = 0;
     virtual void update() = 0;
     virtual void draw(mgc::graphics::Framebuffer& fb) = 0;

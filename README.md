@@ -10,29 +10,25 @@ Instead of being a full-fledged game engine, **mgc** provides a set of modular t
 designed to simplify graphics, input, and asset handling in embedded environments.
 
 ```
-+----------------------------------------------+
-|                    mgc                       |
-|                                              |
-|  +------------+    +----------------------+  |
-|  |  mgc_c     |    |       mgc_cpp        |  |
-|  |  C core    |    |                      |  |
-|  +------------+    |  +----------------+  |  |
-|                    |  |  platform      |  |  |
-|                    |  |  application–  |  |  |
-|                    |  |  driver I/F    |  |  |
-|                    |  +--------|-------+  |  |
-|                    +-----------|----------+  |
-+--------------------------------|-------------+
-                                 |
-                                 v
-                      +------------------------+
-                      |  mgc_drivers           |
-                      |  (optional)            |
-                      |                        |
-                      |  drivers / hardware    |
-                      +------------------------+
++-------------------------------------+
+|               mgc                   |
+| +--------+ +----------------------+ |
+| | mgc_c  | |       mgc_cpp        | |
+| | C core | |      (optional)      | |
+| +--------+ |  +----------------+  | |
+|            |  |  platform      |  | |
+|            |  |  application–  |  | |
+|            |  |  driver I/F    |  | |
+|            |  +--------|-------+  | |
+|            +-----------|----------+ |
+|                        v            |
+|             +---------------------+ |
+|             |  mgc_drivers        | |
+|             |  (optional)         | |
+|             |  drivers / hardware | |
+|             +---------------------+ |
++-------------------------------------+
 ```
-
 The platform layer provides interfaces that connect application logic
 to platform-specific drivers, without owning hardware resources.
 

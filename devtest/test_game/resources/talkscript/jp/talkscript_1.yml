@@ -17,27 +17,145 @@ talkscript:
     tower_front_talk_2:
       - { message: " * 「・・・・・・・・・。」", tag: POINT_6 }
       - { message: " * 「え？この中に入るの？」", tag: POINT_7 }
-      - { message: " * 「やるねぇ、きみ」", tag: POINT_8 }
       - end: true
 
     tower_front_talk_3:
+      - { message: " * 「やるねぇ、君。」", end: true }
+
+    tower_front_talk_4:
       - { message: " * 「気をつけて！」", end: true }
+
+    shop_talk_1:
+      - message: " * 「いらっしゃいませ。はじめてのお客さんかな？」"
+      - end: true
+
+    shop_talk_1_2:
+      - message: " * 「あら、こんにちは。」"
+      - end: true
+      
+    shop_talk_2:
+      - message: " * 「せっかくですから、ゆっくりしていってください。」"
+      - message: " * 「お菓子やコーヒーもありますよ。」"
+      - end: true
+
+    shop_talk_3:
+      - { message: "何をいたしましょうか？", auto_next: true }
+      - choice:
+          tag: "SELECT_ACTION"
+          items:
+            - { item: "買う", next: shop_shopping_1 }
+            - { item: "休む" }
+            - { item: "話す", next: shop_small_talking_1 }
+            - { item: "やめる" }
+      - end: true
+
+    shop_shopping_1:
+      - { message: "気になるものがあればおっしゃってください。", auto_next: true }
+      - choice:
+          tag: "SELECT_ITEMS"
+          items:
+            - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
+            - { item: "ブーメラン", value: 100, tag: BOOMERANG, next: shop_shopping_item_boomerang }
+            - { item: "やめる" }
+      - end: true
+
+    shop_shopping_item_cookie:
+      - message: "チョコチップが入ったクッキーです。"
+        next: shop_shopping_check
+
+    shop_shopping_item_boomerang:
+      - message: "投げると戻ってきて、面白いですよね。"
+        next: shop_shopping_check
+
+    shop_shopping_check:
+      - message: "%dGです。"
+        format: true
+        auto_next: true
+      - choice:
+          tag: "SHOPPING_CHECK"
+          items:
+            - { item: "買う", next: shop_shopping_judge }
+            - { item: "他を見る", next: shop_shopping_1 }
+
+    shop_shopping_judge:
+      - decision:
+          tag: CHECK_OWNED
+          branches:
+            true: shop_shopping_sold_out
+      - decision:
+          tag: CHECK_MONEY
+          branches:
+            false: shop_shopping_not_enough_money
+
+    shop_shopping_thanks:
+      - message: "ありがとうございます。買い物を続けますか？"
+        auto_next: true
+      - choice:
+          tag: "SHOPPING_IS_CONTINUE"
+          items:
+            - { item: "続ける", next: shop_shopping_1 }
+            - { item: "やめる" }
+      - end: true
+        
+    shop_shopping_sold_out:
+      - message: "あ、ごめんなさい。売り切れちゃってたみたい。"
+        next: shop_shopping_1
+
+    shop_shopping_not_enough_money:
+      - message: "あら、お金がたりないみたい。"
+        next: shop_shopping_1
+
+    shop_small_talking_1:
+      - choice:
+          tag: "SHOP_SMALL_TALKING_1"
+          items:
+            - { item: "あの入口は？", next: shop_small_talking_1_1 }
+            - { item: "ここは？", next: shop_small_talking_1_2 }
+
+    shop_small_talking_1_1:
+      - message: "あの入口、最近になって急に現れたんです。不思議ですよね。"
+      - message: "あそこをくぐれば、元の場所に戻れるそうですよ。"
+      - end: true
+
+    shop_small_talking_1_2:
+      - message: "ここは私の家なんですが・・・"
+      - message: "あの入口からお客さんが来てくれるようになったので、この機会にお店をはじめたんです。"
+      - message: "実はずっとやってみたかったんですよ、お店屋さん。"
+      - end: true
 
     signboard_1:
       - { message: "何かかいてある" }
-      - { message: "\\n            禍、塔の上にあり", end: true } 
+      - { message: "            禍、塔の上にあり", end: true } 
+
+    signboard_1_2:
+      - { message: "何かかいてある" }
+      - { message: "            WELCOME!", end: true }
 
     gate_1:
       - { message: "開かない・・・。", end: true }
 
-    game_over:
-    - message: "つづける？"
-    - choice:
-        tag: "TRY_AGAIN"
-        items:
-          - { item: "はい" , tag: "YES", next: game_retry }
-          - { item: "いいえ", tag: "NO", next: game_end }
+    password_success:
+      - { message: "LOAD COMPLETE!", end: true }
 
+    password_failure:
+      - { message: "LOAD ERROR!", end: true }
+
+    password_exit:
+      - { message: "タイトル画面に戻りますか？", auto_next: true }
+      - choice:
+          tag: "CONFIRM_PASSWORD_EXIT"
+          items:
+            - { item: "はい" , tag: "YES" }
+            - { item: "いいえ", tag: "NO" }
+      - end: true
+
+    game_over:
+      - message: "つづける？"
+      - choice:
+          tag: "TRY_AGAIN"
+          items:
+            - { item: "はい" , tag: "YES", next: game_retry }
+            - { item: "いいえ", tag: "NO", next: game_end }
     game_retry:
       - { message: "がんばって！", end: true }
 

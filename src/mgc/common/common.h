@@ -51,6 +51,14 @@ typedef uint16_t mgc_id_t;
 #define MGC_ABS(x)              (((x) >= 0) ? (x) : ((x)*-1))
 #endif/*MGC_ABS*/
 
+#ifndef MGC_MIN
+#define MGC_MIN(x,y)            (((x) >= (y)) ? (y) : (x))
+#endif/*MGC_MIN*/
+
+#ifndef MGC_MAX
+#define MGC_MAX(x,y)            (((x) >= (y)) ? (x) : (y))
+#endif/*MGC_MAX*/
+
 #define MGC_CELL_LEN_LOG2       (4)
 #define MGC_CELL_LEN            (1<<MGC_CELL_LEN_LOG2)
 #define MGC_CELL_LEN_MOD        (MGC_CELL_LEN-1)
@@ -125,9 +133,12 @@ typedef mgc_color_rgb565_t mgc_color_t;
 #define MGC_MAP_CELL_VALUE(hit_flag, tileset_index) \
     (((hit_flag) ? 0x80 : 0x00) | ((tileset_index) + (MGC_MAP_TILESET_INDEX_OFFSET)))
     
+
+typedef int16_t mgc_world_t;
+
 typedef struct mgc_point {
-    int16_t x;
-    int16_t y;
+    mgc_world_t x;
+    mgc_world_t y;
 } mgc_point_t;
 
 enum draw_effect_flags {

@@ -155,6 +155,31 @@ bool mml_psg_play_sound_effect(int effect_id, float fade_in_sec) {
     return false;
 }
 
+bool mml_psg_play_background_music_direct(const char *mml, float fade_in_sec) {
+    // NOTE: Fade-in and fade-out are not supported.
+    (void)fade_in_sec;
+    if ( mml != nullptr ) {
+        psgino_z.SetMML(mml);
+        psgino_z.Play();
+        return true;
+    }
+
+    return false;
+}
+
+bool mml_psg_play_sound_effect_direct(const char *mml, float fade_in_sec) {
+    // NOTE: Fade-in and fade-out are not supported.
+    (void)fade_in_sec;
+    if ( mml != nullptr ) {
+        psgino_z.SetSeMML(mml);
+        psgino_z.PlaySe();
+        return true;
+    }
+
+    return false;
+}
+
+
 void mml_psg_stop_background_music(float fade_out_in_sec) {
     // NOTE: Fade-in and fade-out are not supported.
     (void)fade_out_in_sec;
@@ -205,15 +230,15 @@ void mml_psg_set_sound_effect_volume(float volume) {
     // NOTE: Not supported.
 }
 
-float mml_psg_get_master_volume() {
+float mml_psg_get_master_volume(void) {
     return Q_TO_F(master_volume_q);
 }
 
-float mml_psg_get_background_music_volume() {
+float mml_psg_get_background_music_volume(void) {
     return Q_TO_F(master_volume_q);
 }
 
-float mml_psg_get_sound_effect_volume() {
+float mml_psg_get_sound_effect_volume(void) {
     return Q_TO_F(master_volume_q);
 }
 
@@ -241,6 +266,10 @@ void mml_psg_set_psg_lpf_enabled(bool enabled) {
     psg_lpf_enabled = enabled;
 }
 
+bool mml_psg_get_psg_lpf_enabled(void) {
+    return psg_lpf_enabled;
+}
+
 void mml_psg_set_psg_lpf_alpha(float alpha) {
     if ( alpha < 0.0f ) {
         psg_lpf_alpha_q = F_TO_Q(0.0f);
@@ -253,6 +282,10 @@ void mml_psg_set_psg_lpf_alpha(float alpha) {
     }
 }
 
+float mml_psg_get_psg_lpf_alpha(void) {
+    return Q_TO_F(psg_lpf_alpha_q);
+}
+
 void mml_psg_set_speed_factor(float factor) {
     uint16_t factor_pct = 0;
     if ( factor < 0.0f ) {
@@ -263,8 +296,40 @@ void mml_psg_set_speed_factor(float factor) {
     psgino_z.SetSpeedFactor(factor_pct);
 }
 
+float mml_psg_get_speed_factor(void) {
+    uint16_t factor_pct = psgino_z.GetSpeedFactor();
+    return static_cast<float>(factor_pct)/100.0f;
+}
+
 void mml_psg_shift_pitch_by_degree(int16_t degree) {
     psgino_z.ShiftFrequency(degree);
+}
+
+int16_t mml_psg_get_pitch_shift_in_degree(void) {
+    return psgino_z.GetFrequencyShiftDegrees();
+}
+
+void mml_psg_set_sound_effect_speed_factor(float factor) {
+    uint16_t factor_pct = 0;
+    if ( factor < 0.0f ) {
+        factor_pct = 0;
+    } else {
+        factor_pct = static_cast<uint16_t>(factor * 100 + 0.5f);
+    }
+    psgino_z.SetSeSpeedFactor(factor_pct);
+}
+
+float mml_psg_get_sound_effect_speed_factor(void) {
+    uint16_t factor_pct = psgino_z.GetSeSpeedFactor();
+    return static_cast<float>(factor_pct)/100.0f;
+}
+
+void mml_psg_shift_sound_effect_pitch_by_degree(int16_t degree) {
+    psgino_z.ShiftSeFrequency(degree);
+}
+
+int16_t mml_psg_get_sound_effect_pitch_shift_in_degree(void) {
+    return psgino_z.GetSeFrequencyShiftDegrees();
 }
 
 uint16_t mml_psg_local__proc_psg_emu(void) {
