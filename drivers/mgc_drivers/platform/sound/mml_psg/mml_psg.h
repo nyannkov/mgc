@@ -13,9 +13,12 @@ extern "C" {
 
 #include "mgc/common/common.h"
 
+/* Record ID indicating no music or effect is assigned. */
+#define MGC_MML_RECORD_ID_NULL     (-1)
+
 typedef struct mgc_mml_record {
-    const int id;
-    const char *mml;
+    const int id;     /* Record ID. Users can freely use values >= 0. */
+    const char *mml;  /* MML string data. */
 } mgc_mml_record_t;
 
 void mml_psg_init(float mml_proc_rate, void *ctx);
@@ -23,9 +26,11 @@ void mml_psg_deinit(void);
 
 bool mml_psg_play_background_music(int music_id, float fade_in_sec);
 bool mml_psg_play_sound_effect(int effect_id, float fade_in_sec);
+int mml_psg_get_current_background_music_id(void);
 
 bool mml_psg_play_background_music_direct(const char *mml, float fade_in_sec);
 bool mml_psg_play_sound_effect_direct(const char *mml, float fade_in_sec);
+int mml_psg_get_current_sound_effect_id(void);
 
 void mml_psg_stop_background_music(float fade_out_in_sec);
 void mml_psg_stop_all_sound_effects(float fade_out_in_sec);
