@@ -1,0 +1,23 @@
+animations:
+  - name: walk_right
+    description: "Walk right"
+    frames:
+      - { file: frame_000.bmp, time_ms: 200 }
+      - { file: frame_001.bmp, time_ms: 200 }
+
+  - name: walk_left
+    description: "Walk left"
+    frames:
+      - { file: frame_002.bmp, time_ms: 200 }
+      - { file: frame_003.bmp, time_ms: 200 }
+
+  - name: stand_right
+    description: "Stand right"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }
+
+  - name: stand_left
+    description: "Stand left"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }
+

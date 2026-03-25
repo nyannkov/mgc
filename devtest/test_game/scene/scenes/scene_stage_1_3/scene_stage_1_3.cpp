@@ -23,27 +23,19 @@ Scene_Stage1_3::Scene_Stage1_3(GameContext& ctx)
 
 void Scene_Stage1_3::init() {
     
-    switch (id_prev()) {
-    case SceneId::GameOver:// fall-through
-    case SceneId::Stage1_2:
-        scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(18)},
-            PlayerAnimState::StandRight
-        );
-        break;
-    case SceneId::Stage1_4:
+    if ( id_prev() == SceneId::Stage1_4 ) {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(21), MGC_CELL2PIXEL(22)},
             PlayerAnimState::StandRight
         );
-        break;
-    default:
+    } else {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(18)},
             PlayerAnimState::StandRight
         );
-        break;
     }
+
+    set_background_music(MML_BGM_3_STAGE1);
 
     stage_.setup(stage::StageId::Stage1_3);
     stage_.set_position({0, 0});

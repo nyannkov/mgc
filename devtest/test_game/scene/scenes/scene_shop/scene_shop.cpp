@@ -27,7 +27,7 @@ void Scene_Shop::init() {
         PlayerAnimState::StandRight
     );
 
-    scx_.sound.play_background_music(MML_BGM_4_SHOP, 0.0);
+    set_background_music(MML_BGM_4_SHOP);
 
     stage_.setup(stage::StageId::Shop);
     stage_.set_position({0, 0});

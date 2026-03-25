@@ -173,6 +173,12 @@ anim_cmake_list_gen(
     --width 16 --height 16
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/enemy/walker/anim_walker.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_walker.bmp"
+    "${GEN_DIR}/anim/enemy/walker"
+    --width 16 --height 16
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/prop/portal/anim_portal.yml" 
     "${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp"
     "${GEN_DIR}/anim/prop/portal"
@@ -186,6 +192,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_player
     anim_attack
     anim_skyfish
+    anim_walker
     anim_portal
     mml
 )

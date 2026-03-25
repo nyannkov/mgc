@@ -38,7 +38,7 @@ void Scene_Corridor::init() {
     default:
         break;
     }
-    scx_.sound.stop_background_music(0.0);
+    scx_.sound.stop_background_music();
 
     stage_.setup(stage::StageId::Corridor);
     stage_.set_position({0, 0});

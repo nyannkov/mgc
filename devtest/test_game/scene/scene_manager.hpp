@@ -20,6 +20,7 @@ struct SceneManager {
     void init() {
         set_scene(app::SceneId::Title);
         //set_scene(app::SceneId::Shop);
+        //set_scene(app::SceneId::Stage1_1);
         //set_scene(app::SceneId::Stage1_3);
         //set_scene(app::SceneId::Stage1_4);
 

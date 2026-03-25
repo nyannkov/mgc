@@ -5,6 +5,7 @@
 #include "game_context.hpp"
 #include "scene_context.hpp"
 #include "interface/iscene.hpp"
+#include "resources/mml/mml.h"
 #include "utils/game_over_effect/game_over_effect.hpp"
 
 namespace app {
@@ -75,8 +76,18 @@ protected:
         scene_change_request_ = true;
     }
 
+    void set_background_music(int mml_id) {
+        
+        int current_id = scx_.sound.current_background_music_id();
+
+        if ( current_id != mml_id ) {
+            scx_.sound.play_background_music(mml_id);
+        }
+    }
+
 private:
     const SceneId id_prev_;
+    int bgm_id_ = MML_BGM_COUNT;
     bool menu_request_ = false;
     bool scene_change_request_ = false;
     SceneId id_ = SceneId::Title;

@@ -22,21 +22,19 @@ Scene_TowerFront::Scene_TowerFront(GameContext& ctx)
 
 void Scene_TowerFront::init() {
 
-    switch (id_prev()) {
-    case SceneId::Corridor:
+    if ( id_prev() == SceneId::Corridor ) {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(56), MGC_CELL2PIXEL(10)},
             PlayerAnimState::StandLeft
         );
-        break;
-    default:
+    } else {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(10)},
             PlayerAnimState::StandRight
         );
-        break;
     }
-    scx_.sound.play_background_music(MML_BGM_2_WATER_FALL, 0.0);
+
+    set_background_music(MML_BGM_2_WATER_FALL);
 
     stage_.setup(stage::StageId::TowerFront);
     stage_.set_position({0, 0});
