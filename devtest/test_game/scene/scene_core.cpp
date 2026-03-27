@@ -106,6 +106,7 @@ void update_movement(SceneContext& scx) {
         }
         for ( auto* prop : scx.objs->props() ) {
             ColBox2BoxT::detect_pair(*prop, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+            ColBox2BoxT::detect_pair(*prop, scx.player.attack());
         }
         for ( auto* civil : scx.objs->civils() ) {
             ColBox2BoxT::detect_pair(*civil, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));

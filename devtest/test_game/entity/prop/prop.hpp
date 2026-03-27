@@ -37,7 +37,10 @@ struct Prop : mgc::entities::ActorImpl<
             ) {
                 on_player_hit(other, info);
             }
-        }
+        } else if constexpr (std::is_same_v<Other, attack::Attack>) {
+            on_attack_hit(other, info);
+
+        } else { }
     }
 
     const auto* take_talkflow_request() {
@@ -65,6 +68,11 @@ struct Prop : mgc::entities::ActorImpl<
 protected:
     virtual void on_player_hit(
         const Player& player,
+        const mgc::collision::BoxCollisionInfo& info
+    ) { }
+
+    virtual void on_attack_hit(
+        const attack::Attack& attack,
         const mgc::collision::BoxCollisionInfo& info
     ) { }
 

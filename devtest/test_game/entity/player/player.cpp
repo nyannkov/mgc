@@ -40,9 +40,9 @@ Player::Player(
 
 void Player::init() {
     this->spawn({0, 0}, anim_state_);
-    this->set_full_hp(6);
+    this->set_full_hp(3);
     this->set_hp(full_hp_);
-    gold_ = 100;
+    gold_ = 0;
     blink_animator_.set_target(*this);
 
     auto& body = at(this->mut_hitboxes(), PlayerHitboxIndex::Body);
@@ -97,6 +97,9 @@ void Player::reset_state_for_placement(
     this->set_position(pos);
     velocity_ = {0.0f, 0.0f};
     player_state_ = PlayerState::Normal;
+
+    attack_state_ = AttackState::Stop;
+    attack_.despawn();
 }
 
 void Player::update_movement() {
@@ -361,12 +364,12 @@ void Player::update_anim_attacking() {
     anim_.set_current_frame(this->mut_sprite());
 }
 
-void Player::set_anim_manually(PlayerAnimState state) {
+void Player::set_anim_manually(PlayerAnimState state, bool loop) {
     attack_state_ = AttackState::Stop;
     attack_.despawn();
     anim_state_manual_ = state;
     anim_.set_anim_frames(get_anim_frames(state));
-    anim_.set_loop(true);
+    anim_.set_loop(loop);
     anim_.start_animation();
 }
 

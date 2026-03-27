@@ -28,6 +28,7 @@ set(CXX_SOURCES
     entity/prop/entrance/entrance.cpp
     entity/prop/signboard/signboard.cpp
     entity/prop/teleporter/teleporter.cpp
+    entity/prop/button/button.cpp
     entity/event/warp/warp.cpp
     entity/attack/attack.cpp
     entity/item/potion/potion.cpp

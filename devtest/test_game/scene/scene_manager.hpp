@@ -23,8 +23,10 @@ struct SceneManager {
         //set_scene(app::SceneId::Stage1_1);
         //set_scene(app::SceneId::Stage1_3);
         //set_scene(app::SceneId::Stage1_4);
+        //set_scene(app::SceneId::Stage1_5);
 
         equipment_info_.weapon.add(WeaponId::Claw);
+        //equipment_info_.weapon.add(WeaponId::Boomerang);
         equipment_info_.weapon.equip(WeaponId::Claw);
 
         menu_.init();

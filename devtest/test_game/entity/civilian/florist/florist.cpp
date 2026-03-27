@@ -46,6 +46,7 @@ void Florist::update_movement() {
 }
 
 void Florist::update_animation() {
+    
 }
 
 void Florist::set_anim_state(FloristAnimState anim_state) {

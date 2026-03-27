@@ -133,9 +133,9 @@ int32_t Walker::apply_damage_to(
         amount = 1;
         player.receive_damage(amount);
         if ( this->is_direction_right() ) {
-            player.receive_impact({12.0f, 0.0f});
+            player.receive_impact({3.0f, 0.0f});
         } else {
-            player.receive_impact({-12.0f, 0.0f});
+            player.receive_impact({-3.0f, 0.0f});
         }
     }
     return amount;

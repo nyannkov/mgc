@@ -98,4 +98,11 @@ animations:
       - { file: frame_021.bmp, time_ms: 250 }
       - { file: frame_022.bmp, time_ms: 250 }
 
+  - name: coffee_break
+    description: "Coffee break"
+    frames:
+      - { file: frame_033.bmp, time_ms: 2000 }
+      - { file: frame_034.bmp, time_ms: 2000 }
+      - { file: frame_035.bmp, time_ms: 1500 }
+      - { file: frame_033.bmp, time_ms: 2500 }
 

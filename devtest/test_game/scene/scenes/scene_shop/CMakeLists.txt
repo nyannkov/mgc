@@ -4,6 +4,7 @@ project(scene_shop CXX)
 add_library(${PROJECT_NAME} STATIC
     scene_shop.cpp
     event_objects/event_shop_1.cpp
+    event_objects/event_shop_2.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC

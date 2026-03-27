@@ -88,6 +88,19 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_1_4/csv"
     --tile-or128 block one_way_block ladder needle
 )
+set(STAGE_MAP_STAGE_1_5_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_1_5/csv/map_stage_1_5_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_5/csv/map_stage_1_5_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_5/csv/map_stage_1_5_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_5/csv/map_stage_1_5_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_5/csv/map_stage_1_5_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_1_5/map_stage_1_5.tmx"
+    "${STAGE_MAP_STAGE_1_5_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_1_5/csv"
+    --tile-or128 block one_way_block ladder needle
+)
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_1.csv"
@@ -108,6 +121,7 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_1_2_CSVS}
     ${STAGE_MAP_STAGE_1_3_CSVS}
     ${STAGE_MAP_STAGE_1_4_CSVS}
+    ${STAGE_MAP_STAGE_1_5_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
 )
 
@@ -121,7 +135,7 @@ add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_map_elements.bmp" "${GEN_
 add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_shop_elements.bmp" "${GEN_DIR}/tileset" --count 100)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_items.bmp" "${GEN_DIR}/tileset" --count 16 --width 8 --height 8)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_block.bmp" "${GEN_DIR}/tileset" --count 1)
-add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 7)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 9)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x48.bmp" "${GEN_DIR}/tileset" --count 2 --width 16 --height 48)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_hen.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)

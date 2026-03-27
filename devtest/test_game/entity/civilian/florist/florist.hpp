@@ -71,13 +71,22 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
             return true;
         }
     }
-//    void on_flow_end(mgc_node_idx_t tag) {}
+
+    void on_flow_end(mgc_node_idx_t tag) override {
+        if ( tag ==MGC_TALKSCRIPT_1_TAG_MESSAGE__START_COFFEE_BREAK ) {
+            coffee_break_flag_ = true;
+        }
+    }
+
+    bool coffee_break_flag() const { return coffee_break_flag_; }
+    void clear_coffee_break_flag() { coffee_break_flag_ = false; }
 
 private:
     Player& player_;
     int32_t last_item_value_ = 0;
     int32_t last_item_tag_ = 0;
     char text_buffer[128];
+    bool coffee_break_flag_ = false;
 };
 
 
@@ -110,11 +119,15 @@ struct Florist : Civilian {
         const mgc::collision::BoxCollisionInfo& info
     ) override;
 
+    bool coffee_break_flag() const { return talkflow_listener_.coffee_break_flag(); }
+    void clear_coffee_break_flag() { talkflow_listener_.clear_coffee_break_flag(); }
+
 private:
     const GamepadT& gamepad_;
     TalkflowListenerAtShopping talkflow_listener_;
     CheckpointInfo& cp_info_;
     FloristAnimState anim_state_;
+    bool start_coffee_break_ = false;
 };
 
 }// namespace civilian

@@ -5,7 +5,7 @@
 #include "mgc_cpp/mgc.hpp"
 #include "scene/scene_context.hpp"
 #include "scene/interface/iscene_objects.hpp"
-#include "entity/enemy/skyfish/skyfish.hpp"
+#include "entity/enemy/walker/walker.hpp"
 #include "entity/item/potion/potion.hpp"
 #include "entity/item/elixir/elixir.hpp"
 #include "entity/prop/gate/gate.hpp"
@@ -18,14 +18,15 @@ struct SceneObjects_Stage1_4 : ISceneObjects {
 
     explicit SceneObjects_Stage1_4(SceneContext& scx)
         : cp_info_(scx.world_state.checkpoint_info),
-          skyfish_1_(scx.timer, scx.sound, scx.player),
-          skyfish_2_(scx.timer, scx.sound, scx.player),
-          skyfish_3_(scx.timer, scx.sound, scx.player),
-          enemies_ { &skyfish_1_, &skyfish_2_, &skyfish_3_ },
-          items_ { &potion_, &elixir_ },
+          walker_1_(scx.timer, scx.sound),
+          enemies_ { &walker_1_ },
           gate_1_(scx.gamepad),
           portal_1_(scx.gamepad, scx.timer),
           teleporters_ {
+            prop::Teleporter(scx.gamepad),
+            prop::Teleporter(scx.gamepad),
+            prop::Teleporter(scx.gamepad),
+            prop::Teleporter(scx.gamepad),
             prop::Teleporter(scx.gamepad),
             prop::Teleporter(scx.gamepad),
             prop::Teleporter(scx.gamepad),
@@ -61,8 +62,13 @@ struct SceneObjects_Stage1_4 : ISceneObjects {
             &teleporters_[12],
             &teleporters_[13],
             &teleporters_[14],
-            &teleporters_[15]
-          } { }
+            &teleporters_[15],
+            &teleporters_[16],
+            &teleporters_[17],
+            &teleporters_[18],
+            &teleporters_[19]
+          } { 
+     }
 
     void init();
 
@@ -70,16 +76,12 @@ struct SceneObjects_Stage1_4 : ISceneObjects {
         return { props_.data(), props_.size() };
     }
 
-    ArrayViewer<item::Item*> items() override {
-        return { items_.data(), items_.size() };
-    }
-
     ArrayViewer<enemy::Enemy*> enemies() override {
         return { enemies_.data(), enemies_.size() };
     }
 
+    ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
-
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
 
     auto& teleporters() { return teleporters_; }
@@ -89,21 +91,14 @@ private:
     CheckpointInfo& cp_info_;
 
     // Enemy
-    enemy::SkyFish skyfish_1_;
-    enemy::SkyFish skyfish_2_;
-    enemy::SkyFish skyfish_3_;
-    std::array<enemy::Enemy*, 3> enemies_;
-
-    // Item
-    item::Potion potion_;
-    item::Elixir elixir_;
-    std::array<item::Item*, 2> items_;
+    enemy::Walker walker_1_;
+    std::array<enemy::Enemy*, 1> enemies_;
 
     // Prop
     prop::Gate gate_1_;
     prop::Portal portal_1_;
-    std::array<prop::Teleporter, 16> teleporters_;
-    std::array<prop::Prop*, 18> props_;
+    std::array<prop::Teleporter, 20> teleporters_;
+    std::array<prop::Prop*, 22> props_;
 };
 
 } // namespace app

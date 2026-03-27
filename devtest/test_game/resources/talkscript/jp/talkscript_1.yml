@@ -26,7 +26,7 @@ talkscript:
       - { message: " * 「気をつけて！」", end: true }
 
     shop_talk_1:
-      - message: " * 「いらっしゃいませ。はじめてのお客さんかな？」"
+      - message: " * 「いらっしゃいませ。お客さん、初めてかな？」"
       - end: true
 
     shop_talk_1_2:
@@ -39,12 +39,12 @@ talkscript:
       - end: true
 
     shop_talk_3:
-      - { message: "何をいたしましょうか？", auto_next: true }
+      - { message: "何をいたしましょう？", auto_next: true }
       - choice:
           tag: "SELECT_ACTION"
           items:
             - { item: "買う", next: shop_shopping_1 }
-            - { item: "休む" }
+            - { item: "休む", next: shop_coffee_break_1 }
             - { item: "話す", next: shop_small_talking_1 }
             - { item: "やめる" }
       - end: true
@@ -88,22 +88,28 @@ talkscript:
             false: shop_shopping_not_enough_money
 
     shop_shopping_thanks:
-      - message: "ありがとうございます。買い物を続けますか？"
+      - message: "ありがとうございます。他になにか買いますか？"
         auto_next: true
       - choice:
           tag: "SHOPPING_IS_CONTINUE"
           items:
-            - { item: "続ける", next: shop_shopping_1 }
+            - { item: "買う", next: shop_shopping_1 }
             - { item: "やめる" }
       - end: true
         
     shop_shopping_sold_out:
-      - message: "あ、ごめんなさい。売り切れちゃってたみたい。"
+      - message: "あ、ごめんなさい。売り切れだったみたい。"
         next: shop_shopping_1
 
     shop_shopping_not_enough_money:
       - message: "あら、お金がたりないみたい。"
         next: shop_shopping_1
+
+    shop_coffee_break_1:
+      - { message: "コーヒーはいかがですか？\\n前に焙煎した豆が余っていまして。", tag: START_COFFEE_BREAK, end: true }
+
+    shop_coffee_break_2:
+      - { message: "元気になった！", tag: END_COFFEE_BREAK, end: true }
 
     shop_small_talking_1:
       - choice:

@@ -155,13 +155,16 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void set_anim_mode(PlayerAnimMode mode) { anim_mode_ = mode; }
     auto anim_mode() const { return anim_mode_; }
 
-    void set_anim_manually(PlayerAnimState state);
+    void set_anim_manually(PlayerAnimState state, bool loop = true);
     auto anim_state() const {
         if ( anim_mode_ == PlayerAnimMode::Auto ) {
             return anim_state_;
         } else {
             return anim_state_manual_;
         }
+    }
+    bool is_animation_finished() const {
+        return anim_.is_finished();
     }
 
     void set_input_enabled(bool enabled) { input_enabled_ = enabled; }

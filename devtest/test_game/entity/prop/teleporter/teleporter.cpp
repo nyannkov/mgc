@@ -22,7 +22,7 @@ void Teleporter::spawn(const mgc::math::Vec2i& pos) {
     hitboxes[0].set_enabled(true);
     this->set_position(pos);
     this->mut_sprite().set_visible(true);
-    this->mut_sprite().set_tile_index(2);
+    this->mut_sprite().set_tile_index(7);
 }
 
 void Teleporter::spawn(const mgc::math::Vec2i& pos, const mgc::math::Vec2i& dest) {
