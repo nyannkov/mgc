@@ -1,6 +1,7 @@
 #ifndef MGC_CIVILIAN_FLORIST_HPP
 #define MGC_CIVILIAN_FLORIST_HPP
 
+#include <cstdio>
 #include "app_common.hpp"
 #include "world_state/checkpoint_info.hpp"
 #include "entity/civilian/civilian.hpp"
