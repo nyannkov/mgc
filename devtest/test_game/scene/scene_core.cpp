@@ -104,6 +104,8 @@ void update_movement(SceneContext& scx) {
                 scx.player.add_gold(enemy->gold());
             }
         }
+        ColBox2BoxT::detect_pair(scx.player, scx.player.attack());
+
         for ( auto* prop : scx.objs->props() ) {
             ColBox2BoxT::detect_pair(*prop, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
             ColBox2BoxT::detect_pair(*prop, scx.player.attack());

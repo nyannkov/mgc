@@ -226,7 +226,7 @@ void SkyFish::on_attack_hit(
 
         attack.apply_damage_to(*this, attack_hitbox_index);
 
-        sound_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 

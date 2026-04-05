@@ -8,10 +8,13 @@
 namespace app {
 namespace enemy {
 
-constexpr int32_t WalkerMaxHP = 1;
+constexpr int32_t WalkerMaxHP = 2;
+enum class WalkerMode {
+    Normal,
+    Dancing
+};
 
 struct Walker: Enemy {
-
     Walker(
         const FrameTimerT& timer,
         SoundControllerT& sound
@@ -23,6 +26,7 @@ struct Walker: Enemy {
     Walker& operator=(Walker&&) = default;
 
     void spawn(const mgc::math::Vec2i& pos, bool is_right) override;
+    void spawn(const mgc::math::Vec2i& pos, bool is_right, WalkerMode mode);
     void despawn() override;
     void update_movement() override;
     void update_animation() override;
@@ -57,13 +61,18 @@ private:
     WalkerAnimState anim_state_;
     BlinkAnimatorT blink_animator_;
     StopwatchT sw_;
+    WalkerMode mode_ = WalkerMode::Normal;
+    uint32_t update_bgm_param_count_ = 0;
     bool is_walking_ = false;
     bool is_direction_right() const {
         return (
             ( anim_state_ == WalkerAnimState::StandRight ) ||
-            ( anim_state_ == WalkerAnimState::WalkRight )
+            ( anim_state_ == WalkerAnimState::WalkRight ) ||
+            ( anim_state_ == WalkerAnimState::KickRight )
         );
     }
+    void update_movement_normal();
+    void update_movement_dancing();
 };
 
 }// namespace enemy

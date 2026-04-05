@@ -12,6 +12,8 @@ enum class WalkerAnimState {
     StandLeft,
     WalkRight,
     WalkLeft,
+    KickRight,
+    KickLeft,
 };
 
 inline const mgc::parts::assets::AnimFrames& get_anim_frames(WalkerAnimState state) {
@@ -20,6 +22,8 @@ inline const mgc::parts::assets::AnimFrames& get_anim_frames(WalkerAnimState sta
     case WalkerAnimState::StandLeft: return anim_walker_stand_left;
     case WalkerAnimState::WalkRight: return anim_walker_walk_right;
     case WalkerAnimState::WalkLeft: return anim_walker_walk_left;
+    case WalkerAnimState::KickRight: return anim_walker_kick_right;
+    case WalkerAnimState::KickLeft: return anim_walker_kick_left;
     default: return anim_walker_stand_right;
     }
 }

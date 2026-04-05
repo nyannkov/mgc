@@ -15,14 +15,19 @@ Walker::Walker(
     anim_state_(WalkerAnimState::StandRight),
     blink_animator_(timer) {
 
-      blink_animator_.set_target(*this);
-      set_hp(WalkerMaxHP);
-      set_full_hp(WalkerMaxHP);
-      set_gold(10);
+    blink_animator_.set_target(*this);
+    set_hp(WalkerMaxHP);
+    set_full_hp(WalkerMaxHP);
+    set_gold(10);
 }
 
 void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right) {
     
+    spawn(pos, is_right, WalkerMode::Normal);
+}
+
+void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right, WalkerMode mode) {
+    set_hp(WalkerMaxHP);
     this->set_enemy_state(EnemyState::Spawning);
 
     if ( is_right ) {
@@ -36,7 +41,6 @@ void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right) {
     anim_.set_current_frame(this->mut_sprite());
     this->set_position(pos);
 
-
     auto& hitboxes = this->mut_hitboxes();
 
     // body
@@ -44,6 +48,9 @@ void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right) {
     hitbox_body.set_offset({0, 0});
     hitbox_body.set_size({16, 16});
     hitbox_body.set_enabled(true);
+
+    this->set_visible(true);
+    mode_ = mode;
 
     // No spawning animation
     this->set_enemy_state(EnemyState::Active);
@@ -62,31 +69,46 @@ void Walker::despawn() {
 }
 
 void Walker::update_movement() {
+    if ( mode_ == WalkerMode::Normal ) {
+        update_movement_normal();
+    } else {
+        update_movement_dancing();
+    }
+}
+
+void Walker::update_movement_dancing() {
 
     auto state = this->enemy_state();
 
     if ( state == EnemyState::Active ) {
-        
-        if ( sw_.elapsed_ms() >= 3000 ) {
-            sw_.restart();
-            is_walking_ = !is_walking_;
-            if ( (rand()%2) != 0 ) {
-                if ( is_walking_ ) {
-                    anim_state_ = WalkerAnimState::WalkRight;
-                } else {
-                    anim_state_ = WalkerAnimState::StandRight;
-                }
-            } else {
-                if ( is_walking_ ) {
-                    anim_state_ = WalkerAnimState::WalkLeft;
-                } else {
-                    anim_state_ = WalkerAnimState::StandLeft;
-                }
-            }
 
-            anim_.set_anim_frames(get_anim_frames(anim_state_));
-            anim_.start_animation();
+        auto pos = this->precise_position();
+        if ( velocity_.y < (MGC_CELL_LEN-1) ) {
+            velocity_.y += 1.0f;
         }
+        pos += velocity_;
+        this->set_precise_position(pos);
+
+    } else if ( state == EnemyState::Despawning ) {
+       
+        blink_animator_.update();
+
+        if ( blink_animator_.state() == mgc::utils::BlinkAnimatorState::Done ) {
+
+            blink_animator_.clear();
+
+            this->set_enemy_state(EnemyState::Inactive);
+        }
+
+    } else { }
+
+}
+
+void Walker::update_movement_normal() {
+
+    auto state = this->enemy_state();
+
+    if ( state == EnemyState::Active ) {
 
         auto pos = this->precise_position();
         if ( anim_state_ == WalkerAnimState::WalkRight ) {
@@ -119,6 +141,60 @@ void Walker::update_movement() {
 void Walker::update_animation() {
 
     if ( this->enemy_state() == EnemyState::Inactive ) return;
+
+
+    if ( mode_ == WalkerMode::Normal ) {
+        if ( sw_.elapsed_ms() >= 3000 ) {
+            sw_.restart();
+            is_walking_ = !is_walking_;
+            if ( (rand()%2) != 0 ) {
+                if ( is_walking_ ) {
+                    anim_state_ = WalkerAnimState::WalkRight;
+                } else {
+                    anim_state_ = WalkerAnimState::StandRight;
+                }
+            } else {
+                if ( is_walking_ ) {
+                    anim_state_ = WalkerAnimState::WalkLeft;
+                } else {
+                    anim_state_ = WalkerAnimState::StandLeft;
+                }
+            }
+
+            anim_.set_loop(true);
+            anim_.set_anim_frames(get_anim_frames(anim_state_));
+            anim_.start_animation();
+        }
+
+    } else {
+        auto pos = this->precise_position();
+        uint32_t count = sound_.update_bgm_param_count();
+        uint32_t param = sound_.last_bgm_param();
+
+        if ( update_bgm_param_count_ != count ) {
+            update_bgm_param_count_ = count;
+            if ( (count & 0x2) == 0 ) {
+                anim_state_ = WalkerAnimState::KickRight;
+                if ( (count & 0x1) == 0) {
+                    velocity_.y -= 5;
+                    if ( param >= 5 ) {
+                        velocity_.x = 1;
+                    }
+                }
+            } else {
+                anim_state_ = WalkerAnimState::KickLeft;
+                if ( (count & 0x1) == 0) {
+                    velocity_.y -= 5;
+                    if ( param >= 5 ) {
+                        velocity_.x = -1;
+                    }
+                }
+            }
+            anim_.set_loop(false);
+            anim_.set_anim_frames(get_anim_frames(anim_state_));
+            anim_.start_animation();
+        }
+    }
 
     anim_.proc();
     anim_.set_current_frame(this->mut_sprite());
@@ -169,7 +245,7 @@ void Walker::on_attack_hit(
 
         attack.apply_damage_to(*this, attack_hitbox_index);
 
-        sound_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 
@@ -183,6 +259,7 @@ void Walker::on_collision_resolved(
             if ( velocity_.y > 0 ) {
                 velocity_.y = 0.0f;
             }
+            velocity_.x = 0;
         }
         
         auto pos = this->position();

@@ -13,6 +13,7 @@ enum class SceneId : int {
     Stage1_3,
     Stage1_4,
     Stage1_5,
+    Stage1_6,
     Shop,
     GameOver,
 };

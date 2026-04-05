@@ -22,7 +22,6 @@ private:
     CameraT camera_;
     stage::Stage stage_;
     SceneObjects_Stage1_5 scene_objects_;
-    ScreenFader screen_fader_;
 };
 
 } // namespace app

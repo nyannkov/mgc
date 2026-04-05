@@ -5,6 +5,7 @@
 #include "bgm/mml_bgm_water_fall.h"
 #include "bgm/mml_bgm_stage1.h"
 #include "bgm/mml_bgm_shop.h"
+#include "bgm/mml_bgm_boss.h"
 
 
 const mgc_mml_record_t se_records[] = {
@@ -31,6 +32,7 @@ const mgc_mml_record_t bgm_records[] = {
     { .id = MML_BGM_2_WATER_FALL, .mml = mml_bgm_water_fall },
     { .id = MML_BGM_3_STAGE1, .mml = mml_bgm_stage1 },
     { .id = MML_BGM_4_SHOP, .mml = mml_bgm_shop },
+    { .id = MML_BGM_5_BOSS, .mml = mml_bgm_boss },
 };
 const size_t BGM_RECORDS_COUNT = countof(bgm_records);
 

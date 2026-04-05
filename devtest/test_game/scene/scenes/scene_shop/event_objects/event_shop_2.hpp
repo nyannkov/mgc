@@ -12,15 +12,6 @@
 
 namespace app {
 
-enum class EventDetail {
-    Stop,
-    FadeOut,
-    FadeIn,
-    DrinkCoffee,
-    WaitFadeOut2,
-    FadeOut2,
-    FadeIn2
-};
 
 struct Event_Shop2 : event::Event {
 
@@ -36,6 +27,15 @@ struct Event_Shop2 : event::Event {
     void draw_effect(FramebufferT& fb, mgc::math::Vec2i& cam_pos) override;
 
 private:
+    enum class EventDetail {
+        Stop,
+        FadeOut,
+        FadeIn,
+        DrinkCoffee,
+        WaitFadeOut2,
+        FadeOut2,
+        FadeIn2
+    };
     SoundControllerT& sound_;
     CheckpointInfo& cp_info_;
     ScreenFader screen_fader_;

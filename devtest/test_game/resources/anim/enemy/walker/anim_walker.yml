@@ -21,3 +21,15 @@ animations:
     frames:
       - { file: frame_002.bmp, time_ms: 999999 }
 
+  - name: kick_right
+    description: "Kick right"
+    frames:
+      - { file: frame_001.bmp, time_ms: 50 }
+      - { file: frame_000.bmp, time_ms: 50 }
+
+  - name: kick_left
+    description: "Kick left"
+    frames:
+      - { file: frame_003.bmp, time_ms: 50 }
+      - { file: frame_002.bmp, time_ms: 50 }
+

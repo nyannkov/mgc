@@ -1,8 +1,8 @@
 #include "app_common.hpp"
 #include "frame/main_frame.hpp"
 #include "frame/status_frame.hpp"
-#include "resources/mml/mml.h"
 #include "platform/platform.hpp"
+#include "resources/mml/mml.h"
 
 namespace {
 
@@ -76,9 +76,6 @@ int main() {
 
     platform.sound_controller.set_background_music_list(bgm_records, BGM_RECORDS_COUNT);
     platform.sound_controller.set_sound_effect_list(se_records, SE_RECORDS_COUNT);
-    platform.sound_controller.set_lpf_enabled(true);
-    platform.sound_controller.set_lpf_alpha(0.5);
-    platform.sound_controller.set_master_volume(0.5);
 
     sw.start();
 
@@ -91,7 +88,9 @@ int main() {
         app::platform_tick();
         app::platform_sound_proc();
         
+        auto elapsed = sw.elapsed_ms();
         if ( sw.elapsed_ms() >= 25 ) {
+
             sw.restart();
             app::platform_gamepad_proc();
             

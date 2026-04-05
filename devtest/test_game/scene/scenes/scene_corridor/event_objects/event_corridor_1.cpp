@@ -49,7 +49,7 @@ void Event_Corridor1::update() {
     }
 
     if ( talkflow_listener_.checked_count() > 0 ) {
-        sound_.play_sound_effect(MML_SE_8_OPEN, 0.0);
+        sound_.play_sound_effect(MML_SE_8_OPEN);
         gate_.open();
         set_event_state(EventState::Finished);
         cp_info_.advance_checkpoint(Checkpoint::Corridor_OpenedTheDoor);

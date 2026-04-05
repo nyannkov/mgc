@@ -11,7 +11,7 @@
 #include "gamepad_picolcd.hpp"
 #endif
 
-#include "sound_controller_mml_psg.hpp"
+#include "sound_wrap.hpp"
 #include "free_running_timer_u32.hpp"
 
 namespace app {
@@ -24,7 +24,7 @@ using DisplayDriverT = mgc::drivers::platform::display::ST7789;
 using GamepadT = mgc::drivers::platform::input::GamepadPicoLcd;
 #endif
 
-using SoundControllerT = mgc::drivers::platform::sound::MmlPsgSoundController;
+using SoundControllerT = app::SoundControllerWrapper;
 using HwTimerT = mgc::drivers::platform::timer::FreeRunningTimerU32;
 using FrameTimerT = mgc::platform::timer::FrameTimer<HwTimerT>;
 

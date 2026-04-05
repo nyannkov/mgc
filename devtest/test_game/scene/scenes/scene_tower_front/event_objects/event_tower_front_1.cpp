@@ -117,7 +117,7 @@ void Event_TowerFront1::update() {
         if ( sw_.elapsed_ms() >= 1987 ) {
             entrance_.set_visible(true);
             state_ = Event_TowerFront1::State::Scene8;
-            sound_.play_sound_effect(MML_SE_10_OPEN_2, 0.0);
+            sound_.play_sound_effect(MML_SE_10_OPEN_2);
             sw_.restart();
         }
         break;

@@ -36,6 +36,7 @@ set(CXX_SOURCES
     entity/enemy/skyfish/skyfish.cpp
     entity/enemy/skyfish/skyfish_bt.cpp
     entity/enemy/walker/walker.cpp
+    entity/enemy/boss/dancer/dancer.cpp
     entity/stage/stage.cpp
     entity/stage/layer/tile_draw_hook.cpp
     entity/civilian/hen/hen.cpp

@@ -13,6 +13,7 @@ enum class StageId {
     Stage1_3,
     Stage1_4,
     Stage1_5,
+    Stage1_6,
     Shop,
     Count
 };

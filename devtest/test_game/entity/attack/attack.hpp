@@ -3,6 +3,7 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "app_common.hpp"
+#include "entity/player/player_hitbox_index.hpp"
 
 namespace app {
 namespace attack {
@@ -68,7 +69,19 @@ struct Attack : mgc::entities::ActorImpl<
     void on_hit_box_to_box_impl(
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
-    ) { }
+    ) {
+        if constexpr (std::is_same_v<Other, Player>) {
+            if ( info.other_hitbox_index == 
+                static_cast<size_t>(PlayerHitboxIndex::Body) 
+            ) {
+                on_player_hit(other, info);
+            }
+        } else if constexpr (std::is_same_v<Other, enemy::Enemy>) {
+
+            on_enemy_hit(other, info);
+
+        } else { }
+    }
 
     template <typename ObjT, typename MapT>
     void handle_map_pushback_result_impl(
@@ -89,6 +102,7 @@ private:
     SoundControllerT& sound_;
     mgc::math::Vec2f velocity_;
     mgc::math::Vec2i pos_orig_;
+    bool hit_ = false;//TODO
 
     AttackOwner owner_type_ = AttackOwner::Player;
     AttackType attack_type_ = AttackType::Scratch;
@@ -119,6 +133,15 @@ private:
     void despawn_boomerang();
     void update_animation_boomerang();
     void update_movement_boomerang();
+
+    void on_enemy_hit(
+        const enemy::Enemy& enemy,
+        const mgc::collision::BoxCollisionInfo& info
+    );
+    void on_player_hit(
+        const Player& player,
+        const mgc::collision::BoxCollisionInfo& info
+    );
 
 };
 

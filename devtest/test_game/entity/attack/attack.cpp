@@ -22,6 +22,8 @@ Attack::Attack(
     hitboxes[0].set_offset({0, 0});
     hitboxes[0].set_size({8, 16});
     hitboxes[0].set_enabled(false);
+
+    hit_ = false;
 }
 
 void Attack::spawn(
@@ -44,6 +46,7 @@ void Attack::spawn(
     }
 
     pos_orig_ = this->position();
+    hit_ = false;
 }
 
 void Attack::despawn() {
@@ -70,6 +73,7 @@ void Attack::update_movement() {
     default:
         break;
     }
+    hit_ = false;
 }
 
 void Attack::update_animation() {
@@ -141,7 +145,7 @@ void Attack::spawn_scratch(
     set_lifecycle(AttackLifeCycle::Spawned);
     anim_.set_current_frame(this->mut_sprite());
     anim_.start_animation();
-    sound_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH, 0.0);
+    sound_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH);
 }
 
 void Attack::despawn_scratch() {
@@ -213,12 +217,12 @@ void Attack::update_animation_boomerang() {
 
 void Attack::update_movement_boomerang() {
 
-    if ( anim_.is_finished() ) {
+    if ( anim_.is_finished() || hit_ ) {
         despawn();
         return;
     }
 
-    if ( MGC_ABS(pos_orig_.x - this->position().x) > 1000 ) {// TODO
+    if ( MGC_ABS(pos_orig_.x - this->position().x) > MGC_CELL2PIXEL(10) ) {
         despawn();
         return;
     }
@@ -239,6 +243,27 @@ void Attack::update_movement_boomerang() {
 
     set_velocity(v);
     set_precise_position(pos);
+}
+
+void Attack::on_enemy_hit(
+    const enemy::Enemy& enemy,
+    const mgc::collision::BoxCollisionInfo& info
+) {
+    switch (info.other_hitbox_index) {
+    case static_cast<size_t>(enemy::EnemyHitboxIndex::Body): //fallthrough
+    case static_cast<size_t>(enemy::EnemyHitboxIndex::Core):
+        hit_ = true;
+        break;
+    default:
+        break;
+    }
+}
+
+void Attack::on_player_hit(
+    const Player& player,
+    const mgc::collision::BoxCollisionInfo& info
+) {
+    hit_ = true;
 }
 
 }// namespace attack

@@ -30,6 +30,7 @@ enum {
     MML_BGM_2_WATER_FALL,
     MML_BGM_3_STAGE1,
     MML_BGM_4_SHOP,
+    MML_BGM_5_BOSS,
     MML_BGM_COUNT
 };
 

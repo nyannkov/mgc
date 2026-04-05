@@ -23,15 +23,14 @@ Scene_Stage1_5::Scene_Stage1_5(GameContext& ctx)
 
 void Scene_Stage1_5::init() {
     
-    if ( id_prev() == SceneId::Stage1_4 ) {
+    if ( id_prev() == SceneId::Stage1_3 ) {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(62)},
             PlayerAnimState::StandRight
         );
     } else {
-        //TODO
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(62)},
+            {MGC_CELL2PIXEL(28), MGC_CELL2PIXEL(6)},
             PlayerAnimState::StandLeft
         );
     }

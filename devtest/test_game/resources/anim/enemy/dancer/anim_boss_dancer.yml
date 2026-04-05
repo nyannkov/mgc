@@ -1,0 +1,33 @@
+animations:
+  - name: "static_yeah"
+    description: "static_yeah"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }
+  - name: "yeah"
+    description: "yeah"
+    frames:
+      - { file: frame_001.bmp, time_ms: 50 }
+      - { file: frame_000.bmp, time_ms: 50 }
+  - name: "walk_left"
+    description: "walk_left"
+    frames:
+      - { file: frame_005.bmp, time_ms: 100 }
+      - { file: frame_003.bmp, time_ms: 100 }
+      - { file: frame_002.bmp, time_ms: 100 }
+  - name: "walk_right"
+    description: "walk_right"
+    frames:
+      - { file: frame_005.bmp, time_ms: 100 }
+      - { file: frame_004.bmp, time_ms: 100 }
+      - { file: frame_002.bmp, time_ms: 100 }
+
+  - name: "boxing"
+    description: "boxing"
+    frames:
+      - { file: frame_006.bmp, time_ms: 50 }
+      - { file: frame_007.bmp, time_ms: 50 }
+      - { file: frame_006.bmp, time_ms: 50 }
+      - { file: frame_007.bmp, time_ms: 50 }
+      - { file: frame_008.bmp, time_ms: 50 }
+      - { file: frame_007.bmp, time_ms: 50 }
+

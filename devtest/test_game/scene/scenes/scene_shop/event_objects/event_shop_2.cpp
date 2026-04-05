@@ -94,6 +94,7 @@ void Event_Shop2::update() {
                 player_.set_anim_manually(PlayerAnimState::StandRight);
                 objs_.set_table_layer(false);
                 player_.set_position({MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(6)});
+                chair_left_.set_position({MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(6)});
                 detail_ = EventDetail::FadeIn2;
                 screen_fader_.request_fade_in(ScreenFaderType::Fade);
             }

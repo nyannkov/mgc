@@ -56,6 +56,10 @@ struct Stage {
         return r;
     }
 
+    void set_ladder_enabled(bool enabled) {
+        ladder_.set_all_enabled(enabled);
+    }
+
 private:
     mgc::math::Vec2i pos_;
     StageId stage_id_;

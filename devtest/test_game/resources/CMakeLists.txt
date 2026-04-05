@@ -101,6 +101,20 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_1_5/csv"
     --tile-or128 block one_way_block ladder needle
 )
+set(STAGE_MAP_STAGE_1_6_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_1_6/csv/map_stage_1_6_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_6/csv/map_stage_1_6_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_6/csv/map_stage_1_6_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_6/csv/map_stage_1_6_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_1_6/csv/map_stage_1_6_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_1_6/map_stage_1_6.tmx"
+    "${STAGE_MAP_STAGE_1_6_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_1_6/csv"
+    --tile-or128 block one_way_block ladder needle
+)
+
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_1.csv"
@@ -122,6 +136,7 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_1_3_CSVS}
     ${STAGE_MAP_STAGE_1_4_CSVS}
     ${STAGE_MAP_STAGE_1_5_CSVS}
+    ${STAGE_MAP_STAGE_1_6_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
 )
 
@@ -198,7 +213,12 @@ anim_cmake_list_gen(
     "${GEN_DIR}/anim/prop/portal"
     --width 16 --height 24
 )
-
+anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/enemy/dancer/anim_boss_dancer.yml"
+    "${RESOURCE_DIR}/tileset/tileset_boss_dancer.bmp"
+    "${GEN_DIR}/anim/enemy/dancer"
+    --width 20 --height 32 
+)
 add_subdirectory(mml)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
@@ -207,6 +227,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_attack
     anim_skyfish
     anim_walker
+    anim_boss_dancer
     anim_portal
     mml
 )

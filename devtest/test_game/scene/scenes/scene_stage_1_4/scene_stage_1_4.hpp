@@ -24,7 +24,6 @@ private:
     stage::Stage stage_;
     SceneObjects_Stage1_4 scene_objects_;
     EventObjects_Stage1_4 event_objects_;
-    ScreenFader screen_fader_;
 };
 
 } // namespace app

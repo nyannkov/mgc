@@ -406,7 +406,7 @@ void Player::on_enemy_hit(
         size_t enemy_hitbox_index = info.other_hitbox_index;
         if ( enemy.apply_damage_to(*this, enemy_hitbox_index) > 0 ) {
             if ( this->hp() > 0 ) {
-                sound_controller_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+                sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
                 is_invulnerable_ = true;
                 blink_animator_.set_blink_half_period(50);
                 blink_animator_.set_blink_count_max(40);
@@ -424,10 +424,10 @@ void Player::on_item_hit(
     size_t item_hitbox_index = info.other_hitbox_index;
     if ( item.apply_effect_to(*this, item_hitbox_index) > 0 ) {
         if ( item.effect_type() == item::ItemEffectType::Heal ) {
-            sound_controller_.play_sound_effect(MML_SE_1_LIFE_RECOVER, 0.0);
+            sound_controller_.play_sound_effect(MML_SE_1_LIFE_RECOVER);
 
         } else if ( item.effect_type() == item::ItemEffectType::LifeUp ) {
-            sound_controller_.play_sound_effect(MML_SE_2_LIFE_UP, 0.0);
+            sound_controller_.play_sound_effect(MML_SE_2_LIFE_UP);
         } else { }
     }
 }
@@ -507,7 +507,7 @@ void Player::on_collision_resolved(
         this->receive_damage(1);
 
         if ( this->hp() > 0 ) {
-            sound_controller_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+            sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
             is_invulnerable_ = true;
             blink_animator_.set_blink_half_period(50);
             blink_animator_.set_blink_count_max(40);
