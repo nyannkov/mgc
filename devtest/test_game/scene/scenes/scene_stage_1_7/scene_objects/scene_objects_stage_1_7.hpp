@@ -1,0 +1,55 @@
+#ifndef MGC_SCENE_OBJECTS_STAGE_1_7_HPP
+#define MGC_SCENE_OBJECTS_STAGE_1_7_HPP
+
+#include <utility>
+#include "mgc_cpp/mgc.hpp"
+#include "scene/scene_context.hpp"
+#include "scene/interface/iscene_objects.hpp"
+#include "entity/enemy/skyfish/skyfish.hpp"
+#include "entity/enemy/walker/walker.hpp"
+#include "entity/prop/gate/gate.hpp"
+#include "entity/block/pushable_block/pushable_block.hpp"
+
+namespace app {
+struct SceneObjects_Stage1_7 : ISceneObjects {
+
+    explicit SceneObjects_Stage1_7(SceneContext& scx)
+        : cp_info_(scx.world_state.checkpoint_info),
+          walker_1_(scx.timer, scx.sound),
+          skyfish_1_(scx.timer, scx.sound, scx.player),
+          enemies_ { &walker_1_, &skyfish_1_ },
+          blocks_ { &block_1_, &block_2_ },
+          gate_1_(scx.gamepad),
+          gate_2_(scx.gamepad),
+          props_ { &gate_1_, &gate_2_ }
+        { }
+
+    void init();
+
+    ArrayViewer<prop::Prop*> props() override { return { props_.data(), props_.size() }; }
+    ArrayViewer<item::Item*> items() override { return {}; }
+    ArrayViewer<enemy::Enemy*> enemies() override { return { enemies_.data(), enemies_.size() }; }
+    ArrayViewer<block::Block*> blocks() override { return { blocks_.data(), blocks_.size() }; }
+    ArrayViewer<civilian::Civilian*> civils() override { return {}; }
+    
+private:
+    CheckpointInfo& cp_info_;
+    // Enemy
+    enemy::SkyFish skyfish_1_;
+    enemy::Walker walker_1_;
+    std::array<enemy::Enemy*, 2> enemies_;
+
+    // Block
+    block::PushableBlock block_1_;
+    block::PushableBlock block_2_;
+    std::array<block::Block*, 2> blocks_;
+    // Prop
+    prop::Gate gate_1_;
+    prop::Gate gate_2_;
+    std::array<prop::Prop*, 2> props_;
+};
+
+} // namespace app
+
+#endif // MGC_SCENE_OBJECTS_STAGE_1_7_HPP
+

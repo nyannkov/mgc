@@ -106,3 +106,15 @@ animations:
       - { file: frame_035.bmp, time_ms: 1500 }
       - { file: frame_033.bmp, time_ms: 2500 }
 
+  - name: swim_left
+    description: "Swim left"
+    frames:
+      - { file: frame_006.bmp, time_ms: 100 }
+      - { file: frame_036.bmp, time_ms: 100 }
+
+  - name: swim_right
+    description: "Swim right"
+    frames:
+      - { file: frame_009.bmp, time_ms: 100 }
+      - { file: frame_037.bmp, time_ms: 100 }
+

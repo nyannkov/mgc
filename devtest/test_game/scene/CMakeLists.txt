@@ -19,6 +19,8 @@ add_subdirectory(scenes/scene_stage_1_3)
 add_subdirectory(scenes/scene_stage_1_4)
 add_subdirectory(scenes/scene_stage_1_5)
 add_subdirectory(scenes/scene_stage_1_6)
+add_subdirectory(scenes/scene_stage_1_7)
+add_subdirectory(scenes/scene_stage_2_1)
 add_subdirectory(scenes/scene_shop)
 add_subdirectory(scenes/scene_game_over)
 
@@ -35,6 +37,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     scene_stage_1_4
     scene_stage_1_5
     scene_stage_1_6
+    scene_stage_1_7
+    scene_stage_2_1
     scene_shop
     scene_game_over
 )

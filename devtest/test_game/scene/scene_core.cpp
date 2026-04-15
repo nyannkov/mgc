@@ -126,6 +126,10 @@ void update_movement(SceneContext& scx) {
             scx.player,
             static_cast<size_t>(PlayerHitboxIndex::Body)
         );
+        scx.stage->detect_hit(
+            scx.player,
+            static_cast<size_t>(PlayerHitboxIndex::Head)
+        );
     }
 
     if ( scx.evts ) {

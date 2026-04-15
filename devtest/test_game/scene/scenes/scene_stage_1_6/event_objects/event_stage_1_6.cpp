@@ -1,7 +1,5 @@
 #include "resources/mml/mml.h"
 #include "event_stage_1_6.hpp"
-#include <stdio.h>
-
 
 namespace app {
 

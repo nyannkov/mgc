@@ -6,6 +6,7 @@
 #include "entity/stage/layer/layer_ladder.hpp"
 #include "entity/stage/layer/layer_one_way_block.hpp"
 #include "entity/stage/layer/layer_needle.hpp"
+#include "entity/stage/layer/layer_water.hpp"
 #include "entity/attack/attack.hpp"
 #include "entity/enemy/enemy_state.hpp"
 #include "entity/prop/prop.hpp"
@@ -20,6 +21,7 @@ enum class PlayerState {
     Normal = 0,
     Ladder,
     Swimming,
+    Diving,
     GameOver
 };
 
@@ -109,11 +111,19 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
                 on_collision_resolved(map, info);
             } else if constexpr (std::is_same_v<MapT, stage::LayerLadder>) {
                 hit_ladder_ = true;
+            } else if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+                hit_water_ = true;
             } else if constexpr (std::is_same_v<MapT, stage::LayerNeedle>) {
                 on_collision_resolved(map, info);
             } else if constexpr (std::is_same_v<MapT, stage::LayerOneWayBlock>) {
                 hit_one_way_block_ = true;
                 on_collision_resolved(map, info);
+            }
+        } else if ( info.obj_hitbox_index == 
+            static_cast<size_t>(PlayerHitboxIndex::Head) 
+        ) {
+            if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+                hit_head_water_ = true;
             }
         }
     }
@@ -198,6 +208,8 @@ private:
     BlinkAnimatorT blink_animator_;
     mgc::math::Vec2f force_ex_;
     bool hit_ladder_;
+    bool hit_water_;
+    bool hit_head_water_;
     bool hit_one_way_block_;
     bool one_way_block_falling_;
     bool input_enabled_;

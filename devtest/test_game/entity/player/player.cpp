@@ -27,6 +27,8 @@ Player::Player(
       is_grounded_(true),
       is_invulnerable_(false),
       hit_ladder_(false),
+      hit_water_(false),
+      hit_head_water_(false),
       hit_one_way_block_(false),
       one_way_block_falling_(false),
       input_enabled_(true),
@@ -54,6 +56,11 @@ void Player::init() {
     hand.set_offset({1, 1});
     hand.set_size({14, 1});
     hand.set_enabled(true);
+
+    auto& head = at(this->mut_hitboxes(), PlayerHitboxIndex::Head);
+    head.set_offset({1, 5});
+    head.set_size({14, 2});
+    head.set_enabled(true);
 }
 
 void Player::spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state) {
@@ -82,6 +89,7 @@ void Player::reset_state_for_placement(
     case PlayerAnimState::AttackRight:
     case PlayerAnimState::GameOverRight:
     case PlayerAnimState::LookupRight:
+    case PlayerAnimState::SwimRight:
         is_right_ = true;
         break;
     default:
@@ -129,6 +137,9 @@ void Player::update_movement() {
             } else { 
             }
             hit_ladder_ = false;
+        } else if ( hit_water_ ) {
+            player_state_ = PlayerState::Swimming;
+            hit_water_ = false;
         } else {
             player_state_ = PlayerState::Normal;
         }
@@ -182,7 +193,37 @@ void Player::update_movement() {
                 is_right_ = true;
             } else { }
         }
+    } else if ( player_state_ == PlayerState::Swimming ) {
         
+        if ( input_enabled_ ) {
+            if ( gamepad_.just_pressed(Key::Cancel) ) {
+                velocity_.y = -6;
+            }
+
+            if ( gamepad_.is_pressed(Key::Left) ) {
+                velocity_.x = -2;
+                real_pos.x += velocity_.x;
+                is_right_ = false;
+            } else if ( gamepad_.is_pressed(Key::Right) ) {
+                velocity_.x = 2;
+                real_pos.x += velocity_.x;
+                is_right_ = true;
+            } else { }
+        }
+
+        if ( hit_head_water_ ) {
+            hit_head_water_ = false;
+            if ( velocity_.y > -3 ) {
+                velocity_.y -= 0.5f;
+            }
+            velocity_.y *= 0.8f;
+        } else {
+            if ( velocity_.y > 3 ) {
+                velocity_.y += 0.1f;
+            }
+        }
+        real_pos.y += velocity_.y;
+
     } else if ( player_state_ == PlayerState::GameOver ) {
         if ( velocity_.y < (MGC_CELL_LEN-1) ) {
             velocity_.y += 1.0f;
@@ -304,6 +345,10 @@ void Player::update_anim_normal() {
         } else {
             state_next = PlayerAnimState::LadderStay;
         }
+    } else if ( player_state_ == PlayerState::Swimming ) {
+
+        state_next = is_right_ ? PlayerAnimState::SwimRight 
+                               : PlayerAnimState::SwimLeft;
     } else {
         state_next = is_right_ ? PlayerAnimState::JumpRight
                                : PlayerAnimState::JumpLeft;
