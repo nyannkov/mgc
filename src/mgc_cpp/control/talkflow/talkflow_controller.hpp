@@ -343,7 +343,7 @@ private:
     int32_t on_select(mgc_talkflow_t *talkflow, mgc_node_idx_t tag) {
         (void)talkflow;
         if ( !listener_ ) {
-            return false;
+            return 0;
         }
         return listener_->on_select(tag);
     }
