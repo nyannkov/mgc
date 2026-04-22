@@ -22,7 +22,7 @@ struct SceneObjects_Shop : ISceneObjects {
           props_ { &door_, &portal_ },
           florist_(
             scx.gamepad, 
-            scx.world_state.checkpoint_info,
+            scx.world_state,
             scx.player
           ),
           civils_ {&florist_ } {

@@ -140,6 +140,45 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_2_1/csv"
     --tile-or128 block one_way_block ladder needle water
 )
+set(STAGE_MAP_STAGE_2_2_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_2_2/csv/map_stage_2_2_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_2/csv/map_stage_2_2_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_2/csv/map_stage_2_2_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_2/csv/map_stage_2_2_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_2/csv/map_stage_2_2_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_2_2/map_stage_2_2.tmx"
+    "${STAGE_MAP_STAGE_2_2_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_2_2/csv"
+    --tile-or128 block one_way_block ladder needle water
+)
+set(STAGE_MAP_STAGE_2_3_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_2_3/csv/map_stage_2_3_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_3/csv/map_stage_2_3_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_3/csv/map_stage_2_3_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_3/csv/map_stage_2_3_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_3/csv/map_stage_2_3_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_2_3/map_stage_2_3.tmx"
+    "${STAGE_MAP_STAGE_2_3_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_2_3/csv"
+    --tile-or128 block one_way_block ladder needle water
+)
+set(STAGE_MAP_STAGE_2_4_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_2_4/csv/map_stage_2_4_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_4/csv/map_stage_2_4_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_4/csv/map_stage_2_4_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_4/csv/map_stage_2_4_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_4/csv/map_stage_2_4_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_2_4/map_stage_2_4.tmx"
+    "${STAGE_MAP_STAGE_2_4_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_2_4/csv"
+    --tile-or128 block one_way_block ladder needle water
+)
 
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
@@ -165,6 +204,9 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_1_6_CSVS}
     ${STAGE_MAP_STAGE_1_7_CSVS}
     ${STAGE_MAP_STAGE_2_1_CSVS}
+    ${STAGE_MAP_STAGE_2_2_CSVS}
+    ${STAGE_MAP_STAGE_2_3_CSVS}
+    ${STAGE_MAP_STAGE_2_4_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
 )
 
@@ -236,6 +278,12 @@ anim_cmake_list_gen(
     --width 16 --height 16
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/enemy/floaty_fish/anim_floaty_fish.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_floaty_fish.bmp"
+    "${GEN_DIR}/anim/enemy/floaty_fish"
+    --width 16 --height 16
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/prop/portal/anim_portal.yml" 
     "${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp"
     "${GEN_DIR}/anim/prop/portal"
@@ -255,6 +303,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_attack
     anim_skyfish
     anim_walker
+    anim_floaty_fish
     anim_boss_dancer
     anim_portal
     mml

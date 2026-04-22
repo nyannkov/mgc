@@ -6,10 +6,10 @@ namespace civilian {
 
 using mgc::platform::input::Key;
 
-Florist::Florist(const GamepadT& gamepad, CheckpointInfo& cp_info, Player& player) 
+Florist::Florist(const GamepadT& gamepad, WorldState& world_state, Player& player) 
     : gamepad_(gamepad),
-      cp_info_(cp_info),
-      talkflow_listener_(player) {
+      cp_info_(world_state.checkpoint_info),
+      talkflow_listener_(player, world_state) {
     this->mut_sprite().set_visible(false);
     this->mut_sprite().set_tileset(tileset_florist);
     auto& hitboxes = this->mut_hitboxes();

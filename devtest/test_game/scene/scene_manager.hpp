@@ -27,10 +27,17 @@ struct SceneManager {
         //set_scene(app::SceneId::Stage1_6);
         //set_scene(app::SceneId::Stage1_7);
         //set_scene(app::SceneId::Stage2_1);
+        //set_scene(app::SceneId::Stage2_2);
+        //set_scene(app::SceneId::Stage2_3);
+        //set_scene(app::SceneId::Stage2_4);
 
         equipment_info_.weapon.add(WeaponId::Claw);
-        //equipment_info_.weapon.add(WeaponId::Boomerang);
         equipment_info_.weapon.equip(WeaponId::Claw);
+
+        //test
+        //equipment_info_.weapon.add(WeaponId::Boomerang);
+        //equipment_info_.item.add(ItemId::DivingEquipment);
+        //ctx_.world_state.player.add_gold(1000);
 
         menu_.init();
     }

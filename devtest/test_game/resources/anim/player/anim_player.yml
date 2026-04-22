@@ -118,3 +118,15 @@ animations:
       - { file: frame_009.bmp, time_ms: 100 }
       - { file: frame_037.bmp, time_ms: 100 }
 
+  - name: diving_left
+    description: "Diving left"
+    frames:
+      - { file: frame_038.bmp, time_ms: 200 }
+      - { file: frame_039.bmp, time_ms: 200 }
+
+  - name: diving_right
+    description: "Diving right"
+    frames:
+      - { file: frame_040.bmp, time_ms: 200 }
+      - { file: frame_041.bmp, time_ms: 200 }
+

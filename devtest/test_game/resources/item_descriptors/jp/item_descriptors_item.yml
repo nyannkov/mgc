@@ -5,7 +5,7 @@ item_descriptors:
     descriptors:
         - { id: Test1, name: 'test1', description: '魚', tile_index: 0 }
         - { id: Cookie, name: 'クッキー', description: 'チョコチップ入りのクッキー。中はしっとり。食べると体力が少し回復する。', tile_index: 1 }
-        - { id: Test3, name: 'test3', description: '魚', tile_index: 2 }
+        - { id: DivingEquipment, name: 'ダイビング機材', description: '所持しているだけで水に潜れるようになる。', tile_index: 2 }
         - { id: Test4, name: 'test4', description: '魚', tile_index: 3 }
         - { id: Test5, name: 'test5', description: '魚', tile_index: 4 }
         - { id: Test6, name: 'test6', description: '魚', tile_index: 5 }

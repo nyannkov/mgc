@@ -95,6 +95,11 @@ void update_movement(SceneContext& scx) {
                 *enemy,
                 static_cast<size_t>(enemy::EnemyHitboxIndex::Body)
             );
+            scx.stage->detect_hit(
+                *enemy,
+                static_cast<size_t>(enemy::EnemyHitboxIndex::Head)
+            );
+
             ColBox2BoxT::detect_pair(*enemy, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
             ColBox2BoxT::detect_pair(*enemy, scx.player.attack());
             if ( ( enemy->enemy_state() == enemy::EnemyState::Active ) &&
