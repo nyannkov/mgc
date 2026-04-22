@@ -75,7 +75,7 @@ talkscript:
           tag: "SHOPPING_CONTENT_CASE_2"
           items:
             - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
-            - { item: "ダイビング機材", value: 300, tag: DIVING_EQUIPMENT, next: shop_shopping_item_diving_equipment }
+            - { item: "ダイビング機材", value: 3000, tag: DIVING_EQUIPMENT, next: shop_shopping_item_diving_equipment }
             - { item: "やめる" }
       - end: true
 
