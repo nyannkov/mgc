@@ -45,6 +45,7 @@ struct ITalkflowListener {
     virtual bool on_start_choice(mgc_node_idx_t tag, SelectboxConfig& selectbox_config) { return false; }
     virtual void on_message_done(mgc_node_idx_t tag) {}
     virtual void on_choice_done(mgc_node_idx_t tag, size_t item_tag, int32_t value) {}
+    virtual int32_t on_select(mgc_node_idx_t tag) { return 0; }
     virtual bool on_decision(mgc_node_idx_t tag) { return true; }
     virtual void on_flow_end(mgc_node_idx_t tag) {}
 };

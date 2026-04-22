@@ -66,6 +66,11 @@ typedef struct mgc_talkflow_callbacks{
             mgc_node_idx_t tag,
             void *context
     );
+    int32_t (*on_select)(
+            mgc_talkflow_t *talkflow,
+            mgc_node_idx_t tag,
+            void *context
+    );
     void (*on_flow_end)(
             mgc_talkflow_t *talkflow,
             mgc_node_idx_t tag,

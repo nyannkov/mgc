@@ -112,6 +112,17 @@ if __name__ == '__main__':
                     if "tag" in decision:
                         decision_tag_value = decision['tag']
                         f.write(f"#define MGC_{scriptname.upper()}_TAG_DECISION__{decision_tag_value} {node_index}\n")
+                elif "select" in entry:
+                    select = entry['select']
+                    if "tag" in select:
+                        select_tag_value = select['tag']
+                        f.write(f"#define MGC_{scriptname.upper()}_TAG_SELECT__{select_tag_value} {node_index}\n")
+
+                    if "cases" in select:
+                        for case in select['cases']:
+                            if "tag" in case:
+                                f.write(f"#define MGC_{scriptname.upper()}_TAG_SELECT__{select_tag_value}__CASE__{case['tag']} {case['value']}\n")
+
                 elif "end" in entry:
                     pass
 
@@ -172,12 +183,12 @@ if __name__ == '__main__':
                     next_label = item.get("next")
                     next_idx = label_macros[next_label] if next_label else node_index + 1
                     item_lines.append(f'    [{i}] = {{ .text = "{text}", .value = {value}, .next = {next_idx} }},')
-                c_lines.append(f'static const mgc_node_choice_item_t node_{node_index}_items[{len(items)}] = {{')
+                c_lines.append(f'static const mgc_node_choice_item_t node_{node_index}_items[] = {{')
                 c_lines.extend(item_lines)
                 c_lines.append('};')
                 c_lines.append(f'static const mgc_node_choice_t node_{node_index}_choice = {{')
                 c_lines.append(f'    .items = node_{node_index}_items,')
-                c_lines.append(f'    .item_count = {len(items)}')
+                c_lines.append(f'    .item_count = countof(node_{node_index}_items)')
                 c_lines.append('};\n')
                 node_list.append(f'{{ .content.choice = &node_{node_index}_choice, .type = MGC_TALKNODE_TYPE_CHOICE, .end = false }},')
             elif "decision" in entry:
@@ -194,6 +205,26 @@ if __name__ == '__main__':
                 c_lines.append(f'    .next_if_false = {next_if_false}')
                 c_lines.append('};\n')
                 node_list.append(f'{{ .content.decision = &node_{node_index}_decision, .type = MGC_TALKNODE_TYPE_DECISION, .end = false }},')
+            elif "select" in entry:
+                c_lines.append(f'static const mgc_node_select_item_t node_{node_index}_select_items[] = {{')
+                cases = entry['select']['cases']
+                default = entry['select']['default']
+                for case in cases:
+                    case_value = case['value']
+                    case_next = label_macros[case['next']]
+                    c_lines.append(f'    {{ .value = {case_value}, .next = {case_next}}},')
+
+                c_lines.append('};\n')
+
+                default_next = label_macros[default['next']]
+                c_lines.append(f'static const mgc_node_select_t node_{node_index}_select = {{')
+                c_lines.append(f'    .items = node_{node_index}_select_items,')
+                c_lines.append(f'    .item_count = countof(node_{node_index}_select_items),')
+                c_lines.append(f'    .default_next = {default_next}')
+                c_lines.append('};\n')
+
+                node_list.append(f'{{ .content.select = &node_{node_index}_select, .type = MGC_TALKNODE_TYPE_SELECT, .end = false }},')
+
             elif "end" in entry:
                 c_lines.append(f'static const mgc_node_end_t node_{node_index}_end = {{')
                 c_lines.append(f'    .next = {node_index}')
