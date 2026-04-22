@@ -9,6 +9,7 @@ enum class EnemyHitboxIndex : size_t {
     ViewLeft,
     ViewRight,
     Core,
+    Head,
     Count
 };
 

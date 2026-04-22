@@ -4,6 +4,7 @@
 #include "mgc_cpp/mgc.hpp"
 #include "enemy_state.hpp"
 #include "entity/stage/layer/layer_block.hpp"
+#include "entity/stage/layer/layer_water.hpp"
 #include "app_common.hpp"
 #include "entity/player/player_hitbox_index.hpp"
 #include "enemy_hitbox_index.hpp"
@@ -63,6 +64,8 @@ struct Enemy : mgc::entities::ActorImpl<
     ) { 
         if constexpr (std::is_same_v<MapT, stage::LayerBlock>) {
             on_collision_resolved(map, info);
+        } else if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+            on_collision_resolved(map, info);
         }
     }
 
@@ -89,6 +92,11 @@ protected:
 
     virtual void on_collision_resolved(
         const stage::LayerBlock& block,
+        const mgc::collision::MapPushbackInfo& info
+    ) { }
+
+    virtual void on_collision_resolved(
+        const stage::LayerWater& water,
         const mgc::collision::MapPushbackInfo& info
     ) { }
 

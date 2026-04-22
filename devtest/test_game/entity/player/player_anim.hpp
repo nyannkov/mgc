@@ -27,6 +27,8 @@ enum class PlayerAnimState {
     CoffeeBreak,
     SwimLeft,
     SwimRight,
+    DivingLeft,
+    DivingRight,
 };
 
 inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState state) {
@@ -51,6 +53,8 @@ inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState sta
     case PlayerAnimState::CoffeeBreak: return anim_player_coffee_break;
     case PlayerAnimState::SwimLeft: return anim_player_swim_left;
     case PlayerAnimState::SwimRight: return anim_player_swim_right;
+    case PlayerAnimState::DivingLeft: return anim_player_diving_left;
+    case PlayerAnimState::DivingRight: return anim_player_diving_right;
     default: return anim_player_stand_right;
     }
 }

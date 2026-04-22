@@ -7,6 +7,7 @@
 #include "scene/interface/iscene_objects.hpp"
 #include "entity/enemy/skyfish/skyfish.hpp"
 #include "entity/enemy/walker/walker.hpp"
+#include "entity/enemy/floaty_fish/floaty_fish.hpp"
 #include "entity/prop/gate/gate.hpp"
 #include "entity/prop/signboard/signboard.hpp"
 #include "entity/block/pushable_block/pushable_block.hpp"
@@ -18,12 +19,14 @@ struct SceneObjects_Stage2_1 : ISceneObjects {
         : cp_info_(scx.world_state.checkpoint_info),
           walker_1_(scx.timer, scx.sound),
           skyfish_1_(scx.timer, scx.sound, scx.player),
-          enemies_ { &walker_1_, &skyfish_1_ },
+          floaty_fish_1_(scx.timer, scx.sound),
+          enemies_ { &walker_1_, &skyfish_1_, &floaty_fish_1_ },
           blocks_ { &block_1_, &block_2_ },
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
+          gate_3_(scx.gamepad),
           signboard_(scx.gamepad),
-          props_ { &gate_1_, &gate_2_, &signboard_ }
+          props_ { &gate_1_, &gate_2_, &gate_3_, &signboard_ }
         { }
 
     void init();
@@ -39,7 +42,8 @@ private:
     // Enemy
     enemy::SkyFish skyfish_1_;
     enemy::Walker walker_1_;
-    std::array<enemy::Enemy*, 2> enemies_;
+    enemy::FloatyFish floaty_fish_1_;
+    std::array<enemy::Enemy*, 3> enemies_;
 
     // Block
     block::PushableBlock block_1_;
@@ -48,8 +52,9 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
+    prop::Gate gate_3_;
     prop::Signboard signboard_;
-    std::array<prop::Prop*, 3> props_;
+    std::array<prop::Prop*, 4> props_;
 };
 
 } // namespace app

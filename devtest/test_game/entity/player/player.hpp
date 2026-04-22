@@ -22,6 +22,7 @@ enum class PlayerState {
     Ladder,
     Swimming,
     Diving,
+    DivingJump,
     GameOver
 };
 

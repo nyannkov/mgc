@@ -2,6 +2,7 @@
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
 #include "resources/mml/mml.h"
+#include <stdio.h>
 
 namespace app {
 
@@ -123,11 +124,27 @@ void Player::update_movement() {
 
     auto real_pos = this->precise_position();
 
-    if ( ( player_state_ == PlayerState::Ladder ) && is_grounded_ ) {
-        player_state_ = PlayerState::Normal;
+    if ( player_state_ == PlayerState::Ladder ) {
+        if ( is_grounded_ || !hit_ladder_) {
+            player_state_ = PlayerState::Normal;
+        }
     }
 
     if ( player_state_ != PlayerState::GameOver ) {
+
+        if ( hit_water_ ) {
+            if ( equipment_info_.item.has_item_at(ItemId::DivingEquipment) ) {
+                player_state_ = PlayerState::Diving;
+            } else {
+                player_state_ = PlayerState::Swimming;
+            }
+            hit_water_ = false;
+        } else {
+            if ( player_state_ != PlayerState::Ladder ) {
+                player_state_ = PlayerState::Normal;
+            }
+        }
+
         if ( hit_ladder_ ) {
             if ( ( gamepad_.is_pressed(Key::Up) ) ||
                  ( gamepad_.is_pressed(Key::Down) )
@@ -137,13 +154,9 @@ void Player::update_movement() {
             } else { 
             }
             hit_ladder_ = false;
-        } else if ( hit_water_ ) {
-            player_state_ = PlayerState::Swimming;
-            hit_water_ = false;
-        } else {
-            player_state_ = PlayerState::Normal;
-        }
+        } 
     }
+
 
     // Update position
     if ( player_state_ == PlayerState::Normal ) {
@@ -223,6 +236,39 @@ void Player::update_movement() {
             }
         }
         real_pos.y += velocity_.y;
+
+    } else if ( player_state_ == PlayerState::Diving ) {
+
+        if ( input_enabled_ ) {
+            if ( gamepad_.just_pressed(Key::Cancel) ) {
+                velocity_.y = -3;
+            } else if ( gamepad_.is_pressed(Key::Up) ) {
+                if ( hit_head_water_ ) {
+                    velocity_.y = -1;
+                }
+            } else if ( gamepad_.is_pressed(Key::Down) ) {
+                velocity_.y = 1;
+            }
+
+            if ( gamepad_.is_pressed(Key::Left) ) {
+                velocity_.x = -2;
+                is_right_ = false;
+            } else if ( gamepad_.is_pressed(Key::Right) ) {
+                velocity_.x = 2;
+                is_right_ = true;
+            } else { }
+        }
+
+        if ( velocity_.y < 1.0f ) {
+            velocity_.y += 0.3f;
+        }
+
+        real_pos += velocity_;
+        hit_head_water_ = false;
+        if ( velocity_.y > 0 ) {
+            velocity_.y *= 0.8f;
+        }
+
 
     } else if ( player_state_ == PlayerState::GameOver ) {
         if ( velocity_.y < (MGC_CELL_LEN-1) ) {
@@ -331,13 +377,18 @@ void Player::update_anim_normal() {
         state_next = PlayerAnimState::StandLeft;
     }
 
-    if ( is_grounded_ ) {
-        if ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) {
-            state_next = is_right_ ? PlayerAnimState::WalkRight
-                                   : PlayerAnimState::WalkLeft;
+    if ( player_state_ == PlayerState::Normal ) {
+        if ( is_grounded_ ) {
+            if ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) {
+                state_next = is_right_ ? PlayerAnimState::WalkRight
+                                       : PlayerAnimState::WalkLeft;
+            } else {
+                state_next = is_right_ ? PlayerAnimState::StandRight
+                                       : PlayerAnimState::StandLeft;
+            }
         } else {
-            state_next = is_right_ ? PlayerAnimState::StandRight
-                                   : PlayerAnimState::StandLeft;
+            state_next = is_right_ ? PlayerAnimState::JumpRight
+                                   : PlayerAnimState::JumpLeft;
         }
     } else if ( player_state_ == PlayerState::Ladder ) {
         if ( gamepad_.is_pressed(Key::Up) || gamepad_.is_pressed(Key::Down) ) {
@@ -349,12 +400,18 @@ void Player::update_anim_normal() {
 
         state_next = is_right_ ? PlayerAnimState::SwimRight 
                                : PlayerAnimState::SwimLeft;
+
+    } else if ( player_state_ == PlayerState::Diving ) {
+        state_next = is_right_ ? PlayerAnimState::DivingRight 
+                               : PlayerAnimState::DivingLeft;
     } else {
+
         state_next = is_right_ ? PlayerAnimState::JumpRight
                                : PlayerAnimState::JumpLeft;
     }
 
     if ( state_next != anim_state_ ) {
+
         anim_state_ = state_next;
         anim_.set_anim_frames(get_anim_frames(anim_state_));
         anim_.start_animation();

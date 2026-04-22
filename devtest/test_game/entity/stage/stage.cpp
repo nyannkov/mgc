@@ -37,6 +37,21 @@
 #include "resources/generated/map/map_stage_2_1_water.h"
 #include "resources/generated/map/map_stage_2_1_needle.h"
 #include "resources/generated/map/map_stage_2_1_one_way_block.h"
+#include "resources/generated/map/map_stage_2_2_block.h"
+#include "resources/generated/map/map_stage_2_2_ladder.h"
+#include "resources/generated/map/map_stage_2_2_water.h"
+#include "resources/generated/map/map_stage_2_2_needle.h"
+#include "resources/generated/map/map_stage_2_2_one_way_block.h"
+#include "resources/generated/map/map_stage_2_3_block.h"
+#include "resources/generated/map/map_stage_2_3_ladder.h"
+#include "resources/generated/map/map_stage_2_3_water.h"
+#include "resources/generated/map/map_stage_2_3_needle.h"
+#include "resources/generated/map/map_stage_2_3_one_way_block.h"
+#include "resources/generated/map/map_stage_2_4_block.h"
+#include "resources/generated/map/map_stage_2_4_ladder.h"
+#include "resources/generated/map/map_stage_2_4_water.h"
+#include "resources/generated/map/map_stage_2_4_needle.h"
+#include "resources/generated/map/map_stage_2_4_one_way_block.h"
 
 #include "resources/generated/map/map_shop_back_0.h"
 #include "resources/generated/map/map_shop_back_1.h"
@@ -205,6 +220,57 @@ void Stage::setup(StageId id) {
         water_.set_all_enabled(true);
 
         needle_.set_maps(map_stage_2_1_needle, tileset_map_elements, &map_stage_2_1_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage2_2:
+        block_.set_maps(map_stage_2_2_block, tileset_map_elements, &map_stage_2_2_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_2_2_one_way_block, tileset_map_elements, &map_stage_2_2_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_2_2_ladder, tileset_map_elements, &map_stage_2_2_ladder);
+        ladder_.set_all_enabled(true);
+
+        water_.set_maps(map_stage_2_2_water, tileset_map_elements, &map_stage_2_2_water);
+        water_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_2_2_needle, tileset_map_elements, &map_stage_2_2_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage2_3:
+        block_.set_maps(map_stage_2_3_block, tileset_map_elements, &map_stage_2_3_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_2_3_one_way_block, tileset_map_elements, &map_stage_2_3_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_2_3_ladder, tileset_map_elements, &map_stage_2_3_ladder);
+        ladder_.set_all_enabled(true);
+
+        water_.set_maps(map_stage_2_3_water, tileset_map_elements, &map_stage_2_3_water);
+        water_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_2_3_needle, tileset_map_elements, &map_stage_2_3_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage2_4:
+        block_.set_maps(map_stage_2_4_block, tileset_map_elements, &map_stage_2_4_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_2_4_one_way_block, tileset_map_elements, &map_stage_2_4_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_2_4_ladder, tileset_map_elements, &map_stage_2_4_ladder);
+        ladder_.set_all_enabled(true);
+
+        water_.set_maps(map_stage_2_4_water, tileset_map_elements, &map_stage_2_4_water);
+        water_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_2_4_needle, tileset_map_elements, &map_stage_2_4_needle);
         needle_.set_all_enabled(true);
         break;
 

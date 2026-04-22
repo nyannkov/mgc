@@ -28,11 +28,15 @@ void Scene_Stage2_1::init() {
             {MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(30)},
             PlayerAnimState::StandRight
         );
+    } else if ( id_prev() == SceneId::Stage2_2 ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(5)},
+            PlayerAnimState::StandLeft
+        );
     } else {
-        //TODO
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(30)},
-            PlayerAnimState::StandLeft
+            PlayerAnimState::StandRight
         );
     }
 
