@@ -27,6 +27,7 @@ typedef struct mgc_node_choice_item {
     const char *text;
     int32_t value;
     mgc_node_idx_t next;
+    bool is_cancel_target;
 } mgc_node_choice_item_t;
 
 typedef struct mgc_node_choice {

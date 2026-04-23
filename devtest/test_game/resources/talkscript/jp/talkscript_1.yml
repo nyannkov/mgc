@@ -47,7 +47,7 @@ talkscript:
             - { item: "買う", next: shop_shopping }
             - { item: "休む", next: shop_coffee_break_1 }
             - { item: "話す", next: shop_small_talking_1 }
-            - { item: "やめる" }
+            - { item: "やめる", cancel: true }
       - end: true
 
     shop_shopping:
@@ -67,7 +67,7 @@ talkscript:
           items:
             - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
             - { item: "ブーメラン", value: 100, tag: BOOMERANG, next: shop_shopping_item_boomerang }
-            - { item: "やめる" }
+            - { item: "やめる", cancel: true }
       - end: true
 
     shop_shopping_content_case_2:
@@ -76,7 +76,7 @@ talkscript:
           items:
             - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
             - { item: "ダイビング機材", value: 3000, tag: DIVING_EQUIPMENT, next: shop_shopping_item_diving_equipment }
-            - { item: "やめる" }
+            - { item: "やめる", cancel: true }
       - end: true
 
     shop_shopping_item_cookie:
@@ -99,7 +99,7 @@ talkscript:
           tag: "SHOPPING_CHECK"
           items:
             - { item: "買う", next: shop_shopping_judge }
-            - { item: "他を見る", next: shop_shopping }
+            - { item: "他を見る", cancel: true, next: shop_shopping }
 
     shop_shopping_judge:
       - decision:
@@ -118,7 +118,7 @@ talkscript:
           tag: "SHOPPING_IS_CONTINUE"
           items:
             - { item: "買う", next: shop_shopping }
-            - { item: "やめる" }
+            - { item: "やめる", cancel: true }
       - end: true
         
     shop_shopping_sold_out:
@@ -177,7 +177,7 @@ talkscript:
           tag: "CONFIRM_PASSWORD_EXIT"
           items:
             - { item: "はい" , tag: "YES" }
-            - { item: "いいえ", tag: "NO" }
+            - { item: "いいえ", tag: "NO", cancel: true }
       - end: true
 
     game_over:
@@ -186,7 +186,7 @@ talkscript:
           tag: "TRY_AGAIN"
           items:
             - { item: "はい" , tag: "YES", next: game_retry }
-            - { item: "いいえ", tag: "NO", next: game_end }
+            - { item: "いいえ", cancel: true, tag: "NO", next: game_end }
     game_retry:
       - { message: "がんばって！", end: true }
 
