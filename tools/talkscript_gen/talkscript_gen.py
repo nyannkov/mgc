@@ -182,7 +182,8 @@ if __name__ == '__main__':
                     value = item.get("value", 0)
                     next_label = item.get("next")
                     next_idx = label_macros[next_label] if next_label else node_index + 1
-                    item_lines.append(f'    [{i}] = {{ .text = "{text}", .value = {value}, .next = {next_idx} }},')
+                    is_cancel_target = item.get("cancel", False)
+                    item_lines.append(f'    [{i}] = {{ .text = "{text}", .value = {value}, .next = {next_idx}, .is_cancel_target = {"true" if is_cancel_target else "false"} }},')
                 c_lines.append(f'static const mgc_node_choice_item_t node_{node_index}_items[] = {{')
                 c_lines.extend(item_lines)
                 c_lines.append('};')

@@ -315,6 +315,16 @@ private:
             if ( effects_ ) {
                 effects_->play_select_move_sound(tag);
             }
+        } else if ( active_button_->just_released(mgc::platform::input::Key::Cancel) ) {
+            for ( size_t i = 0; i < choice->item_count; i++ ) {
+                if ( choice->items[i].is_cancel_target ) {
+                    selectbox_.set_selected_index(static_cast<int32_t>(i));
+                    if ( effects_ ) {
+                        effects_->play_select_move_sound(tag);
+                    }
+                    break;
+                }
+            }
         } else if ( active_button_->just_released(mgc::platform::input::Key::Enter) ) {
             int32_t value = talkscript_get_item_value(choice, selectbox_.selected_index());
             if ( listener_ ) {
