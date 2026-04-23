@@ -155,6 +155,19 @@ void Player::update_movement() {
             }
             hit_ladder_ = false;
         } 
+
+        if ( gamepad_.is_pressed(Key::Home) ) {
+            if ( equipment_info_.item.equipped() ) {
+                switch (equipment_info_.item.equipped_id()) {
+                case static_cast<uint32_t>(ItemId::Cookie):
+                    this->receive_heal(2);
+                    sound_controller_.play_sound_effect(MML_SE_1_LIFE_RECOVER);
+                    equipment_info_.item.unequip();
+                    equipment_info_.item.remove(ItemId::Cookie);
+                    break;
+                }
+            }
+        }
     }
 
 
