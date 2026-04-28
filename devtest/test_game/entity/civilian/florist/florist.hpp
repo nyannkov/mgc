@@ -85,11 +85,11 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
 
         } else if ( tag == MGC_TALKSCRIPT_1_TAG_DECISION__CHECK_MONEY ) {
             
-            if ( player_.gold() < last_item_value_ ) {
+            if ( player_.money() < last_item_value_ ) {
                 return false;
             }
                 
-            player_.sub_gold(last_item_value_);
+            player_.sub_money(last_item_value_);
             
             if ( last_choice_tag_ == MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_1 ) {
                 switch ( last_item_tag_ ) {

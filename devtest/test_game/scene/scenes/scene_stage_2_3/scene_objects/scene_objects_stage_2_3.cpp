@@ -12,20 +12,19 @@ void SceneObjects_Stage2_3::init() {
         { SceneId::Stage2_2 }
     );
 
-//    gate_2_.spawn({MGC_CELL2PIXEL(42), MGC_CELL2PIXEL(7)});
-//    gate_2_.set_gate_type(prop::GateType::Type2);
-//    gate_2_.open();
-//    gate_2_.set_scene_transition_request(
-//        { SceneId::Stage2_4 }
-//    );
+    gate_2_.spawn({MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(18)});
+    gate_2_.set_gate_type(prop::GateType::Type2);
+    gate_2_.open();
+    gate_2_.set_scene_transition_request(
+        { SceneId::Stage2_6 }
+    );
 
-//    signboard_.spawn({MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(5)});
-//    signboard_.set_talkflow_request({
-//        &talkscript_1,
-//        MGC_TALKSCRIPT_1_PREPARING,
-//        nullptr,
-//        TalkflowEffectType::Mute
-//    });
+    gate_3_.spawn({MGC_CELL2PIXEL(41), MGC_CELL2PIXEL(7)});
+    gate_3_.set_gate_type(prop::GateType::Type2);
+    gate_3_.open();
+    gate_3_.set_scene_transition_request(
+        { SceneId::Stage2_5 }
+    );
 
     floaty_fish_1_.spawn({MGC_CELL2PIXEL(36), MGC_CELL2PIXEL(22)});
 }

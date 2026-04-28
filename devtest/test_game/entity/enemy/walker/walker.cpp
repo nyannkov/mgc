@@ -18,7 +18,7 @@ Walker::Walker(
     blink_animator_.set_target(*this);
     set_hp(WalkerMaxHP);
     set_full_hp(WalkerMaxHP);
-    set_gold(10);
+    set_money(10);
 }
 
 void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right) {

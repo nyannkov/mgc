@@ -106,7 +106,7 @@ void update_movement(SceneContext& scx) {
                  ( enemy->hp() <= 0 )
             ) {
                 enemy->despawn();
-                scx.player.add_gold(enemy->gold());
+                scx.player.add_money(enemy->money());
             }
         }
         ColBox2BoxT::detect_pair(scx.player, scx.player.attack());

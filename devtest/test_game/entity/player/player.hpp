@@ -64,40 +64,40 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
 
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
-    void add_gold(int32_t amount) { 
+    void add_money(int32_t amount) { 
         if ( amount < 0 ) {
             return;
         }
-        if ( MAX_GOLD < amount ) {
-            amount = MAX_GOLD;
+        if ( MAX_MONEY < amount ) {
+            amount = MAX_MONEY;
         }
 
-        if ( ( gold_ + amount ) < 0 ) {
-            gold_ = 0;
-        } else if ( MAX_GOLD < ( gold_ + amount ) ) {
-            gold_ = MAX_GOLD;
+        if ( ( money_ + amount ) < 0 ) {
+            money_ = 0;
+        } else if ( MAX_MONEY < ( money_ + amount ) ) {
+            money_ = MAX_MONEY;
         } else {
-            gold_ += amount; 
+            money_ += amount; 
         }
     }
-    void sub_gold(int32_t amount) {
+    void sub_money(int32_t amount) {
         if ( amount < 0 ) {
             return;
         }
-        if ( MAX_GOLD < amount ) {
-            amount = MAX_GOLD;
+        if ( MAX_MONEY < amount ) {
+            amount = MAX_MONEY;
         }
 
-        if ( ( gold_ - amount ) < 0 ) {
-            gold_ = 0;
-        } else if ( MAX_GOLD < ( gold_ - amount ) ) {
-            gold_ = MAX_GOLD;
+        if ( ( money_ - amount ) < 0 ) {
+            money_ = 0;
+        } else if ( MAX_MONEY < ( money_ - amount ) ) {
+            money_ = MAX_MONEY;
         } else {
-            gold_ -= amount; 
+            money_ -= amount; 
         }
     }
-    void set_gold(int32_t amount) { gold_ = amount; }
-    int32_t gold() const { return gold_; }
+    void set_money(int32_t amount) { money_ = amount; }
+    int32_t money() const { return money_; }
 
     template <typename ObjT, typename MapT>
     void handle_map_pushback_result_impl(
@@ -214,12 +214,12 @@ private:
     bool hit_one_way_block_;
     bool one_way_block_falling_;
     bool input_enabled_;
-    int32_t gold_;
+    int32_t money_;
     mgc::math::Vec2i pushback_box_ {};
     mgc::math::Vec2i pushback_map_ {};
     mgc::math::Vec2i box_overlap_ {};
 
-    static constexpr int32_t MAX_GOLD = 99999;
+    static constexpr int32_t MAX_MONEY = 99999;
 
     void set_hp(int32_t hp) { hp_ = hp; };
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };

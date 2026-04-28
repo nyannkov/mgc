@@ -22,7 +22,7 @@ SkyFish::SkyFish(
       blink_animator_.set_target(*this);
       set_hp(SkyFishMaxHP);
       set_full_hp(SkyFishMaxHP);
-      set_gold(10);
+      set_money(10);
 }
 
 void SkyFish::spawn(const mgc::math::Vec2i& pos, bool is_right) {

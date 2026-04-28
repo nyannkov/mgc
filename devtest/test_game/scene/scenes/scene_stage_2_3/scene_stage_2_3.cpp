@@ -28,9 +28,14 @@ void Scene_Stage2_3::init() {
             {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(30)},
             PlayerAnimState::StandRight
         );
-    } else if ( id_prev() == SceneId::Stage2_4 ) {
+    } else if ( id_prev() == SceneId::Stage2_5 ) {
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(42), MGC_CELL2PIXEL(7)},
+            {MGC_CELL2PIXEL(43), MGC_CELL2PIXEL(7)},
+            PlayerAnimState::StandRight
+        );
+    } else if ( id_prev() == SceneId::Stage2_6 ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(18)},
             PlayerAnimState::StandRight
         );
     } else {

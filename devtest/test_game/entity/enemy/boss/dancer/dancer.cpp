@@ -21,7 +21,7 @@ Dancer::Dancer(
       blink_animator_.set_blink_count_max(40);
       set_hp(DancerMaxHP);
       set_full_hp(DancerMaxHP);
-      set_gold(10);
+      set_money(10);
 }
 
 void Dancer::spawn(const mgc::math::Vec2i& pos, bool is_right) {

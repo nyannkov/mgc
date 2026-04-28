@@ -8,21 +8,36 @@
 namespace app {
 namespace prop {
 
+enum class ButtonType {
+    Type1,
+    Type2
+};
+
 struct Button : Prop {
-    Button();
+    explicit Button(ButtonType type = ButtonType::Type1);
     void spawn(const mgc::math::Vec2i& pos) override;
     void spawn(const mgc::math::Vec2i& pos, bool pushed);
     void despawn() override;
     void update_movement() override {};
     void update_animation() override {};
     bool is_pushed() const { return pushed_; }
+    void set_pushed_state(bool pushed);
+    void toggle_state();
+    bool just_pushed() {
+        bool r = just_pushed_;
+        just_pushed_ = false;
+        return r;
+    }
 
 private:
     bool pushed_ = false;
+    bool just_pushed_ = false;
+    ButtonType type_ = ButtonType::Type1;
     void on_attack_hit(
         const attack::Attack& attack,
         const mgc::collision::BoxCollisionInfo& info
     ) override;
+    void update_sprite();
 };
 
 } // namespace prop

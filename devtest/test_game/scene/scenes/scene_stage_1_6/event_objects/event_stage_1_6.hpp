@@ -36,7 +36,6 @@ private:
     StopwatchT sw_;
     SceneObjects_Stage1_6& objs_;
     EventDetail detail_ = EventDetail::Idle;
-    stage::Stage* stage_;
 };
 
 }// namespace app

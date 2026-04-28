@@ -24,8 +24,8 @@ struct SceneObjects_Stage2_3 : ISceneObjects {
           blocks_ { &block_1_, &block_2_ },
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
-          signboard_(scx.gamepad),
-          props_ { &gate_1_, &gate_2_, &signboard_ }
+          gate_3_(scx.gamepad),
+          props_ { &gate_1_, &gate_2_, &gate_3_ }
         { }
 
     void init();
@@ -51,7 +51,7 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
-    prop::Signboard signboard_;
+    prop::Gate gate_3_;
     std::array<prop::Prop*, 3> props_;
 };
 

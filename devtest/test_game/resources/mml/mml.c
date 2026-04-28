@@ -23,6 +23,7 @@ const mgc_mml_record_t se_records[] = {
     { .id = MML_SE_10_OPEN_2, .mml = "T180 V15$E1$A0$H100$D100$S90$F3000 $P-720 O3 A4" }, 
     { .id = MML_SE_11_SELECT_2, .mml = "T140L16V13O7 Q6A64" },
     { .id = MML_SE_12_SILENT, .mml = "R" },
+    { .id = MML_SE_13_DISCHARGE, .mml = "T130V15 Q4L32J15J5 R3 Q8 L1 V15J15J17J20 L4 V13J20 V12J21 V11J21 V10J23 V10J23 V10J24 V9J25 V8J27 V8J27 V7J28 L8 V5J29 V4J30 V2J31" },
 };
 const size_t SE_RECORDS_COUNT = countof(se_records);
 

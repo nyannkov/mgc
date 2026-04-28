@@ -30,7 +30,7 @@ struct Enemy : mgc::entities::ActorImpl<
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
     EnemyState enemy_state() const { return enemy_state_; }
-    int32_t gold() const { return gold_amount_; }
+    int32_t money() const { return money_amount_; }
 
     template <typename Other>
     void on_hit_box_to_box_impl(
@@ -73,7 +73,7 @@ protected:
     void set_enemy_state(EnemyState state) { enemy_state_ = state; }
     void set_hp(int32_t hp) { hp_ = hp; }
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };
-    void set_gold(int32_t amount) { gold_amount_ = amount; }
+    void set_money(int32_t amount) { money_amount_ = amount; }
 
     virtual void on_player_hit(
         const Player& player,
@@ -104,7 +104,7 @@ private:
     EnemyState enemy_state_ = EnemyState::Inactive;
     int32_t hp_ = 0;
     int32_t full_hp_ = 0;
-    int32_t gold_amount_ = 0;
+    int32_t money_amount_ = 0;
 };
 
 }// namespace enemy

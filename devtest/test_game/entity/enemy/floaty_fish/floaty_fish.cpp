@@ -18,7 +18,7 @@ FloatyFish::FloatyFish(
     blink_animator_.set_target(*this);
     set_hp(FloatyFishMaxHP);
     set_full_hp(FloatyFishMaxHP);
-    set_gold(10);
+    set_money(10);
 }
 
 void FloatyFish::spawn(const mgc::math::Vec2i& pos) {

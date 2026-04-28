@@ -21,6 +21,7 @@ enum {
     MML_SE_10_OPEN_2,
     MML_SE_11_SELECT_2,
     MML_SE_12_SILENT,
+    MML_SE_13_DISCHARGE,
     MML_SE_COUNT
 };
 

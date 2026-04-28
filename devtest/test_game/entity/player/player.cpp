@@ -33,7 +33,7 @@ Player::Player(
       hit_one_way_block_(false),
       one_way_block_falling_(false),
       input_enabled_(true),
-      gold_(100),
+      money_(100),
       attack_state_(AttackState::Stop),
       blink_animator_(frame_timer),
       equipment_info_(equipment_info) {
@@ -45,7 +45,7 @@ void Player::init() {
     this->spawn({0, 0}, anim_state_);
     this->set_full_hp(3);
     this->set_hp(full_hp_);
-    gold_ = 0;
+    money_ = 0;
     blink_animator_.set_target(*this);
 
     auto& body = at(this->mut_hitboxes(), PlayerHitboxIndex::Body);
