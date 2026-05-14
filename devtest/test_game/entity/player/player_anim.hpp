@@ -15,6 +15,14 @@ enum class PlayerAnimState {
     JumpRight,
     AttackLeft,
     AttackRight,
+    AttackYoyoLeft,
+    AttackYoyoRight,
+    AttackYoyoUpLeft,
+    AttackYoyoUpRight,
+    AttackYoyoLeftWalking,
+    AttackYoyoRightWalking,
+    AttackYoyoUpLeftWalking,
+    AttackYoyoUpRightWalking,
     GameOverLeft,
     GameOverRight,
     PowerPose,
@@ -41,6 +49,14 @@ inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState sta
     case PlayerAnimState::JumpRight: return anim_player_jump_right;
     case PlayerAnimState::AttackLeft: return anim_player_attack_left;
     case PlayerAnimState::AttackRight: return anim_player_attack_right;
+    case PlayerAnimState::AttackYoyoLeft: return anim_player_attack_yoyo_left;
+    case PlayerAnimState::AttackYoyoRight: return anim_player_attack_yoyo_right;
+    case PlayerAnimState::AttackYoyoUpLeft: return anim_player_attack_yoyo_up_left;
+    case PlayerAnimState::AttackYoyoUpRight: return anim_player_attack_yoyo_up_right;
+    case PlayerAnimState::AttackYoyoLeftWalking: return anim_player_attack_yoyo_left_walking;
+    case PlayerAnimState::AttackYoyoRightWalking: return anim_player_attack_yoyo_right_walking;
+    case PlayerAnimState::AttackYoyoUpLeftWalking: return anim_player_attack_yoyo_up_left_walking;
+    case PlayerAnimState::AttackYoyoUpRightWalking: return anim_player_attack_yoyo_up_right_walking;
     case PlayerAnimState::GameOverLeft: return anim_player_game_over_left;
     case PlayerAnimState::GameOverRight: return anim_player_game_over_right;
     case PlayerAnimState::PowerPose: return anim_player_yeah;

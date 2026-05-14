@@ -9,6 +9,10 @@ item_descriptors:
           tile_index: 0
         - id: Boomerang
           name: 'ブーメラン'
-          description: '投げると戻ってくる。'
+          description: '投げても戻ってくる。それがブーメラン。'
           tile_index: 1
+        - id: Yoyo
+          name: 'ヨーヨー'
+          description: '紐がゴム製のヨーヨー。振り回しすぎると紐が切れて飛んでいく。'
+          tile_index: 2
 

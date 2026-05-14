@@ -2,7 +2,6 @@
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
 #include "resources/mml/mml.h"
-#include <stdio.h>
 
 namespace app {
 
@@ -16,25 +15,8 @@ Player::Player(
 )   : gamepad_(gamepad),
       frame_timer_(frame_timer),
       sound_controller_(sound_controller),
-      attack_(frame_timer, gamepad, sound_controller),
+      attack_(frame_timer, gamepad, sound_controller, *this),
       anim_(frame_timer), 
-      velocity_({0.0f, 0.0f}),
-      force_ex_({0.0f, 0.0f}),
-      anim_state_(PlayerAnimState::StandRight),
-      anim_state_manual_(PlayerAnimState::StandRight),
-      anim_mode_(PlayerAnimMode::Auto),
-      player_state_(PlayerState::Normal),
-      is_right_(true),
-      is_grounded_(true),
-      is_invulnerable_(false),
-      hit_ladder_(false),
-      hit_water_(false),
-      hit_head_water_(false),
-      hit_one_way_block_(false),
-      one_way_block_falling_(false),
-      input_enabled_(true),
-      money_(100),
-      attack_state_(AttackState::Stop),
       blink_animator_(frame_timer),
       equipment_info_(equipment_info) {
 
@@ -88,6 +70,10 @@ void Player::reset_state_for_placement(
     case PlayerAnimState::WalkRight:
     case PlayerAnimState::JumpRight:
     case PlayerAnimState::AttackRight:
+    case PlayerAnimState::AttackYoyoRight:
+    case PlayerAnimState::AttackYoyoUpRight:
+    case PlayerAnimState::AttackYoyoRightWalking:
+    case PlayerAnimState::AttackYoyoUpRightWalking:
     case PlayerAnimState::GameOverRight:
     case PlayerAnimState::LookupRight:
     case PlayerAnimState::SwimRight:
@@ -156,6 +142,19 @@ void Player::update_movement() {
             hit_ladder_ = false;
         } 
 
+        switch ( player_state_ ) {
+        case PlayerState::Ladder:
+        case PlayerState::Swimming:
+        case PlayerState::Diving:
+            if ( current_attack_type_ == attack::AttackType::Yoyo ) {
+                attack_state_ = AttackState::Stop;
+                attack_.despawn();
+            }
+            break;
+        default:
+            break;
+        }
+
         if ( gamepad_.is_pressed(Key::Home) ) {
             if ( equipment_info_.item.equipped() ) {
                 switch (equipment_info_.item.equipped_id()) {
@@ -174,7 +173,10 @@ void Player::update_movement() {
     // Update position
     if ( player_state_ == PlayerState::Normal ) {
         if ( input_enabled_ ) {
-            if ( attack_state_ == AttackState::Stop ) {
+
+            if ( attack_state_ == AttackState::Stop  || 
+                 current_attack_type_ == attack::AttackType::Yoyo 
+            ) {
                 if ( gamepad_.just_pressed(Key::Enter) ) {
                     attack_state_ = AttackState::Start;
                 } else if ( gamepad_.is_pressed(Key::Left) ) {
@@ -195,7 +197,7 @@ void Player::update_movement() {
             }
         }
 
-        if ( velocity_.y < (MGC_CELL_LEN-1) ) {
+        if ( velocity_.y < (MGC_CELL_LEN-2) ) {
             velocity_.y += 1.0f;
         }
         real_pos.y += velocity_.y;
@@ -284,7 +286,7 @@ void Player::update_movement() {
 
 
     } else if ( player_state_ == PlayerState::GameOver ) {
-        if ( velocity_.y < (MGC_CELL_LEN-1) ) {
+        if ( velocity_.y < (MGC_CELL_LEN-2) ) {
             velocity_.y += 1.0f;
         }
         real_pos.y += velocity_.y;
@@ -446,6 +448,10 @@ void Player::update_anim_attacking() {
     case static_cast<uint32_t>(WeaponId::Boomerang):
         current_attack_type_ = attack::AttackType::Boomerang;
         break;
+    case static_cast<uint32_t>(WeaponId::Yoyo):
+        current_attack_type_ = attack::AttackType::Yoyo;
+        anim_.set_loop(true);
+        break;
     default:
         break;
     }
@@ -453,22 +459,92 @@ void Player::update_anim_attacking() {
     if ( attack_state_ == AttackState::Start ) {
         attack_state_ = AttackState::InProgress;
 
-        if ( is_right_ ) {
-            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
-            anim_state_ = PlayerAnimState::AttackRight;
+        if ( current_attack_type_ == attack::AttackType::Yoyo ) {
+            if ( is_right_ ) {
+                if ( gamepad_.is_pressed(Key::Up) ) {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(18, 0),
+                        current_attack_type_, 
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::UpRight
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoUpRightWalking;
+                } else {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(18, 0),
+                        current_attack_type_,
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::Right
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoRightWalking;
+                }
+            } else {
+                if ( gamepad_.is_pressed(Key::Up) ) {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(-10, 0),
+                        current_attack_type_,
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::UpLeft
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoUpLeft;
+                } else {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(-10, 0),
+                        current_attack_type_,
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::Left
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoLeft;
+                }
+            }
+
         } else {
-            attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
-            anim_state_ = PlayerAnimState::AttackLeft;
+            if ( is_right_ ) {
+                attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
+                anim_state_ = PlayerAnimState::AttackRight;
+            } else {
+                attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
+                anim_state_ = PlayerAnimState::AttackLeft;
+            }
         }
 
         anim_.set_anim_frames(get_anim_frames(anim_state_));
         anim_.start_animation();
 
     } else if ( attack_state_ == AttackState::InProgress ) {
-        if ( anim_.is_finished() ) {
-            attack_state_ = AttackState::Stop;
-        }
+        if ( current_attack_type_ == attack::AttackType::Yoyo ) {
+            if ( attack_.lifecycle() == attack::AttackLifeCycle::Despawned ) {
+                attack_state_ = AttackState::Stop;
+            } else {
+                auto bak_anim_state = anim_state_;
+                if ( is_grounded_ && ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) ) {
+                    switch ( anim_state_ ) {
+                    case PlayerAnimState::AttackYoyoUpRight: anim_state_ = PlayerAnimState::AttackYoyoUpRightWalking; break;
+                    case PlayerAnimState::AttackYoyoUpLeft: anim_state_ = PlayerAnimState::AttackYoyoUpLeftWalking; break;
+                    case PlayerAnimState::AttackYoyoRight: anim_state_ = PlayerAnimState::AttackYoyoRightWalking; break;
+                    case PlayerAnimState::AttackYoyoLeft: anim_state_ = PlayerAnimState::AttackYoyoLeftWalking; break;
+                    default: break;
+                    }
+                } else {
+                    switch ( anim_state_ ) {
+                    case PlayerAnimState::AttackYoyoUpRightWalking: anim_state_ = PlayerAnimState::AttackYoyoUpRight; break;
+                    case PlayerAnimState::AttackYoyoUpLeftWalking: anim_state_ = PlayerAnimState::AttackYoyoUpLeft; break;
+                    case PlayerAnimState::AttackYoyoRightWalking: anim_state_ = PlayerAnimState::AttackYoyoRight; break;
+                    case PlayerAnimState::AttackYoyoLeftWalking: anim_state_ = PlayerAnimState::AttackYoyoLeft; break;
+                    default: break;
+                    }
+                }
 
+                if ( bak_anim_state != anim_state_ ) {
+                    anim_.set_anim_frames(get_anim_frames(anim_state_));
+                    anim_.start_animation();
+                }
+            }
+        } else {
+            if ( anim_.is_finished() ) {
+                attack_state_ = AttackState::Stop;
+            }
+        }
     } else if ( attack_state_ == AttackState::Stop ) {
         attack_.despawn();
         anim_.reset_animation();

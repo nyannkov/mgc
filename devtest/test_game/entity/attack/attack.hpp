@@ -11,6 +11,7 @@ namespace attack {
 enum class AttackType {
     Scratch,
     Boomerang,
+    Yoyo
 };
 
 enum class AttackLifeCycle {
@@ -27,7 +28,9 @@ enum class AttackOwner {
 
 enum class AttackDirection {
     Right,
-    Left
+    Left,
+    UpRight,
+    UpLeft
 };
 
 enum class AttackHitboxIndex : size_t {
@@ -42,7 +45,8 @@ struct Attack : mgc::entities::ActorImpl<
     Attack(
         const FrameTimerT& frame_timer, 
         const GamepadT& gamepad,
-        SoundControllerT& sound
+        SoundControllerT& sound,
+        const mgc::features::HasPosition<mgc::math::Vec2i>& owner_pos
     );
     ~Attack() = default;
 
@@ -64,6 +68,11 @@ struct Attack : mgc::entities::ActorImpl<
     AttackDirection direction() const { return direction_; }
     AttackType attack_type() const { return attack_type_; }
     mgc::math::Vec2f velocity() const { return velocity_; }
+
+    void draw_wrap(
+        FramebufferT& fb,
+        mgc::math::Vec2i& cam_pos
+    );
 
     template <typename Other>
     void on_hit_box_to_box_impl(
@@ -103,6 +112,8 @@ private:
     mgc::math::Vec2f velocity_;
     mgc::math::Vec2i pos_orig_;
     bool hit_ = false;//TODO
+    const mgc::features::HasPosition<mgc::math::Vec2i> &owner_pos_;
+    mgc::math::Vec2f yoyo_sum_i_;
 
     AttackOwner owner_type_ = AttackOwner::Player;
     AttackType attack_type_ = AttackType::Scratch;
@@ -133,6 +144,15 @@ private:
     void despawn_boomerang();
     void update_animation_boomerang();
     void update_movement_boomerang();
+
+    void spawn_yoyo(
+        const mgc::math::Vec2i& pos,
+        AttackOwner owner,
+        AttackDirection dir
+    );
+    void despawn_yoyo();
+    void update_animation_yoyo();
+    void update_movement_yoyo();
 
     void on_enemy_hit(
         const enemy::Enemy& enemy,

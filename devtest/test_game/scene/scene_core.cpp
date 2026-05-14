@@ -318,7 +318,7 @@ void draw(
     // TODO event
 
     scx.player.draw(fb, pos);
-    scx.player.attack().draw(fb, pos);
+    scx.player.attack().draw_wrap(fb, pos);
 
     if ( scx.objs ) {
         scx.objs->draw_after(fb, pos);

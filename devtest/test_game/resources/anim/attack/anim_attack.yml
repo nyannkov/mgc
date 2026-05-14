@@ -25,3 +25,8 @@ animations:
       - { file: frame_006.bmp, time_ms: 50 }
       - { file: frame_007.bmp, time_ms: 50 }
 
+  - name: yoyo
+    description: "Yoyo"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }
+
