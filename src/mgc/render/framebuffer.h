@@ -40,6 +40,7 @@ void framebuffer_draw_pixel(mgc_framebuffer_t *fb, uint16_t x, uint16_t y, mgc_c
 
     if ( ( x >= fb->width ) || ( y >= fb->height ) ) {
         MGC_INFO("Out-of-bounds pixel skipped");
+        return;
     }
 
     fb->buffer[(size_t)x + (size_t)y * (size_t)(fb->width)] = MGC_COLOR_SWAP(color);
