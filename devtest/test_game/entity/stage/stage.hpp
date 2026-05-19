@@ -52,10 +52,10 @@ struct Stage {
         bool r = false;
         r |= back_0_.draw(fb, cam_pos);
         r |= back_1_.draw(fb, cam_pos);
+        r |= water_.draw(fb, cam_pos);
         r |= block_.draw(fb, cam_pos);
         r |= ladder_.draw(fb, cam_pos);
         r |= one_way_block_.draw(fb, cam_pos);
-        r |= water_.draw(fb, cam_pos);
         r |= needle_.draw(fb, cam_pos);
         return r;
     }
@@ -66,6 +66,14 @@ struct Stage {
 
     void set_water_enabled(bool enabled) {
         water_.set_all_enabled(enabled);
+    }
+
+    void set_water_position(mgc::math::Vec2i pos) {
+        water_.set_position(pos);
+    }
+
+    auto water_position() const {
+        return water_.position();
     }
 
 private:
