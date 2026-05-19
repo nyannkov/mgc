@@ -41,7 +41,7 @@ void collision_boxmap_init(
     boxmap->flags = 0;
 }
 
-void collision_boxmap_calc_map_range(
+bool collision_boxmap_calc_map_range(
     const mgc_collision_boxmap_t *boxmap,
     mgc_map_range_t *out
 ) {
@@ -50,7 +50,7 @@ void collision_boxmap_calc_map_range(
     MGC_ASSERT(boxmap->map != NULL, "`map` must not be NULL");
     MGC_ASSERT(out != NULL, "`out` must not be NULL");
 
-    mgc_aabb_t target;
+    mgc_aabb_t target, map_area;
 
     collision_calc_aabb_from_hitbox(
         boxmap->box_x,
@@ -58,6 +58,15 @@ void collision_boxmap_calc_map_range(
         boxmap->box,
         &target
     );
+
+    map_area.l = boxmap->map_x;
+    map_area.r = map_area.l + MGC_CELL2PIXEL(boxmap->map->map_width) - 1;
+    map_area.t = boxmap->map_y;
+    map_area.b = map_area.t + MGC_CELL2PIXEL(boxmap->map->map_height) - 1;
+
+    if ( !collision_test_hit(&target, &map_area) ) {
+        return false;
+    }
 
     mgc_world_t col_min = MGC_DIV_CELL_LEN(target.l - boxmap->map_x);
     mgc_world_t col_max = MGC_DIV_CELL_LEN(target.r - boxmap->map_x);
@@ -73,6 +82,8 @@ void collision_boxmap_calc_map_range(
     out->col_max = col_max;
     out->row_min = row_min;
     out->row_max = row_max;
+
+    return true;
 }
 
 void collision_boxmap_begin(
