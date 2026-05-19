@@ -73,7 +73,10 @@ struct BoxMapDetector {
         collision_boxmap_begin(&boxmap);
 
         mgc_map_range_t range;
-        collision_boxmap_calc_map_range(&boxmap, &range);
+
+        if ( !collision_boxmap_calc_map_range(&boxmap, &range) ) {
+            return result;
+        }
 
         for ( uint16_t row = range.row_min;; ++row ) {
             for ( uint16_t col = range.col_min;; ++col ) {
