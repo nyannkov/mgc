@@ -209,8 +209,13 @@ void update(
     bool is_control_locked = false;
 
     is_control_locked = scene::event_update(scx.evts);
+    if ( is_control_locked ) {
+        scx.player.set_input_enabled(false);
+    } else {
+        scx.player.set_input_enabled(true);
+    }
 
-    if ( !( talkflow.in_progress() || is_control_locked ) ) {
+    if ( !talkflow.in_progress() ) {
 
         update_movement(scx);
 

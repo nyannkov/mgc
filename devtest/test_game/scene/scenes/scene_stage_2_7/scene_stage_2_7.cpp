@@ -24,9 +24,14 @@ Scene_Stage2_7::Scene_Stage2_7(GameContext& ctx)
 
 void Scene_Stage2_7::init() {
     
-    if ( id_prev() == SceneId::Stage2_3 ) {
+    if ( id_prev() == SceneId::Stage2_6 ) {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(8)},
+            PlayerAnimState::StandRight
+        );
+    } else if ( id_prev() == SceneId::Shop ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(36), MGC_CELL2PIXEL(2)},
             PlayerAnimState::StandRight
         );
     } else {

@@ -21,11 +21,9 @@ struct SceneObjects_Stage2_6 : ISceneObjects {
           stage_(stage),
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
-          signboard_(scx.gamepad),
           props_ { 
             &gate_1_,
-            &gate_2_,
-            &signboard_
+            &gate_2_
           } { }
 
     void init();
@@ -45,8 +43,7 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
-    prop::Signboard signboard_;
-    std::array<prop::Prop*, 3> props_;
+    std::array<prop::Prop*, 2> props_;
 };
 
 } // namespace app

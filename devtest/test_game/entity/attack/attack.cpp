@@ -1,3 +1,4 @@
+#include <math.h>//sqrt
 #include "attack.hpp"
 #include "resources/generated/anim/attack/anim_attack.h"
 #include "resources/mml/mml.h"

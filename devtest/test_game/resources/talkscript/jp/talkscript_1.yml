@@ -31,7 +31,7 @@ talkscript:
       - end: true
 
     shop_talk_1_2:
-      - message: " * 「あら、こんにちは。」"
+      - message: " * 「あら、こんにちは！」"
       - end: true
       
     shop_talk_2:
@@ -46,17 +46,18 @@ talkscript:
           items:
             - { item: "買う", next: shop_shopping }
             - { item: "休む", next: shop_coffee_break_1 }
-            - { item: "話す", next: shop_small_talking_1 }
+            - { item: "話す", next: shop_small_talking }
             - { item: "やめる", cancel: true }
       - end: true
 
     shop_shopping:
-      - { message: "気になるものがあればおっしゃってください。", auto_next: true }
+      - { message: "気になるものがあれば、何でもおっしゃってくださいね。", auto_next: true }
       - select:
           tag: SELECT_SHOPPING_CONTENT
           cases:
             - { tag: CASE_1, value: 0, next: shop_shopping_content_case_1 }
             - { tag: CASE_2, value: 1, next: shop_shopping_content_case_2 }
+            - { tag: CASE_3, value: 2, next: shop_shopping_content_case_3 }
           default:
             next: shop_shopping_content_case_1
       - end: true
@@ -79,12 +80,28 @@ talkscript:
             - { item: "やめる", cancel: true }
       - end: true
 
+    shop_shopping_content_case_3:
+      - choice:
+          tag: "SHOPPING_CONTENT_CASE_3"
+          items:
+            - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
+            - { item: "ヨーヨー", value: 300, tag: YOYO, next: shop_shopping_item_yoyo }
+            - { item: "やめる", cancel: true }
+      - end: true
+
+
     shop_shopping_item_cookie:
       - message: "チョコチップが入ったクッキーです。"
         next: shop_shopping_check
 
     shop_shopping_item_boomerang:
-      - message: "投げると戻ってきて、面白いですよね。"
+      - message: "投げても戻ってきて、面白いですよね。"
+        next: shop_shopping_check
+
+    shop_shopping_item_yoyo:
+      - message: "昔、楽しそうだなと思って買ったんですけれど．．．"
+      - message: "これ、紐がゴムでできているみたいで、すごく不規則に伸び縮みするんですよ。"
+      - message: "私にはちょっと扱いが難しくて．．．"
         next: shop_shopping_check
 
     shop_shopping_item_diving_equipment:
@@ -92,7 +109,7 @@ talkscript:
         next: shop_shopping_check
 
     shop_shopping_check:
-      - message: "%dGです。"
+      - message: "%dGになりますけれど．．．いかがですか？"
         format: true
         auto_next: true
       - choice:
@@ -112,7 +129,7 @@ talkscript:
             false: shop_shopping_not_enough_money
 
     shop_shopping_thanks:
-      - message: "ありがとうございます。他になにか買いますか？"
+      - message: "ありがとうございます！他になにか気になるものはありますか？"
         auto_next: true
       - choice:
           tag: "SHOPPING_IS_CONTINUE"
@@ -122,11 +139,11 @@ talkscript:
       - end: true
         
     shop_shopping_sold_out:
-      - message: "あ、ごめんなさい。売り切れだったみたい。"
+      - message: "あ、ごめんなさい！売り切れちゃったみたいです。"
         next: shop_shopping
 
     shop_shopping_not_enough_money:
-      - message: "あら、お金がたりないみたい。"
+      - message: "あら、お金が少し足りないみたい．．．？"
         next: shop_shopping
 
     shop_coffee_break_1:
@@ -136,6 +153,16 @@ talkscript:
     shop_coffee_break_2:
       - { message: "元気になった！", tag: END_COFFEE_BREAK, end: true }
 
+    shop_small_talking:
+      - select:
+          tag: SELECT_SMALL_TALKING_CONTENT
+          cases:
+            - { tag: CASE_1, value: 0, next: shop_small_talking_1 }
+            - { tag: CASE_2, value: 1, next: shop_small_talking_2 }
+          default:
+            next: shop_small_talking_1
+      - end: true
+        
     shop_small_talking_1:
       - choice:
           tag: "SHOP_SMALL_TALKING_1"
@@ -152,6 +179,18 @@ talkscript:
       - message: "ここは私の家なんですが・・・"
       - message: "あの入口からお客さんが来てくれるようになったので、この機会にお店をはじめたんです。"
       - message: "実はずっとやってみたかったんですよ、お店屋さん。"
+      - end: true
+
+    shop_small_talking_2:
+      - choice:
+          tag: "SHOP_SMALL_TALKING_2"
+          items:
+            - { item: "商品について", next: shop_small_talking_2_1 }
+
+    shop_small_talking_2_1:
+      - message: "お店の商品、あんまり統一感がないですよね。"
+      - message: "クッキーみたいなお菓子は私がここで手作りしているんですけれど．．．"
+      - message: "それ以外は、もう使わないかなぁ、っていう私物を並べているんです。"
       - end: true
 
     signboard_1:

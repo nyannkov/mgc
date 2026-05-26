@@ -18,12 +18,12 @@ struct SceneObjects_Stage2_2 : ISceneObjects {
     explicit SceneObjects_Stage2_2(SceneContext& scx)
         : cp_info_(scx.world_state.checkpoint_info),
           skyfish_1_(scx.timer, scx.sound, scx.player),
-          floaty_fish_1_(scx.timer, scx.sound), 
-          floaty_fish_2_(scx.timer, scx.sound), 
-          floaty_fish_3_(scx.timer, scx.sound), 
-          floaty_fish_4_(scx.timer, scx.sound), 
-          floaty_fish_5_(scx.timer, scx.sound), 
-          floaty_fish_6_(scx.timer, scx.sound),
+          floaty_fish_1_(scx.timer, scx.sound, scx.player), 
+          floaty_fish_2_(scx.timer, scx.sound, scx.player), 
+          floaty_fish_3_(scx.timer, scx.sound, scx.player), 
+          floaty_fish_4_(scx.timer, scx.sound, scx.player), 
+          floaty_fish_5_(scx.timer, scx.sound, scx.player), 
+          floaty_fish_6_(scx.timer, scx.sound, scx.player),
           enemies_ { 
             &skyfish_1_,
             &floaty_fish_1_, 

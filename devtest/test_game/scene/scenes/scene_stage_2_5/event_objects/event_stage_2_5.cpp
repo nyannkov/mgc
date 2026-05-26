@@ -63,7 +63,7 @@ void Event_Stage2_5::update() {
             unlock_control();
             set_event_state(EventState::Finished);
         }
-        return;;
+        return;
     }
 
     for ( size_t i = 0; i < buttons_.size(); ++i ) {

@@ -56,9 +56,6 @@ void Event_TowerFront1::update() {
     case Event_TowerFront1::State::Scene0:
         break;
     case Event_TowerFront1::State::Scene1:
-        if ( player_.input_enabled() ) {
-            player_.set_input_enabled(false);
-        }
         if ( player_.is_ground() ) {
             set_and_trigger_talkflow_request({
                 &talkscript_1,
@@ -143,10 +140,8 @@ void Event_TowerFront1::update() {
     case Event_TowerFront1::State::Scene10:
         if ( event == EventName::Point7 ) {
             state_ = Event_TowerFront1::State::End;
-            if ( !player_.input_enabled() ) {
-                player_.set_input_enabled(true);
-                player_.set_anim_mode(PlayerAnimMode::Auto);
-            }
+            unlock_control();
+            player_.set_anim_mode(PlayerAnimMode::Auto);
             set_event_state(EventState::Finished);
             cp_info_.advance_checkpoint(Checkpoint::TowerFrontEvent_Finished);
 
@@ -173,6 +168,7 @@ void Event_TowerFront1::on_player_hit(
     if ( event_state() == EventState::NotStarted ) {
         set_event_state(EventState::Playing);
         state_ = Event_TowerFront1::State::Scene1;
+        lock_control();
     }
 }
 

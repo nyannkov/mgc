@@ -4,6 +4,8 @@
 #include "scene/interface/ievent_objects.hpp"
 #include "entity/event/warp/warp.hpp"
 #include "event_stage_2_7.hpp"
+#include "entity/event/warp/warp.hpp"
+#include "entity/event/teleport/teleport.hpp"
 
 namespace app {
 
@@ -12,11 +14,20 @@ struct EventObjects_Stage2_7 : IEventObjects {
     EventObjects_Stage2_7(SceneContext& scx, SceneObjects_Stage2_7& objs)
         : cp_info_(scx.world_state.checkpoint_info),
           event_1_(scx, objs),
-          events_ { &event_1_ } {
+          warp_(objs.portal()),
+          teleport_(
+            objs.teleporters().data(),
+            objs.teleporters().size(),
+            scx.player
+          ),
+          events_ { &event_1_, &warp_, &teleport_ } {
     }
     
     void init() override {
         event_1_.spawn();
+        warp_.spawn();
+        warp_.set_destination(SceneId::Shop);
+        teleport_.spawn();
     }
 
     ArrayViewer<event::Event*> events() override {
@@ -34,7 +45,9 @@ struct EventObjects_Stage2_7 : IEventObjects {
 private:
     CheckpointInfo& cp_info_;
     Event_Stage2_7 event_1_;
-    std::array<event::Event*, 1> events_;
+    Warp warp_;
+    event::Teleport teleport_;
+    std::array<event::Event*, 3> events_;
 };
 
 }// namespace app

@@ -19,7 +19,7 @@ struct SceneObjects_Stage2_3 : ISceneObjects {
         : cp_info_(scx.world_state.checkpoint_info),
           walker_1_(scx.timer, scx.sound),
           skyfish_1_(scx.timer, scx.sound, scx.player),
-          floaty_fish_1_(scx.timer, scx.sound),
+          floaty_fish_1_(scx.timer, scx.sound, scx.player),
           enemies_ { &walker_1_, &skyfish_1_, &floaty_fish_1_ },
           blocks_ { &block_1_, &block_2_ },
           gate_1_(scx.gamepad),

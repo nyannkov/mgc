@@ -394,7 +394,9 @@ void Player::update_anim_normal() {
 
     if ( player_state_ == PlayerState::Normal ) {
         if ( is_grounded_ ) {
-            if ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) {
+            bool is_key_pressed_left_or_right = 
+                gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right);
+            if (  input_enabled_ && is_key_pressed_left_or_right ) {
                 state_next = is_right_ ? PlayerAnimState::WalkRight
                                        : PlayerAnimState::WalkLeft;
             } else {
@@ -406,7 +408,9 @@ void Player::update_anim_normal() {
                                    : PlayerAnimState::JumpLeft;
         }
     } else if ( player_state_ == PlayerState::Ladder ) {
-        if ( gamepad_.is_pressed(Key::Up) || gamepad_.is_pressed(Key::Down) ) {
+        bool is_key_pressed_up_or_down = 
+            gamepad_.is_pressed(Key::Up) || gamepad_.is_pressed(Key::Down);
+        if ( input_enabled_ && is_key_pressed_up_or_down ) {
             state_next = PlayerAnimState::Ladder;
         } else {
             state_next = PlayerAnimState::LadderStay;
@@ -468,7 +472,7 @@ void Player::update_anim_attacking() {
                         attack::AttackOwner::Player,
                         attack::AttackDirection::UpRight
                     );
-                    anim_state_ = PlayerAnimState::AttackYoyoUpRightWalking;
+                    anim_state_ = PlayerAnimState::AttackYoyoUpRight;
                 } else {
                     attack_.spawn(
                         this->position() + mgc::math::Vec2i(18, 0),
@@ -476,7 +480,7 @@ void Player::update_anim_attacking() {
                         attack::AttackOwner::Player,
                         attack::AttackDirection::Right
                     );
-                    anim_state_ = PlayerAnimState::AttackYoyoRightWalking;
+                    anim_state_ = PlayerAnimState::AttackYoyoRight;
                 }
             } else {
                 if ( gamepad_.is_pressed(Key::Up) ) {
@@ -517,7 +521,7 @@ void Player::update_anim_attacking() {
                 attack_state_ = AttackState::Stop;
             } else {
                 auto bak_anim_state = anim_state_;
-                if ( is_grounded_ && ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) ) {
+                if ( is_grounded_ && input_enabled_ && ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) ) {
                     switch ( anim_state_ ) {
                     case PlayerAnimState::AttackYoyoUpRight: anim_state_ = PlayerAnimState::AttackYoyoUpRightWalking; break;
                     case PlayerAnimState::AttackYoyoUpLeft: anim_state_ = PlayerAnimState::AttackYoyoUpLeftWalking; break;

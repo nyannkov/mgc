@@ -11,6 +11,8 @@
 #include "entity/prop/gate/gate.hpp"
 #include "entity/prop/signboard/signboard.hpp"
 #include "entity/prop/button/button.hpp"
+#include "entity/prop/portal/portal.hpp"
+#include "entity/prop/teleporter/teleporter.hpp"
 #include "entity/block/pushable_block/pushable_block.hpp"
 
 namespace app {
@@ -21,12 +23,28 @@ struct SceneObjects_Stage2_7 : ISceneObjects {
           stage_(stage),
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
+          gate_3_(scx.gamepad),
+          portal_1_(scx.gamepad, scx.timer),
           signboard_(scx.gamepad),
+          signboard2_(scx.gamepad),
+          teleporters_ {
+            prop::Teleporter(scx.gamepad),
+            prop::Teleporter(scx.gamepad),
+            prop::Teleporter(scx.gamepad),
+            prop::Teleporter(scx.gamepad)
+          },
           props_ { 
             &gate_1_,
             &gate_2_,
+            &gate_3_,
+            &button_,
+            &portal_1_,
             &signboard_,
-            &button_
+            &signboard2_,
+            &teleporters_[0],
+            &teleporters_[1],
+            &teleporters_[2],
+            &teleporters_[3]
           } { }
 
     void init();
@@ -39,6 +57,8 @@ struct SceneObjects_Stage2_7 : ISceneObjects {
 
     auto& stage() { return stage_; }
     auto& button() { return button_; }
+    auto& portal() { return portal_1_; }
+    auto& teleporters() { return teleporters_; }
 
 private:
     CheckpointInfo& cp_info_;
@@ -47,9 +67,13 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
+    prop::Gate gate_3_;
     prop::Button button_;
+    prop::Portal portal_1_;
     prop::Signboard signboard_;
-    std::array<prop::Prop*, 4> props_;
+    prop::Signboard signboard2_;
+    std::array<prop::Teleporter, 4> teleporters_;
+    std::array<prop::Prop*, 11> props_;
 };
 
 } // namespace app

@@ -10,7 +10,8 @@ Event_Stage2_7::Event_Stage2_7(
     SceneObjects_Stage2_7& objs
 ) : sound_(scx.sound),
     cp_info_(scx.world_state.checkpoint_info),
-    objs_(objs) {
+    objs_(objs),
+    sw_(scx.timer) {
 
     this->mut_sprite().set_visible(false);
     auto& hitboxes = this->mut_hitboxes();
@@ -24,7 +25,8 @@ void Event_Stage2_7::spawn(const mgc::math::Vec2i& pos) {
 
     objs_.stage().set_water_enabled(true);
 
-    wait_flag_ = false;
+    detail_ = EventDetail::NotStarted;
+    counter_ = 0;
 }
 
 void Event_Stage2_7::spawn() {
@@ -38,15 +40,34 @@ void Event_Stage2_7::despawn() {
 void Event_Stage2_7::update() {
     switch (event_state()) {
     case EventState::Playing:
-        if ( objs_.button().is_pushed() ) {
-
-            auto pos = objs_.stage().water_position();
-            pos.y += 8;
-            objs_.stage().set_water_position(pos);
-
-            if ( pos.y >= MGC_CELL2PIXEL(6) ) {
-                set_event_state(EventState::Finished);
+        if ( detail_ == EventDetail::NotStarted ) {
+            if ( objs_.button().is_pushed() ) {
+                sound_.play_sound_effect(MML_SE_14_DISCHARGE_2);
+                lock_control();
+                detail_ = EventDetail::StartToDischarge;
+                sw_.start();
             }
+        } else {
+            
+            if ( detail_ == EventDetail::StartToDischarge ) {
+                if ( sw_.elapsed_ms() >= 4000 ) {
+                    detail_ = EventDetail::Discharging;
+                }
+            } else if ( detail_ == EventDetail::Discharging ) {
+                counter_++;
+                if ( counter_ & 0x1 ) {
+                    auto pos = objs_.stage().water_position();
+                    pos.y += 1;
+                    objs_.stage().set_water_position(pos);
+                    if ( sound_.have_all_sound_effects_finished() && 
+                         pos.y >= MGC_CELL2PIXEL(6)
+                    ) {
+                        detail_ = EventDetail::Discharged;
+                        set_event_state(EventState::Finished);
+                        unlock_control();
+                    }
+                }
+            } else { }
         } 
         break;
 

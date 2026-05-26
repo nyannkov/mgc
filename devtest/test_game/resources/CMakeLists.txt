@@ -337,6 +337,7 @@ anim_cmake_list_gen(
     "${GEN_DIR}/anim/enemy/dancer"
     --width 20 --height 32 
 )
+
 add_subdirectory(mml)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 

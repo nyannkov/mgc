@@ -45,7 +45,7 @@ void Event_Stage1_6::update() {
         if ( player_.position().x > MGC_CELL2PIXEL(26) ) {
             detail_ = EventDetail::Lookup;
             sound_.play_sound_effect(MML_SE_8_OPEN);
-            player_.set_input_enabled(false);
+            lock_control();
             player_.set_anim_mode(PlayerAnimMode::Manual);
             player_.set_anim_manually(PlayerAnimState::LookupRight, false);
             sw_.restart();
@@ -67,7 +67,7 @@ void Event_Stage1_6::update() {
         }
         if ( sw_.elapsed_ms() >= 1987 ) {
             sound_.play_background_music(MML_BGM_5_BOSS);
-            player_.set_input_enabled(true);
+            unlock_control();
             player_.set_anim_mode(PlayerAnimMode::Auto);
             detail_ = EventDetail::Fight;
         }

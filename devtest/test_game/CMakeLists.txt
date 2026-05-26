@@ -30,6 +30,7 @@ set(CXX_SOURCES
     entity/prop/teleporter/teleporter.cpp
     entity/prop/button/button.cpp
     entity/event/warp/warp.cpp
+    entity/event/teleport/teleport.cpp
     entity/attack/attack.cpp
     entity/item/potion/potion.cpp
     entity/item/elixir/elixir.cpp

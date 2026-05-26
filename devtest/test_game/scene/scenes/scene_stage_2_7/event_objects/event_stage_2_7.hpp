@@ -27,7 +27,14 @@ private:
     SoundControllerT& sound_;
     CheckpointInfo& cp_info_;
     SceneObjects_Stage2_7& objs_;
-    bool wait_flag_ = false;
+    StopwatchT sw_;
+    uint32_t counter_ = 0;
+    enum class EventDetail {
+        NotStarted,
+        StartToDischarge,
+        Discharging,
+        Discharged
+    } detail_ = EventDetail::NotStarted;
 };
 
 }// namespace app

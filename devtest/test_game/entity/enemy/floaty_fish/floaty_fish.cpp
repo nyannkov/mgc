@@ -7,13 +7,15 @@ namespace enemy {
 
 FloatyFish::FloatyFish(
     const FrameTimerT& timer,
-    SoundControllerT& sound
+    SoundControllerT& sound,
+    const mgc::features::HasPosition<mgc::math::Vec2i>& player_pos
 ) : sound_(sound),
     anim_(timer), 
     sw_(timer),
     force_ex_({0.0f, 0.0f}),
     anim_state_(FloatyFishAnimState::FloatingRight),
-    blink_animator_(timer) {
+    blink_animator_(timer),
+    player_pos_(player_pos) {
 
     blink_animator_.set_target(*this);
     set_hp(FloatyFishMaxHP);
@@ -84,9 +86,22 @@ void FloatyFish::update_movement_normal() {
     if ( state == EnemyState::Active ) {
 
         auto pos = this->precise_position();
-        if ( anim_state_ == FloatyFishAnimState::FloatingRight ) {
+
+        float delta = player_pos_.position().x - pos.x;
+
+        if ( delta > 2.0 ) {
+            if ( anim_state_ != FloatyFishAnimState::FloatingRight ) {
+                anim_state_ = FloatyFishAnimState::FloatingRight;
+                anim_.set_anim_frames(get_anim_frames(anim_state_));
+                anim_.start_animation();
+            }
             pos.x += 1;
-        } else if ( anim_state_ == FloatyFishAnimState::FloatingLeft ) {
+        } else if ( delta < -2.0 ) {
+            if ( anim_state_ != FloatyFishAnimState::FloatingLeft ) {
+                anim_state_ = FloatyFishAnimState::FloatingLeft;
+                anim_.set_anim_frames(get_anim_frames(anim_state_));
+                anim_.start_animation();
+            }
             pos.x -= 1;
         } else { }
 
@@ -131,22 +146,6 @@ void FloatyFish::update_movement_normal() {
 void FloatyFish::update_animation() {
 
     if ( this->enemy_state() == EnemyState::Inactive ) return;
-
-    if ( sw_.elapsed_ms() >= 3000 ) {
-        sw_.restart();
-        is_walking_ = !is_walking_;
-        if ( (rand()%2) != 0 ) {
-            if ( is_walking_ ) {
-                anim_state_ = FloatyFishAnimState::FloatingRight;
-            } else {
-                anim_state_ = FloatyFishAnimState::FloatingLeft;
-            }
-        }
-
-        anim_.set_loop(true);
-        anim_.set_anim_frames(get_anim_frames(anim_state_));
-        anim_.start_animation();
-    }
 
     anim_.proc();
     anim_.set_current_frame(this->mut_sprite());

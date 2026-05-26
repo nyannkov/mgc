@@ -13,7 +13,8 @@ constexpr int32_t FloatyFishMaxHP = 2;
 struct FloatyFish: Enemy {
     FloatyFish(
         const FrameTimerT& timer,
-        SoundControllerT& sound
+        SoundControllerT& sound,
+        const mgc::features::HasPosition<mgc::math::Vec2i>& player_pos
     );
     ~FloatyFish() = default;
     FloatyFish(const FloatyFish&) = delete;
@@ -62,7 +63,8 @@ private:
     FloatyFishAnimState anim_state_;
     BlinkAnimatorT blink_animator_;
     StopwatchT sw_;
-    bool is_walking_ = false;
+    const mgc::features::HasPosition<mgc::math::Vec2i>& player_pos_;
+
     bool hit_water_ = false;
     bool hit_head_water_ = false;
 
