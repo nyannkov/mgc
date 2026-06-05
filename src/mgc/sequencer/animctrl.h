@@ -72,6 +72,14 @@ size_t animctrl_get_current_tile_index(const mgc_animctrl_t* animctrl) {
 }
 
 static inline
+size_t animctrl_get_current_frame_index(const mgc_animctrl_t* animctrl) {
+
+    MGC_ASSERT(animctrl != NULL , "Invalid handler");
+
+    return animctrl->current_frame_index;
+}
+
+static inline
 bool animctrl_is_finished(const mgc_animctrl_t* animctrl) {
 
     MGC_ASSERT(animctrl != NULL , "Invalid handler");
