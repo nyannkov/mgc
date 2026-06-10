@@ -101,7 +101,12 @@ void update_movement(SceneContext& scx) {
             );
 
             ColBox2BoxT::detect_pair(*enemy, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+
             ColBox2BoxT::detect_pair(*enemy, scx.player.attack());
+            for ( auto* weapon: enemy->weapons() ) {
+                ColBox2BoxT::detect_pair(scx.player, *weapon);
+            }
+
             if ( ( enemy->enemy_state() == enemy::EnemyState::Active ) &&
                  ( enemy->hp() <= 0 )
             ) {
@@ -312,6 +317,10 @@ void draw(
 
     if ( camera ) {
         pos = camera->follow_position();
+    }
+
+    if ( scx.objs ) {
+        scx.objs->draw_before(fb, pos);
     }
 
     if ( scx.stage ) {

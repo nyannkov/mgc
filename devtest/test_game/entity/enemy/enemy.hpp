@@ -27,6 +27,8 @@ struct Enemy : mgc::entities::ActorImpl<
     virtual void receive_damage(int32_t amount) = 0;
     virtual void receive_impact(mgc::math::Vec2f delta) = 0;
 
+    virtual ArrayViewer<attack::Attack*> weapons() { return {}; }
+
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
     EnemyState enemy_state() const { return enemy_state_; }
@@ -38,17 +40,19 @@ struct Enemy : mgc::entities::ActorImpl<
             const mgc::collision::BoxCollisionInfo& info
     ) { 
         if ( enemy_state_ == EnemyState::Active ) {
-            if constexpr (std::is_same_v<Other, Player>) {
+            using CleanedOther = std::decay_t<Other>;
+
+            if constexpr (std::is_same_v<CleanedOther, Player>) {
                 if ( info.other_hitbox_index == 
                     static_cast<size_t>(PlayerHitboxIndex::Body) 
                 ) {
                     on_player_hit(other, info);
                 }
-            } else if constexpr (std::is_same_v<Other, attack::Attack>) {
+            } else if constexpr (std::is_base_of_v<attack::Attack, CleanedOther>) {
                 
                 on_attack_hit(other, info);
 
-            } else if constexpr (std::is_same_v<Other, Enemy>) {
+            } else if constexpr (std::is_base_of_v<CleanedOther, Enemy>) {
 
                 on_enemy_hit(other, info);
 

@@ -218,6 +218,19 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_2_7/csv"
     --tile-or128 block one_way_block ladder needle water
 )
+set(STAGE_MAP_STAGE_2_8_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_2_8/csv/map_stage_2_8_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_8/csv/map_stage_2_8_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_8/csv/map_stage_2_8_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_8/csv/map_stage_2_8_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_8/csv/map_stage_2_8_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_2_8/map_stage_2_8.tmx"
+    "${STAGE_MAP_STAGE_2_8_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_2_8/csv"
+    --tile-or128 block one_way_block ladder needle water
+)
 
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
@@ -249,6 +262,7 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_2_5_CSVS}
     ${STAGE_MAP_STAGE_2_6_CSVS}
     ${STAGE_MAP_STAGE_2_7_CSVS}
+    ${STAGE_MAP_STAGE_2_8_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
 )
 
@@ -308,6 +322,12 @@ anim_cmake_list_gen(
     --width 16 --height 16
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/attack_lance/anim_attack_lance.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_attack_lance.bmp"
+    "${GEN_DIR}/anim/attack_lance"
+    --width 16 --height 16
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/enemy/skyfish/anim_skyfish.yml" 
     "${RESOURCE_DIR}/tileset/tileset_skyfish.bmp"
     "${GEN_DIR}/anim/enemy/skyfish"
@@ -337,6 +357,12 @@ anim_cmake_list_gen(
     "${GEN_DIR}/anim/enemy/dancer"
     --width 20 --height 32 
 )
+anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/enemy/lancer/anim_boss_lancer.yml"
+    "${RESOURCE_DIR}/tileset/tileset_boss_lancer.bmp"
+    "${GEN_DIR}/anim/enemy/lancer"
+    --width 20 --height 32 
+)
 
 add_subdirectory(mml)
 
@@ -344,10 +370,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     resources_config
     anim_player
     anim_attack
+    anim_attack_lance
     anim_skyfish
     anim_walker
     anim_floaty_fish
     anim_boss_dancer
+    anim_boss_lancer
     anim_portal
     mml
 )

@@ -1,0 +1,85 @@
+#include "resources/mml/mml.h"
+#include "event_stage_2_8.hpp"
+
+namespace app {
+
+using app::event::EventState;
+
+Event_Stage2_8::Event_Stage2_8(
+    SceneContext& scx,
+    SceneObjects_Stage2_8& objs
+) : sound_(scx.sound),
+    cp_info_(scx.world_state.checkpoint_info),
+    objs_(objs),
+    sw_(scx.timer) {
+
+    this->mut_sprite().set_visible(false);
+    auto& hitboxes = this->mut_hitboxes();
+    hitboxes[0].set_enabled(false);
+    set_event_state(EventState::NotStarted);
+}
+
+void Event_Stage2_8::spawn(const mgc::math::Vec2i& pos) {
+    set_event_state(EventState::Playing);
+    unlock_control();
+
+    objs_.stage().set_water_enabled(true);
+
+    detail_ = EventDetail::NotStarted;
+    counter_ = 0;
+}
+
+void Event_Stage2_8::spawn() {
+    spawn({0, 0});
+}
+
+void Event_Stage2_8::despawn() {
+    set_event_state(EventState::NotStarted);
+}
+
+void Event_Stage2_8::update() {
+    switch (event_state()) {
+    case EventState::Playing:
+        if ( detail_ == EventDetail::NotStarted ) {
+//            if ( objs_.button().is_pushed() ) {
+            {
+                sound_.play_sound_effect(MML_SE_14_DISCHARGE_2);
+                lock_control();
+                detail_ = EventDetail::StartToDischarge;
+                sw_.start();
+            }
+        } else {
+            
+            if ( detail_ == EventDetail::StartToDischarge ) {
+                if ( sw_.elapsed_ms() >= 4000 ) {
+                    detail_ = EventDetail::Discharging;
+                }
+            } else if ( detail_ == EventDetail::Discharging ) {
+                counter_++;
+                if ( counter_ & 0x1 ) {
+                    auto pos = objs_.stage().water_position();
+                    pos.y += 1;
+                    objs_.stage().set_water_position(pos);
+                    if ( sound_.have_all_sound_effects_finished() && 
+                         pos.y >= MGC_CELL2PIXEL(6)
+                    ) {
+                        detail_ = EventDetail::Discharged;
+                        set_event_state(EventState::Finished);
+                        unlock_control();
+                    }
+                }
+            } else { }
+        } 
+        break;
+
+    case EventState::Finished:
+        set_event_state(EventState::NotStarted);
+        break;
+
+    default:
+        break;
+    }
+}
+
+} // namespace app
+

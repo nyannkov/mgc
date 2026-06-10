@@ -146,7 +146,7 @@ void Player::update_movement() {
         case PlayerState::Ladder:
         case PlayerState::Swimming:
         case PlayerState::Diving:
-            if ( current_attack_type_ == attack::AttackType::Yoyo ) {
+            if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
                 attack_state_ = AttackState::Stop;
                 attack_.despawn();
             }
@@ -175,7 +175,7 @@ void Player::update_movement() {
         if ( input_enabled_ ) {
 
             if ( attack_state_ == AttackState::Stop  || 
-                 current_attack_type_ == attack::AttackType::Yoyo 
+                 current_attack_type_ == attack::AttackPlayerType::Yoyo 
             ) {
                 if ( gamepad_.just_pressed(Key::Enter) ) {
                     attack_state_ = AttackState::Start;
@@ -447,13 +447,13 @@ void Player::update_anim_attacking() {
     //TODO
     switch ( equipment_info_.weapon.equipped_id() ) {
     case static_cast<uint32_t>(WeaponId::Claw):
-        current_attack_type_ = attack::AttackType::Scratch;
+        current_attack_type_ = attack::AttackPlayerType::Scratch;
         break;
     case static_cast<uint32_t>(WeaponId::Boomerang):
-        current_attack_type_ = attack::AttackType::Boomerang;
+        current_attack_type_ = attack::AttackPlayerType::Boomerang;
         break;
     case static_cast<uint32_t>(WeaponId::Yoyo):
-        current_attack_type_ = attack::AttackType::Yoyo;
+        current_attack_type_ = attack::AttackPlayerType::Yoyo;
         anim_.set_loop(true);
         break;
     default:
@@ -463,7 +463,7 @@ void Player::update_anim_attacking() {
     if ( attack_state_ == AttackState::Start ) {
         attack_state_ = AttackState::InProgress;
 
-        if ( current_attack_type_ == attack::AttackType::Yoyo ) {
+        if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
             if ( is_right_ ) {
                 if ( gamepad_.is_pressed(Key::Up) ) {
                     attack_.spawn(
@@ -516,7 +516,7 @@ void Player::update_anim_attacking() {
         anim_.start_animation();
 
     } else if ( attack_state_ == AttackState::InProgress ) {
-        if ( current_attack_type_ == attack::AttackType::Yoyo ) {
+        if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
             if ( attack_.lifecycle() == attack::AttackLifeCycle::Despawned ) {
                 attack_state_ = AttackState::Stop;
             } else {

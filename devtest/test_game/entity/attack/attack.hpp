@@ -8,12 +8,6 @@
 namespace app {
 namespace attack {
 
-enum class AttackType {
-    Scratch,
-    Boomerang,
-    Yoyo
-};
-
 enum class AttackLifeCycle {
     Despawned,
     Spawing,
@@ -42,37 +36,36 @@ struct Attack : mgc::entities::ActorImpl<
         Attack, static_cast<size_t>(AttackHitboxIndex::Count)
     > {
 
-    Attack(
-        const FrameTimerT& frame_timer, 
-        const GamepadT& gamepad,
-        SoundControllerT& sound,
-        const mgc::features::HasPosition<mgc::math::Vec2i>& owner_pos
-    );
-    ~Attack() = default;
+    virtual ~Attack() = default;
 
-    void spawn(
+    virtual void spawn(
         const mgc::math::Vec2i& pos,
-        AttackType type,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn();
-    void update_movement();
-    void update_animation();
+        AttackOwner owner
+    ) = 0;
+    virtual void despawn() = 0;
+    virtual void update_movement() = 0;
+    virtual void update_animation() = 0;
 
-    int32_t apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_index) const;
-    int32_t apply_damage_to(Player& player, size_t attack_hitbox_index) const;
+    virtual int32_t apply_damage_to(
+        enemy::Enemy& enemy,
+        size_t attack_hitbox_index
+    ) const = 0;
+    virtual int32_t apply_damage_to(
+        Player& player,
+        size_t attack_hitbox_index
+    ) const = 0;
 
     AttackLifeCycle lifecycle() const { return lifecycle_; }
     AttackOwner owner_type() const { return owner_type_; }
     AttackDirection direction() const { return direction_; }
-    AttackType attack_type() const { return attack_type_; }
     mgc::math::Vec2f velocity() const { return velocity_; }
 
-    void draw_wrap(
+    virtual void draw_wrap(
         FramebufferT& fb,
         mgc::math::Vec2i& cam_pos
-    );
+    ) {
+        this->draw(fb, cam_pos);
+    }
 
     template <typename Other>
     void on_hit_box_to_box_impl(
@@ -105,64 +98,25 @@ struct Attack : mgc::entities::ActorImpl<
             const View& others
     ) { }   
 
-private:
-    AnimControllerT anim_;
-    const GamepadT& gamepad_;
-    SoundControllerT& sound_;
-    mgc::math::Vec2f velocity_;
-    mgc::math::Vec2i pos_orig_;
-    bool hit_ = false;//TODO
-    const mgc::features::HasPosition<mgc::math::Vec2i> &owner_pos_;
-    mgc::math::Vec2f yoyo_sum_i_;
-
-    AttackOwner owner_type_ = AttackOwner::Player;
-    AttackType attack_type_ = AttackType::Scratch;
-    AttackDirection direction_ = AttackDirection::Right;
-    AttackLifeCycle lifecycle_ = AttackLifeCycle::Despawned;
-
+protected:
     void set_direction(AttackDirection dir) { direction_ = dir; }
     void set_lifecycle(AttackLifeCycle lifecycle) { lifecycle_ = lifecycle; }
     void set_owner_type(AttackOwner owner) { owner_type_ = owner; }
-    void set_attack_type(AttackType type) { attack_type_ = type; }
     void set_velocity(mgc::math::Vec2f v) { velocity_ = v; }
-
-
-    void spawn_scratch(
-        const mgc::math::Vec2i& pos,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn_scratch();
-    void update_animation_scratch();
-    void update_movement_scratch();
-
-    void spawn_boomerang(
-        const mgc::math::Vec2i& pos,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn_boomerang();
-    void update_animation_boomerang();
-    void update_movement_boomerang();
-
-    void spawn_yoyo(
-        const mgc::math::Vec2i& pos,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn_yoyo();
-    void update_animation_yoyo();
-    void update_movement_yoyo();
-
-    void on_enemy_hit(
+    virtual void on_enemy_hit(
         const enemy::Enemy& enemy,
         const mgc::collision::BoxCollisionInfo& info
-    );
-    void on_player_hit(
+    ) { }
+    virtual void on_player_hit(
         const Player& player,
         const mgc::collision::BoxCollisionInfo& info
-    );
+    ) { }
 
+private:
+    mgc::math::Vec2f velocity_;
+    AttackOwner owner_type_ = AttackOwner::Player;
+    AttackDirection direction_ = AttackDirection::Right;
+    AttackLifeCycle lifecycle_ = AttackLifeCycle::Despawned;
 };
 
 }// namespace attack

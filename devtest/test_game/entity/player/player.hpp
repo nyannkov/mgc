@@ -7,7 +7,7 @@
 #include "entity/stage/layer/layer_one_way_block.hpp"
 #include "entity/stage/layer/layer_needle.hpp"
 #include "entity/stage/layer/layer_water.hpp"
-#include "entity/attack/attack.hpp"
+#include "entity/attack/attack_player/attack_player.hpp"
 #include "entity/enemy/enemy_state.hpp"
 #include "entity/prop/prop.hpp"
 #include "entity/block/block.hpp"
@@ -50,7 +50,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void update_movement();
     void resolve_movement();
     void update_animation(bool is_talking);
-    attack::Attack& attack() { return attack_; }
+    attack::AttackPlayer& attack() { return attack_; }
 
     void reset_state_for_placement(
         const mgc::math::Vec2i& pos,
@@ -207,13 +207,13 @@ private:
     PlayerAnimState anim_state_ = PlayerAnimState::StandRight;
     PlayerAnimState anim_state_manual_ = PlayerAnimState::StandRight;
     PlayerState player_state_ = PlayerState::Normal;
-    attack::AttackType current_attack_type_ = attack::AttackType::Boomerang;
+    attack::AttackPlayerType current_attack_type_ = attack::AttackPlayerType::Boomerang;
     int32_t hp_;
     int32_t full_hp_;
     enum class AttackState {
         Stop, Start, InProgress
     } attack_state_ = AttackState::Stop;;
-    attack::Attack attack_;
+    attack::AttackPlayer attack_;
     BlinkAnimatorT blink_animator_;
     mgc::math::Vec2i pushback_box_ {};
     mgc::math::Vec2i pushback_map_ {};

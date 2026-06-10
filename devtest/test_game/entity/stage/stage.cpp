@@ -67,7 +67,11 @@
 #include "resources/generated/map/map_stage_2_7_water.h"
 #include "resources/generated/map/map_stage_2_7_needle.h"
 #include "resources/generated/map/map_stage_2_7_one_way_block.h"
-
+#include "resources/generated/map/map_stage_2_8_block.h"
+#include "resources/generated/map/map_stage_2_8_ladder.h"
+#include "resources/generated/map/map_stage_2_8_water.h"
+#include "resources/generated/map/map_stage_2_8_needle.h"
+#include "resources/generated/map/map_stage_2_8_one_way_block.h"
 
 #include "resources/generated/map/map_shop_back_0.h"
 #include "resources/generated/map/map_shop_back_1.h"
@@ -338,6 +342,23 @@ void Stage::setup(StageId id) {
         water_.set_all_enabled(true);
 
         needle_.set_maps(map_stage_2_7_needle, tileset_map_elements, &map_stage_2_7_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage2_8:
+        block_.set_maps(map_stage_2_8_block, tileset_map_elements, &map_stage_2_8_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_2_8_one_way_block, tileset_map_elements, &map_stage_2_8_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_2_8_ladder, tileset_map_elements, &map_stage_2_8_ladder);
+        ladder_.set_all_enabled(true);
+
+        water_.set_maps(map_stage_2_8_water, tileset_map_elements, &map_stage_2_8_water);
+        water_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_2_8_needle, tileset_map_elements, &map_stage_2_8_needle);
         needle_.set_all_enabled(true);
         break;
 

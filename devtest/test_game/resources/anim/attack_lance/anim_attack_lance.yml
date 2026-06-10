@@ -1,0 +1,41 @@
+animations:
+  - name: lance_up
+    description: "Lance Up"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }
+
+  - name: lance_down
+    description: "Lance Down"
+    frames:
+      - { file: frame_001.bmp, time_ms: 999999 }
+
+  - name: lance_right
+    description: "Lance Right"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }
+
+  - name: lance_left
+    description: "Lance Left"
+    frames:
+      - { file: frame_003.bmp, time_ms: 999999 }
+
+  - name: lance_up_right
+    description: "Lance Up Right"
+    frames:
+      - { file: frame_004.bmp, time_ms: 999999 }
+
+  - name: lance_down_right
+    description: "Lance Down Right"
+    frames:
+      - { file: frame_005.bmp, time_ms: 999999 }
+
+  - name: lance_up_left
+    description: "Lance Up Left"
+    frames:
+      - { file: frame_006.bmp, time_ms: 999999 }
+
+  - name: lance_down_left
+    description: "Lance Down Left"
+    frames:
+      - { file: frame_007.bmp, time_ms: 999999 }
+

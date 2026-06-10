@@ -1,5 +1,5 @@
 #include <math.h>//sqrt
-#include "attack.hpp"
+#include "attack_player.hpp"
 #include "resources/generated/anim/attack/anim_attack.h"
 #include "resources/mml/mml.h"
 #include "entity/player/player.hpp"
@@ -8,7 +8,7 @@
 namespace app {
 namespace attack {
 
-Attack::Attack(
+AttackPlayer::AttackPlayer(
     const FrameTimerT& frame_timer, 
     const GamepadT& gamepad,
     SoundControllerT& sound,
@@ -30,9 +30,16 @@ Attack::Attack(
     hit_ = false;
 }
 
-void Attack::spawn(
+void AttackPlayer::spawn(
     const mgc::math::Vec2i& pos,
-    AttackType type,
+    AttackOwner owner
+) {
+    spawn(pos, AttackPlayerType::Scratch, owner, AttackDirection::Right);
+}
+
+void AttackPlayer::spawn(
+    const mgc::math::Vec2i& pos,
+    AttackPlayerType type,
     AttackOwner owner,
     AttackDirection dir
 ) {
@@ -40,13 +47,13 @@ void Attack::spawn(
     set_attack_type(type);
 
     switch ( attack_type() ) {
-    case AttackType::Scratch:
+    case AttackPlayerType::Scratch:
         spawn_scratch(pos, owner, dir);
         break;
-    case AttackType::Boomerang:
+    case AttackPlayerType::Boomerang:
         spawn_boomerang(pos, owner, dir);
         break;
-    case AttackType::Yoyo:
+    case AttackPlayerType::Yoyo:
         spawn_yoyo(pos, owner, dir);
         break;
     default:
@@ -57,15 +64,15 @@ void Attack::spawn(
     hit_ = false;
 }
 
-void Attack::despawn() {
+void AttackPlayer::despawn() {
     switch ( attack_type() ) {
-    case AttackType::Scratch:
+    case AttackPlayerType::Scratch:
         despawn_scratch();
         break;
-    case AttackType::Boomerang:
+    case AttackPlayerType::Boomerang:
         despawn_boomerang();
         break;
-    case AttackType::Yoyo:
+    case AttackPlayerType::Yoyo:
         despawn_yoyo();
         break;
     default:
@@ -73,19 +80,19 @@ void Attack::despawn() {
     }
 }
 
-void Attack::update_movement() {
+void AttackPlayer::update_movement() {
     if ( lifecycle() == AttackLifeCycle::Despawned ) {
         return;
     }
 
     switch ( attack_type() ) {
-    case AttackType::Scratch:
+    case AttackPlayerType::Scratch:
         update_movement_scratch();
         break;
-    case AttackType::Boomerang:
+    case AttackPlayerType::Boomerang:
         update_movement_boomerang();
         break;
-    case AttackType::Yoyo:
+    case AttackPlayerType::Yoyo:
         update_movement_yoyo();
         break;
     default:
@@ -94,20 +101,20 @@ void Attack::update_movement() {
     hit_ = false;
 }
 
-void Attack::update_animation() {
+void AttackPlayer::update_animation() {
 
     if ( lifecycle() == AttackLifeCycle::Despawned ) {
         return;
     }
 
     switch ( attack_type() ) {
-    case AttackType::Scratch:
+    case AttackPlayerType::Scratch:
         update_animation_scratch();
         break;
-    case AttackType::Boomerang:
+    case AttackPlayerType::Boomerang:
         update_animation_boomerang();
         break;
-    case AttackType::Yoyo:
+    case AttackPlayerType::Yoyo:
         update_animation_yoyo();
         break;
     default:
@@ -115,7 +122,7 @@ void Attack::update_animation() {
     }
 }
 
-int32_t Attack::apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_index) const {
+int32_t AttackPlayer::apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_index) const {
     int32_t amount = 0;
     if ( attack_hitbox_index == 0 ) {
         if ( owner_type() == AttackOwner::Player ) {
@@ -138,7 +145,7 @@ int32_t Attack::apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_index)
     return amount;
 }
 
-int32_t Attack::apply_damage_to(Player& player, size_t attack_hitbox_index) const {
+int32_t AttackPlayer::apply_damage_to(Player& player, size_t attack_hitbox_index) const {
     int32_t amount = 0;
     if ( attack_hitbox_index == 0 ) {
         if ( owner_type() == AttackOwner::Enemy ) {
@@ -163,7 +170,7 @@ int32_t Attack::apply_damage_to(Player& player, size_t attack_hitbox_index) cons
     return amount;
 }
 
-void Attack::spawn_scratch(
+void AttackPlayer::spawn_scratch(
     const mgc::math::Vec2i& pos,
     AttackOwner owner,
     AttackDirection dir
@@ -195,14 +202,14 @@ void Attack::spawn_scratch(
     sound_.play_sound_effect(MML_SE_4_ATTACK_SCRATCH);
 }
 
-void Attack::despawn_scratch() {
+void AttackPlayer::despawn_scratch() {
     auto& hitboxes = this->mut_hitboxes();
     hitboxes[0].set_enabled(false);
     this->mut_sprite().set_visible(false);
     set_lifecycle(AttackLifeCycle::Despawned);
 }
 
-void Attack::update_animation_scratch() {
+void AttackPlayer::update_animation_scratch() {
 
     if ( anim_.is_finished() ) {
         despawn();
@@ -212,11 +219,11 @@ void Attack::update_animation_scratch() {
     }
 }
 
-void Attack::update_movement_scratch() {
+void AttackPlayer::update_movement_scratch() {
 }
 
 
-void Attack::spawn_boomerang(
+void AttackPlayer::spawn_boomerang(
     const mgc::math::Vec2i& pos,
     AttackOwner owner,
     AttackDirection dir
@@ -249,20 +256,20 @@ void Attack::spawn_boomerang(
     anim_.start_animation();
 }
 
-void Attack::despawn_boomerang() {
+void AttackPlayer::despawn_boomerang() {
     auto& hitboxes = this->mut_hitboxes();
     hitboxes[0].set_enabled(false);
     this->mut_sprite().set_visible(false);
     set_lifecycle(AttackLifeCycle::Despawned);
 }
 
-void Attack::update_animation_boomerang() {
+void AttackPlayer::update_animation_boomerang() {
 
     anim_.proc();
     anim_.set_current_frame(this->mut_sprite());
 }
 
-void Attack::update_movement_boomerang() {
+void AttackPlayer::update_movement_boomerang() {
 
     if ( anim_.is_finished() || hit_ ) {
         despawn();
@@ -295,7 +302,7 @@ void Attack::update_movement_boomerang() {
     set_precise_position(pos);
 }
 
-void Attack::spawn_yoyo(
+void AttackPlayer::spawn_yoyo(
     const mgc::math::Vec2i& pos,
     AttackOwner owner,
     AttackDirection dir
@@ -336,14 +343,14 @@ void Attack::spawn_yoyo(
     yoyo_sum_i_ = mgc::math::Vec2f({0, 0});
 }
 
-void Attack::despawn_yoyo() {
+void AttackPlayer::despawn_yoyo() {
     auto& hitboxes = this->mut_hitboxes();
     hitboxes[0].set_enabled(false);
     this->mut_sprite().set_visible(false);
     set_lifecycle(AttackLifeCycle::Despawned);
 }
 
-void Attack::update_animation_yoyo() {
+void AttackPlayer::update_animation_yoyo() {
 
     if ( anim_.is_finished() ) {
         despawn();
@@ -353,7 +360,7 @@ void Attack::update_animation_yoyo() {
     }
 }
 
-void Attack::update_movement_yoyo() {
+void AttackPlayer::update_movement_yoyo() {
     if ( anim_.is_finished() || hit_ ) {
         despawn();
         return;
@@ -402,7 +409,7 @@ void Attack::update_movement_yoyo() {
     yoyo_sum_i_ += err;
 }
 
-void Attack::on_enemy_hit(
+void AttackPlayer::on_enemy_hit(
     const enemy::Enemy& enemy,
     const mgc::collision::BoxCollisionInfo& info
 ) {
@@ -416,18 +423,18 @@ void Attack::on_enemy_hit(
     }
 }
 
-void Attack::on_player_hit(
+void AttackPlayer::on_player_hit(
     const Player& player,
     const mgc::collision::BoxCollisionInfo& info
 ) {
     hit_ = true;
 }
 
-void Attack::draw_wrap(
+void AttackPlayer::draw_wrap(
     FramebufferT& fb,
     mgc::math::Vec2i& cam_pos
 ) {
-    if ( attack_type_ == AttackType::Yoyo ) {
+    if ( attack_type_ == AttackPlayerType::Yoyo ) {
         if ( lifecycle() == AttackLifeCycle::Despawned ) {
             return;
         }
