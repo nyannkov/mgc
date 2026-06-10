@@ -210,16 +210,28 @@ void collision_boxmap_calc_pushback(
 
     if ( n_x > 0 ) {
         p_x = MGC_CELL_LEN - dx;
+        if ( p_x == 0 ) {
+            p_x = MGC_CELL_LEN;
+        }
     } else if ( n_x < 0 ) {
         p_x = MGC_MOD_CELL_LEN(dx + width)*-1;
+        if ( p_x == 0 ) {
+            p_x = MGC_CELL_LEN * -1;
+        }
     } else {
         p_x = 0;
     }
 
     if ( n_y > 0 ) {
         p_y = MGC_CELL_LEN - dy;
+        if ( p_y == 0 ) {
+            p_y = MGC_CELL_LEN;
+        }
     } else if ( n_y < 0 ) {
         p_y = MGC_MOD_CELL_LEN(dy + height)*-1;
+        if ( p_y == 0 ) {
+            p_y = MGC_CELL_LEN * -1;
+        }
     } else {
         p_y = 0;
     }
