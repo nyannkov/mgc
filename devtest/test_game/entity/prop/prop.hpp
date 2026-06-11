@@ -31,13 +31,14 @@ struct Prop : mgc::entities::ActorImpl<
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
     ) { 
-        if constexpr (std::is_same_v<Other, Player>) {
+        using CleanedOther = std::decay_t<Other>;
+        if constexpr (std::is_same_v<CleanedOther, Player>) {
             if ( info.other_hitbox_index == 
                 static_cast<size_t>(PlayerHitboxIndex::Body) 
             ) {
                 on_player_hit(other, info);
             }
-        } else if constexpr (std::is_same_v<Other, attack::Attack>) {
+        } else if constexpr (std::is_base_of_v<attack::Attack, CleanedOther>) {
             on_attack_hit(other, info);
 
         } else { }

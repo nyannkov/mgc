@@ -16,12 +16,18 @@ Button::Button(ButtonType type) {
         hitboxes[0].set_enabled(false);
         this->mut_sprite().set_tileset(tileset_static_objects);
         this->mut_sprite().set_tile_index(5);
-    } else {
+    } else if ( type == ButtonType::Type2 ) {
         hitboxes[0].set_offset({0, 5});
         hitboxes[0].set_size({16, 11});
         hitboxes[0].set_enabled(false);
         this->mut_sprite().set_tileset(tileset_static_objects);
         this->mut_sprite().set_tile_index(8);
+    } else {
+        hitboxes[0].set_offset({0, 0});
+        hitboxes[0].set_size({16, 11});
+        hitboxes[0].set_enabled(false);
+        this->mut_sprite().set_tileset(tileset_static_objects);
+        this->mut_sprite().set_tile_index(10);
     }
 }
 
@@ -56,11 +62,17 @@ void Button::update_sprite() {
         } else {
             this->mut_sprite().set_tile_index(5);
         }
-    } else {
+    } else if ( type_ == ButtonType::Type2 ) {
         if ( pushed_ ) {
             this->mut_sprite().set_tile_index(9);
         } else {
             this->mut_sprite().set_tile_index(8);
+        }
+    } else {
+        if ( pushed_ ) {
+            this->mut_sprite().set_tile_index(11);
+        } else {
+            this->mut_sprite().set_tile_index(10);
         }
     }
 }

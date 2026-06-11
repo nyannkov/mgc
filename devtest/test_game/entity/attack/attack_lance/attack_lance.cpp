@@ -41,6 +41,8 @@ void AttackLance::spawn(
 
     attack_type_ = type;
 
+    set_owner_type(owner);
+
     switch (attack_type_) {
     case AttackLanceType::ThrowLeft:
         this->set_direction(AttackDirection::Left);
@@ -115,6 +117,8 @@ void AttackLance::update_movement() {
         }
     } else {
         
+        auto bak_anim_type_ = anim_type_;
+        
         if ( launch_state_ == LaunchState::Start ) {
             switch (attack_type_) {
             case AttackLanceType::ThrowLeft:
@@ -155,6 +159,38 @@ void AttackLance::update_movement() {
                 break;
             }
             launch_state_ = LaunchState::Launched;
+        } else if ( launch_state_ == LaunchState::Launched ) {
+            switch (attack_type_) {
+            case AttackLanceType::ThrowUpLeft:
+                if ( MGC_ABS(velocity_.y) <= 1 ) {
+                    anim_type_ = AnimType::Left;
+                } else if ( velocity_.y > 1 ) {
+                    anim_type_ = AnimType::DownLeft;
+                }
+                break;
+            case AttackLanceType::ThrowUpRight:
+                if ( MGC_ABS(velocity_.y) <= 1 ) {
+                    anim_type_ = AnimType::Right;
+                } else if ( velocity_.y > 1 ) {
+                    anim_type_ = AnimType::DownRight;
+                }
+                break;
+            case AttackLanceType::ThrowUp:
+                if ( velocity_.y > 0 ) {
+                    anim_type_ = AnimType::Down;
+                }
+                break;
+            case AttackLanceType::Hold:
+            case AttackLanceType::LeftwardAim:
+            case AttackLanceType::RightwardAim:
+            case AttackLanceType::UpwardAim:
+            default:
+                break;
+            }
+        }
+
+        if ( bak_anim_type_ != anim_type_ ) {
+            anim_.set_anim_frames(get_anim_frames(anim_type_));
         }
 
         auto pos = this->precise_position();
@@ -237,6 +273,17 @@ void AttackLance::on_player_hit(
     const Player& player,
     const mgc::collision::BoxCollisionInfo& info
 ) {
+    switch (attack_type_) {
+    case AttackLanceType::ThrowLeft:
+    case AttackLanceType::ThrowRight:
+    case AttackLanceType::ThrowUpLeft:
+    case AttackLanceType::ThrowUpRight:
+    case AttackLanceType::ThrowUp:
+        this->despawn();
+        break;
+    default:
+        break;
+    }
 }
 
 void AttackLance::draw_wrap(

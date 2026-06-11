@@ -276,7 +276,7 @@ add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_map_elements.bmp" "${GEN_
 add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_shop_elements.bmp" "${GEN_DIR}/tileset" --count 100)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_items.bmp" "${GEN_DIR}/tileset" --count 16 --width 8 --height 8)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_block.bmp" "${GEN_DIR}/tileset" --count 1)
-add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 10)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 16)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x48.bmp" "${GEN_DIR}/tileset" --count 2 --width 16 --height 48)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_hen.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)

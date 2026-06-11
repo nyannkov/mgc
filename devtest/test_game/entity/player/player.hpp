@@ -134,15 +134,20 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
     ) { 
+        using CleanedOther = std::decay_t<Other>;
         if ( info.self_hitbox_index == 
             static_cast<size_t>(PlayerHitboxIndex::Body) 
         ) {
-            if constexpr (std::is_same_v<Other, enemy::Enemy>) {
+            if constexpr (std::is_same_v<CleanedOther, enemy::Enemy>) {
                 if ( other.enemy_state() == enemy::EnemyState::Active ) {
                     on_enemy_hit(other, info);
                 }
-            } else if constexpr (std::is_same_v<Other, item::Item>) {
+            } else if constexpr (std::is_same_v<CleanedOther, item::Item>) {
                 on_item_hit(other, info);
+
+            } else if constexpr (std::is_base_of_v<attack::Attack, CleanedOther>) {
+                
+                on_attack_hit(other, info);
             }
         }
     }
@@ -232,6 +237,10 @@ private:
     );
     void on_item_hit(
         const item::Item& item,
+        const mgc::collision::BoxCollisionInfo& info
+    );
+    void on_attack_hit(
+        const attack::Attack& attack,
         const mgc::collision::BoxCollisionInfo& info
     );
     void on_collision_resolved(

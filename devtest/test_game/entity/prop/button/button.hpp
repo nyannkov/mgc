@@ -9,8 +9,9 @@ namespace app {
 namespace prop {
 
 enum class ButtonType {
-    Type1,
-    Type2
+    Type1,// Right
+    Type2,// Up
+    Type3,// Down
 };
 
 struct Button : Prop {

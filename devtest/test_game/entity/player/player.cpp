@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "player.hpp"
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
@@ -624,6 +625,25 @@ void Player::on_item_hit(
         } else if ( item.effect_type() == item::ItemEffectType::LifeUp ) {
             sound_controller_.play_sound_effect(MML_SE_2_LIFE_UP);
         } else { }
+    }
+}
+
+void Player::on_attack_hit(
+    const attack::Attack& attack,
+    const mgc::collision::BoxCollisionInfo& info
+) {
+    if ( attack.owner_type() == attack::AttackOwner::Enemy ) {
+        size_t attack_hitbox_index = info.other_hitbox_index;
+        if ( attack.apply_damage_to(*this, attack_hitbox_index) > 0 ) {
+            if ( this->hp() > 0 ) {
+                sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
+                is_invulnerable_ = true;
+                blink_animator_.set_blink_half_period(50);
+                blink_animator_.set_blink_count_max(40);
+                blink_animator_.set_end_state(mgc::utils::BlinkEndState::Visible);
+                blink_animator_.start();
+            }
+        }
     }
 }
 
