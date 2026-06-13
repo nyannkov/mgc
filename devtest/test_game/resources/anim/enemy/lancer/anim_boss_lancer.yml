@@ -1,4 +1,8 @@
 animations:
+  - name: "stand"
+    description: "stand"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }
   - name: "walk_left"
     description: "walk_left"
     frames:
@@ -32,4 +36,7 @@ animations:
       - { file: frame_001.bmp, time_ms: 500 }
       - { file: frame_000.bmp, time_ms: 100, name: THROW_UP }
       - { file: frame_005.bmp, time_ms: 400 }
-
+  - name: "see_you_next"
+    description: "see_you_next"
+    frames:
+      - { file: frame_001.bmp, time_ms: 999999 }

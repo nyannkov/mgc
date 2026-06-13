@@ -54,6 +54,7 @@ struct SceneObjects_Stage2_8 : ISceneObjects {
     auto& floaty() { return floaty_; }
     auto& lancer() { return lancer_; }
     auto& stage() { return stage_; }
+    auto& button() { return button_; }
 
     void draw(
         FramebufferT& fb,
@@ -61,9 +62,6 @@ struct SceneObjects_Stage2_8 : ISceneObjects {
     ) override {
         for ( auto* civil : civils() ) {
             civil->draw(fb, cam_pos);
-        }
-        for ( auto* prop : props() ) {
-            prop->draw(fb, cam_pos);
         }
         for ( auto* item : items() ) {
             item->draw(fb, cam_pos);
@@ -77,6 +75,9 @@ struct SceneObjects_Stage2_8 : ISceneObjects {
         FramebufferT& fb,
         mgc::math::Vec2i& cam_pos
     ) override { 
+        for ( auto* prop : props() ) {
+            prop->draw(fb, cam_pos);
+        }
         for ( auto* enemy : enemies() ) {
             enemy->draw(fb, cam_pos);
             for ( auto* weapon : enemy->weapons() ) {

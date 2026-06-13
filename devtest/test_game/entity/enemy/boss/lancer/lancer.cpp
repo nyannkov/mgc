@@ -64,8 +64,8 @@ void Lancer::spawn(const mgc::math::Vec2i& pos, bool is_right) {
 
     // TODO core
     auto& hitbox_core = at(hitboxes, EnemyHitboxIndex::ViewLeft);//TODO rename
-    hitbox_core.set_offset({24, 0});
-    hitbox_core.set_size({8, 8});
+    hitbox_core.set_offset({6, 22});
+    hitbox_core.set_size({8, 10});
     hitbox_core.set_enabled(true);
 
     // No spawning animation
@@ -73,7 +73,8 @@ void Lancer::spawn(const mgc::math::Vec2i& pos, bool is_right) {
 
     spawn_lance(pos, lance_[0], attack::AttackLanceType::Hold);
 
-    action_ = ActionState::Walking;
+    action_ = ActionState::Wait;
+    fight_state_ = false;
 
     sw_.restart();
 }
@@ -83,12 +84,18 @@ void Lancer::despawn() {
     auto& hitboxes = this->mut_hitboxes();
     for ( auto& h : hitboxes ) { h.set_enabled(false); }
 
+    action_ = ActionState::Wait;
+    fight_state_ = false;
+    anim_state_ = LancerAnimState::SeeYouNext;
     this->set_enemy_state(EnemyState::Despawning);
     blink_animator_.set_end_state(mgc::utils::BlinkEndState::Hidden);
 
     blink_animator_.set_blink_half_period(50);
     blink_animator_.set_blink_count_max(40);
     blink_animator_.start();
+    for ( auto& lance : lance_ ) {
+        lance.despawn();
+    }
 }
 
 void Lancer::update_movement() {
@@ -103,7 +110,16 @@ void Lancer::update_movement() {
         const int16_t DX_THRES = 16*4;
         const int16_t DY_THRES = 16*1;
 
+        if ( !fight_state_ ) {
+            action_ = ActionState::Wait;
+        }
+
         switch ( action_ ) {
+        case ActionState::Wait:
+            if ( fight_state_ ) {
+                action_ = ActionState::Walking;
+            }
+            break;
         case ActionState::Walking:
             if ( MGC_ABS(dx) < DX_THRES ) {
                 action_ = ActionState::ReadyToThrow;
@@ -144,6 +160,9 @@ void Lancer::update_movement() {
         }
 
         switch ( action_ ) {
+        case ActionState::Wait:
+            anim_state_ = LancerAnimState::Stand;
+            break;
         case ActionState::Walking: {
                 auto pos = this->precise_position();
                 uint32_t count = sound_.update_bgm_param_count();
@@ -365,6 +384,12 @@ void Lancer::spawn_lance(
     default:
         break;
     }
+}
+void Lancer::set_enabled_hitbox_body(bool enabled) {
+    // body
+    auto& hitboxes = this->mut_hitboxes();
+    auto& hitbox_body = at(hitboxes, EnemyHitboxIndex::Body);
+    hitbox_body.set_enabled(enabled);
 }
 
 }// namespace enemy

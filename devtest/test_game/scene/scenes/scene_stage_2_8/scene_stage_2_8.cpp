@@ -36,14 +36,10 @@ void Scene_Stage2_8::init() {
         );
     }
 
-    set_background_music(MML_BGM_5_BOSS);
+    scx_.sound.stop_background_music();
 
     stage_.setup(stage::StageId::Stage2_8);
     stage_.set_position({0, 0});
-    stage_.set_water_enabled(true);
-    auto water_pos = stage_.water_position();
-    water_pos.y += 5;
-    stage_.set_water_position(water_pos);
 
     camera_.set_target(scx_.player);
     camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(67), MGC_CELL2PIXEL(2));

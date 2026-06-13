@@ -9,7 +9,7 @@
 namespace app {
 namespace enemy {
 
-constexpr int32_t LancerMaxHP = 30;
+constexpr int32_t LancerMaxHP = 1;
 
 struct Lancer: Enemy {
 
@@ -51,16 +51,21 @@ struct Lancer: Enemy {
         const mgc::collision::MapPushbackInfo& info
     ) override;
 
+    void set_enabled_hitbox_body(bool enabled);
+    void fight() { fight_state_ = true; }
+    void wait() { fight_state_ = false; }
+
     virtual ArrayViewer<attack::Attack*> weapons() { return {weapons_.data(), weapons_.size()}; }
 
 private:
     enum class ActionState {
+        Wait,
         Walking,
         ReadyToThrow,
         Launch,
         Throwing,
         Thrown
-    } action_ = ActionState::Walking;
+    } action_ = ActionState::Wait;
     const mgc::features::HasPosition<mgc::math::Vec2i>& target_pos_;
     SoundControllerT& sound_;
     AnimControllerT anim_;
@@ -78,6 +83,7 @@ private:
             attack::AttackLance& lance,
             attack::AttackLanceType type
     );
+    bool fight_state_ = false;
 };
 
 }// namespace enemy

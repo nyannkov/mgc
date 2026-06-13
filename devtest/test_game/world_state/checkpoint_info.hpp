@@ -13,6 +13,7 @@ enum class Checkpoint : uint32_t {
     Shop_FirstTalk,
     WonTheStage1Boss,
     Puzzle1_Solved,
+    WonTheStage2Boss,
 };
 
 struct CheckpointInfo {

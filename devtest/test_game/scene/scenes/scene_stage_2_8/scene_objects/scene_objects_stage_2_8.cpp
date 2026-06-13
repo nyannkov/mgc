@@ -27,10 +27,6 @@ void SceneObjects_Stage2_8::init() {
 //        TalkflowEffectType::Mute
 //    });
 
-    lancer_.spawn({MGC_CELL2PIXEL(7), MGC_CELL2PIXEL(11)}, true);
-
-    button_.spawn({MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(1)}, true);
-    button_.set_pushed_state(false);
 }
 
 } // namespace app

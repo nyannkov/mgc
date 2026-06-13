@@ -445,20 +445,30 @@ void Player::update_anim_attacking() {
 
     anim_.set_loop(false);
 
-    //TODO
-    switch ( equipment_info_.weapon.equipped_id() ) {
+
+    attack::AttackPlayerType next_type = current_attack_type_;
+    auto weapon_id = equipment_info_.weapon.equipped_id();
+
+    switch ( weapon_id ) {
     case static_cast<uint32_t>(WeaponId::Claw):
-        current_attack_type_ = attack::AttackPlayerType::Scratch;
+        next_type = attack::AttackPlayerType::Scratch;
         break;
     case static_cast<uint32_t>(WeaponId::Boomerang):
-        current_attack_type_ = attack::AttackPlayerType::Boomerang;
+        next_type = attack::AttackPlayerType::Boomerang;
         break;
     case static_cast<uint32_t>(WeaponId::Yoyo):
-        current_attack_type_ = attack::AttackPlayerType::Yoyo;
+        next_type = attack::AttackPlayerType::Yoyo;
         anim_.set_loop(true);
         break;
     default:
         break;
+    }
+
+    if ( current_attack_type_ != next_type ) {
+        current_attack_type_ = next_type;
+        if ( attack_state_ == AttackState::InProgress ) {
+            attack_state_ = AttackState::Stop;
+        }
     }
 
     if ( attack_state_ == AttackState::Start ) {
@@ -632,16 +642,18 @@ void Player::on_attack_hit(
     const attack::Attack& attack,
     const mgc::collision::BoxCollisionInfo& info
 ) {
-    if ( attack.owner_type() == attack::AttackOwner::Enemy ) {
-        size_t attack_hitbox_index = info.other_hitbox_index;
-        if ( attack.apply_damage_to(*this, attack_hitbox_index) > 0 ) {
-            if ( this->hp() > 0 ) {
-                sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
-                is_invulnerable_ = true;
-                blink_animator_.set_blink_half_period(50);
-                blink_animator_.set_blink_count_max(40);
-                blink_animator_.set_end_state(mgc::utils::BlinkEndState::Visible);
-                blink_animator_.start();
+    if ( !is_invulnerable_ && !this->is_game_over() ) {
+        if ( attack.owner_type() == attack::AttackOwner::Enemy ) {
+            size_t attack_hitbox_index = info.other_hitbox_index;
+            if ( attack.apply_damage_to(*this, attack_hitbox_index) > 0 ) {
+                if ( this->hp() > 0 ) {
+                    sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
+                    is_invulnerable_ = true;
+                    blink_animator_.set_blink_half_period(50);
+                    blink_animator_.set_blink_count_max(40);
+                    blink_animator_.set_end_state(mgc::utils::BlinkEndState::Visible);
+                    blink_animator_.start();
+                }
             }
         }
     }

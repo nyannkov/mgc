@@ -1,5 +1,5 @@
-#ifndef MGC_EVENT_STAGE_2_8_HPP
-#define MGC_EVENT_STAGE_2_8_HPP
+#ifndef MGC_EVENT_STAGE_2_8_APPEAR_ENEMY_HPP
+#define MGC_EVENT_STAGE_2_8_APPEAR_ENEMY_HPP
 
 #include "mgc_cpp/mgc.hpp"
 #include "app_common.hpp"
@@ -10,9 +10,9 @@
 
 namespace app {
 
-struct Event_Stage2_8 : event::Event {
+struct Event_Stage2_8_AppearEnemy : event::Event {
 
-    Event_Stage2_8(
+    Event_Stage2_8_AppearEnemy(
         SceneContext& scx,
         SceneObjects_Stage2_8& objs
     );
@@ -28,18 +28,17 @@ private:
     CheckpointInfo& cp_info_;
     SceneObjects_Stage2_8& objs_;
     StopwatchT sw_;
-    uint32_t counter_ = 0;
-    uint32_t button_pos_case_ = 0;
+    Player& player_;
     enum class EventDetail {
-        NotStarted,
-        StartToDischarge,
-        Discharging,
-        Charging,
-        Discharged
-    } detail_ = EventDetail::NotStarted;
+        Idle,
+        Ready,
+        Steady,
+        Fight,
+        Victory
+    } detail_ = EventDetail::Idle;
 };
 
 }// namespace app
 
-#endif/*MGC_EVENT_STAGE_2_8_HPP*/
+#endif/*MGC_EVENT_STAGE_2_8_APPEAR_ENEMY_HPP*/
 

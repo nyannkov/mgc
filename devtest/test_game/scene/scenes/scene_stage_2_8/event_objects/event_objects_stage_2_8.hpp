@@ -2,10 +2,8 @@
 #define MGC_EVENTS_OBJECTS_STAGE_2_8_HPP
 
 #include "scene/interface/ievent_objects.hpp"
-#include "entity/event/warp/warp.hpp"
 #include "event_stage_2_8.hpp"
-#include "entity/event/warp/warp.hpp"
-#include "entity/event/teleport/teleport.hpp"
+#include "event_stage_2_8_appear_enemy.hpp"
 
 namespace app {
 
@@ -14,14 +12,13 @@ struct EventObjects_Stage2_8 : IEventObjects {
     EventObjects_Stage2_8(SceneContext& scx, SceneObjects_Stage2_8& objs)
         : cp_info_(scx.world_state.checkpoint_info),
           event_1_(scx, objs),
-          events_ { &event_1_ } {
+          event_2_(scx, objs),
+          events_ { &event_1_, &event_2_ } {
     }
     
     void init() override {
-//        event_1_.spawn();
-//        warp_.spawn();
-//        warp_.set_destination(SceneId::Shop);
-//        teleport_.spawn();
+        event_1_.spawn();
+        event_2_.spawn();
     }
 
     ArrayViewer<event::Event*> events() override {
@@ -39,7 +36,8 @@ struct EventObjects_Stage2_8 : IEventObjects {
 private:
     CheckpointInfo& cp_info_;
     Event_Stage2_8 event_1_;
-    std::array<event::Event*, 1> events_;
+    Event_Stage2_8_AppearEnemy event_2_;
+    std::array<event::Event*, 2> events_;
 };
 
 }// namespace app
