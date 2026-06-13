@@ -9,7 +9,7 @@
 namespace app {
 namespace enemy {
 
-constexpr int32_t LancerMaxHP = 1;
+constexpr int32_t LancerMaxHP = 30;
 
 struct Lancer: Enemy {
 
