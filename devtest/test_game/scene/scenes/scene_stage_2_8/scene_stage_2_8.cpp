@@ -24,14 +24,19 @@ Scene_Stage2_8::Scene_Stage2_8(GameContext& ctx)
 
 void Scene_Stage2_8::init() {
     
-    if ( id_prev() == SceneId::Stage2_6 ) {
+    if ( id_prev() == SceneId::Stage2_7 ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(11)},
+            PlayerAnimState::StandRight
+        );
+    } else if ( id_prev() == SceneId::GameOver ) {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(11)},
             PlayerAnimState::StandRight
         );
     } else {
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(11)},
+            {MGC_CELL2PIXEL(52), MGC_CELL2PIXEL(7)},
             PlayerAnimState::StandRight
         );
     }

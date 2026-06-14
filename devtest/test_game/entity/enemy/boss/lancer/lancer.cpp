@@ -74,7 +74,7 @@ void Lancer::spawn(const mgc::math::Vec2i& pos, bool is_right) {
     spawn_lance(pos, lance_[0], attack::AttackLanceType::Hold);
 
     action_ = ActionState::Wait;
-    fight_state_ = false;
+    fight_state_ = FightState::Wait;
 
     sw_.restart();
 }
@@ -85,7 +85,7 @@ void Lancer::despawn() {
     for ( auto& h : hitboxes ) { h.set_enabled(false); }
 
     action_ = ActionState::Wait;
-    fight_state_ = false;
+    fight_state_ = FightState::Wait;
     anim_state_ = LancerAnimState::SeeYouNext;
     this->set_enemy_state(EnemyState::Despawning);
     blink_animator_.set_end_state(mgc::utils::BlinkEndState::Hidden);
@@ -110,14 +110,23 @@ void Lancer::update_movement() {
         const int16_t DX_THRES = 16*4;
         const int16_t DY_THRES = 16*1;
 
-        if ( !fight_state_ ) {
+        if ( fight_state_ == FightState::Wait ) {
             action_ = ActionState::Wait;
-        }
+        } else if ( fight_state_ == FightState::Victory ) {
+            action_ = ActionState::Victory;
+        } else { }
 
         switch ( action_ ) {
         case ActionState::Wait:
-            if ( fight_state_ ) {
+            if ( fight_state_ == FightState::Fight ) {
                 action_ = ActionState::Walking;
+            }
+            break;
+        case ActionState::Victory:
+            if ( anim_state_ != LancerAnimState::SeeYouNext ) {
+                for ( auto& lance : lance_ ) {
+                    lance.despawn();
+                }
             }
             break;
         case ActionState::Walking:
@@ -162,6 +171,9 @@ void Lancer::update_movement() {
         switch ( action_ ) {
         case ActionState::Wait:
             anim_state_ = LancerAnimState::Stand;
+            break;
+        case ActionState::Victory:
+            anim_state_ = LancerAnimState::SeeYouNext;
             break;
         case ActionState::Walking: {
                 auto pos = this->precise_position();

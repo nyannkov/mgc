@@ -103,7 +103,7 @@ void Event_Stage2_8_AppearEnemy::update() {
         }
 
         if ( player_.is_game_over() ) {
-            //objs_.lancer().wait();
+            objs_.lancer().won();
         }
 
         break;

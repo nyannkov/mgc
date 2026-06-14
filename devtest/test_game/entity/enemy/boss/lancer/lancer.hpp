@@ -52,14 +52,16 @@ struct Lancer: Enemy {
     ) override;
 
     void set_enabled_hitbox_body(bool enabled);
-    void fight() { fight_state_ = true; }
-    void wait() { fight_state_ = false; }
+    void fight() { fight_state_ = FightState::Fight; }
+    void wait() { fight_state_ = FightState::Wait; }
+    void won() { fight_state_ = FightState::Victory; }
 
     virtual ArrayViewer<attack::Attack*> weapons() { return {weapons_.data(), weapons_.size()}; }
 
 private:
     enum class ActionState {
         Wait,
+        Victory,
         Walking,
         ReadyToThrow,
         Launch,
@@ -83,7 +85,11 @@ private:
             attack::AttackLance& lance,
             attack::AttackLanceType type
     );
-    bool fight_state_ = false;
+    enum class FightState {
+        Wait,
+        Fight,
+        Victory
+    } fight_state_ = FightState::Wait;
 };
 
 }// namespace enemy

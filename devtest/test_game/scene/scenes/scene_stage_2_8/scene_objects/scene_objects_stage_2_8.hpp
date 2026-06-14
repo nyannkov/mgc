@@ -40,7 +40,8 @@ struct SceneObjects_Stage2_8 : ISceneObjects {
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
           button_(prop::ButtonType::Type3),
-          props_ { &gate_1_, &gate_2_, &button_}
+          signboard_(scx.gamepad),
+          props_ { &gate_1_, &gate_2_, &button_, &signboard_ }
         { }
 
     void init();
@@ -104,9 +105,9 @@ private:
     prop::Gate gate_1_;
     prop::Gate gate_2_;
     prop::Button button_;
-//    prop::Signboard signboard_;
+    prop::Signboard signboard_;
 //    std::array<prop::Prop*, 3> props_;
-    std::array<prop::Prop*, 3> props_;
+    std::array<prop::Prop*, 4> props_;
 };
 
 } // namespace app

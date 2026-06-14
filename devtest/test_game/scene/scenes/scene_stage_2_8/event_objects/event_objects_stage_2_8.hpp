@@ -18,7 +18,9 @@ struct EventObjects_Stage2_8 : IEventObjects {
     
     void init() override {
         event_1_.spawn();
-        event_2_.spawn();
+        if ( !cp_info_.has_reached(Checkpoint::WonTheStage2Boss) ) {
+            event_2_.spawn();
+        }
     }
 
     ArrayViewer<event::Event*> events() override {
