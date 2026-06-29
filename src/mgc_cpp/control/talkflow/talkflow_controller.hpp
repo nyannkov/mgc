@@ -192,6 +192,7 @@ private:
             on_proc_message_wrapper,
             on_proc_choice_wrapper,
             on_decision_wrapper,
+            on_select_wrapper,
             on_flow_end_wrapper
         };
         talkflow_set_callbacks(&talkflow_, &callbacks_);
@@ -219,6 +220,10 @@ private:
 
     static bool on_decision_wrapper(mgc_talkflow_t *talkflow, mgc_node_idx_t tag, void *context) {
         return static_cast<TalkflowController<SelectboxT, DialogueboxT>*>(context)->on_decision(talkflow, tag);
+    }
+
+    static int32_t on_select_wrapper(mgc_talkflow_t *talkflow, mgc_node_idx_t tag, void *context) {
+        return static_cast<TalkflowController<SelectboxT, DialogueboxT>*>(context)->on_select(talkflow, tag);
     }
 
     static void on_flow_end_wrapper(mgc_talkflow_t *talkflow, mgc_node_idx_t tag, const mgc_talknode_t *node, void *context) {
@@ -310,6 +315,16 @@ private:
             if ( effects_ ) {
                 effects_->play_select_move_sound(tag);
             }
+        } else if ( active_button_->just_released(mgc::platform::input::Key::Cancel) ) {
+            for ( size_t i = 0; i < choice->item_count; i++ ) {
+                if ( choice->items[i].is_cancel_target ) {
+                    selectbox_.set_selected_index(static_cast<int32_t>(i));
+                    if ( effects_ ) {
+                        effects_->play_select_move_sound(tag);
+                    }
+                    break;
+                }
+            }
         } else if ( active_button_->just_released(mgc::platform::input::Key::Enter) ) {
             int32_t value = talkscript_get_item_value(choice, selectbox_.selected_index());
             if ( listener_ ) {
@@ -333,6 +348,14 @@ private:
             return false;
         }
         return listener_->on_decision(tag);
+    }
+
+    int32_t on_select(mgc_talkflow_t *talkflow, mgc_node_idx_t tag) {
+        (void)talkflow;
+        if ( !listener_ ) {
+            return 0;
+        }
+        return listener_->on_select(tag);
     }
 
     void on_flow_end(mgc_talkflow_t *talkflow, mgc_node_idx_t tag, const mgc_talknode_t *node) {

@@ -24,28 +24,25 @@ Scene_Stage1_4::Scene_Stage1_4(GameContext& ctx)
 
 void Scene_Stage1_4::init() {
     
-    switch (id_prev()) {
-    case SceneId::GameOver:// fall-through
-    case SceneId::Stage1_3:
+    if ( id_prev() == SceneId::Shop ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(21), MGC_CELL2PIXEL(8)},
+            PlayerAnimState::StandRight
+        );
+    } else {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(28), MGC_CELL2PIXEL(30)},
             PlayerAnimState::StandLeft
         );
-        break;
-    default:
-        scx_.player.reset_state_for_placement(
-//            {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(18)},
-            {MGC_CELL2PIXEL(17), MGC_CELL2PIXEL(11)},
-            PlayerAnimState::StandRight
-        );
-        break;
     }
+
+    set_background_music(MML_BGM_3_STAGE1);
 
     stage_.setup(stage::StageId::Stage1_4);
     stage_.set_position({0, 0});
 
     camera_.set_target(scx_.player);
-    camera_.set_x_follow_setting(MGC_CELL2PIXEL(5), MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(1));
+    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(24), MGC_CELL2PIXEL(1));
     camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(3));
     camera_.set_x_follow_enabled(true);
     camera_.set_y_follow_enabled(true);

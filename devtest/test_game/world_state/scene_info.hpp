@@ -9,9 +9,10 @@ struct SceneInfo {
     // Scene
     void set_prev_scene_id(SceneId id) { prev_scene_id_ = id; }
     SceneId prev_scene_id() const { return prev_scene_id_; }
-    
+
 private:
     SceneId prev_scene_id_ = SceneId::Title;
+    uint32_t flags_ = 0;
 };
 
 }// namespace app

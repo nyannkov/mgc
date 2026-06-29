@@ -22,7 +22,7 @@ SkyFish::SkyFish(
       blink_animator_.set_target(*this);
       set_hp(SkyFishMaxHP);
       set_full_hp(SkyFishMaxHP);
-      set_gold(10);
+      set_money(10);
 }
 
 void SkyFish::spawn(const mgc::math::Vec2i& pos, bool is_right) {
@@ -189,9 +189,9 @@ int32_t SkyFish::apply_damage_to(
         amount = 1;
         player.receive_damage(amount);
         if ( this->is_direction_right() ) {
-            player.receive_impact({12.0f, 0.0f});
+            player.receive_impact({3.0f, 0.0f});
         } else {
-            player.receive_impact({-12.0f, 0.0f});
+            player.receive_impact({-3.0f, 0.0f});
         }
     }
     return amount;
@@ -226,7 +226,7 @@ void SkyFish::on_attack_hit(
 
         attack.apply_damage_to(*this, attack_hitbox_index);
 
-        sound_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 

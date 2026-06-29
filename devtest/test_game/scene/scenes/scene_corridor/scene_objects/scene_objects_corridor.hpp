@@ -79,7 +79,7 @@ struct SceneObjects_Corridor : ISceneObjects {
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
 
-    virtual void draw_after (
+    void draw_after (
         FramebufferT& fb,
         mgc::math::Vec2i& cam_pos
     ) override { 

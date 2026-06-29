@@ -3,14 +3,10 @@
 
 #include "mgc_cpp/mgc.hpp"
 #include "app_common.hpp"
+#include "entity/player/player_hitbox_index.hpp"
 
 namespace app {
 namespace attack {
-
-enum class AttackType {
-    Scratch,
-    Boomerang,
-};
 
 enum class AttackLifeCycle {
     Despawned,
@@ -26,7 +22,9 @@ enum class AttackOwner {
 
 enum class AttackDirection {
     Right,
-    Left
+    Left,
+    UpRight,
+    UpLeft
 };
 
 enum class AttackHitboxIndex : size_t {
@@ -38,37 +36,54 @@ struct Attack : mgc::entities::ActorImpl<
         Attack, static_cast<size_t>(AttackHitboxIndex::Count)
     > {
 
-    Attack(
-        const FrameTimerT& frame_timer, 
-        const GamepadT& gamepad,
-        SoundControllerT& sound
-    );
-    ~Attack() = default;
+    virtual ~Attack() = default;
 
-    void spawn(
+    virtual void spawn(
         const mgc::math::Vec2i& pos,
-        AttackType type,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn();
-    void update_movement();
-    void update_animation();
+        AttackOwner owner
+    ) = 0;
+    virtual void despawn() = 0;
+    virtual void update_movement() = 0;
+    virtual void update_animation() = 0;
 
-    int32_t apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_index) const;
-    int32_t apply_damage_to(Player& player, size_t attack_hitbox_index) const;
+    virtual int32_t apply_damage_to(
+        enemy::Enemy& enemy,
+        size_t attack_hitbox_index
+    ) const = 0;
+    virtual int32_t apply_damage_to(
+        Player& player,
+        size_t attack_hitbox_index
+    ) const = 0;
 
     AttackLifeCycle lifecycle() const { return lifecycle_; }
     AttackOwner owner_type() const { return owner_type_; }
     AttackDirection direction() const { return direction_; }
-    AttackType attack_type() const { return attack_type_; }
     mgc::math::Vec2f velocity() const { return velocity_; }
+
+    virtual void draw_wrap(
+        FramebufferT& fb,
+        mgc::math::Vec2i& cam_pos
+    ) {
+        this->draw(fb, cam_pos);
+    }
 
     template <typename Other>
     void on_hit_box_to_box_impl(
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
-    ) { }
+    ) {
+        if constexpr (std::is_same_v<Other, Player>) {
+            if ( info.other_hitbox_index == 
+                static_cast<size_t>(PlayerHitboxIndex::Body) 
+            ) {
+                on_player_hit(other, info);
+            }
+        } else if constexpr (std::is_same_v<Other, enemy::Enemy>) {
+
+            on_enemy_hit(other, info);
+
+        } else { }
+    }
 
     template <typename ObjT, typename MapT>
     void handle_map_pushback_result_impl(
@@ -83,43 +98,25 @@ struct Attack : mgc::entities::ActorImpl<
             const View& others
     ) { }   
 
-private:
-    AnimControllerT anim_;
-    const GamepadT& gamepad_;
-    SoundControllerT& sound_;
-    mgc::math::Vec2f velocity_;
-    mgc::math::Vec2i pos_orig_;
-
-    AttackOwner owner_type_ = AttackOwner::Player;
-    AttackType attack_type_ = AttackType::Scratch;
-    AttackDirection direction_ = AttackDirection::Right;
-    AttackLifeCycle lifecycle_ = AttackLifeCycle::Despawned;
-
+protected:
     void set_direction(AttackDirection dir) { direction_ = dir; }
     void set_lifecycle(AttackLifeCycle lifecycle) { lifecycle_ = lifecycle; }
     void set_owner_type(AttackOwner owner) { owner_type_ = owner; }
-    void set_attack_type(AttackType type) { attack_type_ = type; }
     void set_velocity(mgc::math::Vec2f v) { velocity_ = v; }
+    virtual void on_enemy_hit(
+        const enemy::Enemy& enemy,
+        const mgc::collision::BoxCollisionInfo& info
+    ) { }
+    virtual void on_player_hit(
+        const Player& player,
+        const mgc::collision::BoxCollisionInfo& info
+    ) { }
 
-
-    void spawn_scratch(
-        const mgc::math::Vec2i& pos,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn_scratch();
-    void update_animation_scratch();
-    void update_movement_scratch();
-
-    void spawn_boomerang(
-        const mgc::math::Vec2i& pos,
-        AttackOwner owner,
-        AttackDirection dir
-    );
-    void despawn_boomerang();
-    void update_animation_boomerang();
-    void update_movement_boomerang();
-
+private:
+    mgc::math::Vec2f velocity_;
+    AttackOwner owner_type_ = AttackOwner::Player;
+    AttackDirection direction_ = AttackDirection::Right;
+    AttackLifeCycle lifecycle_ = AttackLifeCycle::Despawned;
 };
 
 }// namespace attack

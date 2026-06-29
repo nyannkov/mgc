@@ -31,6 +31,9 @@ struct ISceneObjects {
         }
         for ( auto* enemy : enemies() ) {
             enemy->draw(fb, cam_pos);
+            for ( auto* weapon : enemy->weapons() ) {
+                weapon->draw(fb, cam_pos);
+            }
         }
         for ( auto* item : items() ) {
             item->draw(fb, cam_pos);
@@ -41,6 +44,11 @@ struct ISceneObjects {
     }
 
     virtual void draw_after(
+        FramebufferT& fb,
+        mgc::math::Vec2i& cam_pos
+    ) { }
+
+    virtual void draw_before(
         FramebufferT& fb,
         mgc::math::Vec2i& cam_pos
     ) { }

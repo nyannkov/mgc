@@ -95,17 +95,30 @@ void update_movement(SceneContext& scx) {
                 *enemy,
                 static_cast<size_t>(enemy::EnemyHitboxIndex::Body)
             );
+            scx.stage->detect_hit(
+                *enemy,
+                static_cast<size_t>(enemy::EnemyHitboxIndex::Head)
+            );
+
             ColBox2BoxT::detect_pair(*enemy, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+
             ColBox2BoxT::detect_pair(*enemy, scx.player.attack());
+            for ( auto* weapon: enemy->weapons() ) {
+                ColBox2BoxT::detect_pair(scx.player, *weapon);
+            }
+
             if ( ( enemy->enemy_state() == enemy::EnemyState::Active ) &&
                  ( enemy->hp() <= 0 )
             ) {
                 enemy->despawn();
-                scx.player.add_gold(enemy->gold());
+                scx.player.add_money(enemy->money());
             }
         }
+        ColBox2BoxT::detect_pair(scx.player, scx.player.attack());
+
         for ( auto* prop : scx.objs->props() ) {
             ColBox2BoxT::detect_pair(*prop, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
+            ColBox2BoxT::detect_pair(*prop, scx.player.attack());
         }
         for ( auto* civil : scx.objs->civils() ) {
             ColBox2BoxT::detect_pair(*civil, scx.player, static_cast<size_t>(PlayerHitboxIndex::Body));
@@ -122,6 +135,10 @@ void update_movement(SceneContext& scx) {
         scx.stage->detect_hit(
             scx.player,
             static_cast<size_t>(PlayerHitboxIndex::Body)
+        );
+        scx.stage->detect_hit(
+            scx.player,
+            static_cast<size_t>(PlayerHitboxIndex::Head)
         );
     }
 
@@ -197,8 +214,13 @@ void update(
     bool is_control_locked = false;
 
     is_control_locked = scene::event_update(scx.evts);
+    if ( is_control_locked ) {
+        scx.player.set_input_enabled(false);
+    } else {
+        scx.player.set_input_enabled(true);
+    }
 
-    if ( !( talkflow.in_progress() || is_control_locked ) ) {
+    if ( !talkflow.in_progress() ) {
 
         update_movement(scx);
 
@@ -297,6 +319,10 @@ void draw(
         pos = camera->follow_position();
     }
 
+    if ( scx.objs ) {
+        scx.objs->draw_before(fb, pos);
+    }
+
     if ( scx.stage ) {
         scx.stage->draw(fb, pos);
     }
@@ -306,10 +332,14 @@ void draw(
     // TODO event
 
     scx.player.draw(fb, pos);
-    scx.player.attack().draw(fb, pos);
+    scx.player.attack().draw_wrap(fb, pos);
 
     if ( scx.objs ) {
         scx.objs->draw_after(fb, pos);
+    }
+
+    if ( scx.stage ) {
+        scx.stage->draw_after(fb, pos);
     }
 
     if ( scx.evts ) {

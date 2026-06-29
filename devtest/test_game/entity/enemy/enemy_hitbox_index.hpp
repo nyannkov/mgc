@@ -8,6 +8,8 @@ enum class EnemyHitboxIndex : size_t {
     Body = 0,
     ViewLeft,
     ViewRight,
+    Core,
+    Head,
     Count
 };
 

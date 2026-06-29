@@ -34,7 +34,7 @@ void Scene_Title::init() {
 
     status_display_request_.request_hide();
 
-    scx_.sound.stop_background_music(0.0);
+    scx_.sound.stop_background_music();
 
     scx_.world_state.checkpoint_info.set_checkpoint(Checkpoint::Initial);
 
@@ -73,7 +73,7 @@ void Scene_Title::update_select() {
     } else if ( scx_.gamepad.just_pressed(Key::Enter) ) {
         switch (selectbox_menu_.selected_index()) {
         case SELECT_INDEX_START:
-            scx_.sound.play_sound_effect(MML_SE_0_MEOW, 0.0);
+            scx_.sound.play_sound_effect(MML_SE_0_MEOW);
             selected_state_ = SelectedState::Start;
             break;
         case SELECT_INDEX_PASSWORD:

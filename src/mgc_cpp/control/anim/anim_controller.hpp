@@ -73,6 +73,10 @@ struct AnimController : mgc::features::Resettable {
         return animctrl_get_current_tile_index(&animctrl_);
     }
 
+    size_t current_frame_index() const {
+        return animctrl_get_current_frame_index(&animctrl_);
+    }
+
     template <typename SpriteT>
     void set_current_frame(SpriteT& sprite) {
         static_assert(std::is_base_of<mgc::parts::interfaces::mixins::WithTileset<SpriteT>, SpriteT>::value,

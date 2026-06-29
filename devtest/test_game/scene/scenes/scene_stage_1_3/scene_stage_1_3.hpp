@@ -8,6 +8,7 @@
 #include "entity/player/player.hpp"
 #include "entity/stage/stage.hpp"
 #include "scene_objects/scene_objects_stage_1_3.hpp"
+#include "event_objects/event_objects_stage_1_3.hpp"
 
 namespace app {
 
@@ -22,7 +23,7 @@ private:
     CameraT camera_;
     stage::Stage stage_;
     SceneObjects_Stage1_3 scene_objects_;
-    ScreenFader screen_fader_;
+    EventObjects_Stage1_3 event_objects_;
 };
 
 } // namespace app

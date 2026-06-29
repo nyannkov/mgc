@@ -4,6 +4,7 @@
 #include "mgc_cpp/mgc.hpp"
 #include "enemy_state.hpp"
 #include "entity/stage/layer/layer_block.hpp"
+#include "entity/stage/layer/layer_water.hpp"
 #include "app_common.hpp"
 #include "entity/player/player_hitbox_index.hpp"
 #include "enemy_hitbox_index.hpp"
@@ -26,10 +27,12 @@ struct Enemy : mgc::entities::ActorImpl<
     virtual void receive_damage(int32_t amount) = 0;
     virtual void receive_impact(mgc::math::Vec2f delta) = 0;
 
+    virtual ArrayViewer<attack::Attack*> weapons() { return {}; }
+
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
     EnemyState enemy_state() const { return enemy_state_; }
-    int32_t gold() const { return gold_amount_; }
+    int32_t money() const { return money_amount_; }
 
     template <typename Other>
     void on_hit_box_to_box_impl(
@@ -37,17 +40,19 @@ struct Enemy : mgc::entities::ActorImpl<
             const mgc::collision::BoxCollisionInfo& info
     ) { 
         if ( enemy_state_ == EnemyState::Active ) {
-            if constexpr (std::is_same_v<Other, Player>) {
+            using CleanedOther = std::decay_t<Other>;
+
+            if constexpr (std::is_same_v<CleanedOther, Player>) {
                 if ( info.other_hitbox_index == 
                     static_cast<size_t>(PlayerHitboxIndex::Body) 
                 ) {
                     on_player_hit(other, info);
                 }
-            } else if constexpr (std::is_same_v<Other, attack::Attack>) {
+            } else if constexpr (std::is_base_of_v<attack::Attack, CleanedOther>) {
                 
                 on_attack_hit(other, info);
 
-            } else if constexpr (std::is_same_v<Other, Enemy>) {
+            } else if constexpr (std::is_base_of_v<CleanedOther, Enemy>) {
 
                 on_enemy_hit(other, info);
 
@@ -63,6 +68,8 @@ struct Enemy : mgc::entities::ActorImpl<
     ) { 
         if constexpr (std::is_same_v<MapT, stage::LayerBlock>) {
             on_collision_resolved(map, info);
+        } else if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+            on_collision_resolved(map, info);
         }
     }
 
@@ -70,7 +77,7 @@ protected:
     void set_enemy_state(EnemyState state) { enemy_state_ = state; }
     void set_hp(int32_t hp) { hp_ = hp; }
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };
-    void set_gold(int32_t amount) { gold_amount_ = amount; }
+    void set_money(int32_t amount) { money_amount_ = amount; }
 
     virtual void on_player_hit(
         const Player& player,
@@ -92,11 +99,16 @@ protected:
         const mgc::collision::MapPushbackInfo& info
     ) { }
 
+    virtual void on_collision_resolved(
+        const stage::LayerWater& water,
+        const mgc::collision::MapPushbackInfo& info
+    ) { }
+
 private:
     EnemyState enemy_state_ = EnemyState::Inactive;
     int32_t hp_ = 0;
     int32_t full_hp_ = 0;
-    int32_t gold_amount_ = 0;
+    int32_t money_amount_ = 0;
 };
 
 }// namespace enemy

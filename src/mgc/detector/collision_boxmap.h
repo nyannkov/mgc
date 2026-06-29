@@ -42,7 +42,7 @@ void collision_boxmap_init(
     mgc_world_t map_y 
 );
 
-void collision_boxmap_calc_map_range(
+bool collision_boxmap_calc_map_range(
     const mgc_collision_boxmap_t *boxmap,
     mgc_map_range_t *out
 );

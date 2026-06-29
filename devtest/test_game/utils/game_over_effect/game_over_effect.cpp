@@ -10,7 +10,7 @@ void GameOverEffect::proc(mgc::graphics::Framebuffer& fb) {
         if ( player_.is_game_over() ) {
             state_ = GameOverState::MusicPlaying;
             sound_controller_.play_background_music(
-                MML_BGM_1_THE_FLEA_WALTZ_END, 0.0
+                MML_BGM_1_THE_FLEA_WALTZ_END
             );
             sw_.start();
         }

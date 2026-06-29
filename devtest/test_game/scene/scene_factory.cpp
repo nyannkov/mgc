@@ -8,7 +8,20 @@
 #include "scenes/scene_stage_1_2/scene_stage_1_2.hpp"
 #include "scenes/scene_stage_1_3/scene_stage_1_3.hpp"
 #include "scenes/scene_stage_1_4/scene_stage_1_4.hpp"
+#include "scenes/scene_stage_1_5/scene_stage_1_5.hpp"
+#include "scenes/scene_stage_1_6/scene_stage_1_6.hpp"
+#include "scenes/scene_stage_1_7/scene_stage_1_7.hpp"
+#include "scenes/scene_stage_2_1/scene_stage_2_1.hpp"
+#include "scenes/scene_stage_2_2/scene_stage_2_2.hpp"
+#include "scenes/scene_stage_2_3/scene_stage_2_3.hpp"
+#include "scenes/scene_stage_2_4/scene_stage_2_4.hpp"
+#include "scenes/scene_stage_2_5/scene_stage_2_5.hpp"
+#include "scenes/scene_stage_2_6/scene_stage_2_6.hpp"
+#include "scenes/scene_stage_2_7/scene_stage_2_7.hpp"
+#include "scenes/scene_stage_2_8/scene_stage_2_8.hpp"
+#include "scenes/scene_stage_2_9/scene_stage_2_9.hpp"
 #include "scenes/scene_shop/scene_shop.hpp"
+#include "scenes/scene_log_terminal/scene_log_terminal.hpp"
 #include "scenes/scene_game_over/scene_game_over.hpp"
 
 namespace app {
@@ -42,8 +55,47 @@ IScene* SceneFactory::create_scene(SceneId id, GameContext& ctx) {
     case SceneId::Stage1_4:
         pool.create<Scene_Stage1_4>(ctx);
         break;
+    case SceneId::Stage1_5:
+        pool.create<Scene_Stage1_5>(ctx);
+        break;
+    case SceneId::Stage1_6:
+        pool.create<Scene_Stage1_6>(ctx);
+        break;
+    case SceneId::Stage1_7:
+        pool.create<Scene_Stage1_7>(ctx);
+        break;
+    case SceneId::Stage2_1:
+        pool.create<Scene_Stage2_1>(ctx);
+        break;
+    case SceneId::Stage2_2:
+        pool.create<Scene_Stage2_2>(ctx);
+        break;
+    case SceneId::Stage2_3:
+        pool.create<Scene_Stage2_3>(ctx);
+        break;
+    case SceneId::Stage2_4:
+        pool.create<Scene_Stage2_4>(ctx);
+        break;
+    case SceneId::Stage2_5:
+        pool.create<Scene_Stage2_5>(ctx);
+        break;
+    case SceneId::Stage2_6:
+        pool.create<Scene_Stage2_6>(ctx);
+        break;
+    case SceneId::Stage2_7:
+        pool.create<Scene_Stage2_7>(ctx);
+        break;
+    case SceneId::Stage2_8:
+        pool.create<Scene_Stage2_8>(ctx);
+        break;
+    case SceneId::Stage2_9:
+        pool.create<Scene_Stage2_9>(ctx);
+        break;
     case SceneId::Shop:
         pool.create<Scene_Shop>(ctx);
+        break;
+    case SceneId::LogTerminal:
+        pool.create<Scene_LogTerminal>(ctx);
         break;
     case SceneId::GameOver:
         pool.create<Scene_GameOver>(ctx);

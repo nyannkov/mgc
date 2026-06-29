@@ -8,7 +8,7 @@ void SceneBase::load_default_config(TalkflowControllerT& talkflow) {
     talkflow.set_font(k8x12);
     talkflow.set_selectbox_config(
         {
-            {150, 48}, // position
+            {140, 48}, // position
             {48, 30}, // size
             "*", // cursor simbol
             {4, 0}, // cursor offset

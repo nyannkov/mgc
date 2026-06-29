@@ -23,6 +23,7 @@ void talkflow_init(mgc_talkflow_t *talkflow) {
     talkflow->callbacks.on_ui_proc_message = NULL;
     talkflow->callbacks.on_ui_proc_choice = NULL;
     talkflow->callbacks.on_decision = NULL;
+    talkflow->callbacks.on_select = NULL;
     talkflow->callbacks.on_flow_end = NULL;
 }
 
@@ -58,6 +59,7 @@ void talkflow_set_callbacks(
     talkflow->callbacks.on_ui_proc_message = callbacks->on_ui_proc_message;
     talkflow->callbacks.on_ui_proc_choice = callbacks->on_ui_proc_choice;
     talkflow->callbacks.on_decision = callbacks->on_decision;
+    talkflow->callbacks.on_select = callbacks->on_select;
     talkflow->callbacks.on_flow_end = callbacks->on_flow_end;
 }
 
@@ -197,6 +199,8 @@ enum mgc_talkflow_state talkflow_proc(mgc_talkflow_t *talkflow) {
         );
     } else if ( current_node->type == MGC_TALKNODE_TYPE_DECISION ) {
         ui_state = MGC_TALKFLOW_UI_STATE_FINISHED;
+    } else if ( current_node->type == MGC_TALKNODE_TYPE_SELECT ) {
+        ui_state = MGC_TALKFLOW_UI_STATE_FINISHED;
     } else if ( current_node->type == MGC_TALKNODE_TYPE_END ) {
         ui_state = MGC_TALKFLOW_UI_STATE_FINISHED;
     } else {
@@ -242,6 +246,37 @@ enum mgc_talkflow_state talkflow_proc(mgc_talkflow_t *talkflow) {
                 } else {
                     talkflow->current_node_idx = 
                         current_node->content.decision->next_if_false;
+                }
+                break;
+            case MGC_TALKNODE_TYPE_SELECT:
+                if ( callbacks->on_select != NULL ) {
+                    size_t item_count = current_node->content.select->item_count;
+                    bool found = false;
+                    mgc_node_idx_t next_node = 0;
+
+                    int32_t result = callbacks->on_select(
+                            talkflow,
+                            current_index,
+                            callbacks->context
+                    );
+
+                    for ( size_t i = 0; i < item_count; i++ ) {
+                        if ( result == current_node->content.select->items[i].value ) {
+                            next_node = current_node->content.select->items[i].next;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if ( !found ) {
+                        next_node = current_node->content.select->default_next;
+                    }
+
+                    talkflow->current_node_idx = next_node;
+
+                } else {
+                    talkflow->current_node_idx =
+                        current_node->content.select->default_next;
                 }
                 break;
             case MGC_TALKNODE_TYPE_END:

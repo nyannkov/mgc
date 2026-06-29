@@ -21,10 +21,10 @@ struct Status {
 private:
     const Player& player_;
     int32_t disp_player_hp_;
-    int32_t disp_gold_;
+    int32_t disp_money_;
     mgc::parts::BasicLabel label_life_;
-    mgc::parts::BasicLabel label_gold_;
-    char gold_txt_[32];
+    mgc::parts::BasicLabel label_money_;
+    char money_txt_[32];
 
     std::array<mgc::parts::BasicSprite, 10> hearts_;
     std::array<const mgc::features::CellDrawable*, MAX_CELL_DRAWABLES> cell_drawables_;

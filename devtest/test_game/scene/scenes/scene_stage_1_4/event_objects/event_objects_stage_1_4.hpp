@@ -1,10 +1,10 @@
 #ifndef MGC_EVENTS_OBJECTS_STAGE_1_4_HPP
 #define MGC_EVENTS_OBJECTS_STAGE_1_4_HPP
 
-#include "event_stage_1_4.hpp"
 #include "scene/interface/ievent_objects.hpp"
 #include "scene_objects/scene_objects_corridor.hpp"
 #include "entity/event/warp/warp.hpp"
+#include "entity/event/teleport/teleport.hpp"
 
 namespace app {
 
@@ -12,13 +12,17 @@ struct EventObjects_Stage1_4 : IEventObjects {
 
     EventObjects_Stage1_4(SceneContext& scx, SceneObjects_Stage1_4& objs)
         : cp_info_(scx.world_state.checkpoint_info),
-          event_1_(scx, objs),
           warp_(objs.portal()),
-          events_ { &event_1_, &warp_ } {
+          teleport_(
+            objs.teleporters().data(),
+            objs.teleporters().size(),
+            scx.player
+          ),
+          events_ { &warp_, &teleport_ } {
     }
     
     void init() override {
-        event_1_.spawn();
+        teleport_.spawn();
         warp_.spawn();
         warp_.set_destination(SceneId::Shop);
     }
@@ -37,8 +41,8 @@ struct EventObjects_Stage1_4 : IEventObjects {
 
 private:
     CheckpointInfo& cp_info_;
-    Event_Stage1_4 event_1_;
     Warp warp_;
+    event::Teleport teleport_;
     std::array<event::Event*, 2> events_;
 };
 

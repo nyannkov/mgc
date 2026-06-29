@@ -22,7 +22,7 @@ struct EquipSlot {
     }
 
     void unequip() {
-        equipped_id_ = IdT::None;
+        equipped_id_ = static_cast<uint32_t>(IdT::None);
         equipped_ = false;
     }
 

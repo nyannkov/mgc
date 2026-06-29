@@ -4,13 +4,14 @@ talkscript:
   talknodes:
     tower_front_talk_1:
       - { message: " * 「やあ、きみも観光かい？」", tag: POINT_1 }
-      - { message: " * 「すごいよね、この塔。思っていた以上の高さだよ。」" }
+      - { message: " * 「すごいよね、この塔。」" }
+      - { message: " * 「思っていた以上の高さだよ。」" }
       - { message: " * 「てっぺんがかすんで見えない。」" }
-      - { message: " * 「こんなに高くて大きいのに、まどやトビラがひとつもないなんて、ホント不思議だよね。」" , tag: POINT_2 }
+      - { message: " * 「こんなに高くて大きいのに、窓やトビラがひとつもないなんて、ホント不思議だよね。」" , tag: POINT_2 }
       - { message: " * 「あんなうわさが立つのもわかるね。」" }
       - { message: " * 「あれ？ 知らない？」", tag: POINT_3 }
-      - { message: " * 「実はこの塔、中にすごく恐ろしい奴が眠っているらしいよ。」" }
-      - { message: " * 「うわさだと、そいつが起きそうになると塔にトビラがあらわれるんだって。」", tag: POINT_4 } 
+      - { message: " * 「実はこの塔、中にすごく恐ろしい何かが眠っているらしいよ。」" }
+      - { message: " * 「うわさだと、それが起きそうになると塔にトビラがあらわれるんだって。」", tag: POINT_4 } 
       - { message: " * 「怖い話だけど、なんかちょっとワクワクするよね！」", tag: POINT_5 }
       - end: true
 
@@ -26,11 +27,11 @@ talkscript:
       - { message: " * 「気をつけて！」", end: true }
 
     shop_talk_1:
-      - message: " * 「いらっしゃいませ。はじめてのお客さんかな？」"
+      - message: " * 「いらっしゃいませ。お客さん、初めてかな？」"
       - end: true
 
     shop_talk_1_2:
-      - message: " * 「あら、こんにちは。」"
+      - message: " * 「あら、こんにちは！」"
       - end: true
       
     shop_talk_2:
@@ -39,43 +40,83 @@ talkscript:
       - end: true
 
     shop_talk_3:
-      - { message: "何をいたしましょうか？", auto_next: true }
+      - { message: "何をいたしましょう？", auto_next: true }
       - choice:
           tag: "SELECT_ACTION"
           items:
-            - { item: "買う", next: shop_shopping_1 }
-            - { item: "休む" }
-            - { item: "話す", next: shop_small_talking_1 }
-            - { item: "やめる" }
+            - { item: "買う", next: shop_shopping }
+            - { item: "休む", next: shop_coffee_break_1 }
+            - { item: "話す", next: shop_small_talking }
+            - { item: "やめる", cancel: true }
       - end: true
 
-    shop_shopping_1:
-      - { message: "気になるものがあればおっしゃってください。", auto_next: true }
+    shop_shopping:
+      - { message: "気になるものがあれば、何でもおっしゃってくださいね。", auto_next: true }
+      - select:
+          tag: SELECT_SHOPPING_CONTENT
+          cases:
+            - { tag: CASE_1, value: 0, next: shop_shopping_content_case_1 }
+            - { tag: CASE_2, value: 1, next: shop_shopping_content_case_2 }
+            - { tag: CASE_3, value: 2, next: shop_shopping_content_case_3 }
+          default:
+            next: shop_shopping_content_case_1
+      - end: true
+    
+    shop_shopping_content_case_1:
       - choice:
-          tag: "SELECT_ITEMS"
+          tag: "SHOPPING_CONTENT_CASE_1"
           items:
             - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
             - { item: "ブーメラン", value: 100, tag: BOOMERANG, next: shop_shopping_item_boomerang }
-            - { item: "やめる" }
+            - { item: "やめる", cancel: true }
       - end: true
+
+    shop_shopping_content_case_2:
+      - choice:
+          tag: "SHOPPING_CONTENT_CASE_2"
+          items:
+            - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
+            - { item: "ダイビング機材", value: 3000, tag: DIVING_EQUIPMENT, next: shop_shopping_item_diving_equipment }
+            - { item: "やめる", cancel: true }
+      - end: true
+
+    shop_shopping_content_case_3:
+      - choice:
+          tag: "SHOPPING_CONTENT_CASE_3"
+          items:
+            - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
+            - { item: "ヨーヨー", value: 300, tag: YOYO, next: shop_shopping_item_yoyo }
+            - { item: "やめる", cancel: true }
+      - end: true
+
 
     shop_shopping_item_cookie:
       - message: "チョコチップが入ったクッキーです。"
         next: shop_shopping_check
 
     shop_shopping_item_boomerang:
-      - message: "投げると戻ってきて、面白いですよね。"
+      - message: "投げても戻ってきて、面白いですよね。"
+        next: shop_shopping_check
+
+    shop_shopping_item_yoyo:
+      - message: "昔、楽しそうだなと思って買ったんですけれど．．．"
+      - message: "これ、紐がゴムでできているみたいで、すごく不規則に伸び縮みするんですよ。"
+      - message: "私にはちょっと扱いが難しくて．．．"
+        next: shop_shopping_check
+
+    shop_shopping_item_diving_equipment:
+      - message: "海の中でお魚と一緒に泳いでみませんか？\\nとっても楽しいですよ！"
         next: shop_shopping_check
 
     shop_shopping_check:
-      - message: "%dGです。"
+      - message: "%dGになりますけれど．．．いかがですか？"
         format: true
         auto_next: true
       - choice:
           tag: "SHOPPING_CHECK"
           items:
             - { item: "買う", next: shop_shopping_judge }
-            - { item: "他を見る", next: shop_shopping_1 }
+            - { item: "他を見る", cancel: true, next: shop_shopping }
 
     shop_shopping_judge:
       - decision:
@@ -88,23 +129,40 @@ talkscript:
             false: shop_shopping_not_enough_money
 
     shop_shopping_thanks:
-      - message: "ありがとうございます。買い物を続けますか？"
+      - message: "ありがとうございます！他になにか気になるものはありますか？"
         auto_next: true
       - choice:
           tag: "SHOPPING_IS_CONTINUE"
           items:
-            - { item: "続ける", next: shop_shopping_1 }
-            - { item: "やめる" }
+            - { item: "買う", next: shop_shopping }
+            - { item: "やめる", cancel: true }
       - end: true
         
     shop_shopping_sold_out:
-      - message: "あ、ごめんなさい。売り切れちゃってたみたい。"
-        next: shop_shopping_1
+      - message: "あ、ごめんなさい！売り切れちゃったみたいです。"
+        next: shop_shopping
 
     shop_shopping_not_enough_money:
-      - message: "あら、お金がたりないみたい。"
-        next: shop_shopping_1
+      - message: "あら、お金が少し足りないみたい．．．？"
+        next: shop_shopping
 
+    shop_coffee_break_1:
+      - { message: "コーヒーはお好きですか？" } 
+      - { message: "前に焙煎した豆が余っていまして。", tag: START_COFFEE_BREAK, end: true }
+
+    shop_coffee_break_2:
+      - { message: "元気になった！", tag: END_COFFEE_BREAK, end: true }
+
+    shop_small_talking:
+      - select:
+          tag: SELECT_SMALL_TALKING_CONTENT
+          cases:
+            - { tag: CASE_1, value: 0, next: shop_small_talking_1 }
+            - { tag: CASE_2, value: 1, next: shop_small_talking_2 }
+          default:
+            next: shop_small_talking_1
+      - end: true
+        
     shop_small_talking_1:
       - choice:
           tag: "SHOP_SMALL_TALKING_1"
@@ -113,7 +171,7 @@ talkscript:
             - { item: "ここは？", next: shop_small_talking_1_2 }
 
     shop_small_talking_1_1:
-      - message: "あの入口、最近になって急に現れたんです。不思議ですよね。"
+      - message: "あの入口、最近になって急に現れたんです。\\n不思議ですよね。"
       - message: "あそこをくぐれば、元の場所に戻れるそうですよ。"
       - end: true
 
@@ -121,6 +179,18 @@ talkscript:
       - message: "ここは私の家なんですが・・・"
       - message: "あの入口からお客さんが来てくれるようになったので、この機会にお店をはじめたんです。"
       - message: "実はずっとやってみたかったんですよ、お店屋さん。"
+      - end: true
+
+    shop_small_talking_2:
+      - choice:
+          tag: "SHOP_SMALL_TALKING_2"
+          items:
+            - { item: "商品について", next: shop_small_talking_2_1 }
+
+    shop_small_talking_2_1:
+      - message: "お店の商品、あんまり統一感がないですよね。"
+      - message: "クッキーみたいなお菓子は私がここで手作りしているんですけれど．．．"
+      - message: "それ以外は、もう使わないかなぁ、っていう私物を並べているんです。"
       - end: true
 
     signboard_1:
@@ -134,6 +204,16 @@ talkscript:
     gate_1:
       - { message: "開かない・・・。", end: true }
 
+
+    log_1:
+     - message: "作成した個体は順調に成長している。"
+     - message: "想定よりも早く、飛翔が可能であることを確認した。"
+     - end: true
+
+    found_jewel:
+     - { message: "何か落ちている．．．。" }
+     - { message: "紫色のガラス玉(？)を拾った。", end: true }
+
     password_success:
       - { message: "LOAD COMPLETE!", end: true }
 
@@ -146,7 +226,7 @@ talkscript:
           tag: "CONFIRM_PASSWORD_EXIT"
           items:
             - { item: "はい" , tag: "YES" }
-            - { item: "いいえ", tag: "NO" }
+            - { item: "いいえ", tag: "NO", cancel: true }
       - end: true
 
     game_over:
@@ -155,7 +235,7 @@ talkscript:
           tag: "TRY_AGAIN"
           items:
             - { item: "はい" , tag: "YES", next: game_retry }
-            - { item: "いいえ", tag: "NO", next: game_end }
+            - { item: "いいえ", cancel: true, tag: "NO", next: game_end }
     game_retry:
       - { message: "がんばって！", end: true }
 

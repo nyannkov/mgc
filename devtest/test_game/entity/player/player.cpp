@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "player.hpp"
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
@@ -15,23 +16,8 @@ Player::Player(
 )   : gamepad_(gamepad),
       frame_timer_(frame_timer),
       sound_controller_(sound_controller),
-      attack_(frame_timer, gamepad, sound_controller),
+      attack_(frame_timer, gamepad, sound_controller, *this),
       anim_(frame_timer), 
-      velocity_({0.0f, 0.0f}),
-      force_ex_({0.0f, 0.0f}),
-      anim_state_(PlayerAnimState::StandRight),
-      anim_state_manual_(PlayerAnimState::StandRight),
-      anim_mode_(PlayerAnimMode::Auto),
-      player_state_(PlayerState::Normal),
-      is_right_(true),
-      is_grounded_(true),
-      is_invulnerable_(false),
-      hit_ladder_(false),
-      hit_one_way_block_(false),
-      one_way_block_falling_(false),
-      input_enabled_(true),
-      gold_(100),
-      attack_state_(AttackState::Stop),
       blink_animator_(frame_timer),
       equipment_info_(equipment_info) {
 
@@ -40,9 +26,9 @@ Player::Player(
 
 void Player::init() {
     this->spawn({0, 0}, anim_state_);
-    this->set_full_hp(6);
+    this->set_full_hp(3);
     this->set_hp(full_hp_);
-    gold_ = 100;
+    money_ = 0;
     blink_animator_.set_target(*this);
 
     auto& body = at(this->mut_hitboxes(), PlayerHitboxIndex::Body);
@@ -54,6 +40,11 @@ void Player::init() {
     hand.set_offset({1, 1});
     hand.set_size({14, 1});
     hand.set_enabled(true);
+
+    auto& head = at(this->mut_hitboxes(), PlayerHitboxIndex::Head);
+    head.set_offset({1, 5});
+    head.set_size({14, 2});
+    head.set_enabled(true);
 }
 
 void Player::spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state) {
@@ -80,8 +71,13 @@ void Player::reset_state_for_placement(
     case PlayerAnimState::WalkRight:
     case PlayerAnimState::JumpRight:
     case PlayerAnimState::AttackRight:
+    case PlayerAnimState::AttackYoyoRight:
+    case PlayerAnimState::AttackYoyoUpRight:
+    case PlayerAnimState::AttackYoyoRightWalking:
+    case PlayerAnimState::AttackYoyoUpRightWalking:
     case PlayerAnimState::GameOverRight:
     case PlayerAnimState::LookupRight:
+    case PlayerAnimState::SwimRight:
         is_right_ = true;
         break;
     default:
@@ -97,6 +93,9 @@ void Player::reset_state_for_placement(
     this->set_position(pos);
     velocity_ = {0.0f, 0.0f};
     player_state_ = PlayerState::Normal;
+
+    attack_state_ = AttackState::Stop;
+    attack_.despawn();
 }
 
 void Player::update_movement() {
@@ -112,11 +111,27 @@ void Player::update_movement() {
 
     auto real_pos = this->precise_position();
 
-    if ( ( player_state_ == PlayerState::Ladder ) && is_grounded_ ) {
-        player_state_ = PlayerState::Normal;
+    if ( player_state_ == PlayerState::Ladder ) {
+        if ( is_grounded_ || !hit_ladder_) {
+            player_state_ = PlayerState::Normal;
+        }
     }
 
     if ( player_state_ != PlayerState::GameOver ) {
+
+        if ( hit_water_ ) {
+            if ( equipment_info_.item.has_item_at(ItemId::DivingEquipment) ) {
+                player_state_ = PlayerState::Diving;
+            } else {
+                player_state_ = PlayerState::Swimming;
+            }
+            hit_water_ = false;
+        } else {
+            if ( player_state_ != PlayerState::Ladder ) {
+                player_state_ = PlayerState::Normal;
+            }
+        }
+
         if ( hit_ladder_ ) {
             if ( ( gamepad_.is_pressed(Key::Up) ) ||
                  ( gamepad_.is_pressed(Key::Down) )
@@ -126,15 +141,43 @@ void Player::update_movement() {
             } else { 
             }
             hit_ladder_ = false;
-        } else {
-            player_state_ = PlayerState::Normal;
+        } 
+
+        switch ( player_state_ ) {
+        case PlayerState::Ladder:
+        case PlayerState::Swimming:
+        case PlayerState::Diving:
+            if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
+                attack_state_ = AttackState::Stop;
+                attack_.despawn();
+            }
+            break;
+        default:
+            break;
+        }
+
+        if ( gamepad_.is_pressed(Key::Home) ) {
+            if ( equipment_info_.item.equipped() ) {
+                switch (equipment_info_.item.equipped_id()) {
+                case static_cast<uint32_t>(ItemId::Cookie):
+                    this->receive_heal(2);
+                    sound_controller_.play_sound_effect(MML_SE_1_LIFE_RECOVER);
+                    equipment_info_.item.unequip();
+                    equipment_info_.item.remove(ItemId::Cookie);
+                    break;
+                }
+            }
         }
     }
+
 
     // Update position
     if ( player_state_ == PlayerState::Normal ) {
         if ( input_enabled_ ) {
-            if ( attack_state_ == AttackState::Stop ) {
+
+            if ( attack_state_ == AttackState::Stop  || 
+                 current_attack_type_ == attack::AttackPlayerType::Yoyo 
+            ) {
                 if ( gamepad_.just_pressed(Key::Enter) ) {
                     attack_state_ = AttackState::Start;
                 } else if ( gamepad_.is_pressed(Key::Left) ) {
@@ -155,7 +198,7 @@ void Player::update_movement() {
             }
         }
 
-        if ( velocity_.y < (MGC_CELL_LEN-1) ) {
+        if ( velocity_.y < (MGC_CELL_LEN-2) ) {
             velocity_.y += 1.0f;
         }
         real_pos.y += velocity_.y;
@@ -179,9 +222,72 @@ void Player::update_movement() {
                 is_right_ = true;
             } else { }
         }
+    } else if ( player_state_ == PlayerState::Swimming ) {
         
+        if ( input_enabled_ ) {
+            if ( gamepad_.just_pressed(Key::Cancel) ) {
+                velocity_.y = -6;
+            }
+
+            if ( gamepad_.is_pressed(Key::Left) ) {
+                velocity_.x = -2;
+                real_pos.x += velocity_.x;
+                is_right_ = false;
+            } else if ( gamepad_.is_pressed(Key::Right) ) {
+                velocity_.x = 2;
+                real_pos.x += velocity_.x;
+                is_right_ = true;
+            } else { }
+        }
+
+        if ( hit_head_water_ ) {
+            hit_head_water_ = false;
+            if ( velocity_.y > -3 ) {
+                velocity_.y -= 0.5f;
+            }
+            velocity_.y *= 0.8f;
+        } else {
+            if ( velocity_.y > 3 ) {
+                velocity_.y += 0.1f;
+            }
+        }
+        real_pos.y += velocity_.y;
+
+    } else if ( player_state_ == PlayerState::Diving ) {
+
+        if ( input_enabled_ ) {
+            if ( gamepad_.just_pressed(Key::Cancel) ) {
+                velocity_.y = -3;
+            } else if ( gamepad_.is_pressed(Key::Up) ) {
+                if ( hit_head_water_ ) {
+                    velocity_.y = -1;
+                }
+            } else if ( gamepad_.is_pressed(Key::Down) ) {
+                velocity_.y = 1;
+            }
+
+            if ( gamepad_.is_pressed(Key::Left) ) {
+                velocity_.x = -2;
+                is_right_ = false;
+            } else if ( gamepad_.is_pressed(Key::Right) ) {
+                velocity_.x = 2;
+                is_right_ = true;
+            } else { }
+        }
+
+        if ( velocity_.y < 1.0f ) {
+            velocity_.y += 0.3f;
+        }
+
+        real_pos += velocity_;
+        hit_head_water_ = false;
+        if ( velocity_.y > 0 ) {
+            velocity_.y *= 0.8f;
+        }
+
+
     } else if ( player_state_ == PlayerState::GameOver ) {
-        if ( velocity_.y < (MGC_CELL_LEN-1) ) {
+        if ( velocity_.y < (MGC_CELL_LEN-2) ) {
             velocity_.y += 1.0f;
         }
         real_pos.y += velocity_.y;
@@ -287,26 +393,45 @@ void Player::update_anim_normal() {
         state_next = PlayerAnimState::StandLeft;
     }
 
-    if ( is_grounded_ ) {
-        if ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) {
-            state_next = is_right_ ? PlayerAnimState::WalkRight
-                                   : PlayerAnimState::WalkLeft;
+    if ( player_state_ == PlayerState::Normal ) {
+        if ( is_grounded_ ) {
+            bool is_key_pressed_left_or_right = 
+                gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right);
+            if (  input_enabled_ && is_key_pressed_left_or_right ) {
+                state_next = is_right_ ? PlayerAnimState::WalkRight
+                                       : PlayerAnimState::WalkLeft;
+            } else {
+                state_next = is_right_ ? PlayerAnimState::StandRight
+                                       : PlayerAnimState::StandLeft;
+            }
         } else {
-            state_next = is_right_ ? PlayerAnimState::StandRight
-                                   : PlayerAnimState::StandLeft;
+            state_next = is_right_ ? PlayerAnimState::JumpRight
+                                   : PlayerAnimState::JumpLeft;
         }
     } else if ( player_state_ == PlayerState::Ladder ) {
-        if ( gamepad_.is_pressed(Key::Up) || gamepad_.is_pressed(Key::Down) ) {
+        bool is_key_pressed_up_or_down = 
+            gamepad_.is_pressed(Key::Up) || gamepad_.is_pressed(Key::Down);
+        if ( input_enabled_ && is_key_pressed_up_or_down ) {
             state_next = PlayerAnimState::Ladder;
         } else {
             state_next = PlayerAnimState::LadderStay;
         }
+    } else if ( player_state_ == PlayerState::Swimming ) {
+
+        state_next = is_right_ ? PlayerAnimState::SwimRight 
+                               : PlayerAnimState::SwimLeft;
+
+    } else if ( player_state_ == PlayerState::Diving ) {
+        state_next = is_right_ ? PlayerAnimState::DivingRight 
+                               : PlayerAnimState::DivingLeft;
     } else {
+
         state_next = is_right_ ? PlayerAnimState::JumpRight
                                : PlayerAnimState::JumpLeft;
     }
 
     if ( state_next != anim_state_ ) {
+
         anim_state_ = state_next;
         anim_.set_anim_frames(get_anim_frames(anim_state_));
         anim_.start_animation();
@@ -320,37 +445,121 @@ void Player::update_anim_attacking() {
 
     anim_.set_loop(false);
 
-    //TODO
-    switch ( equipment_info_.weapon.equipped_id() ) {
+
+    attack::AttackPlayerType next_type = current_attack_type_;
+    auto weapon_id = equipment_info_.weapon.equipped_id();
+
+    switch ( weapon_id ) {
     case static_cast<uint32_t>(WeaponId::Claw):
-        current_attack_type_ = attack::AttackType::Scratch;
+        next_type = attack::AttackPlayerType::Scratch;
         break;
     case static_cast<uint32_t>(WeaponId::Boomerang):
-        current_attack_type_ = attack::AttackType::Boomerang;
+        next_type = attack::AttackPlayerType::Boomerang;
+        break;
+    case static_cast<uint32_t>(WeaponId::Yoyo):
+        next_type = attack::AttackPlayerType::Yoyo;
+        anim_.set_loop(true);
         break;
     default:
         break;
     }
 
+    if ( current_attack_type_ != next_type ) {
+        current_attack_type_ = next_type;
+        if ( attack_state_ == AttackState::InProgress ) {
+            attack_state_ = AttackState::Stop;
+        }
+    }
+
     if ( attack_state_ == AttackState::Start ) {
         attack_state_ = AttackState::InProgress;
 
-        if ( is_right_ ) {
-            attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
-            anim_state_ = PlayerAnimState::AttackRight;
+        if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
+            if ( is_right_ ) {
+                if ( gamepad_.is_pressed(Key::Up) ) {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(18, 0),
+                        current_attack_type_, 
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::UpRight
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoUpRight;
+                } else {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(18, 0),
+                        current_attack_type_,
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::Right
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoRight;
+                }
+            } else {
+                if ( gamepad_.is_pressed(Key::Up) ) {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(-10, 0),
+                        current_attack_type_,
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::UpLeft
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoUpLeft;
+                } else {
+                    attack_.spawn(
+                        this->position() + mgc::math::Vec2i(-10, 0),
+                        current_attack_type_,
+                        attack::AttackOwner::Player,
+                        attack::AttackDirection::Left
+                    );
+                    anim_state_ = PlayerAnimState::AttackYoyoLeft;
+                }
+            }
+
         } else {
-            attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
-            anim_state_ = PlayerAnimState::AttackLeft;
+            if ( is_right_ ) {
+                attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
+                anim_state_ = PlayerAnimState::AttackRight;
+            } else {
+                attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
+                anim_state_ = PlayerAnimState::AttackLeft;
+            }
         }
 
         anim_.set_anim_frames(get_anim_frames(anim_state_));
         anim_.start_animation();
 
     } else if ( attack_state_ == AttackState::InProgress ) {
-        if ( anim_.is_finished() ) {
-            attack_state_ = AttackState::Stop;
-        }
+        if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
+            if ( attack_.lifecycle() == attack::AttackLifeCycle::Despawned ) {
+                attack_state_ = AttackState::Stop;
+            } else {
+                auto bak_anim_state = anim_state_;
+                if ( is_grounded_ && input_enabled_ && ( gamepad_.is_pressed(Key::Left) || gamepad_.is_pressed(Key::Right) ) ) {
+                    switch ( anim_state_ ) {
+                    case PlayerAnimState::AttackYoyoUpRight: anim_state_ = PlayerAnimState::AttackYoyoUpRightWalking; break;
+                    case PlayerAnimState::AttackYoyoUpLeft: anim_state_ = PlayerAnimState::AttackYoyoUpLeftWalking; break;
+                    case PlayerAnimState::AttackYoyoRight: anim_state_ = PlayerAnimState::AttackYoyoRightWalking; break;
+                    case PlayerAnimState::AttackYoyoLeft: anim_state_ = PlayerAnimState::AttackYoyoLeftWalking; break;
+                    default: break;
+                    }
+                } else {
+                    switch ( anim_state_ ) {
+                    case PlayerAnimState::AttackYoyoUpRightWalking: anim_state_ = PlayerAnimState::AttackYoyoUpRight; break;
+                    case PlayerAnimState::AttackYoyoUpLeftWalking: anim_state_ = PlayerAnimState::AttackYoyoUpLeft; break;
+                    case PlayerAnimState::AttackYoyoRightWalking: anim_state_ = PlayerAnimState::AttackYoyoRight; break;
+                    case PlayerAnimState::AttackYoyoLeftWalking: anim_state_ = PlayerAnimState::AttackYoyoLeft; break;
+                    default: break;
+                    }
+                }
 
+                if ( bak_anim_state != anim_state_ ) {
+                    anim_.set_anim_frames(get_anim_frames(anim_state_));
+                    anim_.start_animation();
+                }
+            }
+        } else {
+            if ( anim_.is_finished() ) {
+                attack_state_ = AttackState::Stop;
+            }
+        }
     } else if ( attack_state_ == AttackState::Stop ) {
         attack_.despawn();
         anim_.reset_animation();
@@ -361,12 +570,12 @@ void Player::update_anim_attacking() {
     anim_.set_current_frame(this->mut_sprite());
 }
 
-void Player::set_anim_manually(PlayerAnimState state) {
+void Player::set_anim_manually(PlayerAnimState state, bool loop) {
     attack_state_ = AttackState::Stop;
     attack_.despawn();
     anim_state_manual_ = state;
     anim_.set_anim_frames(get_anim_frames(state));
-    anim_.set_loop(true);
+    anim_.set_loop(loop);
     anim_.start_animation();
 }
 
@@ -403,7 +612,7 @@ void Player::on_enemy_hit(
         size_t enemy_hitbox_index = info.other_hitbox_index;
         if ( enemy.apply_damage_to(*this, enemy_hitbox_index) > 0 ) {
             if ( this->hp() > 0 ) {
-                sound_controller_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+                sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
                 is_invulnerable_ = true;
                 blink_animator_.set_blink_half_period(50);
                 blink_animator_.set_blink_count_max(40);
@@ -421,11 +630,32 @@ void Player::on_item_hit(
     size_t item_hitbox_index = info.other_hitbox_index;
     if ( item.apply_effect_to(*this, item_hitbox_index) > 0 ) {
         if ( item.effect_type() == item::ItemEffectType::Heal ) {
-            sound_controller_.play_sound_effect(MML_SE_1_LIFE_RECOVER, 0.0);
+            sound_controller_.play_sound_effect(MML_SE_1_LIFE_RECOVER);
 
         } else if ( item.effect_type() == item::ItemEffectType::LifeUp ) {
-            sound_controller_.play_sound_effect(MML_SE_2_LIFE_UP, 0.0);
+            sound_controller_.play_sound_effect(MML_SE_2_LIFE_UP);
         } else { }
+    }
+}
+
+void Player::on_attack_hit(
+    const attack::Attack& attack,
+    const mgc::collision::BoxCollisionInfo& info
+) {
+    if ( !is_invulnerable_ && !this->is_game_over() ) {
+        if ( attack.owner_type() == attack::AttackOwner::Enemy ) {
+            size_t attack_hitbox_index = info.other_hitbox_index;
+            if ( attack.apply_damage_to(*this, attack_hitbox_index) > 0 ) {
+                if ( this->hp() > 0 ) {
+                    sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
+                    is_invulnerable_ = true;
+                    blink_animator_.set_blink_half_period(50);
+                    blink_animator_.set_blink_count_max(40);
+                    blink_animator_.set_end_state(mgc::utils::BlinkEndState::Visible);
+                    blink_animator_.start();
+                }
+            }
+        }
     }
 }
 
@@ -450,8 +680,8 @@ void Player::on_collision_resolved(
     }
 
     pushback_map_ = info.pushback;
-
     pos += info.pushback;
+
 
     this->set_position(pos);
 }
@@ -504,7 +734,7 @@ void Player::on_collision_resolved(
         this->receive_damage(1);
 
         if ( this->hp() > 0 ) {
-            sound_controller_.play_sound_effect(MML_SE_3_DAMAGE, 0.0);
+            sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
             is_invulnerable_ = true;
             blink_animator_.set_blink_half_period(50);
             blink_animator_.set_blink_count_max(40);

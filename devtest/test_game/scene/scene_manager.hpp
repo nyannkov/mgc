@@ -20,11 +20,33 @@ struct SceneManager {
     void init() {
         set_scene(app::SceneId::Title);
         //set_scene(app::SceneId::Shop);
+        //set_scene(app::SceneId::LogTerminal);
+        //set_scene(app::SceneId::Stage1_1);
         //set_scene(app::SceneId::Stage1_3);
         //set_scene(app::SceneId::Stage1_4);
+        //set_scene(app::SceneId::Stage1_5);
+        //set_scene(app::SceneId::Stage1_6);
+        //set_scene(app::SceneId::Stage1_7);
+        //set_scene(app::SceneId::Stage2_1);
+        //set_scene(app::SceneId::Stage2_2);
+        //set_scene(app::SceneId::Stage2_3);
+        //set_scene(app::SceneId::Stage2_4);
+        //set_scene(app::SceneId::Stage2_5);
+        //set_scene(app::SceneId::Stage2_6);
+        //set_scene(app::SceneId::Stage2_7);
+        //set_scene(app::SceneId::Stage2_8);
+        //set_scene(app::SceneId::Stage2_9);
 
         equipment_info_.weapon.add(WeaponId::Claw);
         equipment_info_.weapon.equip(WeaponId::Claw);
+
+        //test
+        //equipment_info_.weapon.add(WeaponId::Boomerang);
+        //equipment_info_.weapon.add(WeaponId::Yoyo);
+        //equipment_info_.item.add(ItemId::DivingEquipment);
+        //equipment_info_.item.add(ItemId::VioletJewel);
+        //ctx_.world_state.player.add_money(1000);
+        //ctx_.world_state.checkpoint_info.advance_checkpoint(Checkpoint::WonTheStage2Boss);
 
         menu_.init();
     }

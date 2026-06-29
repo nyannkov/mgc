@@ -98,4 +98,79 @@ animations:
       - { file: frame_021.bmp, time_ms: 250 }
       - { file: frame_022.bmp, time_ms: 250 }
 
+  - name: coffee_break
+    description: "Coffee break"
+    frames:
+      - { file: frame_033.bmp, time_ms: 2000 }
+      - { file: frame_034.bmp, time_ms: 2000 }
+      - { file: frame_035.bmp, time_ms: 1500 }
+      - { file: frame_033.bmp, time_ms: 2500 }
+
+  - name: swim_left
+    description: "Swim left"
+    frames:
+      - { file: frame_006.bmp, time_ms: 100 }
+      - { file: frame_036.bmp, time_ms: 100 }
+
+  - name: swim_right
+    description: "Swim right"
+    frames:
+      - { file: frame_009.bmp, time_ms: 100 }
+      - { file: frame_037.bmp, time_ms: 100 }
+
+  - name: diving_left
+    description: "Diving left"
+    frames:
+      - { file: frame_038.bmp, time_ms: 200 }
+      - { file: frame_039.bmp, time_ms: 200 }
+
+  - name: diving_right
+    description: "Diving right"
+    frames:
+      - { file: frame_040.bmp, time_ms: 200 }
+      - { file: frame_041.bmp, time_ms: 200 }
+
+  - name: attack_yoyo_left
+    description: "Attack Yoyo left"
+    frames:
+      - { file: frame_049.bmp, time_ms: 999999 }
+
+  - name: attack_yoyo_up_left
+    description: "Attack Yoyo Up left"
+    frames:
+      - { file: frame_048.bmp, time_ms: 999999 }
+
+  - name: attack_yoyo_right
+    description: "Attack Yoyo right"
+    frames:
+      - { file: frame_047.bmp, time_ms: 999999 }
+
+  - name: attack_yoyo_up_right
+    description: "Attack Yoyo Up right"
+    frames:
+      - { file: frame_046.bmp, time_ms: 999999 }
+
+  - name: attack_yoyo_left_walking
+    description: "Attack Yoyo left Walking"
+    frames:
+      - { file: frame_049.bmp, time_ms: 100 }
+      - { file: frame_045.bmp, time_ms: 100 }
+
+  - name: attack_yoyo_up_left_walking
+    description: "Attack Yoyo Up left Walking"
+    frames:
+      - { file: frame_048.bmp, time_ms: 100 }
+      - { file: frame_044.bmp, time_ms: 100 }
+
+  - name: attack_yoyo_right_walking
+    description: "Attack Yoyo right Walking"
+    frames:
+      - { file: frame_047.bmp, time_ms: 100 }
+      - { file: frame_043.bmp, time_ms: 100 }
+
+  - name: attack_yoyo_up_right_walking
+    description: "Attack Yoyo Up right Walking"
+    frames:
+      - { file: frame_046.bmp, time_ms: 100 }
+      - { file: frame_042.bmp, time_ms: 100 }
 

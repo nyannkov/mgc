@@ -58,6 +58,12 @@ struct ArrayViewer {
     const T* end() const { return data + size; }
 };
 
+void fill_color_with_alpha(
+    FramebufferT& fb,
+    ColorT fill_color,
+    uint8_t alpha
+);
+
 } // namespace app
 
 #endif/*MGC_APP_COMMON_HPP*/

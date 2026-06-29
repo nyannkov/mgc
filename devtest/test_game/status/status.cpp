@@ -5,7 +5,7 @@
 
 namespace app {
 
-static constexpr char FormatGold[]  = "GOLD : %d";
+static constexpr char FormatGold[]  = "GYOLD : %d";
 
 Status::Status(GameContext& ctx)
     : player_(ctx.world_state.player) {
@@ -22,15 +22,15 @@ Status::Status(GameContext& ctx)
     success = this->add_cell_drawable(label_life_);
     assert(success);
 
-    label_gold_.set_position({0, 20});
-    label_gold_.set_font(misaki_gothic);
-    label_gold_.set_fontsize2x(false);
-    label_gold_.set_font_fore_color(MGC_COLOR_WHITE);
+    label_money_.set_position({0, 10});
+    label_money_.set_font(misaki_gothic);
+    label_money_.set_fontsize2x(false);
+    label_money_.set_font_fore_color(MGC_COLOR_WHITE);
 
-    disp_gold_ = player_.gold();
-    std::snprintf(gold_txt_, sizeof(gold_txt_), FormatGold, disp_gold_);
-    label_gold_.set_text(gold_txt_);
-    success = this->add_cell_drawable(label_gold_);
+    disp_money_ = player_.money();
+    std::snprintf(money_txt_, sizeof(money_txt_), FormatGold, disp_money_);
+    label_money_.set_text(money_txt_);
+    success = this->add_cell_drawable(label_money_);
     assert(success);
 
     for ( size_t i = 0; i < hearts_.size(); i++ ) {
@@ -64,9 +64,9 @@ void Status::update() {
         this->set_hearts(disp_player_hp_);
     }
 
-    if ( disp_gold_ != player_.gold() ) {
-        disp_gold_ = player_.gold();
-        std::snprintf(gold_txt_, sizeof(gold_txt_), FormatGold, disp_gold_);
+    if ( disp_money_ != player_.money() ) {
+        disp_money_ = player_.money();
+        std::snprintf(money_txt_, sizeof(money_txt_), FormatGold, disp_money_);
         updated_ = true;
     }
 }

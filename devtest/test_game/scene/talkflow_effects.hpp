@@ -2,6 +2,7 @@
 #define MGC_TALKFLOW_EFFECTS_HPP
 
 #include "app_common.hpp"
+#include "resources/mml/mml.h"
 
 namespace app {
 
@@ -24,9 +25,9 @@ struct TalkflowEffects : ITalkflowEffectsT {
     
 private:
     SoundControllerT& sound_controller_;
-    int typing_sound_id_;
-    int select_sound_id_;
-    int confirm_sound_id_;
+    int typing_sound_id_ = MML_SE_9_SELECT;
+    int select_sound_id_ = MML_SE_9_SELECT;
+    int confirm_sound_id_ = MML_SE_9_SELECT;
 };
 
 } // namespace app

@@ -44,7 +44,6 @@ typedef int64_t           q_t;
 #define LPF_DEFAULT_ALPHA       MGC_MML_PSG_DEFAULT_LPF_ALPHA
 #define LPF_SHIFT_BIT           MGC_MML_PSG_LPF_SHIFT_BIT
 
-
 typedef struct mgc_mml_record_list {
     const mgc_mml_record_t *records;
     size_t record_count;
@@ -59,6 +58,8 @@ static q_t psg_output_2_q;
 
 static bool psg_lpf_enabled;
 static mgc_mml_record_list_t bgm_list, se_list;
+static int current_bgm_id;
+static int current_se_id;
 static void* context;
 static void (*cb_background_music)(uint8_t ch, int32_t param, void *ctx);
 static void (*cb_sound_effect)(uint8_t ch, int32_t param, void *ctx);
@@ -118,6 +119,9 @@ void mml_psg_init(float mml_proc_rate, void *ctx) {
     cb_sound_effect = nullptr;
     psgino_z.SetUserCallback(callback_wrapper_background_music);
     psgino_z.SetSeUserCallback(callback_wrapper_sound_effect);
+
+    current_bgm_id = MGC_MML_RECORD_ID_NULL;
+    current_se_id = MGC_MML_RECORD_ID_NULL;
 }
 
 void mml_psg_deinit(void) {
@@ -132,6 +136,7 @@ bool mml_psg_play_background_music(int music_id, float fade_in_sec) {
     for ( size_t i = 0; i < bgm_list.record_count; i++ ) {
         const mgc_mml_record_t *record = &bgm_list.records[i];
         if ( record->id == music_id ) {
+            current_bgm_id = music_id;
             psgino_z.SetMML(record->mml);
             psgino_z.Play();
             return true;
@@ -145,8 +150,9 @@ bool mml_psg_play_sound_effect(int effect_id, float fade_in_sec) {
     (void)fade_in_sec;
 
     for ( size_t i = 0; i < se_list.record_count; i++ ) {
-        const mgc_mml_record *record = &se_list.records[i];
+        const mgc_mml_record_t *record = &se_list.records[i];
         if ( record->id == effect_id ) {
+            current_se_id = effect_id;
             psgino_z.SetSeMML(record->mml);
             psgino_z.PlaySe();
             return true;
@@ -155,10 +161,27 @@ bool mml_psg_play_sound_effect(int effect_id, float fade_in_sec) {
     return false;
 }
 
+int mml_psg_get_current_background_music_id(void) {
+    if ( psgino_z.GetStatus() != Psgino::Playing ) {
+        return MGC_MML_RECORD_ID_NULL;
+    }
+    return current_bgm_id;
+}
+
+int mml_psg_get_current_sound_effect_id(void) {
+    if ( psgino_z.GetSeStatus() != Psgino::Playing ) {
+        return MGC_MML_RECORD_ID_NULL;
+    }
+    return current_se_id;
+}
+
 bool mml_psg_play_background_music_direct(const char *mml, float fade_in_sec) {
     // NOTE: Fade-in and fade-out are not supported.
     (void)fade_in_sec;
     if ( mml != nullptr ) {
+        // If MML is set directly without using an ID, 
+        // the current ID will be set to NULL.
+        current_bgm_id = MGC_MML_RECORD_ID_NULL;
         psgino_z.SetMML(mml);
         psgino_z.Play();
         return true;
@@ -171,6 +194,9 @@ bool mml_psg_play_sound_effect_direct(const char *mml, float fade_in_sec) {
     // NOTE: Fade-in and fade-out are not supported.
     (void)fade_in_sec;
     if ( mml != nullptr ) {
+        // If MML is set directly without using an ID, 
+        // the current ID will be set to NULL.
+        current_se_id = MGC_MML_RECORD_ID_NULL;
         psgino_z.SetSeMML(mml);
         psgino_z.PlaySe();
         return true;

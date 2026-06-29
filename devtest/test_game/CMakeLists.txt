@@ -16,6 +16,7 @@ target_include_directories(app_headers INTERFACE
 
 set(CXX_SOURCES 
     main.cpp
+    app_common.cpp
     utils/game_over_effect/game_over_effect.cpp
     utils/screen_fader/screen_fader.cpp
     status/status.cpp
@@ -28,12 +29,20 @@ set(CXX_SOURCES
     entity/prop/entrance/entrance.cpp
     entity/prop/signboard/signboard.cpp
     entity/prop/teleporter/teleporter.cpp
+    entity/prop/button/button.cpp
+    entity/prop/jewel/jewel.cpp
     entity/event/warp/warp.cpp
-    entity/attack/attack.cpp
+    entity/event/teleport/teleport.cpp
+    entity/attack/attack_player/attack_player.cpp
+    entity/attack/attack_lance/attack_lance.cpp
     entity/item/potion/potion.cpp
     entity/item/elixir/elixir.cpp
     entity/enemy/skyfish/skyfish.cpp
     entity/enemy/skyfish/skyfish_bt.cpp
+    entity/enemy/walker/walker.cpp
+    entity/enemy/floaty_fish/floaty_fish.cpp
+    entity/enemy/boss/dancer/dancer.cpp
+    entity/enemy/boss/lancer/lancer.cpp
     entity/stage/stage.cpp
     entity/stage/layer/tile_draw_hook.cpp
     entity/civilian/hen/hen.cpp

@@ -36,7 +36,7 @@ void Scene_Password::init() {
     talkflow_.set_talkscript(talkscript_1);
 
     status_display_request_.request_hide();
-    scx_.sound.stop_background_music(0.0);
+    scx_.sound.stop_background_music();
 }
 
 void Scene_Password::update() {

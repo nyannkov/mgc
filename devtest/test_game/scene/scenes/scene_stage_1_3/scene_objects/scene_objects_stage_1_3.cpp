@@ -5,13 +5,6 @@ namespace app {
 
 void SceneObjects_Stage1_3::init() {
 
-//    skyfish_1_.spawn({MGC_CELL2PIXEL(14), MGC_CELL2PIXEL(24)}, true);
-//    skyfish_2_.spawn({MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(10)}, true);
-//    skyfish_3_.spawn({MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(4)}, true);
-    
-//    elixir_.spawn({MGC_CELL2PIXEL(20), MGC_CELL2PIXEL(25)+8});
-//    potion_.spawn({MGC_CELL2PIXEL(30), MGC_CELL2PIXEL(12)+8});
-
     gate_1_.spawn({MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(18)});
     gate_1_.set_gate_type(prop::GateType::Type2);
     gate_1_.open();
@@ -27,21 +20,19 @@ void SceneObjects_Stage1_3::init() {
     );
 
     gate_3_.spawn({MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(3)});
+    gate_3_.set_gate_type(prop::GateType::Type2);
+    gate_3_.set_scene_transition_request(
+        { SceneId::Stage1_5 }
+    );
     gate_3_.close();
 
-    signboard_.spawn({MGC_CELL2PIXEL(7), MGC_CELL2PIXEL(3)});
-    signboard_.set_talkflow_request({
-        &talkscript_1,
-        MGC_TALKSCRIPT_1_PREPARING,
-        nullptr,
-        TalkflowEffectType::Mute
-    });
+    walker_1_.spawn({MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(20)}, true);
+    walker_2_.spawn({MGC_CELL2PIXEL(17), MGC_CELL2PIXEL(12)}, true);
+    walker_3_.spawn({MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(22)}, true);
 
+    button_.spawn({MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(3)});
 
     pushable_block_.spawn({MGC_CELL2PIXEL(11), MGC_CELL2PIXEL(3)});
-//    pushable_block2_.spawn({MGC_CELL2PIXEL(15), MGC_CELL2PIXEL(9)});
-//    pushable_block3_.spawn({MGC_CELL2PIXEL(16), MGC_CELL2PIXEL(9)});
-//    pushable_block4_.spawn({MGC_CELL2PIXEL(15)+10, MGC_CELL2PIXEL(6)});
 }
 
 
