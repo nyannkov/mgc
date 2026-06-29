@@ -101,6 +101,7 @@ For details on the MML syntax, please refer to the following specification:
 
 |Rev. | Date       | Video | Description |
 |---|------------|-------| ----- |
+|3 | 2026-06-30 | - | Fleshed out the game story and advanced narrative development. |
 |2 | 2026-03-20 | - | Added SDL2 simulation support and expanded the game content. |
 |1 | 2025-12-19 | [#2](https://youtu.be/jxs_fwYP9mA) | Significantly redesigned the game based on Rev.0. Further development continues from this revision. |
 |0 | 2025-09-14 | [#1](https://youtu.be/wK57wLaQIZE) | Implemented a simple 2D platformer.　|
