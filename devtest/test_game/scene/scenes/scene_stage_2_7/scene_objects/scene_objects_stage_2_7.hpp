@@ -21,6 +21,8 @@ struct SceneObjects_Stage2_7 : ISceneObjects {
     explicit SceneObjects_Stage2_7(SceneContext& scx, stage::Stage& stage)
         : cp_info_(scx.world_state.checkpoint_info),
           stage_(stage),
+          floaty_fish_1_(scx.timer, scx.sound, scx.player),
+          enemies_ { &floaty_fish_1_ },
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
           gate_3_(scx.gamepad),
@@ -51,7 +53,7 @@ struct SceneObjects_Stage2_7 : ISceneObjects {
 
     ArrayViewer<prop::Prop*> props() override { return { props_.data(), props_.size() }; }
     ArrayViewer<item::Item*> items() override { return {}; }
-    ArrayViewer<enemy::Enemy*> enemies() override { return {}; }
+    ArrayViewer<enemy::Enemy*> enemies() override { return { enemies_.data(), enemies_.size()}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
 
@@ -63,6 +65,9 @@ struct SceneObjects_Stage2_7 : ISceneObjects {
 private:
     CheckpointInfo& cp_info_;
     stage::Stage& stage_;
+
+    enemy::FloatyFish floaty_fish_1_;
+    std::array<enemy::Enemy*, 1> enemies_;
 
     // Prop
     prop::Gate gate_1_;

@@ -9,18 +9,18 @@ item_descriptors:
         - { id: Test4, name: 'test4', description: '魚', tile_index: 3 }
         - { id: Test5, name: 'test5', description: '魚', tile_index: 4 }
         - { id: Test6, name: 'test6', description: '魚', tile_index: 5 }
-        - { id: Test7, name: 'test7', description: '魚', tile_index: 6 }
+        - { id: VioletJewel, name: '紫玉', description: '？？？', tile_index: 6 }
         - { id: Test8, name: 'test8', description: '魚', tile_index: 7 }
         - { id: Test9, name: 'test9', description: '魚', tile_index: 8 }
         - { id: Test10, name: 'test10', description: '魚', tile_index: 9 }
         - { id: Test11, name: 'test11', description: '魚', tile_index: 10 }
         - { id: Test12, name: 'test12', description: '魚', tile_index: 11 }
         - { id: Test13, name: 'test13', description: '魚', tile_index: 12 }
-        - { id: Test14, name: 'test14', description: '魚', tile_index: 13 }
-        - { id: Test15, name: 'test15', description: '魚', tile_index: 14 }
-        - { id: Test16, name: 'test16', description: '魚', tile_index: 15 }
-        - { id: Test17, name: 'test17', description: '魚', tile_index: 16 }
-        - { id: Test18, name: 'test18', description: '魚', tile_index: 17 }
-        - { id: Test19, name: 'test19', description: '魚', tile_index: 18 }
-        - { id: Test20, name: 'test20', description: '魚', tile_index: 19 }
+        - { id: Test14, name: '-', description: '-', tile_index: 13 }
+        - { id: Test15, name: '-', description: '-', tile_index: 14 }
+        - { id: Test16, name: '-', description: '-', tile_index: 15 }
+        - { id: Test17, name: '-', description: '-', tile_index: 16 }
+        - { id: Test18, name: '-', description: '-', tile_index: 17 }
+        - { id: Test19, name: '-', description: '-', tile_index: 18 }
+        - { id: Test20, name: '-', description: '-', tile_index: 19 }
 

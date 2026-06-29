@@ -1,0 +1,7 @@
+animations:
+  - name: blinking
+    description: "blinking"
+    frames:
+      - { file: frame_000.bmp, time_ms: 250 }
+      - { file: frame_001.bmp, time_ms: 250 }
+

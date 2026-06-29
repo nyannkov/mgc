@@ -72,6 +72,19 @@
 #include "resources/generated/map/map_stage_2_8_water.h"
 #include "resources/generated/map/map_stage_2_8_needle.h"
 #include "resources/generated/map/map_stage_2_8_one_way_block.h"
+#include "resources/generated/map/map_stage_2_9_block.h"
+#include "resources/generated/map/map_stage_2_9_ladder.h"
+#include "resources/generated/map/map_stage_2_9_water.h"
+#include "resources/generated/map/map_stage_2_9_needle.h"
+#include "resources/generated/map/map_stage_2_9_one_way_block.h"
+#include "resources/generated/map/map_stage_2_9_front.h"
+
+#include "resources/generated/map/map_log_terminal_back.h"
+#include "resources/generated/map/map_log_terminal_block.h"
+#include "resources/generated/map/map_log_terminal_ladder.h"
+#include "resources/generated/map/map_log_terminal_water.h"
+#include "resources/generated/map/map_log_terminal_needle.h"
+#include "resources/generated/map/map_log_terminal_one_way_block.h"
 
 #include "resources/generated/map/map_shop_back_0.h"
 #include "resources/generated/map/map_shop_back_1.h"
@@ -97,6 +110,7 @@ void Stage::resource_init() {
     water_.set_all_enabled(false);
     back_0_.set_all_enabled(false);
     back_1_.set_all_enabled(false);
+    front_.set_all_enabled(false);
 }
 
 void Stage::setup(StageId id) {
@@ -362,6 +376,26 @@ void Stage::setup(StageId id) {
         needle_.set_all_enabled(true);
         break;
 
+    case StageId::Stage2_9:
+        block_.set_maps(map_stage_2_9_block, tileset_map_elements, &map_stage_2_9_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_2_9_one_way_block, tileset_map_elements, &map_stage_2_9_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_2_9_ladder, tileset_map_elements, &map_stage_2_9_ladder);
+        ladder_.set_all_enabled(true);
+
+        water_.set_maps(map_stage_2_9_water, tileset_map_elements, &map_stage_2_9_water);
+        water_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_2_9_needle, tileset_map_elements, &map_stage_2_9_needle);
+        needle_.set_all_enabled(true);
+
+        front_.set_maps(map_stage_2_9_front, tileset_map_elements, &map_stage_2_9_front);
+        front_.set_all_enabled(true);
+        break;
+
     case StageId::Shop:
         block_.set_maps(map_shop_block, tileset_shop_elements, &map_shop_block);
         block_.set_all_enabled(true);
@@ -371,6 +405,26 @@ void Stage::setup(StageId id) {
 
         back_0_.set_maps(map_shop_back_0, tileset_shop_elements);
         back_0_.set_all_enabled(true);
+        break;
+
+    case StageId::LogTerminal:
+        back_1_.set_maps(map_log_terminal_back, tileset_map_elements);
+        back_1_.set_all_enabled(true);
+
+        block_.set_maps(map_log_terminal_block, tileset_map_elements, &map_log_terminal_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_log_terminal_one_way_block, tileset_map_elements, &map_log_terminal_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_log_terminal_ladder, tileset_map_elements, &map_log_terminal_ladder);
+        ladder_.set_all_enabled(true);
+
+        water_.set_maps(map_log_terminal_water, tileset_map_elements, &map_log_terminal_water);
+        water_.set_all_enabled(true);
+
+        needle_.set_maps(map_log_terminal_needle, tileset_map_elements, &map_log_terminal_needle);
+        needle_.set_all_enabled(true);
         break;
 
     default:
@@ -386,6 +440,7 @@ void Stage::set_position(const mgc::math::Vec2i& position) {
         ladder_.set_position(position);
         back_0_.set_position(position+mgc::math::Vec2i(0, MGC_CELL2PIXEL(3)));
         back_1_.set_position(position);
+        front_.set_position(position);
         break;
     default:
         block_.set_position(position);
@@ -393,6 +448,7 @@ void Stage::set_position(const mgc::math::Vec2i& position) {
         ladder_.set_position(position);
         back_0_.set_position(position);
         back_1_.set_position(position);
+        front_.set_position(position);
         break;
     }
 }

@@ -680,8 +680,8 @@ void Player::on_collision_resolved(
     }
 
     pushback_map_ = info.pushback;
-
     pos += info.pushback;
+
 
     this->set_position(pos);
 }

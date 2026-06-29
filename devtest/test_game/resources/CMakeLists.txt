@@ -231,6 +231,20 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_2_8/csv"
     --tile-or128 block one_way_block ladder needle water
 )
+set(STAGE_MAP_STAGE_2_9_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv/map_stage_2_9_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv/map_stage_2_9_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv/map_stage_2_9_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv/map_stage_2_9_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv/map_stage_2_9_one_way_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv/map_stage_2_9_front.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_2_9/map_stage_2_9.tmx"
+    "${STAGE_MAP_STAGE_2_9_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_2_9/csv"
+    --tile-or128 block one_way_block ladder needle water
+)
 
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
@@ -243,6 +257,22 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/shop/csv"
     --border block
 )
+
+set(STAGE_MAP_LOG_TERMINAL_CSVS
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv/map_log_terminal_back.csv"
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv/map_log_terminal_block.csv"
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv/map_log_terminal_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv/map_log_terminal_water.csv"
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv/map_log_terminal_needle.csv"
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv/map_log_terminal_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/log_terminal/map_log_terminal.tmx"
+    "${STAGE_MAP_LOG_TERMINAL_CSVS}"
+    "${RESOURCE_DIR}/stage/map/log_terminal/csv"
+    --tile-or128 block one_way_block ladder needle water
+)
+
 
 set(STAGE_MAP_CSVS
     ${STAGE_MAP_TOWER_FONT_CSVS}
@@ -263,7 +293,9 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_2_6_CSVS}
     ${STAGE_MAP_STAGE_2_7_CSVS}
     ${STAGE_MAP_STAGE_2_8_CSVS}
+    ${STAGE_MAP_STAGE_2_9_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
+    ${STAGE_MAP_LOG_TERMINAL_CSVS}
 )
 
 foreach(CSV_FILE ${STAGE_MAP_CSVS})
@@ -279,6 +311,7 @@ add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_block.bmp" "${GEN_DIR}/tileset"
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 16)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x48.bmp" "${GEN_DIR}/tileset" --count 2 --width 16 --height 48)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_48x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 48 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_hen.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_chick.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_florist.bmp" "${GEN_DIR}/tileset" --width 16 --height 24)
@@ -352,6 +385,12 @@ anim_cmake_list_gen(
     --width 16 --height 24
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/prop/jewel/anim_jewel.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_static_objects_8x8.bmp"
+    "${GEN_DIR}/anim/prop/jewel"
+    --width 8 --height 8 
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/enemy/dancer/anim_boss_dancer.yml"
     "${RESOURCE_DIR}/tileset/tileset_boss_dancer.bmp"
     "${GEN_DIR}/anim/enemy/dancer"
@@ -377,6 +416,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_boss_dancer
     anim_boss_lancer
     anim_portal
+    anim_jewel
     mml
 )
 

@@ -338,6 +338,10 @@ void draw(
         scx.objs->draw_after(fb, pos);
     }
 
+    if ( scx.stage ) {
+        scx.stage->draw_after(fb, pos);
+    }
+
     if ( scx.evts ) {
         scx.evts->draw_effect(fb, pos);
     }

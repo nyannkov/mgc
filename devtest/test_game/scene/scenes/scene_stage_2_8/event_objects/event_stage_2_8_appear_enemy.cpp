@@ -23,6 +23,7 @@ Event_Stage2_8_AppearEnemy::Event_Stage2_8_AppearEnemy(
 
 void Event_Stage2_8_AppearEnemy::spawn(const mgc::math::Vec2i& pos) {
     set_event_state(EventState::Playing);
+    objs_.gate_2().close();
 }
 
 void Event_Stage2_8_AppearEnemy::spawn() {
@@ -87,6 +88,7 @@ void Event_Stage2_8_AppearEnemy::update() {
                 }
             }
             sound_.stop_background_music();
+            detail_ = EventDetail::Victory;
         } else {
             auto water_level = objs_.stage().water_position().y;
             if ( water_level <= MAX_WATER_LEVEL ) {
@@ -109,6 +111,7 @@ void Event_Stage2_8_AppearEnemy::update() {
         break;
     case EventDetail::Victory:
         cp_info_.advance_checkpoint(Checkpoint::WonTheStage2Boss);
+        objs_.gate_2().open();
         break;
     default:
         break;

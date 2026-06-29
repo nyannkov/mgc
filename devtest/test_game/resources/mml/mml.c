@@ -27,6 +27,7 @@ const mgc_mml_record_t se_records[] = {
     { .id = MML_SE_14_DISCHARGE_2, .mml = "T130V15 Q4L32J15J5 R3 Q8 L1 V15J15J17J20 L4 V13J20 V12J21 V11J23 V10J24 V9J25 V8J27 L8 V7J29 V6J30 V3J31" },
     { .id = MML_SE_15_DISCHARGE_3, .mml = "T130V15 Q4L32J15J5 R3 Q8 L4V15 [4 J15 $<$<$<]" },
     { .id = MML_SE_16_SPLAAAAAAASH, .mml = "T150V15 L16 I3 Q7H16 Q8[15 H16 $<]" },
+    { .id = MML_SE_17_TURN_ON, .mml = "T130V15 Q4L32J15J5" },
 };
 const size_t SE_RECORDS_COUNT = countof(se_records);
 

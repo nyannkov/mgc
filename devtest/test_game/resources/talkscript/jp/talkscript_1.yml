@@ -204,6 +204,16 @@ talkscript:
     gate_1:
       - { message: "開かない・・・。", end: true }
 
+
+    log_1:
+     - message: "作成した個体は順調に成長している。"
+     - message: "想定よりも早く、飛翔が可能であることを確認した。"
+     - end: true
+
+    found_jewel:
+     - { message: "何か落ちている．．．。" }
+     - { message: "紫色のガラス玉(？)を拾った。", end: true }
+
     password_success:
       - { message: "LOAD COMPLETE!", end: true }
 

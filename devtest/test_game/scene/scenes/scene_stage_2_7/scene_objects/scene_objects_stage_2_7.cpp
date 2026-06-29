@@ -5,6 +5,8 @@ namespace app {
 
 void SceneObjects_Stage2_7::init() {
 
+    floaty_fish_1_.spawn({MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(8)});
+
     gate_1_.spawn({MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(8)});
     gate_1_.set_gate_type(prop::GateType::Type2);
     gate_1_.open();

@@ -9,6 +9,7 @@
 #include "layer/layer_ladder.hpp"
 #include "layer/layer_water.hpp"
 #include "layer/layer_back.hpp"
+#include "layer/layer_front.hpp"
 #include "stage_id.hpp"
 
 namespace app {
@@ -60,6 +61,15 @@ struct Stage {
         return r;
     }
 
+    bool draw_after(
+        mgc::graphics::Framebuffer &fb,
+        const mgc::math::Vec2i &cam_pos
+    ) {
+        bool r = false;
+        r = front_.draw(fb, cam_pos);
+        return r;
+    }
+
     void set_ladder_enabled(bool enabled) {
         ladder_.set_all_enabled(enabled);
     }
@@ -86,6 +96,7 @@ private:
     LayerWater water_;
     LayerBack back_0_;
     LayerBack back_1_;
+    LayerFront front_;
 
     void resource_init();
 };

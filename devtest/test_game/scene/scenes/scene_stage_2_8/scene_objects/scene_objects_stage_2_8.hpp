@@ -56,6 +56,7 @@ struct SceneObjects_Stage2_8 : ISceneObjects {
     auto& lancer() { return lancer_; }
     auto& stage() { return stage_; }
     auto& button() { return button_; }
+    auto& gate_2() { return gate_2_; }
 
     void draw(
         FramebufferT& fb,

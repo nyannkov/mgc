@@ -16,6 +16,7 @@ target_include_directories(app_headers INTERFACE
 
 set(CXX_SOURCES 
     main.cpp
+    app_common.cpp
     utils/game_over_effect/game_over_effect.cpp
     utils/screen_fader/screen_fader.cpp
     status/status.cpp
@@ -29,6 +30,7 @@ set(CXX_SOURCES
     entity/prop/signboard/signboard.cpp
     entity/prop/teleporter/teleporter.cpp
     entity/prop/button/button.cpp
+    entity/prop/jewel/jewel.cpp
     entity/event/warp/warp.cpp
     entity/event/teleport/teleport.cpp
     entity/attack/attack_player/attack_player.cpp

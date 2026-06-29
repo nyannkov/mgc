@@ -19,7 +19,9 @@
 #include "scenes/scene_stage_2_6/scene_stage_2_6.hpp"
 #include "scenes/scene_stage_2_7/scene_stage_2_7.hpp"
 #include "scenes/scene_stage_2_8/scene_stage_2_8.hpp"
+#include "scenes/scene_stage_2_9/scene_stage_2_9.hpp"
 #include "scenes/scene_shop/scene_shop.hpp"
+#include "scenes/scene_log_terminal/scene_log_terminal.hpp"
 #include "scenes/scene_game_over/scene_game_over.hpp"
 
 namespace app {
@@ -86,8 +88,14 @@ IScene* SceneFactory::create_scene(SceneId id, GameContext& ctx) {
     case SceneId::Stage2_8:
         pool.create<Scene_Stage2_8>(ctx);
         break;
+    case SceneId::Stage2_9:
+        pool.create<Scene_Stage2_9>(ctx);
+        break;
     case SceneId::Shop:
         pool.create<Scene_Shop>(ctx);
+        break;
+    case SceneId::LogTerminal:
+        pool.create<Scene_LogTerminal>(ctx);
         break;
     case SceneId::GameOver:
         pool.create<Scene_GameOver>(ctx);
