@@ -1,4 +1,4 @@
-#include "scene_stage_2_9.hpp"
+#include "scene_stage_3_1.hpp"
 #include "scene/scene_core.hpp"
 #include "resources/mml/mml.h"
 #include "resources/generated/talkscript/talkscript_1.h"
@@ -6,12 +6,12 @@
 
 namespace app {
 
-Scene_Stage2_9::Scene_Stage2_9(GameContext& ctx) 
+Scene_Stage3_1::Scene_Stage3_1(GameContext& ctx) 
             : SceneBase(ctx),
               stage_(scx_.timer),
               scene_objects_(scx_) {
 
-    set_id(SceneId::Stage2_9);
+    set_id(SceneId::Stage3_1);
 
     scene::setup_scene_context(
         scx_,
@@ -21,39 +21,29 @@ Scene_Stage2_9::Scene_Stage2_9(GameContext& ctx)
     );
 }
 
-void Scene_Stage2_9::init() {
+void Scene_Stage3_1::init() {
     
-    if ( id_prev() == SceneId::Stage2_8 ) {
+    if ( id_prev() == SceneId::Stage2_9 ) {
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(40), MGC_CELL2PIXEL(60)},
-            PlayerAnimState::StandRight
-        );
-    } else if ( id_prev() == SceneId::Stage3_1 ) {
-        scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(39), MGC_CELL2PIXEL(7)},
-            PlayerAnimState::StandRight
-        );
-    } else if ( id_prev() == SceneId::LogTerminal ) {
-        scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(10), MGC_CELL2PIXEL(34)},
+            {MGC_CELL2PIXEL(5), MGC_CELL2PIXEL(27)},
             PlayerAnimState::StandRight
         );
     } else {
         //TODO
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(40), MGC_CELL2PIXEL(60)},
+            {MGC_CELL2PIXEL(5), MGC_CELL2PIXEL(27)},
             PlayerAnimState::StandLeft
         );
     }
 
-    scx_.sound.stop_background_music();
+    set_background_music(MML_BGM_7_STAGE3);
 
-    stage_.setup(stage::StageId::Stage2_9);
+    stage_.setup(stage::StageId::Stage3_1);
     stage_.set_position({0, 0});
 
     camera_.set_target(scx_.player);
-    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(42), MGC_CELL2PIXEL(1));
-    camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(59), MGC_CELL2PIXEL(3));
+    camera_.set_x_follow_setting(MGC_CELL2PIXEL(4), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(1));
+    camera_.set_y_follow_setting(MGC_CELL2PIXEL(4), MGC_CELL2PIXEL(27), MGC_CELL2PIXEL(1));
     camera_.set_x_follow_enabled(true);
     camera_.set_y_follow_enabled(true);
 
@@ -64,7 +54,7 @@ void Scene_Stage2_9::init() {
     status_display_request_.request_show();
 }
 
-void Scene_Stage2_9::update() {
+void Scene_Stage3_1::update() {
 
     SceneId id_next;
     
@@ -86,7 +76,7 @@ void Scene_Stage2_9::update() {
     }
 }
 
-void Scene_Stage2_9::draw(mgc::graphics::Framebuffer& fb) {
+void Scene_Stage3_1::draw(mgc::graphics::Framebuffer& fb) {
 
     scene::draw(
         MGC_COLOR_BLACK,

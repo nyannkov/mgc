@@ -36,6 +36,7 @@ struct SceneManager {
         //set_scene(app::SceneId::Stage2_7);
         //set_scene(app::SceneId::Stage2_8);
         //set_scene(app::SceneId::Stage2_9);
+        //set_scene(app::SceneId::Stage3_1);
 
         equipment_info_.weapon.add(WeaponId::Claw);
         equipment_info_.weapon.equip(WeaponId::Claw);

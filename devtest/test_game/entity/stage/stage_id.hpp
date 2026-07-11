@@ -24,6 +24,7 @@ enum class StageId {
     Stage2_7,
     Stage2_8,
     Stage2_9,
+    Stage3_1,
     Shop,
     LogTerminal,
     Count
