@@ -32,6 +32,21 @@ void collision_calc_aabb_from_hitbox(
     out->b = out->t + hitbox->height - 1;
 }
 
+void collision_calc_aabb_from_cell(
+    mgc_world_t map_x,
+    mgc_world_t map_y,
+    uint16_t row,
+    uint16_t col,
+    mgc_aabb_t *out
+) {
+    MGC_ASSERT(out != NULL, "`out` must not be NULL");
+
+    out->l = map_x + col * MGC_CELL_LEN;
+    out->r = out->l + MGC_CELL_LEN - 1;
+    out->t = map_y + row * MGC_CELL_LEN;
+    out->b = out->t + MGC_CELL_LEN - 1;
+}
+
 void collision_expand_aabb_margin(
     const mgc_aabb_t* src,
     const mgc_aabb_margin_t* m,
@@ -107,5 +122,44 @@ bool collision_calc_signed_overlap(
     }
 
     return true;
+}
+
+mgc_contact_t collision_calc_contact_flags(
+    const mgc_aabb_t *aa,
+    const mgc_aabb_t *bb
+) {
+    mgc_contact_t flags = 0;
+    
+    if ( collision_point_in_box(aa->l, aa->t, bb->l, bb->r, bb->t, bb->b) ) {
+        flags |= (MGC_CONTACT_LT|MGC_CONTACT_L|MGC_CONTACT_T);
+    }
+    if ( collision_point_in_box(aa->r, aa->t, bb->l, bb->r, bb->t, bb->b) ) {
+        flags |= (MGC_CONTACT_RT|MGC_CONTACT_R|MGC_CONTACT_T);
+    }
+    if ( collision_point_in_box(aa->l, aa->b, bb->l, bb->r, bb->t, bb->b) ) {
+        flags |= (MGC_CONTACT_LB|MGC_CONTACT_L|MGC_CONTACT_B);
+    }
+    if ( collision_point_in_box(aa->r, aa->b, bb->l, bb->r, bb->t, bb->b) ) {
+        flags |= (MGC_CONTACT_RB|MGC_CONTACT_R|MGC_CONTACT_B);
+    }
+
+    if ( (aa->t < bb->t) && (bb->b < aa->b) ) {
+        if ( (bb->l <= aa->l) && (aa->l <= bb->r) ) {
+            flags |= MGC_CONTACT_L;
+        }
+        if ( (bb->l <= aa->r) && (aa->r <= bb->r) ) {
+            flags |= MGC_CONTACT_R;
+        }
+    }
+    if ( (aa->l < bb->l) && (bb->r < aa->r) ) {
+        if ( (bb->t <= aa->t) && (aa->t <= bb->b) ) {
+            flags |= MGC_CONTACT_T;
+        }
+        if ( (bb->t <= aa->b) && (aa->b <= bb->b) ) {
+            flags |= MGC_CONTACT_B;
+        }
+    }
+
+    return flags;
 }
 
