@@ -124,30 +124,24 @@ bool collision_boxmap_test_hit_cell(
         *hit_map_cell_value = map_cell_value;
     }
 
-    if ( col == map_range->col_min ) {
-        if ( row == map_range->row_min ) {
-            boxmap->flags |= MGC_CONTACT_LT;
-        } else if ( row == map_range->row_max ) {
-            boxmap->flags |= MGC_CONTACT_LB;
-        } else {
-            boxmap->flags |= MGC_CONTACT_L;
-        }
-    } else if ( col == map_range->col_max ) {
-        if ( row == map_range->row_min ) {
-            boxmap->flags |= MGC_CONTACT_RT;
-        } else if ( row == map_range->row_max ) {
-            boxmap->flags |= MGC_CONTACT_RB;
-        } else {
-            boxmap->flags |= MGC_CONTACT_R;
-        }
-    } else {
-        if ( row == map_range->row_min ) {
-            boxmap->flags |= MGC_CONTACT_T;
-        } else if ( row == map_range->row_max ) {
-            boxmap->flags |= MGC_CONTACT_B;
-        } else {
-        }
-    }
+    mgc_aabb_t target, cell;
+
+    collision_calc_aabb_from_hitbox(
+        boxmap->box_x,
+        boxmap->box_y,
+        boxmap->box,
+        &target
+    );
+
+    collision_calc_aabb_from_cell(
+        boxmap->map_x,
+        boxmap->map_y,
+        row,
+        col,
+        &cell
+    );
+
+    boxmap->flags |= collision_calc_contact_flags(&target, &cell);
 
     return true;
 }
@@ -165,7 +159,7 @@ bool collision_boxmap_test_hit(
     for ( uint16_t row = map_range->row_min;; ++row ) {
         for ( uint16_t col = map_range->col_min;; ++col ) {
 
-            r |= collision_boxmap_test_hit_cell(boxmap, row, col, map_range, NULL);
+            r = collision_boxmap_test_hit_cell(boxmap, row, col, map_range, NULL) || r;
             if ( col == map_range->col_max ) break;
         }
         if ( row == map_range->row_max ) break;
