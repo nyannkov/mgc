@@ -10,6 +10,7 @@
 #include "entity/prop/gate/gate.hpp"
 #include "entity/prop/signboard/signboard.hpp"
 #include "entity/block/pushable_block/pushable_block.hpp"
+#include "entity/carrier/sized_carrier/sized_carrier.hpp"
 
 namespace app {
 struct SceneObjects_Stage3_1 : ISceneObjects {
@@ -19,7 +20,8 @@ struct SceneObjects_Stage3_1 : ISceneObjects {
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
           signboard_(scx.gamepad),
-          props_ { &gate_1_, &gate_2_, &signboard_ }
+          props_ { &gate_1_, &gate_2_, &signboard_ },
+          carriers_ { &carrier_ }
         { }
 
     void init();
@@ -29,6 +31,7 @@ struct SceneObjects_Stage3_1 : ISceneObjects {
     ArrayViewer<enemy::Enemy*> enemies() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return { carriers_.data(), carriers_.size() }; }
     
 private:
     CheckpointInfo& cp_info_;
@@ -37,6 +40,10 @@ private:
     prop::Gate gate_2_;
     prop::Signboard signboard_;
     std::array<prop::Prop*, 3> props_;
+
+    carrier::SizedCarrier<1, 3> carrier_;
+    std::array<carrier::Carrier*, 1> carriers_;
+
 };
 
 } // namespace app

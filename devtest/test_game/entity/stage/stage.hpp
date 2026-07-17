@@ -51,13 +51,27 @@ struct Stage {
         const mgc::math::Vec2i &cam_pos
     ) {
         bool r = false;
-        r |= back_0_.draw(fb, cam_pos);
-        r |= back_1_.draw(fb, cam_pos);
-        r |= water_.draw(fb, cam_pos);
-        r |= block_.draw(fb, cam_pos);
-        r |= ladder_.draw(fb, cam_pos);
-        r |= one_way_block_.draw(fb, cam_pos);
-        r |= needle_.draw(fb, cam_pos);
+        if ( back_0_.is_visible() ) {
+            r = back_0_.draw(fb, cam_pos) || r;
+        }
+        if ( back_1_.is_visible() ) {
+            r = back_1_.draw(fb, cam_pos) || r;
+        }
+        if ( water_.is_visible() ) {
+            r = water_.draw(fb, cam_pos) || r;
+        }
+        if ( block_.is_visible() ) {
+            r = block_.draw(fb, cam_pos) || r;
+        }
+        if ( ladder_.is_visible() ) {
+            r = ladder_.draw(fb, cam_pos) || r;
+        }
+        if ( one_way_block_.is_visible() ) {
+            r = one_way_block_.draw(fb, cam_pos) || r;
+        }
+        if ( needle_.is_visible() ) {
+            r = needle_.draw(fb, cam_pos) || r;
+        }
         return r;
     }
 
@@ -66,7 +80,9 @@ struct Stage {
         const mgc::math::Vec2i &cam_pos
     ) {
         bool r = false;
-        r = front_.draw(fb, cam_pos);
+        if ( front_.is_visible() ) {
+            r = front_.draw(fb, cam_pos);
+        }
         return r;
     }
 

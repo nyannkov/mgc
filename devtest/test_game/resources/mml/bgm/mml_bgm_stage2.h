@@ -2,7 +2,7 @@
 #define MML_BGM_STAGE2_H
 
 static const char * const mml_bgm_stage2 = 
-    "T130V15 $B0"
+    "T130V15 $B30"
     "[0"
         "[2"
             "Q2"
@@ -24,7 +24,7 @@ static const char * const mml_bgm_stage2 =
         "O5 E4 D8 C#8 D4 R4"
     "]"
     ","
-    "T130V15 $B0"
+    "T130V15 $B30"
     "[0"
         "Q2"
         "O2L8"
@@ -49,7 +49,7 @@ static const char * const mml_bgm_stage2 =
         "O2 D >D <D> D"
     "]"
     ","
-    "T130V15 $B0"
+    "T130V15 $B30"
     "[0"
         "[2"
             "L4 $E0"

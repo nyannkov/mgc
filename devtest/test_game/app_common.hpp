@@ -32,6 +32,7 @@ namespace enemy { struct Enemy; }
 namespace item { struct Item; }
 namespace prop { struct Prop; }
 namespace block { struct Block; }
+namespace carrier { struct Carrier; }
 namespace civilian { struct Civilian; }
 namespace event { struct Event; }
 namespace stage { struct Stage; }

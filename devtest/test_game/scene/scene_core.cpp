@@ -129,6 +129,12 @@ void update_movement(SceneContext& scx) {
                 item->despawn();
             }
         }
+        for ( auto* carrier : scx.objs->carriers() ) {
+            carrier->update_movement();
+        }
+        for ( auto* carrier : scx.objs->carriers() ) {
+            ColBox2MapT::detect(scx.player, static_cast<size_t>(PlayerHitboxIndex::Body), *carrier);
+        }
     }
 
     if ( scx.stage ) {

@@ -27,6 +27,8 @@ void SceneObjects_Stage3_1::init() {
         nullptr,
         TalkflowEffectType::Mute
     });
+
+//    carrier_.spawn({MGC_CELL2PIXEL(10)+8, MGC_CELL2PIXEL(22)});
 }
 
 

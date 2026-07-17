@@ -105,25 +105,28 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
             const MapT& map,
             const mgc::collision::MapPushbackInfo& info
     ) { 
+        using CleanedMapT = std::decay_t<MapT>;
         if ( info.obj_hitbox_index == 
             static_cast<size_t>(PlayerHitboxIndex::Body) 
         ) {
-            if constexpr (std::is_same_v<MapT, stage::LayerBlock>) {
+            if constexpr (std::is_same_v<CleanedMapT, stage::LayerBlock>) {
                 on_collision_resolved(map, info);
-            } else if constexpr (std::is_same_v<MapT, stage::LayerLadder>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerLadder>) {
                 hit_ladder_ = true;
-            } else if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerWater>) {
                 hit_water_ = true;
-            } else if constexpr (std::is_same_v<MapT, stage::LayerNeedle>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerNeedle>) {
                 on_collision_resolved(map, info);
-            } else if constexpr (std::is_same_v<MapT, stage::LayerOneWayBlock>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerOneWayBlock>) {
                 hit_one_way_block_ = true;
+                on_collision_resolved(map, info);
+            } else if constexpr (std::is_same_v<CleanedMapT, carrier::Carrier>) {
                 on_collision_resolved(map, info);
             }
         } else if ( info.obj_hitbox_index == 
             static_cast<size_t>(PlayerHitboxIndex::Head) 
         ) {
-            if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+            if constexpr (std::is_same_v<CleanedMapT, stage::LayerWater>) {
                 hit_head_water_ = true;
             }
         }
@@ -253,6 +256,10 @@ private:
     );
     void on_collision_resolved(
         const stage::LayerNeedle& block,
+        const mgc::collision::MapPushbackInfo& info
+    );
+    void on_collision_resolved(
+        const carrier::Carrier& carrier,
         const mgc::collision::MapPushbackInfo& info
     );
     void on_collision_resolved(

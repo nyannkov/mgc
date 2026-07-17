@@ -1,7 +1,7 @@
-#include <stdio.h>
 #include "player.hpp"
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
+#include "entity/carrier/carrier.hpp"
 #include "resources/mml/mml.h"
 
 namespace app {
@@ -687,6 +687,28 @@ void Player::on_collision_resolved(
 }
 
 void Player::on_collision_resolved(
+    const carrier::Carrier& carrier,
+    const mgc::collision::MapPushbackInfo& info
+) {
+    auto pos = this->position();
+    if ( info.pushback.y < 0 ) {
+        if ( velocity_.y >= 0 ) {
+            velocity_.y = 0.0f;
+            is_grounded_ = true;
+            pos += carrier.delta();
+        }
+    } else if ( info.pushback.y > 0 ) {
+        velocity_.y = 0.1f;
+    } else { 
+    }
+
+    pushback_map_ = info.pushback;
+    pos += info.pushback;
+
+    this->set_position(pos);
+}
+
+void Player::on_collision_resolved(
     const stage::LayerOneWayBlock& block,
     const mgc::collision::MapPushbackInfo& info
 ) {
@@ -709,14 +731,11 @@ void Player::on_collision_resolved(
 
     auto pos = this->position();
     if ( info.pushback.y < 0 ) {
-//        velocity_.y = 0.0f;
-//        is_grounded_ = true;
         if ( velocity_.y >= 0 ) {
             velocity_.y = 0.0f;
             is_grounded_ = true;
         }
     } else if ( info.pushback.y > 0 ) {
-        //velocity_.y *= -1;
         velocity_.y = 0.1;
     } else { 
     }

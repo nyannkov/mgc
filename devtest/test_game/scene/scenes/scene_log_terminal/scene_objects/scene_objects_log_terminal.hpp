@@ -97,6 +97,7 @@ struct SceneObjects_LogTerminal : ISceneObjects {
     ArrayViewer<enemy::Enemy*> enemies() override { return {}; }
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     void draw(
         FramebufferT& fb,
