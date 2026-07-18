@@ -70,6 +70,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+set(MY_CUSTOM_CONF "\"${CMAKE_CURRENT_SOURCE_DIR}/mgc_conf.h\"")
+target_compile_definitions(mgc_c PUBLIC MGC_CUSTOM_CONF_PATH=${MY_CUSTOM_CONF})
+
 add_compile_options(-Wall
     -Wno-format
     -Wno-unused-function
