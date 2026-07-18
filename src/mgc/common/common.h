@@ -11,8 +11,8 @@
 extern "C" {
 #endif
 
-#ifdef MGC_USE_CUSTOM_MGC_CONF_H
-#include "mgc_conf.h"
+#ifdef MGC_CUSTOM_CONF_PATH
+#include MGC_CUSTOM_CONF_PATH
 #else
 #include "mgc/mgc_conf.h"
 #endif
