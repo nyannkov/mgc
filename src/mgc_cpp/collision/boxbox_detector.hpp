@@ -159,12 +159,14 @@ struct BoxBoxDetector {
 
         if ( result.hit ) {
             if ( has_flag(flags, DetectFlag::Callback) ) {
-                if constexpr (mgc::entities::mixins::has_on_hit_box_to_box<T1>::value) {
+                // T1
+                {
                     auto signed_overlap = result.query_penetration;
                     const BoxCollisionInfo info = {h1, h2, hitbox_idx1, hitbox_idx2, {signed_overlap}};
                     obj1.on_hit_box_to_box(obj2, info);
                 }
-                if constexpr (mgc::entities::mixins::has_on_hit_box_to_box<T2>::value) {
+                // T2
+                {
                     auto signed_overlap = result.query_penetration * -1;
                     const BoxCollisionInfo info = {h2, h1, hitbox_idx2, hitbox_idx1, {signed_overlap}};
                     obj2.on_hit_box_to_box(obj1, info);
@@ -314,11 +316,8 @@ struct BoxBoxDetector {
 
         if ( has_flag(config.flags, DetectFlag::Callback) ) {
 
-            if constexpr (mgc::entities::mixins::has_handle_box_pushback_result<T1>::value) {
-                
-                BoxPushbackInfo info = { {result.pushback}, {result.max_overlap}, result.is_fully_blocked };
-                obj1.handle_box_pushback_result(info, obj2_view);
-            }
+            BoxPushbackInfo info = { {result.pushback}, {result.max_overlap}, result.is_fully_blocked };
+            obj1.handle_box_pushback_result(info, obj2_view);
         }
 
         return result;
