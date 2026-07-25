@@ -89,12 +89,8 @@ struct BoxMapDetector {
                             h, hitbox_idx, map_cell_value, row, col 
                         };
 
-                        if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<ObjT>::value) {
-                            obj.on_hit_box_to_map(obj, map, info);
-                        }
-                        if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<MapT>::value) {
-                            map.on_hit_box_to_map(obj, map, info);
-                        }
+                        obj.on_hit_box_to_map(obj, map, info);
+                        map.on_hit_box_to_map(obj, map, info);
                     }
                 }
                 if ( col == range.col_max ) break;
@@ -118,13 +114,8 @@ struct BoxMapDetector {
 
                 MapPushbackInfo info = { h, hitbox_idx, {pushback.x, pushback.y} };
 
-                if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<ObjT>::value) {
-                    obj.handle_map_pushback_result(obj, map, info);
-                }
-
-                if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<MapT>::value) {
-                    map.handle_map_pushback_result(obj, map, info);
-                }
+                obj.handle_map_pushback_result(obj, map, info);
+                map.handle_map_pushback_result(obj, map, info);
             }
         }
 

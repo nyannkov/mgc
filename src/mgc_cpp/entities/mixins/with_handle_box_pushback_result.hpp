@@ -14,17 +14,6 @@ namespace mgc {
 namespace entities {
 namespace mixins {
 
-template <typename, typename = void>
-struct has_handle_box_pushback_result : std::false_type {};
-
-template <typename T>
-struct has_handle_box_pushback_result<
-    T,
-    std::void_t<
-        decltype(std::declval<const T&>().hitboxes())
-    >
-> : std::true_type {};
-
 template <typename Derived>
 struct WithHandleBoxPushbackResult {
     template <typename View>
@@ -35,7 +24,6 @@ struct WithHandleBoxPushbackResult {
         static_cast<Derived*>(this)->handle_box_pushback_result_impl(info, others);
     }
 };
-
 
 }// namespace mixins
 }// namespace entities

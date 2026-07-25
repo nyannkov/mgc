@@ -28,7 +28,11 @@ void SceneObjects_Stage3_1::init() {
         TalkflowEffectType::Mute
     });
 
-//    carrier_.spawn({MGC_CELL2PIXEL(10)+8, MGC_CELL2PIXEL(22)});
+    carrier_1_.spawn({MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(21)});
+    carrier_1_.start(wp_1_.data(), wp_1_.size(), carrier::WaypointCarrierMode::PingPong);
+    //carrier_1_.start(wp_1_.data(), wp_1_.size(), carrier::WaypointCarrierMode::OneWay);
+    //carrier_1_.start(wp_1_.data(), wp_1_.size(), carrier::WaypointCarrierMode::Loop);
+    carrier_1_.set_speed(1.f);
 }
 
 

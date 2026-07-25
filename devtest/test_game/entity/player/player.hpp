@@ -47,9 +47,9 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
 
     void init();
     void spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state);
-    void update_movement();
+    void update_movement(bool just_off_board);
     void resolve_movement();
-    void update_animation(bool is_talking);
+    void update_animation(bool is_talking, bool just_off_board);
     attack::AttackPlayer& attack() { return attack_; }
 
     void reset_state_for_placement(
@@ -226,12 +226,13 @@ private:
     mgc::math::Vec2i pushback_box_ {};
     mgc::math::Vec2i pushback_map_ {};
     mgc::math::Vec2i box_overlap_ {};
+    bool flag_jump_ = false;
 
     static constexpr int32_t MAX_MONEY = 99999;
 
     void set_hp(int32_t hp) { hp_ = hp; };
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };
-    void update_anim_normal();
+    void update_anim_normal(bool just_off_board);
     void update_anim_attacking();
     void update_anim_game_over();
     void on_enemy_hit(

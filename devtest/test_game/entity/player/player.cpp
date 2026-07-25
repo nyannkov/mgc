@@ -30,6 +30,7 @@ void Player::init() {
     this->set_hp(full_hp_);
     money_ = 0;
     blink_animator_.set_target(*this);
+    flag_jump_ = false;
 
     auto& body = at(this->mut_hitboxes(), PlayerHitboxIndex::Body);
     body.set_offset({1, 0});
@@ -98,8 +99,9 @@ void Player::reset_state_for_placement(
     attack_.despawn();
 }
 
-void Player::update_movement() {
+void Player::update_movement(bool just_off_board) {
 
+    flag_jump_ = false;
     velocity_.x = 0;//TODO
 
     pushback_box_.x = 0;
@@ -192,7 +194,8 @@ void Player::update_movement() {
             }
 
             if ( gamepad_.just_pressed(Key::Cancel) ) {
-                if ( is_grounded_ ) {
+                if ( is_grounded_ || just_off_board ) {
+                    flag_jump_ = true;
                     velocity_.y = -12;
                 }
             }
@@ -321,7 +324,7 @@ void Player::resolve_movement() {
     }
 }
 
-void Player::update_animation(bool is_talking) {
+void Player::update_animation(bool is_talking, bool just_off_board) {
     
     if ( anim_mode_ == PlayerAnimMode::Auto ) {
         if ( this->is_game_over() ) {
@@ -333,10 +336,10 @@ void Player::update_animation(bool is_talking) {
                 } else {
                     attack_state_ = AttackState::Stop;
                     attack_.despawn();
-                    update_anim_normal();
+                    update_anim_normal(just_off_board);
                 }
             } else {
-                update_anim_normal();
+                update_anim_normal(just_off_board);
             }
         }
 
@@ -382,7 +385,7 @@ void Player::receive_impact(mgc::math::Vec2f delta) {
     force_ex_ += delta;
 }
 
-void Player::update_anim_normal() {
+void Player::update_anim_normal(bool just_off_board) {
 
     PlayerAnimState state_next = anim_state_;
     anim_.set_loop(true);
@@ -405,8 +408,13 @@ void Player::update_anim_normal() {
                                        : PlayerAnimState::StandLeft;
             }
         } else {
-            state_next = is_right_ ? PlayerAnimState::JumpRight
-                                   : PlayerAnimState::JumpLeft;
+            if ( !flag_jump_ && just_off_board ) {
+                state_next = is_right_ ? PlayerAnimState::StandRight
+                                       : PlayerAnimState::StandLeft;
+            } else {
+                state_next = is_right_ ? PlayerAnimState::JumpRight
+                                       : PlayerAnimState::JumpLeft;
+            }
         }
     } else if ( player_state_ == PlayerState::Ladder ) {
         bool is_key_pressed_up_or_down = 
@@ -690,12 +698,16 @@ void Player::on_collision_resolved(
     const carrier::Carrier& carrier,
     const mgc::collision::MapPushbackInfo& info
 ) {
-    auto pos = this->position();
+    auto pos = this->precise_position();
+
     if ( info.pushback.y < 0 ) {
-        if ( velocity_.y >= 0 ) {
+        if ( velocity_.y > 0 ) {
             velocity_.y = 0.0f;
-            is_grounded_ = true;
-            pos += carrier.delta();
+        }
+        is_grounded_ = true;
+        pos.x += carrier.delta().x;
+        if ( carrier.delta().y > 0 ) {
+            pos.y += carrier.delta().y;
         }
     } else if ( info.pushback.y > 0 ) {
         velocity_.y = 0.1f;
@@ -703,9 +715,10 @@ void Player::on_collision_resolved(
     }
 
     pushback_map_ = info.pushback;
-    pos += info.pushback;
+    pos.x += info.pushback.x;
+    pos.y += info.pushback.y;
 
-    this->set_position(pos);
+    this->set_precise_position(pos);
 }
 
 void Player::on_collision_resolved(

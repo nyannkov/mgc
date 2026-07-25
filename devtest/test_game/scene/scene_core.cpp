@@ -41,9 +41,20 @@ bool event_update(IEventObjects* events) {
     return is_control_locked;
 }
 
+bool is_just_off_board(SceneContext& scx) {
+    if ( scx.objs ) {
+        for ( auto* carrier : scx.objs->carriers() ) {
+            if ( carrier->off_board_state() == carrier::Carrier::OffBoardState::JustOffBoard ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void update_movement(SceneContext& scx) {
 
-    scx.player.update_movement();
+    scx.player.update_movement(is_just_off_board(scx));
 
     if ( scx.objs ) {
         for ( auto* block : scx.objs->blocks() ) {
@@ -255,7 +266,7 @@ void update(
         }
     }
 
-    scx.player.update_animation(talkflow.in_progress());
+    scx.player.update_animation(talkflow.in_progress(), is_just_off_board(scx));
 
     if ( scx.objs ) {
         for ( auto* enemy : scx.objs->enemies() ) {
