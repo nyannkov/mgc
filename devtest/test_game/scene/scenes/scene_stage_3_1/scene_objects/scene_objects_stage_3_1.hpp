@@ -10,7 +10,7 @@
 #include "entity/prop/gate/gate.hpp"
 #include "entity/prop/signboard/signboard.hpp"
 #include "entity/block/pushable_block/pushable_block.hpp"
-#include "entity/carrier/sized_carrier/sized_carrier.hpp"
+#include "entity/carrier/waypoint_carrier/waypoint_carrier.hpp"
 
 namespace app {
 struct SceneObjects_Stage3_1 : ISceneObjects {
@@ -21,7 +21,8 @@ struct SceneObjects_Stage3_1 : ISceneObjects {
           gate_2_(scx.gamepad),
           signboard_(scx.gamepad),
           props_ { &gate_1_, &gate_2_, &signboard_ },
-          carriers_ { &carrier_ }
+          carrier_1_(scx.timer),
+          carriers_ { &carrier_1_ }
         { }
 
     void init();
@@ -41,7 +42,12 @@ private:
     prop::Signboard signboard_;
     std::array<prop::Prop*, 3> props_;
 
-    carrier::SizedCarrier<1, 3> carrier_;
+    std::array<carrier::WaypointT, 3> wp_1_ = {{
+        {MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(19)},
+        {MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(8)},
+        {MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(8)},
+    }};
+    carrier::WaypointCarrier<1, 3> carrier_1_;
     std::array<carrier::Carrier*, 1> carriers_;
 
 };

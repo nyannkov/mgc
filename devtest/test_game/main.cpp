@@ -4,9 +4,6 @@
 #include "platform/platform.hpp"
 #include "resources/mml/mml.h"
 
-//TODO
-#include "entity/carrier/sized_carrier/sized_carrier.hpp"
-
 namespace {
 
 auto& platform = app::get_platform_ref();
