@@ -25,6 +25,7 @@ enum class SceneId : int {
     Stage2_8,
     Stage2_9,
     Stage3_1,
+    Stage3_2,
     Shop,
     LogTerminal,
     GameOver,

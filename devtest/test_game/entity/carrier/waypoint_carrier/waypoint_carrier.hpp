@@ -12,7 +12,7 @@
 namespace app {
 namespace carrier {
 
-using WaypointT = mgc::math::Vec2f;
+using WaypointT = mgc::math::Vec2i;
 
 enum class WaypointCarrierMode {
     OneWay,
@@ -143,8 +143,8 @@ struct WaypointCarrier : Carrier {
 
         auto dest = wp_array_[dest_index_];
 
-        auto dx = dest.x - posf_.x;
-        auto dy = dest.y - posf_.y;
+        auto dx = static_cast<float>(dest.x) - posf_.x;
+        auto dy = static_cast<float>(dest.y) - posf_.y;
         bool is_reached_x = false;
         bool is_reached_y = false;
 
@@ -191,7 +191,7 @@ struct WaypointCarrier : Carrier {
     }
     auto speed() const { return speed_; }
 
-    void start(const WaypointT* wp_array, size_t wp_count, WaypointCarrierMode mode) {
+    void start(const WaypointT* wp_array, size_t wp_count, WaypointCarrierMode mode, size_t start_index = 0) {
         
         wp_array_ = wp_array;
         wp_count_ = wp_count;
@@ -199,7 +199,11 @@ struct WaypointCarrier : Carrier {
             state_ = State::Stop;
             return;
         }
-        velocity_ = calc_velocity(posf_, wp_array_[0], speed_);
+        if ( start_index < wp_count_ ) {
+            velocity_ = calc_velocity(this->position(), wp_array_[start_index], speed_);
+        } else {
+            velocity_ = calc_velocity(this->position(), wp_array_[0], speed_);
+        }
         mode_ = mode;
         state_ = State::Running;
     }
@@ -245,9 +249,9 @@ private:
         }
     }
 
-    static mgc::math::Vec2f calc_velocity(mgc::math::Vec2f orig, mgc::math::Vec2f dest, float speed) {
-        auto dx = dest.x - orig.x;
-        auto dy = dest.y - orig.y;
+    static mgc::math::Vec2f calc_velocity(mgc::math::Vec2i orig, mgc::math::Vec2i dest, float speed) {
+        auto dx = static_cast<float>(dest.x - orig.x);
+        auto dy = static_cast<float>(dest.y - orig.y);
 
         float d = sqrt(dx*dx + dy*dy);
 

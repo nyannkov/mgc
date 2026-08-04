@@ -1,0 +1,20 @@
+animations:
+  - name: flutter_left
+    description: "Flutter left"
+    frames:
+      - { file: frame_002.bmp, time_ms: 100 }
+      - { file: frame_003.bmp, time_ms: 100 }
+  - name: flutter_right
+    description: "Flutter right"
+    frames:
+      - { file: frame_000.bmp, time_ms: 100 }
+      - { file: frame_001.bmp, time_ms: 100 }
+  - name: fall_left
+    description: "Fall left"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }
+
+  - name: fall_right
+    description: "Fall right"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }

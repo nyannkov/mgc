@@ -41,6 +41,7 @@ set(CXX_SOURCES
     entity/enemy/skyfish/skyfish_bt.cpp
     entity/enemy/walker/walker.cpp
     entity/enemy/floaty_fish/floaty_fish.cpp
+    entity/enemy/balloon/balloon.cpp
     entity/enemy/boss/dancer/dancer.cpp
     entity/enemy/boss/lancer/lancer.cpp
     entity/stage/stage.cpp
