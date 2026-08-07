@@ -7,6 +7,12 @@
 
 namespace app {
 
+constexpr uint16_t MAIN_FRAME_WIDTH = 224;
+constexpr uint16_t MAIN_FRAME_HEIGHT = 192;
+
+constexpr mgc_world_t TARGET_X_IN_CAMERA = MAIN_FRAME_WIDTH/2-8;
+constexpr mgc_world_t TARGET_Y_IN_CAMERA = MAIN_FRAME_HEIGHT/2;
+
 // Alias
 using BTreeControllerT = mgc::control::btree::BTreeController<FrameTimerT>;
 using IBTListenerT =  mgc::control::btree::IBTreeListener<BTreeControllerT>;

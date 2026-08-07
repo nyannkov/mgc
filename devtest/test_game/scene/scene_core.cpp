@@ -226,7 +226,8 @@ void setup_scene_context(
 void update(
     SceneContext& scx, 
     TalkflowControllerT& talkflow,
-    CameraT* camera
+//    CameraT* camera
+    mgc::camera::ICameraFollower *camera
 ) {
     bool is_control_locked = false;
 
@@ -322,7 +323,8 @@ bool check_scene_transition_request(
 void draw(
     ColorT back_color,
     FramebufferT& fb,
-    const CameraT* camera,
+//    const CameraT* camera,
+    const mgc::camera::ICameraFollower* camera,
     const SceneContext& scx, 
     const TalkflowControllerT& talkflow,
     GameOverEffect& game_over_effect

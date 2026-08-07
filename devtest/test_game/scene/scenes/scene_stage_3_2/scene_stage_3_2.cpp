@@ -42,10 +42,15 @@ void Scene_Stage3_2::init() {
     stage_.set_position({0, 0});
 
     camera_.set_target(scx_.player);
-    camera_.set_x_follow_setting(MGC_CELL2PIXEL(4), MGC_CELL2PIXEL(55), MGC_CELL2PIXEL(1));
-    camera_.set_y_follow_setting(MGC_CELL2PIXEL(4), MGC_CELL2PIXEL(55), MGC_CELL2PIXEL(1));
+    camera_.set_target_position_in_camera_space(
+        {TARGET_X_IN_CAMERA, TARGET_Y_IN_CAMERA}
+    );
+    camera_.set_x_follow_setting(MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(55));
+    camera_.set_y_follow_setting(MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(58));
     camera_.set_x_follow_enabled(true);
     camera_.set_y_follow_enabled(true);
+
+    camera_.snap_to_target();
 
     camera_.update_follow_position();
 

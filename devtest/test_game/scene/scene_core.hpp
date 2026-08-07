@@ -23,7 +23,8 @@ const TalkflowRequest* cutscene_update(
 void update(
     SceneContext& scx, 
     TalkflowControllerT& talkflow,
-    CameraT* camera
+//    CameraT* camera
+    mgc::camera::ICameraFollower* camera
 );
 
 bool check_scene_transition_request(
@@ -35,7 +36,8 @@ bool check_scene_transition_request(
 void draw(
     ColorT back_color,
     FramebufferT& fb,
-    const CameraT* camera,
+//    const CameraT* camera,
+    const mgc::camera::ICameraFollower* camera,
     const SceneContext& scx, 
     const TalkflowControllerT& talkflow,
     GameOverEffect& game_over_effect

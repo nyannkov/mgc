@@ -13,7 +13,7 @@ app::WorldState world_state(platform);
 app::GameContext ctx(platform, world_state, request_hub);
 app::StopwatchT sw(platform.frame_timer);
 
-app::MainFrame<224, 192> main_frame(8, 48, ctx);
+app::MainFrame<app::MAIN_FRAME_WIDTH, app::MAIN_FRAME_HEIGHT> main_frame(8, 48, ctx);
 app::StatusFrame<224, 32> status_frame(8, 8, ctx);
 
 void status_display_draw_blocking() {
