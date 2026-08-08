@@ -8,7 +8,6 @@
 #include "entity/player/player.hpp"
 #include "entity/stage/stage.hpp"
 #include "scene_objects/scene_objects_stage_3_2.hpp"
-#include "utils/smooth_follow_camera/smooth_follow_camera.hpp"
 
 namespace app {
 
@@ -20,8 +19,7 @@ struct Scene_Stage3_2 : SceneBase {
     void draw(mgc::graphics::Framebuffer& fb) override;
 
 private:
-//    CameraT camera_;
-    SmoothFollowCamera camera_;
+    CameraT camera_;
     stage::Stage stage_;
     SceneObjects_Stage3_2 scene_objects_;
 };

@@ -57,7 +57,7 @@ struct SmoothFollowCamera : mgc::camera::ICameraFollower {
                     pos.y = max_y_;
                 } else { }
 
-                float dy = 0.1* (pos.y - (float)target_pos_in_camera_.y - posf_.y);
+                float dy = 0.2* (pos.y - (float)target_pos_in_camera_.y - posf_.y);
                 posf_.y += dy;
             }
 

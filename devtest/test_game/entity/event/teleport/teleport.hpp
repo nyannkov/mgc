@@ -23,12 +23,15 @@ struct Teleport : event::Event {
     void update() override;
     void draw_effect(FramebufferT& fb, mgc::math::Vec2i& cam_pos) override;
 
+    void set_camera(CameraT *camera);
+
 private:
     prop::Teleporter* teleporters_;
     const size_t teleporters_count_;
     ScreenFader screen_fader_;
     Player& player_;
     prop::Teleporter* active_teleporter_ = nullptr;
+    CameraT* camera_ = nullptr;
 };
 
 }// namepsace event

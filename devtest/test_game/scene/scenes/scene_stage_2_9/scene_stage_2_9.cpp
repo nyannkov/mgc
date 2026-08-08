@@ -25,7 +25,7 @@ void Scene_Stage2_9::init() {
     
     if ( id_prev() == SceneId::Stage2_8 ) {
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(40), MGC_CELL2PIXEL(60)},
+            {MGC_CELL2PIXEL(39), MGC_CELL2PIXEL(60)},
             PlayerAnimState::StandRight
         );
     } else if ( id_prev() == SceneId::Stage3_1 ) {
@@ -41,7 +41,7 @@ void Scene_Stage2_9::init() {
     } else {
         //TODO
         scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(40), MGC_CELL2PIXEL(60)},
+            {MGC_CELL2PIXEL(39), MGC_CELL2PIXEL(60)},
             PlayerAnimState::StandLeft
         );
     }
@@ -52,12 +52,15 @@ void Scene_Stage2_9::init() {
     stage_.set_position({0, 0});
 
     camera_.set_target(scx_.player);
-    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(42), MGC_CELL2PIXEL(1));
-    camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(59), MGC_CELL2PIXEL(3));
+    camera_.set_target_position_in_camera_space(
+        {TARGET_X_IN_CAMERA, TARGET_Y_IN_CAMERA}
+    );
+    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(42));
+    camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(58));
     camera_.set_x_follow_enabled(true);
     camera_.set_y_follow_enabled(true);
 
-    camera_.update_follow_position();
+    camera_.snap_to_target();
 
     scene_objects_.init();
 
