@@ -4,8 +4,15 @@
 #include <type_traits>
 #include "mgc_cpp/mgc.hpp"
 #include "platform/platform_conf.hpp"
+#include "utils/smooth_follow_camera/smooth_follow_camera.hpp"
 
 namespace app {
+
+constexpr uint16_t MAIN_FRAME_WIDTH = 224;
+constexpr uint16_t MAIN_FRAME_HEIGHT = 192;
+
+constexpr mgc_world_t TARGET_X_IN_CAMERA = MAIN_FRAME_WIDTH/2-24;
+constexpr mgc_world_t TARGET_Y_IN_CAMERA = MAIN_FRAME_HEIGHT/2;
 
 // Alias
 using BTreeControllerT = mgc::control::btree::BTreeController<FrameTimerT>;
@@ -16,7 +23,7 @@ using BlinkAnimatorT = mgc::utils::BlinkAnimator<FrameTimerT>;
 using TalkflowControllerT = mgc::control::talkflow::DefaultTalkflowController;
 using ITalkflowListenerT = mgc::control::talkflow::ITalkflowListener;
 using ITalkflowEffectsT = mgc::control::talkflow::ITalkflowEffects;
-using CameraT = mgc::camera::SimpleCameraFollower;
+using CameraT = SmoothFollowCamera;
 using ColBox2BoxT = mgc::collision::BoxBoxDetector;
 using ColBox2MapT = mgc::collision::BoxMapDetector;
 using ColorT = mgc::graphics::Color;
