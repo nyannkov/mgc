@@ -144,11 +144,14 @@ typedef struct mgc_point {
 enum draw_effect_flags {
     DRAW_EFFECT_NONE = 0,
     DRAW_EFFECT_ALPHA_BLEND = (1 << 0),
+    DRAW_EFFECT_PALETTE_CHANGE = (1 << 1),
 };
 
 typedef struct mgc_draw_options {
     enum draw_effect_flags eff_flags;
     uint8_t alpha;
+    const mgc_color_t *palette_array;
+    size_t palette_count;
 } mgc_draw_options_t;
 
 typedef struct mgc_parallax_factor {

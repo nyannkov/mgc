@@ -23,6 +23,24 @@ typedef struct mgc_tileset {
     size_t tile_count;
 } mgc_tileset_t;
 
+bool tileset_copy_palette(
+    const mgc_tileset_t *tileset,
+    mgc_color_t* dest_palette,
+    size_t dest_count
+);
+
+static inline
+const mgc_color_t* tileset_get_palette_array(const mgc_tileset_t *tileset) {
+    MGC_ASSERT(tileset != NULL, "Invalid handler");
+    return tileset->palette_array;
+}
+
+static inline
+size_t tileset_get_palette_count(const mgc_tileset_t *tileset) {
+    MGC_ASSERT(tileset != NULL, "Invalid handler");
+    return tileset->palette_count;
+}
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif
