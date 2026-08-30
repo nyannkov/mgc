@@ -260,3 +260,10 @@ mgc_contact_t collision_boxmap_get_contact_flags(
     return boxmap->flags;
 }
 
+bool collision_boxmap_is_fully_blocked(
+    const mgc_collision_boxmap_t *boxmap
+) {
+    MGC_ASSERT(boxmap != NULL, "`boxmap` must not be NULL");
+    return (boxmap->flags & MGC_MASK_CONTACT_ALL) == MGC_MASK_CONTACT_ALL;
+}
+

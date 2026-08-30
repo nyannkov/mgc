@@ -74,6 +74,10 @@ mgc_contact_t collision_boxmap_get_contact_flags(
     const mgc_collision_boxmap_t *boxmap
 );
 
+bool collision_boxmap_is_fully_blocked(
+    const mgc_collision_boxmap_t *boxmap
+);
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif
