@@ -1,0 +1,6 @@
+animations:
+  - name: firework_bursting
+    description: "Firework Bursting"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }
+

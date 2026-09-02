@@ -36,8 +36,9 @@ struct SceneObjects_Stage3_2 : ISceneObjects {
           },
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
+          gate_3_(scx.gamepad),
           signboard_(scx.gamepad),
-          props_ { &gate_1_, &gate_2_, &signboard_ },
+          props_ { &gate_1_, &gate_2_, &gate_3_, &signboard_ },
           carrier_1_(scx.timer),
           carrier_2_1_(scx.timer),
           carrier_2_2_(scx.timer),
@@ -76,8 +77,9 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
+    prop::Gate gate_3_;
     prop::Signboard signboard_;
-    std::array<prop::Prop*, 3> props_;
+    std::array<prop::Prop*, 4> props_;
 
     std::array<carrier::WaypointT, 2> wp_1_ = {{
         {MGC_CELL2PIXEL(51), MGC_CELL2PIXEL(58)},

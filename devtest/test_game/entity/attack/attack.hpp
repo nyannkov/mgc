@@ -4,6 +4,7 @@
 #include "mgc_cpp/mgc.hpp"
 #include "app_common.hpp"
 #include "entity/player/player_hitbox_index.hpp"
+#include "entity/stage/layer/layer_block.hpp"
 
 namespace app {
 namespace attack {
@@ -90,7 +91,14 @@ struct Attack : mgc::entities::ActorImpl<
             const ObjT& obj,
             const MapT& map,
             const mgc::collision::MapPushbackInfo& info
-    ) { }
+    ) { 
+        using CleanedMapT = std::decay_t<MapT>;
+        if constexpr (std::is_same_v<CleanedMapT, stage::LayerBlock>) {
+            on_collision_resolved(map, info);
+        } else if constexpr (std::is_same_v<CleanedMapT, carrier::Carrier>) {
+            on_collision_resolved(map, info);
+        }
+    }
 
     template <typename View>
     void handle_box_pushback_result_impl(                                              
@@ -110,6 +118,14 @@ protected:
     virtual void on_player_hit(
         const Player& player,
         const mgc::collision::BoxCollisionInfo& info
+    ) { }
+    virtual void on_collision_resolved(
+        const stage::LayerBlock& block,
+        const mgc::collision::MapPushbackInfo& info
+    ) { }
+    virtual void on_collision_resolved(
+        const carrier::Carrier& carrier,
+        const mgc::collision::MapPushbackInfo& info
     ) { }
 
 private:

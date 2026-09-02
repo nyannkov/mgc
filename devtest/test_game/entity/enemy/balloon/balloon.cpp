@@ -128,6 +128,13 @@ void Balloon::update_movement() {
 
         } else { }
 
+        pos += force_ex_;
+        force_ex_ *= dumping_rate_;
+        dumping_rate_ -= 0.02f;
+        if ( dumping_rate_ < 0 ) {
+            dumping_rate_ = 0.0f;
+        }
+
         this->set_precise_position(pos);
 
     } else if ( state == EnemyState::Despawning ) {
@@ -225,8 +232,9 @@ void Balloon::receive_damage(int32_t amount) {
     }
 }
 
-void Balloon::receive_impact(mgc::math::Vec2f delta) {
+void Balloon::receive_impact(mgc::math::Vec2f delta, float dumping_rate) {
     force_ex_ += delta;
+    dumping_rate_ = dumping_rate;
 }
 
 void Balloon::on_player_hit(
@@ -249,8 +257,6 @@ void Balloon::on_attack_hit(
         size_t attack_hitbox_index = info.other_hitbox_index;
 
         attack.apply_damage_to(*this, attack_hitbox_index);
-
-        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 

@@ -30,3 +30,16 @@ animations:
     frames:
       - { file: frame_002.bmp, time_ms: 999999 }
 
+  - name: firework_ball_1
+    description: "Firework_ball_1"
+    frames:
+      - { file: frame_008.bmp, time_ms: 100 }
+      - { file: frame_009.bmp, time_ms: 100 }
+
+  - name: firework_ball_2
+    description: "Firework_ball_2"
+    frames:
+      - { file: frame_010.bmp, time_ms: 100 }
+      - { file: frame_011.bmp, time_ms: 100 }
+
+

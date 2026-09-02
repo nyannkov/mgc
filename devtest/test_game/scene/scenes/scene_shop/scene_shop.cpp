@@ -23,7 +23,7 @@ Scene_Shop::Scene_Shop(GameContext& ctx)
 void Scene_Shop::init() {
     
     scx_.player.reset_state_for_placement(
-        {MGC_CELL2PIXEL(1), MGC_CELL2PIXEL(6)},
+        {MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(6)},
         PlayerAnimState::StandRight
     );
 

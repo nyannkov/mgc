@@ -102,7 +102,11 @@ void SkyFish::update_movement() {
             velocity_ = velocity_ + force + force_ex_;
             real_pos += velocity_;
 
-            force_ex_ *= 0.5;
+            force_ex_ *= dumping_rate_;
+            dumping_rate_ -= 0.02f;
+            if ( dumping_rate_ < 0 ) {
+                dumping_rate_ = 0.0f;
+            }
 
             this->set_precise_position(real_pos);
 
@@ -205,8 +209,9 @@ void SkyFish::receive_damage(int32_t amount) {
     }
 }
 
-void SkyFish::receive_impact(mgc::math::Vec2f delta) {
+void SkyFish::receive_impact(mgc::math::Vec2f delta, float dumping_rate) {
     force_ex_ += delta;
+    dumping_rate_ = dumping_rate;
 }
 
 void SkyFish::on_player_hit(
@@ -225,8 +230,6 @@ void SkyFish::on_attack_hit(
         size_t attack_hitbox_index = info.other_hitbox_index;
 
         attack.apply_damage_to(*this, attack_hitbox_index);
-
-        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 

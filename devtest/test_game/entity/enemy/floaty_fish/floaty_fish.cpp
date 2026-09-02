@@ -176,8 +176,9 @@ void FloatyFish::receive_damage(int32_t amount) {
     }
 }
 
-void FloatyFish::receive_impact(mgc::math::Vec2f delta) {
+void FloatyFish::receive_impact(mgc::math::Vec2f delta, float dumping_rate) {
     force_ex_ += delta;
+    dumping_rate_ = dumping_rate;
 }
 
 void FloatyFish::on_player_hit(
@@ -195,8 +196,6 @@ void FloatyFish::on_attack_hit(
         size_t attack_hitbox_index = info.other_hitbox_index;
 
         attack.apply_damage_to(*this, attack_hitbox_index);
-
-        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 

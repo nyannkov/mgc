@@ -86,6 +86,10 @@
 #include "resources/generated/map/map_stage_3_2_ladder.h"
 #include "resources/generated/map/map_stage_3_2_needle.h"
 #include "resources/generated/map/map_stage_3_2_one_way_block.h"
+#include "resources/generated/map/map_stage_3_3_block.h"
+#include "resources/generated/map/map_stage_3_3_ladder.h"
+#include "resources/generated/map/map_stage_3_3_needle.h"
+#include "resources/generated/map/map_stage_3_3_one_way_block.h"
 
 #include "resources/generated/map/map_log_terminal_back.h"
 #include "resources/generated/map/map_log_terminal_block.h"
@@ -429,6 +433,20 @@ void Stage::setup(StageId id) {
         ladder_.set_all_enabled(true);
 
         needle_.set_maps(map_stage_3_2_needle, tileset_map_elements, &map_stage_3_2_needle);
+        needle_.set_all_enabled(true);
+        break;
+
+    case StageId::Stage3_3:
+        block_.set_maps(map_stage_3_3_block, tileset_map_elements, &map_stage_3_3_block);
+        block_.set_all_enabled(true);
+
+        one_way_block_.set_maps(map_stage_3_3_one_way_block, tileset_map_elements, &map_stage_3_3_one_way_block);
+        one_way_block_.set_all_enabled(true);
+
+        ladder_.set_maps(map_stage_3_3_ladder, tileset_map_elements, &map_stage_3_3_ladder);
+        ladder_.set_all_enabled(true);
+
+        needle_.set_maps(map_stage_3_3_needle, tileset_map_elements, &map_stage_3_3_needle);
         needle_.set_all_enabled(true);
         break;
 

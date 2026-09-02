@@ -25,7 +25,7 @@ struct Enemy : mgc::entities::ActorImpl<
 
     virtual int32_t apply_damage_to(Player& player, size_t hitbox_index) const = 0;
     virtual void receive_damage(int32_t amount) = 0;
-    virtual void receive_impact(mgc::math::Vec2f delta) = 0;
+    virtual void receive_impact(mgc::math::Vec2f delta, float dumping_rate) = 0;
 
     virtual ArrayViewer<attack::Attack*> weapons() { return {}; }
 

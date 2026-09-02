@@ -58,6 +58,7 @@ talkscript:
             - { tag: CASE_1, value: 0, next: shop_shopping_content_case_1 }
             - { tag: CASE_2, value: 1, next: shop_shopping_content_case_2 }
             - { tag: CASE_3, value: 2, next: shop_shopping_content_case_3 }
+            - { tag: CASE_4, value: 3, next: shop_shopping_content_case_4 }
           default:
             next: shop_shopping_content_case_1
       - end: true
@@ -89,6 +90,14 @@ talkscript:
             - { item: "やめる", cancel: true }
       - end: true
 
+    shop_shopping_content_case_4:
+      - choice:
+          tag: "SHOPPING_CONTENT_CASE_4"
+          items:
+            - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
+            - { item: "花火", value: 500, tag: FIREWORK, next: shop_shopping_item_firework }
+            - { item: "やめる", cancel: true }
+      - end: true
 
     shop_shopping_item_cookie:
       - message: "チョコチップが入ったクッキーです。"
@@ -100,8 +109,13 @@ talkscript:
 
     shop_shopping_item_yoyo:
       - message: "昔、楽しそうだなと思って買ったんですけれど．．．"
-      - message: "これ、紐がゴムでできているみたいで、すごく不規則に伸び縮みするんですよ。"
+      - message: "これ、ひもがゴムでできていて、すごく不規則に伸び縮みするんですよ。"
       - message: "私にはちょっと扱いが難しくて．．．"
+        next: shop_shopping_check
+
+    shop_shopping_item_firework:
+      - message: "これ、お友達と一緒に花火がしたくて、\\n先日注文したものなんです。"
+      - message: "ただ．．．、\\n思っていたのとちょっと違ったんですよね．．．"
         next: shop_shopping_check
 
     shop_shopping_item_diving_equipment:
@@ -148,7 +162,7 @@ talkscript:
 
     shop_coffee_break_1:
       - { message: "コーヒーはお好きですか？" } 
-      - { message: "前に焙煎した豆が余っていまして。", tag: START_COFFEE_BREAK, end: true }
+      - { message: "うまく焙煎できた豆があるんです。\\nよろしければ一杯いかがでしょうか？", tag: START_COFFEE_BREAK, end: true }
 
     shop_coffee_break_2:
       - { message: "元気になった！", tag: END_COFFEE_BREAK, end: true }
@@ -159,6 +173,7 @@ talkscript:
           cases:
             - { tag: CASE_1, value: 0, next: shop_small_talking_1 }
             - { tag: CASE_2, value: 1, next: shop_small_talking_2 }
+            - { tag: CASE_3, value: 2, next: shop_small_talking_3 }
           default:
             next: shop_small_talking_1
       - end: true
@@ -193,6 +208,20 @@ talkscript:
       - message: "それ以外は、もう使わないかなぁ、っていう私物を並べているんです。"
       - end: true
 
+    shop_small_talking_3:
+      - choice:
+          tag: "SHOP_SMALL_TALKING_3"
+          items:
+            - { item: "コーヒーについて", next: shop_small_talking_3_1 }
+
+    shop_small_talking_3_1:
+      - message: "コーヒーを淹れるのが好きでして、\\nよく焙煎の練習をしているんです。"
+      - message: "焙煎って、少しでも失敗すると焼きすぎたり、\\nムラができちゃったりで難しいんですよね。"
+      - message: "でも、そこが楽しくて、\\nつい何度も試してしまうんです。"
+      - message: "おかげで家中が豆で溢れかえっちゃって．．．"
+      - end: true
+
+
     signboard_1:
       - { message: "何かかいてある" }
       - { message: "            禍、塔の上にあり", end: true } 
@@ -203,7 +232,6 @@ talkscript:
 
     gate_1:
       - { message: "開かない・・・。", end: true }
-
 
     log_1:
      - message: "作成した個体は順調に成長している。"

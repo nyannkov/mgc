@@ -37,6 +37,10 @@ enum class PlayerAnimState {
     SwimRight,
     DivingLeft,
     DivingRight,
+    FireworkLeftCarrying,
+    FireworkRightCarrying,
+    FireworkLeftThrowing,
+    FireworkRightThrowing
 };
 
 inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState state) {
@@ -71,6 +75,10 @@ inline const mgc::parts::assets::AnimFrames& get_anim_frames(PlayerAnimState sta
     case PlayerAnimState::SwimRight: return anim_player_swim_right;
     case PlayerAnimState::DivingLeft: return anim_player_diving_left;
     case PlayerAnimState::DivingRight: return anim_player_diving_right;
+    case PlayerAnimState::FireworkLeftCarrying: return anim_player_attack_firework_carry_left;
+    case PlayerAnimState::FireworkRightCarrying: return anim_player_attack_firework_carry_right;
+    case PlayerAnimState::FireworkLeftThrowing: return anim_player_attack_firework_throw_left;
+    case PlayerAnimState::FireworkRightThrowing: return anim_player_attack_firework_throw_right;
     default: return anim_player_stand_right;
     }
 }

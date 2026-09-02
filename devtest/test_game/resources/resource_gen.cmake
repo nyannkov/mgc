@@ -178,7 +178,7 @@ function(anim_cmake_list_gen INPUT_YAML INPUT_BMP OUT_DIR)
             message(FATAL_ERROR "${INPUT_BMP}: Split failed")
         endif()
         execute_process(
-            COMMAND "${PY3}" "${ANIM_GEN}" "${INPUT_YAML}" --dir "${OUT_DIR}"
+            COMMAND "${PY3}" "${ANIM_GEN}" "${INPUT_YAML}" --columns 1 --dir "${OUT_DIR}"
             RESULT_VARIABLE RET
         )
         if(NOT RET EQUAL 0)

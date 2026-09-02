@@ -60,7 +60,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void receive_damage(int32_t amount);
     void receive_heal(int32_t amount);
     void receive_life_up(int32_t amount);
-    void receive_impact(mgc::math::Vec2f delta);
+    void receive_impact(mgc::math::Vec2f delta, float dumping_rate = 0.5f);
 
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
@@ -199,6 +199,7 @@ private:
     SoundControllerT& sound_controller_;
     EquipmentInfo& equipment_info_;
     mgc::control::anim::AnimController<FrameTimerT> anim_;
+    float dumping_rate_ = 0.5f;
     mgc::math::Vec2f velocity_ {0.0f, 0.0f};
     mgc::math::Vec2f force_ex_ {0.0f, 0.0f};
     bool is_right_ = true;

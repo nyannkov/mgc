@@ -145,6 +145,8 @@ void update_movement(SceneContext& scx) {
         }
         for ( auto* carrier : scx.objs->carriers() ) {
             ColBox2MapT::detect(scx.player, static_cast<size_t>(PlayerHitboxIndex::Body), *carrier);
+
+            ColBox2MapT::detect(scx.player.attack(), static_cast<size_t>(attack::AttackHitboxIndex::Body), *carrier);
         }
     }
 
@@ -156,6 +158,11 @@ void update_movement(SceneContext& scx) {
         scx.stage->detect_hit(
             scx.player,
             static_cast<size_t>(PlayerHitboxIndex::Head)
+        );
+
+        scx.stage->detect_hit(
+            scx.player.attack(),
+            static_cast<size_t>(attack::AttackHitboxIndex::Body)
         );
     }
 
