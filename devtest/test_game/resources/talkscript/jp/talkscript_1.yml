@@ -238,9 +238,17 @@ talkscript:
      - message: "想定よりも早く、飛翔が可能であることを確認した。"
      - end: true
 
-    found_jewel:
+    log_2:
+     - message: "個体の口から、\\n高密度のエネルギー放出を確認した。"
+     - end: true
+
+    found_jewel_1:
      - { message: "何か落ちている．．．。" }
      - { message: "紫色のガラス玉(？)を拾った。", end: true }
+
+    found_jewel_2:
+     - { message: "何か落ちている．．．。" }
+     - { message: "藍色のガラス玉(？)を拾った。", end: true }
 
     password_success:
       - { message: "LOAD COMPLETE!", end: true }

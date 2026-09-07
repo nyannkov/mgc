@@ -58,6 +58,8 @@ struct AttackPlayer : Attack {
     int32_t apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_index) const override;
     int32_t apply_damage_to(Player& player, size_t attack_hitbox_index) const override;
 
+    bool can_break_block() const override;
+
     void draw_wrap(
         FramebufferT& fb,
         mgc::math::Vec2i& cam_pos

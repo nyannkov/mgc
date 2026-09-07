@@ -66,6 +66,9 @@ void update_movement(SceneContext& scx) {
                 static_cast<size_t>(block::BlockHitboxIndex::Body)
             );
         }
+        for ( auto* block : scx.objs->blocks() ) {
+            ColBox2BoxT::detect_pair(*block, scx.player.attack(), static_cast<size_t>(attack::AttackHitboxIndex::Body));
+        }
         for ( size_t i = 0; i < scx.objs->blocks().size; ++i ) {
             auto* a = scx.objs->blocks().data[i];
             for ( size_t j = i + 1; j < scx.objs->blocks().size; ++j ) {

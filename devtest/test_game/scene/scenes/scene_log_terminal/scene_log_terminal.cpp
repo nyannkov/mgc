@@ -22,17 +22,10 @@ Scene_LogTerminal::Scene_LogTerminal(GameContext& ctx)
 
 void Scene_LogTerminal::init() {
     
-    if ( id_prev() == SceneId::Stage2_8 ) {
-        scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(22), MGC_CELL2PIXEL(10)},
-            PlayerAnimState::StandRight
-        );
-    } else {
-        scx_.player.reset_state_for_placement(
-            {MGC_CELL2PIXEL(22), MGC_CELL2PIXEL(10)},
-            PlayerAnimState::StandRight
-        );
-    }
+    scx_.player.reset_state_for_placement(
+        {MGC_CELL2PIXEL(22), MGC_CELL2PIXEL(10)},
+        PlayerAnimState::StandRight
+    );
 
     scx_.sound.stop_background_music();
 

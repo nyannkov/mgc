@@ -20,8 +20,16 @@ enum class WaypointCarrierMode {
     Loop
 };
 
+enum class WaypointCarrierState {
+    Stop,
+    Running,
+    //Wait,
+    Finished
+};
+
 template <uint16_t Row, uint16_t Col>
 struct WaypointCarrier : Carrier {
+
 
     explicit WaypointCarrier(const FrameTimerT& timer) : sw_(timer) {
         for ( auto& m : map_ ) {
@@ -45,7 +53,7 @@ struct WaypointCarrier : Carrier {
         velocity_ = { 0.0f, 0.0f };
 
         mode_ = WaypointCarrierMode::OneWay;
-        state_ = State::Stop;
+        state_ = WaypointCarrierState::Stop;
         dest_index_ = 0;
         wp_array_ = nullptr;
         wp_count_ = 0;
@@ -62,7 +70,7 @@ struct WaypointCarrier : Carrier {
         
         this->update_off_board_counter();
 
-        if ( state_ != State::Running ) return;
+        if ( state_ != WaypointCarrierState::Running ) return;
         
         auto dest = wp_array_[dest_index_];
 
@@ -72,7 +80,7 @@ struct WaypointCarrier : Carrier {
                 
                 if ( is_reverse_ ) {
                     if ( dest_index_ == 0 ) {
-                        state_ = State::Finished;
+                        state_ = WaypointCarrierState::Finished;
                         velocity_ = { 0.0F, 0.0F };
                     } else {
                         dest_index_--;
@@ -80,7 +88,7 @@ struct WaypointCarrier : Carrier {
                     }
                 } else {
                     if ( (wp_count_ - 1) <= dest_index_ ) {
-                        state_ = State::Finished;
+                        state_ = WaypointCarrierState::Finished;
                         velocity_ = { 0.0F, 0.0F };
                     } else {
                         dest_index_++;
@@ -125,7 +133,7 @@ struct WaypointCarrier : Carrier {
                 velocity_ = calc_velocity(orig, wp_array_[dest_index_], speed_);
                 
             } else {
-                state_ = State::Finished;
+                state_ = WaypointCarrierState::Finished;
             }
         }
 
@@ -181,7 +189,8 @@ struct WaypointCarrier : Carrier {
     void update_animation() override {
     }
 
-    auto  mode() const { return mode_; }
+    auto mode() const { return mode_; }
+    auto state() const { return state_; }
     void set_speed(float speed) { 
         if ( speed < 0.0f ) {
             speed_ = 0.0f;
@@ -196,22 +205,23 @@ struct WaypointCarrier : Carrier {
         wp_array_ = wp_array;
         wp_count_ = wp_count;
         if ( wp_array_ == nullptr || wp_count_ == 0 ) {
-            state_ = State::Stop;
+            state_ = WaypointCarrierState::Stop;
             return;
         }
         if ( start_index < wp_count_ ) {
-            velocity_ = calc_velocity(this->position(), wp_array_[start_index], speed_);
+            dest_index_ = start_index;
         } else {
-            velocity_ = calc_velocity(this->position(), wp_array_[0], speed_);
+            dest_index_ = 0;
         }
+        velocity_ = calc_velocity(this->position(), wp_array_[dest_index_], speed_);
         mode_ = mode;
-        state_ = State::Running;
+        state_ = WaypointCarrierState::Running;
     }
 
     void suspend() { }
     void go() { }
     void stop() {
-        state_ = State::Stop;
+        state_ = WaypointCarrierState::Stop;
         dest_index_ = 0;
     }
 
@@ -229,12 +239,7 @@ private:
     float speed_;
     const WaypointT* wp_array_;
     size_t wp_count_;
-    enum class State {
-        Stop,
-        Running,
-        //Wait,
-        Finished
-    } state_ = State::Stop;
+    WaypointCarrierState state_ = WaypointCarrierState::Stop;
     WaypointCarrierMode mode_;
     StopwatchT sw_;
     size_t dest_index_;

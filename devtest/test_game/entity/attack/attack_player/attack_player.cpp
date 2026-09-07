@@ -295,6 +295,14 @@ int32_t AttackPlayer::apply_damage_to(Player& player, size_t attack_hitbox_index
     return amount;
 }
 
+bool AttackPlayer::can_break_block() const {
+    if ( attack_type() == AttackPlayerType::Firework_Bursting ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 void AttackPlayer::spawn_scratch(
     const mgc::math::Vec2i& pos,
     AttackOwner owner,
@@ -441,20 +449,25 @@ void AttackPlayer::spawn_yoyo(
     this->mut_sprite().set_visible(true);
     anim_.set_anim_frames(anim_attack_yoyo);
     anim_.set_loop(false);
+    auto v = velocity();
 
 
     switch (this->direction()) {
     case AttackDirection::Right:
-        set_velocity({12, 0});
+        v += mgc::math::Vec2f(12, 0);
+        set_velocity(v);
         break;
     case AttackDirection::UpRight:
-        set_velocity({8, -12});
+        v += mgc::math::Vec2f(8, -12);
+        set_velocity(v);
         break;
     case AttackDirection::Left:
-        set_velocity({-12, 0});
+        v += mgc::math::Vec2f(-12, 0);
+        set_velocity(v);
         break;
     case AttackDirection::UpLeft:
-        set_velocity({-8, -12});
+        v += mgc::math::Vec2f(-8, -12);
+        set_velocity(v);
         break;
     default:
         break;
@@ -494,7 +507,7 @@ void AttackPlayer::update_movement_yoyo() {
     auto pos = this->precise_position();
     auto o_pos = owner_pos_.position();
 
-    float gain = 0.9;
+    float gain = 0.8;
     float k_p = 0.05;
     float k_i = 0.01;
 

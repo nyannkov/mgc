@@ -74,6 +74,7 @@ struct SceneObjects_LogTerminal : ISceneObjects {
     explicit SceneObjects_LogTerminal(SceneContext& scx)
         : cp_info_(scx.world_state.checkpoint_info),
           signboard_(scx.gamepad),
+          prev_id_(scx.world_state.scene_info.prev_scene_id()),
           gate_(scx.gamepad),
           jewel_(scx.gamepad, scx.timer),
           props_ { &signboard_, &gate_, &jewel_ } {
@@ -84,7 +85,7 @@ struct SceneObjects_LogTerminal : ISceneObjects {
         gate_.set_gate_type(prop::GateType::Type2);
         gate_.open();
         gate_.set_scene_transition_request(
-            { SceneId::Stage2_9 }
+            { prev_id_ }
         );
         
         terminal_.spawn({MGC_CELL2PIXEL(12), MGC_CELL2PIXEL(7)});
@@ -122,6 +123,7 @@ struct SceneObjects_LogTerminal : ISceneObjects {
 
 private:
     CheckpointInfo& cp_info_;
+    const SceneId prev_id_;
     prop::Signboard signboard_;
     prop::Gate gate_;
     prop::Jewel jewel_;

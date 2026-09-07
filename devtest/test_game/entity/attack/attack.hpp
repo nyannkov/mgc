@@ -55,6 +55,7 @@ struct Attack : mgc::entities::ActorImpl<
         Player& player,
         size_t attack_hitbox_index
     ) const = 0;
+    virtual bool can_break_block() const { return false; }
 
     AttackLifeCycle lifecycle() const { return lifecycle_; }
     AttackOwner owner_type() const { return owner_type_; }

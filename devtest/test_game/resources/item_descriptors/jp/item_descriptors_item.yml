@@ -10,7 +10,7 @@ item_descriptors:
         - { id: Test5, name: 'test5', description: '魚', tile_index: 4 }
         - { id: Test6, name: 'test6', description: '魚', tile_index: 5 }
         - { id: VioletJewel, name: '紫玉', description: '？？？', tile_index: 6 }
-        - { id: Test8, name: 'test8', description: '魚', tile_index: 7 }
+        - { id: IndigoJewel, name: '藍玉', description: '？？？', tile_index: 7 }
         - { id: Test9, name: 'test9', description: '魚', tile_index: 8 }
         - { id: Test10, name: 'test10', description: '魚', tile_index: 9 }
         - { id: Test11, name: 'test11', description: '魚', tile_index: 10 }

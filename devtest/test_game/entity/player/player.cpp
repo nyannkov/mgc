@@ -185,7 +185,9 @@ void Player::update_movement(bool just_off_board) {
                     if ( attack_.lifecycle() == attack::AttackLifeCycle::Despawned ) {
                         attack_state_ = AttackState::Start;
                     }
-                } else if ( gamepad_.is_pressed(Key::Left) ) {
+                } 
+
+                if ( gamepad_.is_pressed(Key::Left) ) {
                     velocity_.x = -4;
                     real_pos.x += velocity_.x;
                     is_right_ = false;
@@ -494,6 +496,7 @@ void Player::update_anim_attacking() {
         attack_state_ = AttackState::InProgress;
 
         if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
+            auto v = velocity();
             if ( is_right_ ) {
                 if ( gamepad_.is_pressed(Key::Up) ) {
                     attack_.spawn(
@@ -501,7 +504,7 @@ void Player::update_anim_attacking() {
                         current_attack_type_, 
                         attack::AttackOwner::Player,
                         attack::AttackDirection::UpRight,
-                        {0, 0}
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoUpRight;
                 } else {
@@ -510,7 +513,7 @@ void Player::update_anim_attacking() {
                         current_attack_type_,
                         attack::AttackOwner::Player,
                         attack::AttackDirection::Right,
-                        {0, 0}
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoRight;
                 }
@@ -521,7 +524,7 @@ void Player::update_anim_attacking() {
                         current_attack_type_,
                         attack::AttackOwner::Player,
                         attack::AttackDirection::UpLeft,
-                        {0, 0}
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoUpLeft;
                 } else {
@@ -530,7 +533,7 @@ void Player::update_anim_attacking() {
                         current_attack_type_,
                         attack::AttackOwner::Player,
                         attack::AttackDirection::Left,
-                        {0, 0}
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoLeft;
                 }

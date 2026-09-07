@@ -284,6 +284,32 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_3_3/csv"
     --tile-or128 block one_way_block ladder needle
 )
+set(STAGE_MAP_STAGE_3_4_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_3_4/csv/map_stage_3_4_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_4/csv/map_stage_3_4_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_4/csv/map_stage_3_4_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_4/csv/map_stage_3_4_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_4/csv/map_stage_3_4_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_3_4/map_stage_3_4.tmx"
+    "${STAGE_MAP_STAGE_3_4_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_3_4/csv"
+    --tile-or128 block one_way_block ladder needle
+)
+set(STAGE_MAP_STAGE_3_5_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_3_5/csv/map_stage_3_5_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_5/csv/map_stage_3_5_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_5/csv/map_stage_3_5_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_5/csv/map_stage_3_5_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_5/csv/map_stage_3_5_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_3_5/map_stage_3_5.tmx"
+    "${STAGE_MAP_STAGE_3_5_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_3_5/csv"
+    --tile-or128 block one_way_block ladder needle
+)
 
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
@@ -336,6 +362,8 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_3_1_CSVS}
     ${STAGE_MAP_STAGE_3_2_CSVS}
     ${STAGE_MAP_STAGE_3_3_CSVS}
+    ${STAGE_MAP_STAGE_3_4_CSVS}
+    ${STAGE_MAP_STAGE_3_5_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
     ${STAGE_MAP_LOG_TERMINAL_CSVS}
 )
@@ -349,7 +377,7 @@ add_map_gen("${RESOURCE_DIR}/menu/map/item_name_plate.csv" "${GEN_DIR}/map" --co
 add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_map_elements.bmp" "${GEN_DIR}/tileset" --count 100)
 add_tileset_gen("${RESOURCE_DIR}/stage/tileset/tileset_shop_elements.bmp" "${GEN_DIR}/tileset" --count 100)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_items.bmp" "${GEN_DIR}/tileset" --count 16 --width 8 --height 8)
-add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_block.bmp" "${GEN_DIR}/tileset" --count 1)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_block.bmp" "${GEN_DIR}/tileset" --count 2)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}/tileset" --count 16)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x48.bmp" "${GEN_DIR}/tileset" --count 2 --width 16 --height 48)
@@ -409,6 +437,12 @@ anim_cmake_list_gen(
     --width 64 --height 64 
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/block_breaking/anim_block_breaking.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_block_breaking_24x24.bmp"
+    "${GEN_DIR}/anim/block_breaking"
+    --width 24 --height 24 
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/enemy/skyfish/anim_skyfish.yml" 
     "${RESOURCE_DIR}/tileset/tileset_skyfish.bmp"
     "${GEN_DIR}/anim/enemy/skyfish"
@@ -465,6 +499,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_attack
     anim_attack_lance
     anim_attack_bursting
+    anim_block_breaking
     anim_skyfish
     anim_walker
     anim_floaty_fish
