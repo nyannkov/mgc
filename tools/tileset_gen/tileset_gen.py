@@ -20,7 +20,7 @@ def get_formed_palette(palette, max_color_index, pixel_format):
     else:
         return None
 
-def gen_tileset_h_file(args):
+def gen_tileset_h_file(args, image):
 
     pixel_format = args.pixelformat
     filename = os.path.basename(args.bitmapfile).split('.')[0]
@@ -59,7 +59,7 @@ def gen_tileset_h_file(args):
         # End of include guard 
         f.write('#endif/*{}*/\n'.format(include_guard))
 
-def gen_tileset_c_file(args):
+def gen_tileset_c_file(args, image):
 
     pixel_format = args.pixelformat
     filename = os.path.basename(args.bitmapfile).split('.')[0]
@@ -91,7 +91,7 @@ def gen_tileset_c_file(args):
             tile_height = args.height
 
     if (tile_width <= 0) or (tile_height <=0):
-        print('Error: Tile width and height must be greater than 0.')
+        print('Error: Tile width and height must be greater than 0.', file=sys.stderr)
         sys.exit(2)
 
     if tile_count == 0:
@@ -179,17 +179,17 @@ if __name__ == '__main__':
     image = Image.open(args.bitmapfile)
 
     if image.mode != 'P':
-        print('Error: Only supports indexed color.')
+        print('Error: Only supports indexed color.', file=sys.stderr)
         sys.exit(1)
 
     if args.dir:
         os.makedirs(args.dir, exist_ok=True)
 
     # Create tileset header file.
-    gen_tileset_h_file(args)
+    gen_tileset_h_file(args, image)
 
     # Create tileset source file.
-    gen_tileset_c_file(args)
+    gen_tileset_c_file(args, image)
 
     sys.exit(0)
 
