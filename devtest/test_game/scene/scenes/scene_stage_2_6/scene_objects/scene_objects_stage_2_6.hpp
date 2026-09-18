@@ -33,6 +33,7 @@ struct SceneObjects_Stage2_6 : ISceneObjects {
     ArrayViewer<enemy::Enemy*> enemies() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     auto& stage() { return stage_; }
 

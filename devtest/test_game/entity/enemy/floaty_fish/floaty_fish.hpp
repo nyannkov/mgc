@@ -33,7 +33,7 @@ struct FloatyFish: Enemy {
         size_t enemy_hitbox_index
     ) const override;
     void receive_damage(int32_t amount) override;
-    void receive_impact(mgc::math::Vec2f delta) override;
+    void receive_impact(mgc::math::Vec2f delta, float dumping_rate) override;
 
     void on_player_hit(
         const Player& player,
@@ -58,6 +58,7 @@ struct FloatyFish: Enemy {
 private:
     SoundControllerT& sound_;
     AnimControllerT anim_;
+    float dumping_rate_ = 0.5f;
     mgc::math::Vec2f force_ex_;
     mgc::math::Vec2f velocity_;
     FloatyFishAnimState anim_state_;

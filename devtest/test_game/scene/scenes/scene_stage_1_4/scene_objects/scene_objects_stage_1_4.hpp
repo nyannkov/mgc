@@ -83,6 +83,7 @@ struct SceneObjects_Stage1_4 : ISceneObjects {
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     auto& teleporters() { return teleporters_; }
     auto& portal() { return portal_1_; }

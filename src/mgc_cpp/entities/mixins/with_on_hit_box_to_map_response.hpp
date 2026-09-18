@@ -14,17 +14,6 @@ namespace mgc {
 namespace entities {
 namespace mixins {
 
-template <typename, typename = void>
-struct has_on_hit_box_to_map : std::false_type {};
-
-template <typename T>
-struct has_on_hit_box_to_map<
-    T,
-    std::void_t<
-        decltype(std::declval<const T&>().hitboxes())
-    >
-> : std::true_type {};
-
 template <typename Derived>
 struct WithOnHitBoxToMapResponse {
     template <typename ObjT, typename MapT>
@@ -36,7 +25,6 @@ struct WithOnHitBoxToMapResponse {
         static_cast<Derived*>(this)->on_hit_box_to_map_impl(obj, map, info);
     }
 };
-
 
 }// namespace mixins
 }// namespace entities

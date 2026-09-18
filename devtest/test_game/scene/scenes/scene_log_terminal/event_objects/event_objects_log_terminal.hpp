@@ -9,10 +9,12 @@ namespace app {
 
 struct EventObjects_LogTerminal : IEventObjects {
 
-    EventObjects_LogTerminal(SceneContext& scx, SceneObjects_LogTerminal& objs)
-        : cp_info_(scx.world_state.checkpoint_info),
-          event_1_(scx, objs),
-          events_ { &event_1_ } {
+    EventObjects_LogTerminal(
+        SceneContext& scx,
+        SceneObjects_LogTerminal& objs
+    ) : cp_info_(scx.world_state.checkpoint_info),
+        event_1_(scx, objs),
+        events_ { &event_1_ } {
     }
     
     void init() override {

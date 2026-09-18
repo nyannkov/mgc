@@ -37,7 +37,7 @@ void Scene_GameOver::update() {
         talkflow_listener_.clear_game_request();
     }
 
-    player_.update_animation(false);
+    player_.update_animation(false, false);
 
     if ( talkflow_.has_finished() ) {
         talkflow_.reset_state();

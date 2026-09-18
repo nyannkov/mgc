@@ -10,8 +10,12 @@ namespace app {
 
 struct EventObjects_Stage1_4 : IEventObjects {
 
-    EventObjects_Stage1_4(SceneContext& scx, SceneObjects_Stage1_4& objs)
-        : cp_info_(scx.world_state.checkpoint_info),
+    EventObjects_Stage1_4(
+        SceneContext& scx,
+        SceneObjects_Stage1_4& objs,
+        CameraT& camera
+    ) : cp_info_(scx.world_state.checkpoint_info),
+          camera_(camera),
           warp_(objs.portal()),
           teleport_(
             objs.teleporters().data(),
@@ -23,6 +27,7 @@ struct EventObjects_Stage1_4 : IEventObjects {
     
     void init() override {
         teleport_.spawn();
+        teleport_.set_camera(&camera_);
         warp_.spawn();
         warp_.set_destination(SceneId::Shop);
     }
@@ -44,6 +49,7 @@ private:
     Warp warp_;
     event::Teleport teleport_;
     std::array<event::Event*, 2> events_;
+    CameraT& camera_;
 };
 
 }// namespace app

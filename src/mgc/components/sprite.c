@@ -122,10 +122,13 @@ static inline bool draw_buffer(
     mgc_world_t r0, r1;
     mgc_world_t t0, t1;
     mgc_world_t b0, b1;
+    const mgc_color_t *palette_array;
 
     if ( ( sprite == NULL ) ||
          ( sprite->tileset == NULL ) ||
          ( sprite->tileset->tile_count == 0 ) ||
+         ( sprite->tileset->palette_array == NULL ) ||
+         ( sprite->tileset->palette_count == 0 ) ||
          ( draw_buf == NULL )
     ) {
         MGC_WARN("Invalid handler");
@@ -134,6 +137,18 @@ static inline bool draw_buffer(
     if ( sprite->visible == false ) {
         MGC_INFO("Handler is not visible");
         return false;
+    }
+    if ( options && ( options->eff_flags & DRAW_EFFECT_PALETTE_CHANGE ) ) {
+        if ( options->palette_array != NULL && 
+             sprite->tileset->palette_count <= options->palette_count
+        ) {
+            palette_array = options->palette_array;
+        } else {
+            MGC_WARN("Invalid Custom Palette");
+            return false;
+        }
+    } else {
+        palette_array = sprite->tileset->palette_array;
     }
 
     l0 = sprite->x;
@@ -170,13 +185,11 @@ static inline bool draw_buffer(
         int32_t x_s, y_s, x_e, y_e;
         size_t color_index;
         const uint8_t *tile;
-        const mgc_color_t *palette_array;
         uint16_t tile_width;
 
         tile_width = sprite->tileset->tile_width;
         tile = sprite->tileset->tile_array[sprite->tile_idx];
         tile = &tile[sprite->trim_left + sprite->trim_top * tile_width];
-        palette_array = sprite->tileset->palette_array;
 
         x_s = (( l1 < l0 ) ? l0 : l1) - l0;
         x_e = (( r1 < r0 ) ? r1 : r0) - l0;

@@ -1,7 +1,7 @@
-#include <stdio.h>
 #include "player.hpp"
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
+#include "entity/carrier/carrier.hpp"
 #include "resources/mml/mml.h"
 
 namespace app {
@@ -30,6 +30,7 @@ void Player::init() {
     this->set_hp(full_hp_);
     money_ = 0;
     blink_animator_.set_target(*this);
+    flag_jump_ = false;
 
     auto& body = at(this->mut_hitboxes(), PlayerHitboxIndex::Body);
     body.set_offset({1, 0});
@@ -98,8 +99,9 @@ void Player::reset_state_for_placement(
     attack_.despawn();
 }
 
-void Player::update_movement() {
+void Player::update_movement(bool just_off_board) {
 
+    flag_jump_ = false;
     velocity_.x = 0;//TODO
 
     pushback_box_.x = 0;
@@ -176,11 +178,16 @@ void Player::update_movement() {
         if ( input_enabled_ ) {
 
             if ( attack_state_ == AttackState::Stop  || 
-                 current_attack_type_ == attack::AttackPlayerType::Yoyo 
+                 current_attack_type_ == attack::AttackPlayerType::Yoyo ||
+                 current_attack_type_ == attack::AttackPlayerType::Firework
             ) {
                 if ( gamepad_.just_pressed(Key::Enter) ) {
-                    attack_state_ = AttackState::Start;
-                } else if ( gamepad_.is_pressed(Key::Left) ) {
+                    if ( attack_.lifecycle() == attack::AttackLifeCycle::Despawned ) {
+                        attack_state_ = AttackState::Start;
+                    }
+                } 
+
+                if ( gamepad_.is_pressed(Key::Left) ) {
                     velocity_.x = -4;
                     real_pos.x += velocity_.x;
                     is_right_ = false;
@@ -192,7 +199,8 @@ void Player::update_movement() {
             }
 
             if ( gamepad_.just_pressed(Key::Cancel) ) {
-                if ( is_grounded_ ) {
+                if ( is_grounded_ || just_off_board ) {
+                    flag_jump_ = true;
                     velocity_.y = -12;
                 }
             }
@@ -304,7 +312,12 @@ void Player::update_movement() {
 
     is_grounded_ = false;
 
-    force_ex_ *= 0.5;
+    force_ex_ *= dumping_rate_;
+
+    dumping_rate_ -= 0.02f;
+    if ( dumping_rate_ < 0 ) {
+        dumping_rate_ = 0.0f;
+    }
 
     attack_.update_movement();
 }
@@ -321,7 +334,7 @@ void Player::resolve_movement() {
     }
 }
 
-void Player::update_animation(bool is_talking) {
+void Player::update_animation(bool is_talking, bool just_off_board) {
     
     if ( anim_mode_ == PlayerAnimMode::Auto ) {
         if ( this->is_game_over() ) {
@@ -333,10 +346,10 @@ void Player::update_animation(bool is_talking) {
                 } else {
                     attack_state_ = AttackState::Stop;
                     attack_.despawn();
-                    update_anim_normal();
+                    update_anim_normal(just_off_board);
                 }
             } else {
-                update_anim_normal();
+                update_anim_normal(just_off_board);
             }
         }
 
@@ -377,12 +390,13 @@ void Player::receive_life_up(int32_t amount) {
     set_full_hp( next_full_hp < 20 ? next_full_hp : 20 );
 }
 
-void Player::receive_impact(mgc::math::Vec2f delta) {
+void Player::receive_impact(mgc::math::Vec2f delta, float dumping_rate) {
     
     force_ex_ += delta;
+    dumping_rate_ = dumping_rate;
 }
 
-void Player::update_anim_normal() {
+void Player::update_anim_normal(bool just_off_board) {
 
     PlayerAnimState state_next = anim_state_;
     anim_.set_loop(true);
@@ -405,8 +419,13 @@ void Player::update_anim_normal() {
                                        : PlayerAnimState::StandLeft;
             }
         } else {
-            state_next = is_right_ ? PlayerAnimState::JumpRight
-                                   : PlayerAnimState::JumpLeft;
+            if ( !flag_jump_ && just_off_board ) {
+                state_next = is_right_ ? PlayerAnimState::StandRight
+                                       : PlayerAnimState::StandLeft;
+            } else {
+                state_next = is_right_ ? PlayerAnimState::JumpRight
+                                       : PlayerAnimState::JumpLeft;
+            }
         }
     } else if ( player_state_ == PlayerState::Ladder ) {
         bool is_key_pressed_up_or_down = 
@@ -445,7 +464,6 @@ void Player::update_anim_attacking() {
 
     anim_.set_loop(false);
 
-
     attack::AttackPlayerType next_type = current_attack_type_;
     auto weapon_id = equipment_info_.weapon.equipped_id();
 
@@ -459,6 +477,9 @@ void Player::update_anim_attacking() {
     case static_cast<uint32_t>(WeaponId::Yoyo):
         next_type = attack::AttackPlayerType::Yoyo;
         anim_.set_loop(true);
+        break;
+    case static_cast<uint32_t>(WeaponId::FireworksBall):
+        next_type = attack::AttackPlayerType::Firework;
         break;
     default:
         break;
@@ -475,13 +496,15 @@ void Player::update_anim_attacking() {
         attack_state_ = AttackState::InProgress;
 
         if ( current_attack_type_ == attack::AttackPlayerType::Yoyo ) {
+            auto v = velocity();
             if ( is_right_ ) {
                 if ( gamepad_.is_pressed(Key::Up) ) {
                     attack_.spawn(
                         this->position() + mgc::math::Vec2i(18, 0),
                         current_attack_type_, 
                         attack::AttackOwner::Player,
-                        attack::AttackDirection::UpRight
+                        attack::AttackDirection::UpRight,
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoUpRight;
                 } else {
@@ -489,7 +512,8 @@ void Player::update_anim_attacking() {
                         this->position() + mgc::math::Vec2i(18, 0),
                         current_attack_type_,
                         attack::AttackOwner::Player,
-                        attack::AttackDirection::Right
+                        attack::AttackDirection::Right,
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoRight;
                 }
@@ -499,7 +523,8 @@ void Player::update_anim_attacking() {
                         this->position() + mgc::math::Vec2i(-10, 0),
                         current_attack_type_,
                         attack::AttackOwner::Player,
-                        attack::AttackDirection::UpLeft
+                        attack::AttackDirection::UpLeft,
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoUpLeft;
                 } else {
@@ -507,18 +532,50 @@ void Player::update_anim_attacking() {
                         this->position() + mgc::math::Vec2i(-10, 0),
                         current_attack_type_,
                         attack::AttackOwner::Player,
-                        attack::AttackDirection::Left
+                        attack::AttackDirection::Left,
+                        { v }
                     );
                     anim_state_ = PlayerAnimState::AttackYoyoLeft;
                 }
             }
-
+         } else if ( current_attack_type_ == attack::AttackPlayerType::Firework ) {
+            if ( is_right_ ) {
+                attack_.spawn(
+                    this->position() + mgc::math::Vec2i(1, 0),
+                    current_attack_type_,
+                    attack::AttackOwner::Player,
+                    attack::AttackDirection::Right,
+                    {4, -8}
+                );
+                anim_state_ = PlayerAnimState::FireworkRightCarrying;
+            } else {
+                attack_.spawn(
+                    this->position() + mgc::math::Vec2i(-1, 0),
+                    current_attack_type_,
+                    attack::AttackOwner::Player,
+                    attack::AttackDirection::Left,
+                    {-4, -8}
+                );
+                anim_state_ = PlayerAnimState::FireworkLeftCarrying;
+            }
         } else {
             if ( is_right_ ) {
-                attack_.spawn(this->position() + mgc::math::Vec2i(18, 0), current_attack_type_,  attack::AttackOwner::Player, attack::AttackDirection::Right);
+                attack_.spawn(
+                    this->position() + mgc::math::Vec2i(18, 0),
+                    current_attack_type_,
+                    attack::AttackOwner::Player,
+                    attack::AttackDirection::Right,
+                    {0, 0}
+                );
                 anim_state_ = PlayerAnimState::AttackRight;
             } else {
-                attack_.spawn(this->position() + mgc::math::Vec2i(-18, 0), current_attack_type_, attack::AttackOwner::Player, attack::AttackDirection::Left);
+                attack_.spawn(
+                    this->position() + mgc::math::Vec2i(-18, 0),
+                    current_attack_type_,
+                    attack::AttackOwner::Player,
+                    attack::AttackDirection::Left,
+                    {0, 0}
+                );
                 anim_state_ = PlayerAnimState::AttackLeft;
             }
         }
@@ -554,6 +611,39 @@ void Player::update_anim_attacking() {
                     anim_.set_anim_frames(get_anim_frames(anim_state_));
                     anim_.start_animation();
                 }
+            }
+        } else if ( current_attack_type_ == attack::AttackPlayerType::Firework ) {
+            auto bak_anim_state = anim_state_;
+            if ( attack_.hold_state() == attack::HoldState::On ) {
+                anim_.set_loop(true);
+                if ( !gamepad_.is_pressed(Key::Enter) ) {
+                    auto v = velocity();
+                    if ( is_right_ ) {
+                        v += { 2, -8 };
+                        anim_state_ = PlayerAnimState::FireworkRightThrowing;
+                    } else {
+                        v += { -2, -8 };
+                        anim_state_ = PlayerAnimState::FireworkLeftThrowing;
+                    }
+                    anim_.set_loop(false);
+                    attack_.launch(v);
+                } else {
+                    if ( is_right_ ) {
+                        anim_state_ = PlayerAnimState::FireworkRightCarrying;
+                    } else {
+                        anim_state_ = PlayerAnimState::FireworkLeftCarrying;
+                    }
+                }
+            } else {
+                if ( anim_.is_finished() ) {
+                    //TODO
+                    attack_state_ = AttackState::Stop;
+                }
+            }
+
+            if ( bak_anim_state != anim_state_ ) {
+                anim_.set_anim_frames(get_anim_frames(anim_state_));
+                anim_.start_animation();
             }
         } else {
             if ( anim_.is_finished() ) {
@@ -655,7 +745,19 @@ void Player::on_attack_hit(
                     blink_animator_.start();
                 }
             }
-        }
+        } else if ( attack.owner_type() == attack::AttackOwner::Player ) {
+            size_t attack_hitbox_index = info.other_hitbox_index;
+            if ( attack.apply_damage_to(*this, attack_hitbox_index) > 0 ) {
+                if ( this->hp() > 0 ) {
+                    //sound_controller_.play_sound_effect(MML_SE_3_DAMAGE);
+                    is_invulnerable_ = true;
+                    blink_animator_.set_blink_half_period(50);
+                    blink_animator_.set_blink_count_max(40);
+                    blink_animator_.set_end_state(mgc::utils::BlinkEndState::Visible);
+                    blink_animator_.start();
+                }
+            }
+        } else { }
     }
 }
 
@@ -687,6 +789,33 @@ void Player::on_collision_resolved(
 }
 
 void Player::on_collision_resolved(
+    const carrier::Carrier& carrier,
+    const mgc::collision::MapPushbackInfo& info
+) {
+    auto pos = this->precise_position();
+
+    if ( info.pushback.y < 0 ) {
+        if ( velocity_.y > 0 ) {
+            velocity_.y = 0.0f;
+        }
+        is_grounded_ = true;
+        pos.x += carrier.delta().x;
+        if ( carrier.delta().y > 0 ) {
+            pos.y += carrier.delta().y;
+        }
+    } else if ( info.pushback.y > 0 ) {
+        velocity_.y = 0.1f;
+    } else { 
+    }
+
+    pushback_map_ = info.pushback;
+    pos.x += info.pushback.x;
+    pos.y += info.pushback.y;
+
+    this->set_precise_position(pos);
+}
+
+void Player::on_collision_resolved(
     const stage::LayerOneWayBlock& block,
     const mgc::collision::MapPushbackInfo& info
 ) {
@@ -709,14 +838,11 @@ void Player::on_collision_resolved(
 
     auto pos = this->position();
     if ( info.pushback.y < 0 ) {
-//        velocity_.y = 0.0f;
-//        is_grounded_ = true;
         if ( velocity_.y >= 0 ) {
             velocity_.y = 0.0f;
             is_grounded_ = true;
         }
     } else if ( info.pushback.y > 0 ) {
-        //velocity_.y *= -1;
         velocity_.y = 0.1;
     } else { 
     }

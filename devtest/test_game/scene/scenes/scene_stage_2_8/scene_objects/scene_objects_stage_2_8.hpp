@@ -51,6 +51,7 @@ struct SceneObjects_Stage2_8 : ISceneObjects {
     ArrayViewer<enemy::Enemy*> enemies() override { return { enemies_.data(), enemies_.size() }; }
     ArrayViewer<block::Block*> blocks() override { return { blocks_.data(), blocks_.size() }; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     auto& floaty() { return floaty_; }
     auto& lancer() { return lancer_; }

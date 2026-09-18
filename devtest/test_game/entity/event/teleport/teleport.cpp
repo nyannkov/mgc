@@ -52,6 +52,9 @@ void Teleport::update() {
     case EventState::Playing:
         if ( screen_fader_.fade_state() == ScreenFaderState::FadeOutComplete ) {
             player_.set_position(active_teleporter_->destination());
+            if ( camera_ ) {
+                camera_->snap_to_target();
+            }
             screen_fader_.request_fade_in();
         } else if ( screen_fader_.fade_state() == ScreenFaderState::FadeInComplete ) {
             set_event_state(EventState::Finished);
@@ -71,6 +74,10 @@ void Teleport::draw_effect(FramebufferT& fb, mgc::math::Vec2i& cam_pos) {
     if ( event_state() == EventState::Playing ) {
         screen_fader_.update(fb);
     }
+}
+
+void Teleport::set_camera(CameraT *camera) {
+    camera_ = camera;
 }
 
 }// namepsace event

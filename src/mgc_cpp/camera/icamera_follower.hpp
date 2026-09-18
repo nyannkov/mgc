@@ -17,6 +17,7 @@ struct ICameraFollower {
 
     virtual ~ICameraFollower() = default;
 
+    virtual void update_follow_position() = 0;
     virtual mgc::math::Vec2i follow_position() const = 0;
 
 };

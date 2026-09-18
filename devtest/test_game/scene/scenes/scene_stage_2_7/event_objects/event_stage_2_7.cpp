@@ -43,7 +43,6 @@ void Event_Stage2_7::update() {
         if ( detail_ == EventDetail::NotStarted ) {
             if ( objs_.button().is_pushed() ) {
                 sound_.play_sound_effect(MML_SE_14_DISCHARGE_2);
-                lock_control();
                 detail_ = EventDetail::StartToDischarge;
                 sw_.start();
             }
@@ -64,7 +63,6 @@ void Event_Stage2_7::update() {
                     ) {
                         detail_ = EventDetail::Discharged;
                         set_event_state(EventState::Finished);
-                        unlock_control();
                     }
                 }
             } else { }

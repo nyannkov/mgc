@@ -55,6 +55,10 @@ static inline uint8_t map_get_map_cell_value(const mgc_map_t *map, uint16_t i, u
                     return map->map[idx];
                 }
             }
+            sum_len -= map->map[1];
+            if ( sum_len < target_len ) {
+                return map->map[0];
+            }
         }
         MGC_WARN("Unexpected index");
         return 0;

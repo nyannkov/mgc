@@ -23,6 +23,7 @@ set(CXX_SOURCES
     menu/equipment_menu.cpp
     entity/player/player.cpp
     entity/block/pushable_block/pushable_block.cpp
+    entity/block/breakable_block/breakable_block.cpp
     entity/prop/gate/gate.cpp
     entity/prop/door/door.cpp
     entity/prop/portal/portal.cpp
@@ -41,6 +42,7 @@ set(CXX_SOURCES
     entity/enemy/skyfish/skyfish_bt.cpp
     entity/enemy/walker/walker.cpp
     entity/enemy/floaty_fish/floaty_fish.cpp
+    entity/enemy/balloon/balloon.cpp
     entity/enemy/boss/dancer/dancer.cpp
     entity/enemy/boss/lancer/lancer.cpp
     entity/stage/stage.cpp
@@ -69,6 +71,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+set(MY_CUSTOM_CONF "\"${CMAKE_CURRENT_SOURCE_DIR}/mgc_conf.h\"")
+target_compile_definitions(mgc_c PUBLIC MGC_CUSTOM_CONF_PATH=${MY_CUSTOM_CONF})
 
 add_compile_options(-Wall
     -Wno-format

@@ -3,7 +3,7 @@
 
 static const char * const mml_bgm_shop = 
 "T90V15"
-"$B0I0"
+"$B30I0"
 "$E1$A0$H20$D100$S80$F1000"
 "[0"
     "[2"
@@ -20,7 +20,7 @@ static const char * const mml_bgm_shop =
 "]"
 ","
 "T90V15"
-"$B0I0"
+"$B30I0"
 "$E1$A0$H20$D100$S80$F1000"
 "L4 R4"
 "[0"

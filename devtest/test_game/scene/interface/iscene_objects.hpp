@@ -7,6 +7,7 @@
 #include "entity/enemy/enemy.hpp"
 #include "entity/item/item.hpp"
 #include "entity/block/block.hpp"
+#include "entity/carrier/carrier.hpp"
 
 namespace app {
 
@@ -18,11 +19,15 @@ struct ISceneObjects {
     virtual ArrayViewer<enemy::Enemy*> enemies() = 0;
     virtual ArrayViewer<item::Item*> items() = 0;
     virtual ArrayViewer<block::Block*> blocks() = 0;
+    virtual ArrayViewer<carrier::Carrier*> carriers() = 0;
 
     virtual void draw(
         FramebufferT& fb,
         mgc::math::Vec2i& cam_pos
     ) {
+        for ( auto* carrier : carriers() ) {
+            carrier->draw(fb, cam_pos);
+        }
         for ( auto* civil : civils() ) {
             civil->draw(fb, cam_pos);
         }

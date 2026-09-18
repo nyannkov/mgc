@@ -21,6 +21,7 @@ namespace collision {
 
 struct BoxMapResult {
     bool hit;
+    bool is_fully_blocked;
     mgc::math::Vec2i pushback;
 };
 
@@ -41,7 +42,7 @@ struct BoxMapDetector {
         static_assert(mgc::entities::mixins::has_hitboxes<ObjT>::value, "ObjT must have hitboxes()");
         static_assert(mgc::entities::mixins::has_collision_map<MapT>::value, "MapT must have collision_map()");
 
-        BoxMapResult result = {false, {0, 0}};
+        BoxMapResult result = {false, false, {0, 0}};
 
         if ( !map.collision_enabled() ) {
             return result;
@@ -89,12 +90,8 @@ struct BoxMapDetector {
                             h, hitbox_idx, map_cell_value, row, col 
                         };
 
-                        if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<ObjT>::value) {
-                            obj.on_hit_box_to_map(obj, map, info);
-                        }
-                        if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<MapT>::value) {
-                            map.on_hit_box_to_map(obj, map, info);
-                        }
+                        obj.on_hit_box_to_map(obj, map, info);
+                        map.on_hit_box_to_map(obj, map, info);
                     }
                 }
                 if ( col == range.col_max ) break;
@@ -113,18 +110,14 @@ struct BoxMapDetector {
 
             result.pushback.x = pushback.x;
             result.pushback.y = pushback.y;
+            result.is_fully_blocked = collision_boxmap_is_fully_blocked(&boxmap);
 
             if ( has_flag(config.flags, DetectFlag::Callback) ) {
 
-                MapPushbackInfo info = { h, hitbox_idx, {pushback.x, pushback.y} };
+                MapPushbackInfo info = { h, hitbox_idx, {result.pushback}, result.is_fully_blocked };
 
-                if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<ObjT>::value) {
-                    obj.handle_map_pushback_result(obj, map, info);
-                }
-
-                if constexpr (mgc::entities::mixins::has_on_hit_box_to_map<MapT>::value) {
-                    map.handle_map_pushback_result(obj, map, info);
-                }
+                obj.handle_map_pushback_result(obj, map, info);
+                map.handle_map_pushback_result(obj, map, info);
             }
         }
 

@@ -29,6 +29,7 @@ struct SceneObjects_Stage1_1 : ISceneObjects {
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
 private:
     CheckpointInfo& cp_info_;

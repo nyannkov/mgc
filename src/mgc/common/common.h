@@ -11,8 +11,8 @@
 extern "C" {
 #endif
 
-#ifdef MGC_USE_CUSTOM_MGC_CONF_H
-#include "mgc_conf.h"
+#ifdef MGC_CUSTOM_CONF_PATH
+#include MGC_CUSTOM_CONF_PATH
 #else
 #include "mgc/mgc_conf.h"
 #endif
@@ -142,13 +142,16 @@ typedef struct mgc_point {
 } mgc_point_t;
 
 enum draw_effect_flags {
-    DRAW_EFFECT_NONE = 0,
-    DRAW_EFFECT_ALPHA_BLEND = (1 << 0),
+    DRAW_EFFECT_NONE = 0u,
+    DRAW_EFFECT_ALPHA_BLEND = (1u << 0),
+    DRAW_EFFECT_PALETTE_CHANGE = (1u << 1),
 };
 
 typedef struct mgc_draw_options {
-    enum draw_effect_flags eff_flags;
+    uint16_t eff_flags;
     uint8_t alpha;
+    const mgc_color_t *palette_array;
+    size_t palette_count;
 } mgc_draw_options_t;
 
 typedef struct mgc_parallax_factor {

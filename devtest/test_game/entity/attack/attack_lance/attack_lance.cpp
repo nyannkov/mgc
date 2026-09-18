@@ -220,10 +220,10 @@ int32_t AttackLance::apply_damage_to(enemy::Enemy& enemy, size_t attack_hitbox_i
             enemy.receive_damage(amount);
             switch (attack_type_) {
             case AttackLanceType::ThrowLeft:
-                enemy.receive_impact({-12.0f, 0.0f});
+                enemy.receive_impact({-12.0f, 0.0f}, 0.5f);
                 break;
             case AttackLanceType::ThrowRight:
-                enemy.receive_impact({12.0f, 0.0f});
+                enemy.receive_impact({12.0f, 0.0f}, 0.5f);
                 break;
             default:
                 break;

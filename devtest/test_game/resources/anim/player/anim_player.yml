@@ -174,3 +174,25 @@ animations:
       - { file: frame_046.bmp, time_ms: 100 }
       - { file: frame_042.bmp, time_ms: 100 }
 
+  - name: attack_firework_carry_left
+    description: "Attack Firework left carrying"
+    frames:
+      - { file: frame_054.bmp, time_ms: 100 }
+      - { file: frame_055.bmp, time_ms: 100 }
+
+  - name: attack_firework_carry_right
+    description: "Attack Firework right carrying"
+    frames:
+      - { file: frame_051.bmp, time_ms: 100 }
+      - { file: frame_052.bmp, time_ms: 100 }
+
+  - name: attack_firework_throw_left
+    description: "Attack Firework left throwing"
+    frames:
+      - { file: frame_053.bmp, time_ms: 500 }
+
+  - name: attack_firework_throw_right
+    description: "Attack Firework right throwing"
+    frames:
+      - { file: frame_050.bmp, time_ms: 500 }
+

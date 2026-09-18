@@ -40,14 +40,18 @@ struct Block : mgc::entities::ActorImpl<
             const Other& other,
             const mgc::collision::BoxCollisionInfo& info
     ) { 
-        if constexpr (std::is_same_v<Other, Player>) {
+        using CleanedOther = std::decay_t<Other>;
+
+        if constexpr (std::is_same_v<CleanedOther, Player>) {
             if ( info.other_hitbox_index == 
                 static_cast<size_t>(PlayerHitboxIndex::Hand) 
             ) {
                 on_player_hand_hit(other, info);
             }
-        } else if constexpr (std::is_same_v<Other, Block>) {
+        } else if constexpr (std::is_same_v<CleanedOther, Block>) {
             on_block_hit(other, info);
+        } else if constexpr (std::is_base_of_v<attack::Attack, CleanedOther>) {
+            on_attack_hit(other, info);
         }
     }
 
@@ -72,8 +76,6 @@ struct Block : mgc::entities::ActorImpl<
         }
     }   
 
-
-
     mgc::math::Vec2f velocity() const { return velocity_; }
 
 protected:
@@ -86,7 +88,10 @@ protected:
         const Block& other,
         const mgc::collision::BoxCollisionInfo& info
     ) { }
-
+    virtual void on_attack_hit(
+        const attack::Attack& attack,
+        const mgc::collision::BoxCollisionInfo& info
+    ) { }
     virtual void on_collision_resolved(
         const stage::LayerBlock& block,
         const mgc::collision::MapPushbackInfo& info

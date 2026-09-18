@@ -78,6 +78,7 @@ struct SceneObjects_Corridor : ISceneObjects {
     ArrayViewer<enemy::Enemy*> enemies() override { return {}; }
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     void draw_after (
         FramebufferT& fb,

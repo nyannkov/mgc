@@ -199,7 +199,7 @@ void Dancer::receive_damage(int32_t amount) {
     }
 }
 
-void Dancer::receive_impact(mgc::math::Vec2f delta) {
+void Dancer::receive_impact(mgc::math::Vec2f delta, float dumping_rate) {
     force_ex_ += delta;
 }
 
@@ -217,8 +217,6 @@ void Dancer::on_attack_hit(
         size_t attack_hitbox_index = info.other_hitbox_index;
 
         attack.apply_damage_to(*this, attack_hitbox_index);
-
-        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 

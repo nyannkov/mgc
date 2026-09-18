@@ -47,9 +47,9 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
 
     void init();
     void spawn(const mgc::math::Vec2i& pos, PlayerAnimState anim_state);
-    void update_movement();
+    void update_movement(bool just_off_board);
     void resolve_movement();
-    void update_animation(bool is_talking);
+    void update_animation(bool is_talking, bool just_off_board);
     attack::AttackPlayer& attack() { return attack_; }
 
     void reset_state_for_placement(
@@ -60,7 +60,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     void receive_damage(int32_t amount);
     void receive_heal(int32_t amount);
     void receive_life_up(int32_t amount);
-    void receive_impact(mgc::math::Vec2f delta);
+    void receive_impact(mgc::math::Vec2f delta, float dumping_rate = 0.5f);
 
     int32_t hp() const { return hp_; }
     int32_t full_hp() const { return full_hp_; }
@@ -105,25 +105,28 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
             const MapT& map,
             const mgc::collision::MapPushbackInfo& info
     ) { 
+        using CleanedMapT = std::decay_t<MapT>;
         if ( info.obj_hitbox_index == 
             static_cast<size_t>(PlayerHitboxIndex::Body) 
         ) {
-            if constexpr (std::is_same_v<MapT, stage::LayerBlock>) {
+            if constexpr (std::is_same_v<CleanedMapT, stage::LayerBlock>) {
                 on_collision_resolved(map, info);
-            } else if constexpr (std::is_same_v<MapT, stage::LayerLadder>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerLadder>) {
                 hit_ladder_ = true;
-            } else if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerWater>) {
                 hit_water_ = true;
-            } else if constexpr (std::is_same_v<MapT, stage::LayerNeedle>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerNeedle>) {
                 on_collision_resolved(map, info);
-            } else if constexpr (std::is_same_v<MapT, stage::LayerOneWayBlock>) {
+            } else if constexpr (std::is_same_v<CleanedMapT, stage::LayerOneWayBlock>) {
                 hit_one_way_block_ = true;
+                on_collision_resolved(map, info);
+            } else if constexpr (std::is_same_v<CleanedMapT, carrier::Carrier>) {
                 on_collision_resolved(map, info);
             }
         } else if ( info.obj_hitbox_index == 
             static_cast<size_t>(PlayerHitboxIndex::Head) 
         ) {
-            if constexpr (std::is_same_v<MapT, stage::LayerWater>) {
+            if constexpr (std::is_same_v<CleanedMapT, stage::LayerWater>) {
                 hit_head_water_ = true;
             }
         }
@@ -196,6 +199,7 @@ private:
     SoundControllerT& sound_controller_;
     EquipmentInfo& equipment_info_;
     mgc::control::anim::AnimController<FrameTimerT> anim_;
+    float dumping_rate_ = 0.5f;
     mgc::math::Vec2f velocity_ {0.0f, 0.0f};
     mgc::math::Vec2f force_ex_ {0.0f, 0.0f};
     bool is_right_ = true;
@@ -223,12 +227,13 @@ private:
     mgc::math::Vec2i pushback_box_ {};
     mgc::math::Vec2i pushback_map_ {};
     mgc::math::Vec2i box_overlap_ {};
+    bool flag_jump_ = false;
 
     static constexpr int32_t MAX_MONEY = 99999;
 
     void set_hp(int32_t hp) { hp_ = hp; };
     void set_full_hp(int32_t full_hp) { full_hp_ = full_hp; };
-    void update_anim_normal();
+    void update_anim_normal(bool just_off_board);
     void update_anim_attacking();
     void update_anim_game_over();
     void on_enemy_hit(
@@ -253,6 +258,10 @@ private:
     );
     void on_collision_resolved(
         const stage::LayerNeedle& block,
+        const mgc::collision::MapPushbackInfo& info
+    );
+    void on_collision_resolved(
+        const carrier::Carrier& carrier,
         const mgc::collision::MapPushbackInfo& info
     );
     void on_collision_resolved(

@@ -14,10 +14,10 @@ void SceneObjects_Stage2_9::init() {
 
     gate_2_.spawn({MGC_CELL2PIXEL(39), MGC_CELL2PIXEL(7)});
     gate_2_.set_gate_type(prop::GateType::Type2);
-    gate_2_.close();
-//    gate_2_.set_scene_transition_request(
-//        { SceneId::Stage3_1 }
-//    );
+    gate_2_.open();
+    gate_2_.set_scene_transition_request(
+        { SceneId::Stage3_1 }
+    );
 
     gate_3_.spawn({MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(34)});
     gate_3_.set_gate_type(prop::GateType::Type2);
@@ -26,13 +26,13 @@ void SceneObjects_Stage2_9::init() {
         { SceneId::LogTerminal }
     );
 
-    signboard_.spawn({MGC_CELL2PIXEL(40), MGC_CELL2PIXEL(7)});
-    signboard_.set_talkflow_request({
-        &talkscript_1,
-        MGC_TALKSCRIPT_1_PREPARING,
-        nullptr,
-        TalkflowEffectType::Mute
-    });
+//    signboard_.spawn({MGC_CELL2PIXEL(40), MGC_CELL2PIXEL(7)});
+//    signboard_.set_talkflow_request({
+//        &talkscript_1,
+//        MGC_TALKSCRIPT_1_PREPARING,
+//        nullptr,
+//        TalkflowEffectType::Mute
+//    });
 
 }
 

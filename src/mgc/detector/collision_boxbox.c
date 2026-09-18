@@ -18,45 +18,6 @@ static inline void accumulate_pushback_neg(mgc_world_t* dst, mgc_world_t v) {
     }
 }
 
-static mgc_contact_t calc_contact_flags_box_box(
-    const mgc_aabb_t *aa,
-    const mgc_aabb_t *bb
-) {
-    mgc_contact_t flags = 0;
-    
-    if ( collision_point_in_box(aa->l, aa->t, bb->l, bb->r, bb->t, bb->b) ) {
-        flags |= (MGC_CONTACT_LT|MGC_CONTACT_L|MGC_CONTACT_T);
-    }
-    if ( collision_point_in_box(aa->r, aa->t, bb->l, bb->r, bb->t, bb->b) ) {
-        flags |= (MGC_CONTACT_RT|MGC_CONTACT_R|MGC_CONTACT_T);
-    }
-    if ( collision_point_in_box(aa->l, aa->b, bb->l, bb->r, bb->t, bb->b) ) {
-        flags |= (MGC_CONTACT_LB|MGC_CONTACT_L|MGC_CONTACT_B);
-    }
-    if ( collision_point_in_box(aa->r, aa->b, bb->l, bb->r, bb->t, bb->b) ) {
-        flags |= (MGC_CONTACT_RB|MGC_CONTACT_R|MGC_CONTACT_B);
-    }
-
-    if ( (aa->t < bb->t) && (bb->b < aa->b) ) {
-        if ( (bb->l <= aa->l) && (aa->l <= bb->r) ) {
-            flags |= MGC_CONTACT_L;
-        }
-        if ( (bb->l <= aa->r) && (aa->r <= bb->r) ) {
-            flags |= MGC_CONTACT_R;
-        }
-    }
-    if ( (aa->l < bb->l) && (bb->r < aa->r) ) {
-        if ( (bb->t <= aa->t) && (aa->t <= bb->b) ) {
-            flags |= MGC_CONTACT_T;
-        }
-        if ( (bb->t <= aa->b) && (aa->b <= bb->b) ) {
-            flags |= MGC_CONTACT_B;
-        }
-    }
-
-    return flags;
-}
-
 void collision_boxbox_init(
     mgc_collision_boxbox_t* boxbox,
     const mgc_hitbox_t *hitbox,
@@ -117,7 +78,7 @@ bool collision_boxbox_test_hit(
 
     bool r = collision_test_hit(&boxbox->aa, &bb);
     if ( r ) {
-        boxbox->flags |= calc_contact_flags_box_box(&boxbox->aa, &bb);
+        boxbox->flags |= collision_calc_contact_flags(&boxbox->aa, &bb);
     }
 
     return r;

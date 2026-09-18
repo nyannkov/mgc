@@ -25,6 +25,21 @@ Event_LogTerminal1::Event_LogTerminal1(
     hitboxes[0].set_size({MGC_CELL2PIXEL(7), MGC_CELL2PIXEL(6)});
     hitboxes[0].set_enabled(false);
 
+    switch ( scx.world_state.scene_info.prev_scene_id() ) {
+    case SceneId::Stage3_5:
+        jewel_id_ = ItemId::IndigoJewel;
+        text_log_idx_ = MGC_TALKSCRIPT_1_LOG_2;
+        text_found_jewel_idx_ = MGC_TALKSCRIPT_1_FOUND_JEWEL_2;
+        break;
+
+    case SceneId::Stage2_9:
+    default:
+        jewel_id_ = ItemId::VioletJewel;
+        text_log_idx_ = MGC_TALKSCRIPT_1_LOG_1;
+        text_found_jewel_idx_ = MGC_TALKSCRIPT_1_FOUND_JEWEL_1;
+        break;
+    }
+
     set_event_state(EventState::NotStarted);
 }
 
@@ -38,7 +53,7 @@ void Event_LogTerminal1::spawn(const mgc::math::Vec2i& pos) {
     unlock_control();
     sw_.reset();
 
-    if ( !equip_info_.item.has_item_at(ItemId::VioletJewel) ) {
+    if ( !equip_info_.item.has_item_at(jewel_id_) ) {
         jewel_.spawn({MGC_CELL2PIXEL(9), MGC_CELL2PIXEL(10)+8});
         jewel_.hide();
     } else {
@@ -78,7 +93,7 @@ void Event_LogTerminal1::update() {
         if ( sw_.elapsed_ms() > 1000 ) {
             state_ = SceneState::Wait_1_2;
             terminal_.turn_on();
-            if ( !equip_info_.item.has_item_at(ItemId::VioletJewel) ) {
+            if ( !equip_info_.item.has_item_at(jewel_id_) ) {
                 jewel_.show();
             }
         }
@@ -87,7 +102,7 @@ void Event_LogTerminal1::update() {
         if ( sw_.elapsed_ms() > 2987 ) {
             set_and_trigger_talkflow_request({
                 &talkscript_1,
-                MGC_TALKSCRIPT_1_LOG_1,
+                text_log_idx_,
                 &talkflow_listener_,
                 TalkflowEffectType::Mute
             });
@@ -105,14 +120,14 @@ void Event_LogTerminal1::update() {
             state_ = SceneState::Wait_2_2;
             sw_.restart();
             terminal_.turn_off();
-            if ( !equip_info_.item.has_item_at(ItemId::VioletJewel) ) {
+            if ( !equip_info_.item.has_item_at(jewel_id_) ) {
                 jewel_.hide();
             }
         }
         break;
     case SceneState::Wait_2_2:
         if ( sw_.elapsed_ms() > 1000 ) {
-            if ( !equip_info_.item.has_item_at(ItemId::VioletJewel) ) {
+            if ( !equip_info_.item.has_item_at(jewel_id_) ) {
                 state_ = SceneState::SearchJewel;
             } else {
                 state_ = SceneState::End;
@@ -126,11 +141,11 @@ void Event_LogTerminal1::update() {
         if ( jewel_.found() ) {
             set_and_trigger_talkflow_request({
                 &talkscript_1,
-                MGC_TALKSCRIPT_1_FOUND_JEWEL,
+                text_found_jewel_idx_,
                 &talkflow_listener_,
                 TalkflowEffectType::Mute
             });
-            equip_info_.item.add(ItemId::VioletJewel);
+            equip_info_.item.add(jewel_id_);
             state_ = SceneState::End;
         }
         break;

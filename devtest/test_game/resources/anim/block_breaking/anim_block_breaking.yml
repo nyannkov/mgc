@@ -1,0 +1,8 @@
+animations:
+  - name: block_breaking
+    description: "Block Breaking"
+    frames:
+      - { file: frame_000.bmp, time_ms: 100 }
+      - { file: frame_001.bmp, time_ms: 100 }
+      - { file: frame_002.bmp, time_ms: 100 }
+

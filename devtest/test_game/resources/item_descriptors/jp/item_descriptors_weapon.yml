@@ -13,6 +13,10 @@ item_descriptors:
           tile_index: 1
         - id: Yoyo
           name: 'ヨーヨー'
-          description: '紐がゴム製のヨーヨー。振り回しすぎると紐が切れて飛んでいく。'
+          description: 'ひもがゴムでできたヨーヨー。振り回しすぎるとゴムが切れて飛んでいく。'
           tile_index: 2
+        - id: FireworksBall
+          name: '花火'
+          description: '花火 (極)'
+          tile_index: 3
 

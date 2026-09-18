@@ -41,9 +41,20 @@ bool event_update(IEventObjects* events) {
     return is_control_locked;
 }
 
+bool is_just_off_board(SceneContext& scx) {
+    if ( scx.objs ) {
+        for ( auto* carrier : scx.objs->carriers() ) {
+            if ( carrier->off_board_state() == carrier::Carrier::OffBoardState::JustOffBoard ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void update_movement(SceneContext& scx) {
 
-    scx.player.update_movement();
+    scx.player.update_movement(is_just_off_board(scx));
 
     if ( scx.objs ) {
         for ( auto* block : scx.objs->blocks() ) {
@@ -54,6 +65,9 @@ void update_movement(SceneContext& scx) {
                 *block,
                 static_cast<size_t>(block::BlockHitboxIndex::Body)
             );
+        }
+        for ( auto* block : scx.objs->blocks() ) {
+            ColBox2BoxT::detect_pair(*block, scx.player.attack(), static_cast<size_t>(attack::AttackHitboxIndex::Body));
         }
         for ( size_t i = 0; i < scx.objs->blocks().size; ++i ) {
             auto* a = scx.objs->blocks().data[i];
@@ -129,6 +143,14 @@ void update_movement(SceneContext& scx) {
                 item->despawn();
             }
         }
+        for ( auto* carrier : scx.objs->carriers() ) {
+            carrier->update_movement();
+        }
+        for ( auto* carrier : scx.objs->carriers() ) {
+            ColBox2MapT::detect(scx.player, static_cast<size_t>(PlayerHitboxIndex::Body), *carrier);
+
+            ColBox2MapT::detect(scx.player.attack(), static_cast<size_t>(attack::AttackHitboxIndex::Body), *carrier);
+        }
     }
 
     if ( scx.stage ) {
@@ -139,6 +161,11 @@ void update_movement(SceneContext& scx) {
         scx.stage->detect_hit(
             scx.player,
             static_cast<size_t>(PlayerHitboxIndex::Head)
+        );
+
+        scx.stage->detect_hit(
+            scx.player.attack(),
+            static_cast<size_t>(attack::AttackHitboxIndex::Body)
         );
     }
 
@@ -209,7 +236,8 @@ void setup_scene_context(
 void update(
     SceneContext& scx, 
     TalkflowControllerT& talkflow,
-    CameraT* camera
+//    CameraT* camera
+    mgc::camera::ICameraFollower *camera
 ) {
     bool is_control_locked = false;
 
@@ -249,7 +277,7 @@ void update(
         }
     }
 
-    scx.player.update_animation(talkflow.in_progress());
+    scx.player.update_animation(talkflow.in_progress(), is_just_off_board(scx));
 
     if ( scx.objs ) {
         for ( auto* enemy : scx.objs->enemies() ) {
@@ -305,7 +333,8 @@ bool check_scene_transition_request(
 void draw(
     ColorT back_color,
     FramebufferT& fb,
-    const CameraT* camera,
+//    const CameraT* camera,
+    const mgc::camera::ICameraFollower* camera,
     const SceneContext& scx, 
     const TalkflowControllerT& talkflow,
     GameOverEffect& game_over_effect

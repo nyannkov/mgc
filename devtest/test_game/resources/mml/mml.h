@@ -37,6 +37,7 @@ enum {
     MML_BGM_4_SHOP,
     MML_BGM_5_BOSS,
     MML_BGM_6_STAGE2,
+    MML_BGM_7_STAGE3,
     MML_BGM_COUNT
 };
 

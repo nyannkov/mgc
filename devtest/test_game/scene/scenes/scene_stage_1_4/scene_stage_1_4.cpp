@@ -10,7 +10,7 @@ Scene_Stage1_4::Scene_Stage1_4(GameContext& ctx)
             : SceneBase(ctx),
               stage_(scx_.timer),
               scene_objects_(scx_),
-              event_objects_(scx_, scene_objects_) {
+              event_objects_(scx_, scene_objects_, camera_) {
 
     set_id(SceneId::Stage1_4);
 
@@ -42,12 +42,15 @@ void Scene_Stage1_4::init() {
     stage_.set_position({0, 0});
 
     camera_.set_target(scx_.player);
-    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(24), MGC_CELL2PIXEL(1));
-    camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(23), MGC_CELL2PIXEL(3));
+    camera_.set_target_position_in_camera_space(
+        {TARGET_X_IN_CAMERA, TARGET_Y_IN_CAMERA}
+    );
+    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(23));
+    camera_.set_y_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(26));
     camera_.set_x_follow_enabled(true);
     camera_.set_y_follow_enabled(true);
 
-    camera_.update_follow_position();
+    camera_.snap_to_target();
 
     scene_objects_.init();
     event_objects_.init();

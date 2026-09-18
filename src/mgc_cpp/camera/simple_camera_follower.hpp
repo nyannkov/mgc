@@ -48,7 +48,7 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
         camera_set_y_follow_enabled(&camera_, enabled);
     }
 
-    void update_follow_position() {
+    void update_follow_position() override {
         if ( target_ ) {
             auto position = target_->position();
             camera_follow_target_position(&camera_, mgc_point_t{position.x, position.y});
@@ -67,12 +67,13 @@ struct SimpleCameraFollower : mgc::camera::ICameraFollower,
     // [features] Resettable
     void reset() {
         camera_init(&camera_);
+        target_ = nullptr;
     }
 
 
 private:
     mgc_camera_t camera_;
-    const mgc::features::HasPosition<mgc::math::Vec2i>* target_;
+    const mgc::features::HasPosition<mgc::math::Vec2i>* target_ = nullptr;
 };
 
 }// namespace camera

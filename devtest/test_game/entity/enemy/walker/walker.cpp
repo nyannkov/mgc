@@ -86,7 +86,12 @@ void Walker::update_movement_dancing() {
         if ( velocity_.y < (MGC_CELL_LEN-1) ) {
             velocity_.y += 1.0f;
         }
-        pos += velocity_;
+        pos += velocity_ + force_ex_;
+        force_ex_ *= dumping_rate_;
+        dumping_rate_ -= 0.02f;
+        if ( dumping_rate_ < 0 ) {
+            dumping_rate_ = 0.0f;
+        }
         this->set_precise_position(pos);
 
     } else if ( state == EnemyState::Despawning ) {
@@ -120,7 +125,13 @@ void Walker::update_movement_normal() {
         if ( velocity_.y < (MGC_CELL_LEN-1) ) {
             velocity_.y += 1.0f;
         }
-        pos.y += velocity_.y;
+        pos.y += velocity_.y + force_ex_.y;
+        pos.x += velocity_.x + force_ex_.x;
+        force_ex_ *= dumping_rate_;
+        dumping_rate_ -= 0.02f;
+        if ( dumping_rate_ < 0 ) {
+            dumping_rate_ = 0.0f;
+        }
 
         this->set_precise_position(pos);
 
@@ -225,8 +236,9 @@ void Walker::receive_damage(int32_t amount) {
     }
 }
 
-void Walker::receive_impact(mgc::math::Vec2f delta) {
+void Walker::receive_impact(mgc::math::Vec2f delta, float dumping_rate) {
     force_ex_ += delta;
+    dumping_rate_ = dumping_rate;
 }
 
 void Walker::on_player_hit(
@@ -244,8 +256,6 @@ void Walker::on_attack_hit(
         size_t attack_hitbox_index = info.other_hitbox_index;
 
         attack.apply_damage_to(*this, attack_hitbox_index);
-
-        sound_.play_sound_effect(MML_SE_3_DAMAGE);
     }
 }
 
@@ -268,6 +278,12 @@ void Walker::on_collision_resolved(
         this->set_position(pos);
     }
 }
+
+bool Walker::draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const {
+    
+    return this->sprite().draw(fb, cam_pos, options);
+}
+
 
 
 }// namespace enemy

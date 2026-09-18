@@ -79,6 +79,14 @@ void collision_calc_aabb_from_hitbox(
     mgc_aabb_t *out
 );
 
+void collision_calc_aabb_from_cell(
+    mgc_world_t map_x,
+    mgc_world_t map_y,
+    uint16_t row,
+    uint16_t col,
+    mgc_aabb_t *out
+);
+
 void collision_expand_aabb_margin(
     const mgc_aabb_t* src,
     const mgc_aabb_margin_t* m,
@@ -97,6 +105,10 @@ bool collision_calc_signed_overlap(
     mgc_world_t *out_y
 );
 
+mgc_contact_t collision_calc_contact_flags(
+    const mgc_aabb_t *aa,
+    const mgc_aabb_t *bb
+);
 
 #ifdef __cplusplus
 }/* extern "C" */

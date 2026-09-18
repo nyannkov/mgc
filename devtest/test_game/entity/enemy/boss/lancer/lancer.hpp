@@ -34,7 +34,7 @@ struct Lancer: Enemy {
         size_t enemy_hitbox_index
     ) const override;
     void receive_damage(int32_t amount) override;
-    void receive_impact(mgc::math::Vec2f delta) override;
+    void receive_impact(mgc::math::Vec2f delta, float dumping_rate) override;
     
     void on_player_hit(
         const Player& player,

@@ -20,7 +20,7 @@ def get_formed_palette(palette, max_color_index, pixel_format):
     else:
         return None
 
-def gen_tileset_h_file(args):
+def gen_tileset_h_file(args, image):
 
     pixel_format = args.pixelformat
     filename = os.path.basename(args.bitmapfile).split('.')[0]
@@ -59,7 +59,7 @@ def gen_tileset_h_file(args):
         # End of include guard 
         f.write('#endif/*{}*/\n'.format(include_guard))
 
-def gen_tileset_c_file(args):
+def gen_tileset_c_file(args, image):
 
     pixel_format = args.pixelformat
     filename = os.path.basename(args.bitmapfile).split('.')[0]
@@ -70,11 +70,29 @@ def gen_tileset_c_file(args):
     tile_count = args.count
 
     if tile_count == 1:
-        tile_width = bitmap_width
-        tile_height = bitmap_height
+        if args.width is None:
+            tile_width = bitmap_width
+        else:
+            tile_width = args.width
+            
+        if args.height is None:
+            tile_height = bitmap_height
+        else:
+            tile_height = args.height
     else:
-        tile_width = args.width
-        tile_height = args.height
+        if args.width is None:
+            tile_width = 16
+        else:
+            tile_width = args.width
+            
+        if args.height is None:
+            tile_height = 16
+        else:
+            tile_height = args.height
+
+    if (tile_width <= 0) or (tile_height <=0):
+        print('Error: Tile width and height must be greater than 0.', file=sys.stderr)
+        sys.exit(2)
 
     if tile_count == 0:
         tile_count = (bitmap_width//tile_width)*(bitmap_height//tile_height)
@@ -151,8 +169,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Utility to convert bitmap images into mgc_tileset_t structure constants in C source code.')
     parser.add_argument('bitmapfile', help='Set the path of the bitmap file.')
-    parser.add_argument('-w', '--width', default=16, type=int, help='Set the width of each tile. Default is 16 pixels.')
-    parser.add_argument('-H', '--height', default=16, type=int, help='Set the height of each tile. Default is 16 pixels.')
+    parser.add_argument('-w', '--width', default=None, type=int, help='Set the width of each tile. Default is 16 pixels.')
+    parser.add_argument('-H', '--height', default=None, type=int, help='Set the height of each tile. Default is 16 pixels.')
     parser.add_argument('-c', '--count', default=0, type=int, help='Set the number of tiles. If not specified, it will be calculated based on the image dimensions and tile size.')
     parser.add_argument('-p', '--pixelformat',default='RGB565',  help='Set the pixel format.')
     parser.add_argument('-d', '--dir',  help='Set the destination directory to save the generated files.')
@@ -161,21 +179,17 @@ if __name__ == '__main__':
     image = Image.open(args.bitmapfile)
 
     if image.mode != 'P':
-        print('Error: Only supports indexed color.')
+        print('Error: Only supports indexed color.', file=sys.stderr)
         sys.exit(1)
-
-    if (args.width <= 0) or (args.height <=0):
-        print('Error: Tile width and height must be greater than 0.')
-        sys.exit(2)
 
     if args.dir:
         os.makedirs(args.dir, exist_ok=True)
 
     # Create tileset header file.
-    gen_tileset_h_file(args)
+    gen_tileset_h_file(args, image)
 
     # Create tileset source file.
-    gen_tileset_c_file(args)
+    gen_tileset_c_file(args, image)
 
     sys.exit(0)
 

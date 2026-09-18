@@ -19,7 +19,7 @@ struct Scene_Stage1_1 : SceneBase {
     void draw(mgc::graphics::Framebuffer& fb) override;
 
 private:
-    CameraT camera_;
+    SmoothFollowCamera camera_;
     stage::Stage stage_;
     SceneObjects_Stage1_1 scene_objects_;
 };

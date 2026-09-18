@@ -43,7 +43,9 @@ private:
     prop::Jewel& jewel_;
     Player& player_;
     Terminal& terminal_;
-    
+    ItemId jewel_id_;
+    mgc_node_idx_t text_log_idx_;
+    mgc_node_idx_t text_found_jewel_idx_;
 
     SceneState state_ = SceneState::NotStarted;
 

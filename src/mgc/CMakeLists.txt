@@ -7,6 +7,7 @@ set(MGC_C_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/components/sprite.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/components/textblock.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/components/tilemap.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/components/tileset.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/detector/sprhit.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/detector/maphit.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/detector/collision_common.c"

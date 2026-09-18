@@ -73,6 +73,7 @@ struct SceneObjects_Shop : ISceneObjects {
     ArrayViewer<enemy::Enemy*> enemies() override { return {}; }
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     auto& door() { return door_; }
     auto& portal() { return portal_; }

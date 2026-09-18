@@ -47,6 +47,7 @@ struct SceneObjects_TowerFront : ISceneObjects {
     ArrayViewer<item::Item*> items() override { return { }; }
     ArrayViewer<enemy::Enemy*> enemies() override { return { }; }
     ArrayViewer<block::Block*> blocks() override { return {}; }
+    ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
     auto& entrance() { return entrance_; }
     auto& hen() { return hen_; }

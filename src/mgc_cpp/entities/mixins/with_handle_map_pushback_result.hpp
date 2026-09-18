@@ -14,17 +14,6 @@ namespace mgc {
 namespace entities {
 namespace mixins {
 
-template <typename, typename = void>
-struct has_handle_map_pushback_result : std::false_type {};
-
-template <typename T>
-struct has_handle_map_pushback_result<
-    T,
-    std::void_t<
-        decltype(std::declval<const T&>().hitboxes())
-    >
-> : std::true_type {};
-
 template <typename Derived>
 struct WithHandleMapPushbackResult {
     template <typename ObjT, typename MapT>
@@ -36,7 +25,6 @@ struct WithHandleMapPushbackResult {
         static_cast<Derived*>(this)->handle_map_pushback_result_impl(obj, map, info);
     }
 };
-
 
 }// namespace mixins
 }// namespace entities
