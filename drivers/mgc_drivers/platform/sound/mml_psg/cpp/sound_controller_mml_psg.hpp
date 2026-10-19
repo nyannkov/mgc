@@ -195,6 +195,10 @@ struct MmlPsgSoundController : mgc::platform::sound::ISoundController {
         return mml_psg_get_sound_effect_volume();
     }
 
+    void finish_primary_loop(bool force) {
+        mml_psg_finish_primary_loop(force);
+    }
+
 private:
     IMmlPsgSoundControllerListener *listener_;
 };
