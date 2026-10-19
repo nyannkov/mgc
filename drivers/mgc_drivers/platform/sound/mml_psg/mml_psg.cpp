@@ -382,6 +382,10 @@ uint16_t mml_psg_local__proc_psg_emu(void) {
     return static_cast<uint16_t>(output_q >> Q_VALUE);
 }
 
+void mml_psg_finish_primary_loop(bool force) {
+    psgino_z.FinishPrimaryLoop(force);
+}
+
 void mml_psg_local__proc_psg_mml(void) {
 
     psgino_z.Proc();

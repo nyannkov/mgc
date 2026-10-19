@@ -73,6 +73,8 @@ float mml_psg_get_sound_effect_speed_factor(void);
 void mml_psg_shift_sound_effect_pitch_by_degree(int16_t degree);
 int16_t mml_psg_get_sound_effect_pitch_shift_in_degree(void);
 
+void mml_psg_finish_primary_loop(bool force);
+
 #ifdef __cplusplus
 }/* extern "C" */
 #endif
