@@ -23,12 +23,12 @@ Walker::Walker(
 
 void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right) {
     
-    spawn(pos, is_right, WalkerMode::Normal);
+    spawn(pos, is_right, mode_);
 }
 
 void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right, WalkerMode mode) {
     set_hp(WalkerMaxHP);
-    this->set_enemy_state(EnemyState::Spawning);
+
 
     if ( is_right ) {
         anim_state_ = WalkerAnimState::StandRight;
@@ -41,6 +41,9 @@ void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right, WalkerMode mode) 
     anim_.set_current_frame(this->mut_sprite());
     this->set_position(pos);
 
+    velocity_ = { 0, 0 };
+    force_ex_ = { 0, 0 };
+
     auto& hitboxes = this->mut_hitboxes();
 
     // body
@@ -52,8 +55,14 @@ void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right, WalkerMode mode) 
     this->set_visible(true);
     mode_ = mode;
 
-    // No spawning animation
-    this->set_enemy_state(EnemyState::Active);
+    if ( spawn_animation_enabled_ ) {
+        alpha_ = 0;
+        this->set_enemy_state(EnemyState::Spawning);
+    } else {
+        // No spawning animation
+        alpha_ = 255;
+        this->set_enemy_state(EnemyState::Active);
+    }
 
     sw_.restart();
 }
@@ -153,6 +162,17 @@ void Walker::update_animation() {
 
     if ( this->enemy_state() == EnemyState::Inactive ) return;
 
+    if ( this->enemy_state() == EnemyState::Spawning ) {
+        uint16_t next_ = alpha_;
+        next_ += 3;
+        if ( next_ >= 255 ) {
+            alpha_ = 255;
+            this->set_enemy_state(EnemyState::Active);
+        } else {
+            alpha_ = next_;
+        }
+        return;
+    }
 
     if ( mode_ == WalkerMode::Normal ) {
         if ( sw_.elapsed_ms() >= 3000 ) {
@@ -281,6 +301,22 @@ void Walker::on_collision_resolved(
 
 bool Walker::draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const {
     
+    if ( this->enemy_state() == EnemyState::Spawning ) {
+        mgc::graphics::DrawOptions opt_spawning = { 0 };
+        opt_spawning.eff_flags = DRAW_EFFECT_ALPHA_BLEND; 
+        opt_spawning.alpha = alpha_;
+        if ( options ) {
+            opt_spawning.eff_flags |= options->eff_flags;
+            opt_spawning.palette_array = options->palette_array;
+            opt_spawning.palette_count = options->palette_count;
+        }
+
+        return this->sprite().draw(fb, cam_pos, &opt_spawning);
+        
+    } else {
+        return this->sprite().draw(fb, cam_pos, options);
+    }
+
     return this->sprite().draw(fb, cam_pos, options);
 }
 

@@ -46,7 +46,7 @@ struct SmoothFollowCamera : mgc::camera::ICameraFollower {
                     pos.x = max_x_;
                 } else { }
 
-                float dx = 0.1* (pos.x - (float)target_pos_in_camera_.x - posf_.x);
+                float dx = 0.1* (pos.x + target_offset_.x - (float)target_pos_in_camera_.x - posf_.x);
                 posf_.x += dx;
             }
 
@@ -57,7 +57,7 @@ struct SmoothFollowCamera : mgc::camera::ICameraFollower {
                     pos.y = max_y_;
                 } else { }
 
-                float dy = 0.2* (pos.y - (float)target_pos_in_camera_.y - posf_.y);
+                float dy = 0.2* (pos.y + target_offset_.y - (float)target_pos_in_camera_.y - posf_.y);
                 posf_.y += dy;
             }
 
@@ -76,7 +76,7 @@ struct SmoothFollowCamera : mgc::camera::ICameraFollower {
             } else if ( max_x_ < pos.x ) {
                 pos.x = max_x_;
             } else { }
-            posf_.x = pos.x - target_pos_in_camera_.x; 
+            posf_.x = pos.x + target_offset_.x - target_pos_in_camera_.x; 
         }
 
         if ( y_follow_enabled_ ) {
@@ -85,7 +85,7 @@ struct SmoothFollowCamera : mgc::camera::ICameraFollower {
             } else if ( max_y_ < pos.y ) {
                 pos.y = max_y_;
             } else { }
-            posf_.y = pos.y - target_pos_in_camera_.y; 
+            posf_.y = pos.y + target_offset_.y - target_pos_in_camera_.y; 
         }
     }
 
@@ -96,6 +96,9 @@ struct SmoothFollowCamera : mgc::camera::ICameraFollower {
             return mgc::math::Vec2i(0, 0);
         }
     }
+
+    void set_target_offset(const mgc::math::Vec2i& offset) { target_offset_ = offset; }
+    auto target_offset() const { return target_offset_; }
 
 private:
     mgc::math::Vec2f posf_ = {0, 0};
@@ -108,6 +111,7 @@ private:
     bool y_follow_enabled_ = false;
 
     const mgc::features::HasPosition<mgc::math::Vec2i>* target_ = nullptr;
+    mgc::math::Vec2i target_offset_ = {0, 0};
 };
 
 

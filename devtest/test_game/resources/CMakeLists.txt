@@ -310,6 +310,19 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_3_5/csv"
     --tile-or128 block one_way_block ladder needle
 )
+set(STAGE_MAP_STAGE_3_6_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_one_way_block.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_3_6/map_stage_3_6.tmx"
+    "${STAGE_MAP_STAGE_3_6_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv"
+    --tile-or128 block one_way_block ladder needle
+)
 
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
@@ -364,6 +377,7 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_3_3_CSVS}
     ${STAGE_MAP_STAGE_3_4_CSVS}
     ${STAGE_MAP_STAGE_3_5_CSVS}
+    ${STAGE_MAP_STAGE_3_6_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
     ${STAGE_MAP_LOG_TERMINAL_CSVS}
 )
@@ -382,6 +396,7 @@ add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects.bmp" "${GEN_DIR}
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 16 --height 24)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_16x48.bmp" "${GEN_DIR}/tileset" --count 2 --width 16 --height 48)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_48x24.bmp" "${GEN_DIR}/tileset" --count 3 --width 48 --height 24)
+add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_static_objects_20x32.bmp" "${GEN_DIR}/tileset" --count 1 --width 20 --height 32)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_hen.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_chick.bmp" "${GEN_DIR}/tileset" --width 6 --height 10)
 add_tileset_gen("${RESOURCE_DIR}/tileset/tileset_florist.bmp" "${GEN_DIR}/tileset" --width 16 --height 24)
@@ -467,6 +482,18 @@ anim_cmake_list_gen(
     --width 16 --height 16
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/enemy/spectator/anim_spectator.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_spectator.bmp"
+    "${GEN_DIR}/anim/enemy/spectator"
+    --width 16 --height 16
+)
+anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/effect/vortex/anim_effect_vortex.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_vortex.bmp"
+    "${GEN_DIR}/anim/effect/vortex"
+    --width 16 --height 16
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/prop/portal/anim_portal.yml" 
     "${RESOURCE_DIR}/tileset/tileset_static_objects_16x24.bmp"
     "${GEN_DIR}/anim/prop/portal"
@@ -479,6 +506,12 @@ anim_cmake_list_gen(
     --width 8 --height 8 
 )
 anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/prop/target_balloon/anim_target_balloon.yml" 
+    "${RESOURCE_DIR}/tileset/tileset_target_balloon.bmp"
+    "${GEN_DIR}/anim/prop/target_balloon"
+    --width 16 --height 16 
+)
+anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/enemy/dancer/anim_boss_dancer.yml"
     "${RESOURCE_DIR}/tileset/tileset_boss_dancer.bmp"
     "${GEN_DIR}/anim/enemy/dancer"
@@ -488,6 +521,12 @@ anim_cmake_list_gen(
     "${RESOURCE_DIR}/anim/enemy/lancer/anim_boss_lancer.yml"
     "${RESOURCE_DIR}/tileset/tileset_boss_lancer.bmp"
     "${GEN_DIR}/anim/enemy/lancer"
+    --width 20 --height 32 
+)
+anim_cmake_list_gen(
+    "${RESOURCE_DIR}/anim/enemy/rocker/anim_boss_rocker.yml"
+    "${RESOURCE_DIR}/tileset/tileset_boss_rocker.bmp"
+    "${GEN_DIR}/anim/enemy/rocker"
     --width 20 --height 32 
 )
 
@@ -504,10 +543,14 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     anim_walker
     anim_floaty_fish
     anim_balloon
+    anim_spectator
     anim_boss_dancer
     anim_boss_lancer
+    anim_boss_rocker
     anim_portal
     anim_jewel
+    anim_target_balloon
+    anim_effect_vortex
     mml
 )
 

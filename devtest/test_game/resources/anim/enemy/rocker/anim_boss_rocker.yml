@@ -1,0 +1,41 @@
+animations:
+  - name: "stand"
+    description: "Stand"
+    frames:
+      - { file: frame_004.bmp, time_ms: 999999 }
+  - name: "stand2"
+    description: "Stand2"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }
+  - name: "playing"
+    description: "Playing"
+    frames:
+      - { file: frame_001.bmp, time_ms: 50 }
+      - { file: frame_000.bmp, time_ms: 50 }
+  - name: "wide_playing"
+    description: "Wide Playing"
+    frames:
+      - { file: frame_005.bmp, time_ms: 50 }
+      - { file: frame_004.bmp, time_ms: 50 }
+  - name: "singing"
+    description: "Singing"
+    frames:
+      - { file: frame_003.bmp, time_ms: 50 }
+      - { file: frame_002.bmp, time_ms: 50 }
+  - name: "stepping"
+    description: "Legend"
+    frames:
+      - { file: frame_010.bmp, time_ms: 50 }
+      - { file: frame_009.bmp, time_ms: 50 }
+      - { file: frame_010.bmp, time_ms: 50 }
+      - { file: frame_011.bmp, time_ms: 1000 }
+  - name: "waving"
+    description: "Waving"
+    frames:
+      - { file: frame_006.bmp, time_ms: 250 }
+      - { file: frame_007.bmp, time_ms: 250 }
+  - name: "stop_waving"
+    description: "Stop Waving"
+    frames:
+      - { file: frame_008.bmp, time_ms: 999999 }
+

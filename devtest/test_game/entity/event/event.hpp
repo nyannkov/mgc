@@ -71,6 +71,9 @@ struct Event : mgc::entities::ActorImpl<
         scene_trans_req_set_flag_ = true;
     }
 
+    void set_draw_behind_mode(bool enabled) { draw_behind_mode_ = enabled; }
+    auto draw_behind_mode() const { return draw_behind_mode_; }
+
 protected:
     virtual void on_player_hit(
         const Player& player,
@@ -131,6 +134,8 @@ private:
     bool scene_trans_req_set_flag_ = false;
 
     bool is_control_locked_ = false;
+
+    bool draw_behind_mode_ = false;
 };
 
 }// namespace event

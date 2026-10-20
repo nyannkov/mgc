@@ -102,6 +102,10 @@ struct SoundControllerWrapper {
     uint32_t update_bgm_param_count() const {
         return sound_listener_.update_bgm_param_count();
     }
+
+    void finish_primary_loop(bool force) {
+        sound_.finish_primary_loop(force);
+    }
     
 private:
     mgc::drivers::platform::sound::MmlPsgSoundController sound_;

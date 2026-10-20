@@ -1,0 +1,13 @@
+animations:
+  - name: small_vortex
+    description: "Small Vortex"
+    frames:
+      - { file: frame_000.bmp, time_ms: 50 }
+      - { file: frame_001.bmp, time_ms: 50 }
+
+  - name: large_vortex
+    description: "Large Vortex"
+    frames:
+      - { file: frame_002.bmp, time_ms: 50 }
+      - { file: frame_003.bmp, time_ms: 50 }
+

@@ -1,0 +1,15 @@
+animations:
+  - name: target_floating
+    description: "Target floating"
+    frames:
+      - { file: frame_000.bmp, time_ms: 150 }
+      - { file: frame_001.bmp, time_ms: 150 }
+      - { file: frame_002.bmp, time_ms: 150 }
+      - { file: frame_001.bmp, time_ms: 150 }
+
+  - name: target_breaking
+    description: "Target breaking"
+    frames:
+      - { file: frame_003.bmp, time_ms: 50 }
+      - { file: frame_004.bmp, time_ms: 50 }
+      - { file: frame_005.bmp, time_ms: 50 }

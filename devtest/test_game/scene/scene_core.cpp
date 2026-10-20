@@ -57,6 +57,10 @@ void update_movement(SceneContext& scx) {
     scx.player.update_movement(is_just_off_board(scx));
 
     if ( scx.objs ) {
+        for ( auto* prop : scx.objs->props() ) {
+            prop->update_movement();
+        }
+
         for ( auto* block : scx.objs->blocks() ) {
             block->update_movement();
         }
@@ -355,10 +359,14 @@ void draw(
     if ( scx.stage ) {
         scx.stage->draw(fb, pos);
     }
+
+    if ( scx.evts ) {
+        scx.evts->draw_effect_behind(fb, pos);
+    }
+
     if ( scx.objs ) {
         scx.objs->draw(fb, pos);
     }
-    // TODO event
 
     scx.player.draw(fb, pos);
     scx.player.attack().draw_wrap(fb, pos);

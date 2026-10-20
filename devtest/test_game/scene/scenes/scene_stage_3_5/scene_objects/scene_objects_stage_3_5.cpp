@@ -33,18 +33,17 @@ void SceneObjects_Stage3_5::init() {
 
     gate_3_.spawn({MGC_CELL2PIXEL(58), MGC_CELL2PIXEL(14)});
     gate_3_.set_gate_type(prop::GateType::Type2);
-    gate_3_.close();
-//    gate_3_.open();
-//    gate_3_.set_scene_transition_request(
-//        { SceneId::Stage3_4 }
-//    );
-    signboard_.spawn({MGC_CELL2PIXEL(57), MGC_CELL2PIXEL(14)});
-    signboard_.set_talkflow_request({
-        &talkscript_1,
-        MGC_TALKSCRIPT_1_PREPARING,
-        nullptr,
-        TalkflowEffectType::Mute
-    });
+    gate_3_.open();
+    gate_3_.set_scene_transition_request(
+        { SceneId::Stage3_6 }
+    );
+//    signboard_.spawn({MGC_CELL2PIXEL(57), MGC_CELL2PIXEL(14)});
+//    signboard_.set_talkflow_request({
+//        &talkscript_1,
+//        MGC_TALKSCRIPT_1_PREPARING,
+//        nullptr,
+//        TalkflowEffectType::Mute
+//    });
 
     carrier_1_.spawn(wp_1_.data()[0]);
     carrier_1_.start(wp_1_.data(), wp_1_.size(), carrier::WaypointCarrierMode::OneWay);

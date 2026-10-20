@@ -34,6 +34,7 @@ add_subdirectory(scenes/scene_stage_3_2)
 add_subdirectory(scenes/scene_stage_3_3)
 add_subdirectory(scenes/scene_stage_3_4)
 add_subdirectory(scenes/scene_stage_3_5)
+add_subdirectory(scenes/scene_stage_3_6)
 add_subdirectory(scenes/scene_shop)
 add_subdirectory(scenes/scene_log_terminal)
 add_subdirectory(scenes/scene_game_over)
@@ -66,15 +67,16 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     scene_stage_3_3
     scene_stage_3_4
     scene_stage_3_5
+    scene_stage_3_6
     scene_shop
     scene_log_terminal
     scene_game_over
 )
 
 if (SIM_BUILD)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=16384)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=32768)
 else()
-    target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=8192)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE MGC_SCENE_POOL_SIZE=16384)
 endif()
 
 

@@ -1,0 +1,67 @@
+animations:
+  - name: "type1_stand_right"
+    description: "Type1 Stand Right"
+    frames:
+      - { file: frame_000.bmp, time_ms: 999999 }
+
+  - name: "type1_stand_left"
+    description: "Type1 Stand Left"
+    frames:
+      - { file: frame_002.bmp, time_ms: 999999 }
+
+  - name: "type1_jump_right"
+    description: "Type1 Jump Right"
+    frames:
+      - { file: frame_001.bmp, time_ms: 50 }
+      - { file: frame_000.bmp, time_ms: 1000 }
+
+  - name: "type1_jump_left"
+    description: "Type1 Jump Left"
+    frames:
+      - { file: frame_003.bmp, time_ms: 50 }
+      - { file: frame_002.bmp, time_ms: 1000 }
+
+  - name: "type2_stand_right"
+    description: "Type2 Stand Right"
+    frames:
+      - { file: frame_004.bmp, time_ms: 999999 }
+
+  - name: "type2_stand_left"
+    description: "Type2 Stand Left"
+    frames:
+      - { file: frame_006.bmp, time_ms: 999999 }
+
+  - name: "type2_jump_right"
+    description: "Type2 Jump Right"
+    frames:
+      - { file: frame_005.bmp, time_ms: 50 }
+      - { file: frame_004.bmp, time_ms: 1000 }
+
+  - name: "type2_jump_left"
+    description: "Type2 Jump Left"
+    frames:
+      - { file: frame_007.bmp, time_ms: 50 }
+      - { file: frame_006.bmp, time_ms: 1000 }
+
+  - name: "type3_stand_right"
+    description: "Type3 Stand Right"
+    frames:
+      - { file: frame_008.bmp, time_ms: 999999 }
+
+  - name: "type3_stand_left"
+    description: "Type3 Stand Left"
+    frames:
+      - { file: frame_010.bmp, time_ms: 999999 }
+
+  - name: "type3_jump_right"
+    description: "Type3 Jump Right"
+    frames:
+      - { file: frame_009.bmp, time_ms: 50 }
+      - { file: frame_008.bmp, time_ms: 1000 }
+
+  - name: "type3_jump_left"
+    description: "Type3 Jump Left"
+    frames:
+      - { file: frame_011.bmp, time_ms: 50 }
+      - { file: frame_010.bmp, time_ms: 1000 }
+

@@ -55,6 +55,14 @@ struct Walker: Enemy {
 
     bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override;
 
+    void set_spawn_animation_enabled(bool enabled) {
+        spawn_animation_enabled_ = enabled;
+    }
+    auto spawn_animation_enabled() const { return spawn_animation_enabled_; }
+
+    void set_walker_mode(WalkerMode mode) { mode_ = mode; }
+    auto walker_mode() const { return mode_; }
+
 private:
     SoundControllerT& sound_;
     AnimControllerT anim_;
@@ -65,6 +73,9 @@ private:
     BlinkAnimatorT blink_animator_;
     StopwatchT sw_;
     WalkerMode mode_ = WalkerMode::Normal;
+    bool spawn_animation_enabled_ = false;
+    uint8_t alpha_ = 0;
+
     uint32_t update_bgm_param_count_ = 0;
     bool is_walking_ = false;
     bool is_direction_right() const {

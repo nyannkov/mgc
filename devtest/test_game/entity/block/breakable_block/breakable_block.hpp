@@ -25,10 +25,13 @@ struct BreakableBlock : Block {
     void resolve_movement() override;
     void update_animation() override;
     bool can_move_group(const ArrayViewer<Block*>& blocks) const override;
+    void set_breakable(bool is_breakable) { is_breakable_ = is_breakable; }
+    auto is_breakable() const { return is_breakable_; }
 
 private:
     AnimControllerT anim_;
     State state_;
+    bool is_breakable_;
     void on_attack_hit(
         const attack::Attack& attack,
         const mgc::collision::BoxCollisionInfo& info

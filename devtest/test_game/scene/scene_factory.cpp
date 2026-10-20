@@ -25,6 +25,7 @@
 #include "scenes/scene_stage_3_3/scene_stage_3_3.hpp"
 #include "scenes/scene_stage_3_4/scene_stage_3_4.hpp"
 #include "scenes/scene_stage_3_5/scene_stage_3_5.hpp"
+#include "scenes/scene_stage_3_6/scene_stage_3_6.hpp"
 #include "scenes/scene_shop/scene_shop.hpp"
 #include "scenes/scene_log_terminal/scene_log_terminal.hpp"
 #include "scenes/scene_game_over/scene_game_over.hpp"
@@ -110,6 +111,9 @@ IScene* SceneFactory::create_scene(SceneId id, GameContext& ctx) {
         break;
     case SceneId::Stage3_5:
         pool.create<Scene_Stage3_5>(ctx);
+        break;
+    case SceneId::Stage3_6:
+        pool.create<Scene_Stage3_6>(ctx);
         break;
     case SceneId::Shop:
         pool.create<Scene_Shop>(ctx);

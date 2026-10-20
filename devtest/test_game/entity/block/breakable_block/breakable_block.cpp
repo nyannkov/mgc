@@ -20,6 +20,7 @@ BreakableBlock::BreakableBlock(
     hitboxes[0].set_enabled(false);
 
     state_ = State::Inactive;
+    is_breakable_ = true;
 }
 
 void BreakableBlock::spawn(const mgc::math::Vec2i& pos) {
@@ -30,6 +31,12 @@ void BreakableBlock::spawn(const mgc::math::Vec2i& pos) {
 
     set_velocity({0, 0});
     this->set_player_push_direction(PlayerPushDirection::None);
+
+    if ( is_breakable_ ) {
+        this->mut_sprite().set_tile_index(1);
+    } else {
+        this->mut_sprite().set_tile_index(0);
+    }
 
     state_ = State::Active;
 }
@@ -69,7 +76,7 @@ void BreakableBlock::on_attack_hit(
     const attack::Attack& attack,
     const mgc::collision::BoxCollisionInfo& info
 ) {
-    if ( attack.can_break_block() ) {
+    if ( is_breakable_ && attack.can_break_block() ) {
         if ( state_ == State::Active ) {
             auto pos = this->position();
             pos += { -4, -4 };

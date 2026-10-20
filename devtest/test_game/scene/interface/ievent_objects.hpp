@@ -13,7 +13,18 @@ struct IEventObjects {
     virtual void draw_effect(FramebufferT& fb, mgc::math::Vec2i& cam_pos) {
         for ( auto* evt : events() ) {
             if ( evt ) {
-                evt->draw_effect(fb, cam_pos);
+                if ( !evt->draw_behind_mode() ) {
+                    evt->draw_effect(fb, cam_pos);
+                }
+            }
+        }
+    }
+    virtual void draw_effect_behind(FramebufferT& fb, mgc::math::Vec2i& cam_pos) {
+        for ( auto* evt : events() ) {
+            if ( evt ) {
+                if ( evt->draw_behind_mode() ) {
+                    evt->draw_effect(fb, cam_pos);
+                }
             }
         }
     }
