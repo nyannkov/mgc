@@ -242,6 +242,11 @@ talkscript:
      - message: "個体の口から、\\n高密度のエネルギー放出を確認した。"
      - end: true
 
+    log_3:
+     - message: "実験中に爆発が発生。"
+     - message: "設備は倒壊し、個体の意識は停止した。"
+     - end: true
+
     found_jewel_1:
      - { message: "何か落ちている．．．。" }
      - { message: "紫色のガラス玉(？)を拾った。", end: true }
@@ -249,6 +254,10 @@ talkscript:
     found_jewel_2:
      - { message: "何か落ちている．．．。" }
      - { message: "藍色のガラス玉(？)を拾った。", end: true }
+
+    found_jewel_3:
+     - { message: "何か落ちている．．．。" }
+     - { message: "青色のガラス玉(？)を拾った。", end: true }
 
     password_success:
       - { message: "LOAD COMPLETE!", end: true }

@@ -57,6 +57,7 @@ struct SceneManager {
         //equipment_info_.item.add(ItemId::VioletJewel);
         //ctx_.world_state.player.add_money(1000);
         //ctx_.world_state.checkpoint_info.advance_checkpoint(Checkpoint::WonTheStage2Boss);
+        //ctx_.world_state.checkpoint_info.advance_checkpoint(Checkpoint::WonTheStage3Boss);
 
         menu_.init();
     }

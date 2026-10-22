@@ -41,6 +41,9 @@ void Event_Stage3_6::spawn(const mgc::math::Vec2i& pos) {
     objs_.rocker().spawn({MGC_CELL2PIXEL(19), MGC_CELL2PIXEL(11)}, true);
     objs_.rocker().set_shadow_mode(true);
 
+    objs_.block().spawn({MGC_CELL2PIXEL(34), MGC_CELL2PIXEL(12)});
+    objs_.block().set_breakable(false);
+
     // bottom left1
     objs_.spectator()[0].spawn({MGC_CELL2PIXEL(8), MGC_CELL2PIXEL(16)}, true, enemy::SpectatorMode::Jump, enemy::SpectatorType::Type1);
     objs_.spectator()[0].set_jump_check_interval(300);

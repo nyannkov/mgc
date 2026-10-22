@@ -13,6 +13,7 @@
 #include "entity/prop/signboard/signboard.hpp"
 #include "entity/prop/mic/mic.hpp"
 #include "entity/prop/target_balloon/target_balloon.hpp"
+#include "entity/block/breakable_block/breakable_block.hpp"
 #include "utils/triangle/triangle.hpp"
 
 namespace app {
@@ -124,6 +125,7 @@ struct SceneObjects_Stage3_6 : ISceneObjects {
           },
           gate_1_(scx.gamepad),
           gate_2_(scx.gamepad),
+          gate_3_(scx.gamepad),
           signboard_(scx.gamepad),
           mic_1_(scx.gamepad),
           target_balloons_{
@@ -137,6 +139,7 @@ struct SceneObjects_Stage3_6 : ISceneObjects {
           props_ { 
             &gate_1_,
             &gate_2_,
+            &gate_3_,
             &signboard_,
             &mic_1_,
             &target_balloons_[0],
@@ -145,6 +148,10 @@ struct SceneObjects_Stage3_6 : ISceneObjects {
             &target_balloons_[3],
             &target_balloons_[4],
             &target_balloons_[5]
+          },
+          block_1_(scx.timer),
+          blocks_{
+            &block_1_
           }
         { }
 
@@ -153,7 +160,7 @@ struct SceneObjects_Stage3_6 : ISceneObjects {
     ArrayViewer<prop::Prop*> props() override { return { props_.data(), props_.size() }; }
     ArrayViewer<item::Item*> items() override { return {}; }
     ArrayViewer<enemy::Enemy*> enemies() override { return { enemies_.data(), enemies_.size() }; }
-    ArrayViewer<block::Block*> blocks() override { return {}; }
+    ArrayViewer<block::Block*> blocks() override { return { blocks_.data(), blocks_.size() }; }
     ArrayViewer<civilian::Civilian*> civils() override { return {}; }
     ArrayViewer<carrier::Carrier*> carriers() override { return {}; }
 
@@ -166,6 +173,7 @@ struct SceneObjects_Stage3_6 : ISceneObjects {
     auto& spotlight2() { return spotlight2_; }
     auto& spectator() { return spectator_; }
     auto& target_balloons() { return target_balloons_; }
+    auto& block() { return block_1_; }
 
     void all_enemy_despawn() {
         for ( auto* enemy : enemies() ) {
@@ -239,13 +247,18 @@ private:
     // Prop
     prop::Gate gate_1_;
     prop::Gate gate_2_;
+    prop::Gate gate_3_;
     prop::Mic mic_1_;
     prop::Signboard signboard_;
     std::array<prop::TargetBalloon, 6>  target_balloons_;
-    std::array<prop::Prop*, 10> props_;
+    std::array<prop::Prop*, 11> props_;
 
     Spotlight spotlight1_;
     Spotlight spotlight2_;
+
+    // Block
+    block::BreakableBlock block_1_;
+    std::array<block::Block*, 1> blocks_;
 };
 
 } // namespace app

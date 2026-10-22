@@ -102,6 +102,7 @@
 #include "resources/generated/map/map_stage_3_6_ladder.h"
 #include "resources/generated/map/map_stage_3_6_needle.h"
 #include "resources/generated/map/map_stage_3_6_one_way_block.h"
+#include "resources/generated/map/map_stage_3_6_front.h"
 
 #include "resources/generated/map/map_log_terminal_back.h"
 #include "resources/generated/map/map_log_terminal_block.h"
@@ -502,6 +503,9 @@ void Stage::setup(StageId id) {
 
         needle_.set_maps(map_stage_3_6_needle, tileset_map_elements, &map_stage_3_6_needle);
         needle_.set_all_enabled(true);
+
+        front_.set_maps(map_stage_3_6_front, tileset_map_elements, &map_stage_3_6_front);
+        front_.set_all_enabled(true);
         break;
 
     case StageId::Shop:

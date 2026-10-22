@@ -316,6 +316,7 @@ set(STAGE_MAP_STAGE_3_6_CSVS
     "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_water.csv"
     "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_needle.csv"
     "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_one_way_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_3_6/csv/map_stage_3_6_front.csv"
 )
 add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_3_6/map_stage_3_6.tmx"

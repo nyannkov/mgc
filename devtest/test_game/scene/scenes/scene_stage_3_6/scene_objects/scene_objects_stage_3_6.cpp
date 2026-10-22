@@ -19,6 +19,13 @@ void SceneObjects_Stage3_6::init() {
 //        { SceneId::Stage3_7 }
 //    );
 
+    gate_3_.spawn({MGC_CELL2PIXEL(52), MGC_CELL2PIXEL(12)});
+    gate_3_.set_gate_type(prop::GateType::Type2);
+    gate_3_.open();
+    gate_3_.set_scene_transition_request(
+        { SceneId::LogTerminal }
+    );
+
     mic_1_.spawn({MGC_CELL2PIXEL(20)-3, MGC_CELL2PIXEL(11)});
 
     signboard_.spawn({MGC_CELL2PIXEL(36), MGC_CELL2PIXEL(22)});

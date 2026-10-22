@@ -29,6 +29,12 @@ void Scene_Stage3_6::init() {
             {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(22)},
             PlayerAnimState::StandRight
         );
+    } else if ( id_prev() == SceneId::LogTerminal ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(51), MGC_CELL2PIXEL(12)},
+            PlayerAnimState::StandLeft
+        );
+        camera_.set_target_offset({MGC_CELL2PIXEL(0), MGC_CELL2PIXEL(-4)});
 //    } else if ( id_prev() == SceneId::Stage3_7 ) {
 //        scx_.player.reset_state_for_placement(
 //            {MGC_CELL2PIXEL(32), MGC_CELL2PIXEL(2)},
@@ -50,7 +56,7 @@ void Scene_Stage3_6::init() {
     camera_.set_target_position_in_camera_space(
         {TARGET_X_IN_CAMERA, TARGET_Y_IN_CAMERA}
     );
-    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(33));
+    camera_.set_x_follow_setting(MGC_CELL2PIXEL(6), MGC_CELL2PIXEL(55));
     camera_.set_y_follow_setting(MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(20));
     camera_.set_x_follow_enabled(true);
     camera_.set_y_follow_enabled(true);

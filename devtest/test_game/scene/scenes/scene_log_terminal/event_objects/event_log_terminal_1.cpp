@@ -26,6 +26,11 @@ Event_LogTerminal1::Event_LogTerminal1(
     hitboxes[0].set_enabled(false);
 
     switch ( scx.world_state.scene_info.prev_scene_id() ) {
+    case SceneId::Stage3_6:
+        jewel_id_ = ItemId::BlueJewel;
+        text_log_idx_ = MGC_TALKSCRIPT_1_LOG_3;
+        text_found_jewel_idx_ = MGC_TALKSCRIPT_1_FOUND_JEWEL_3;
+        break;
     case SceneId::Stage3_5:
         jewel_id_ = ItemId::IndigoJewel;
         text_log_idx_ = MGC_TALKSCRIPT_1_LOG_2;
