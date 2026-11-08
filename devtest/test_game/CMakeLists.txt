@@ -37,6 +37,7 @@ set(CXX_SOURCES
     entity/event/warp/warp.cpp
     entity/event/teleport/teleport.cpp
     entity/event/visit/visit.cpp
+    entity/event/light_effect/light_effect.cpp
     entity/attack/attack_player/attack_player.cpp
     entity/attack/attack_lance/attack_lance.cpp
     entity/item/potion/potion.cpp

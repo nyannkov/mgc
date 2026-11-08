@@ -40,6 +40,7 @@ enum {
     MML_BGM_7_STAGE3,
     MML_BGM_8_CHEER,
     MML_BGM_9_BOSS2,
+    MML_BGM_10_STAGE4,
     MML_BGM_COUNT
 };
 

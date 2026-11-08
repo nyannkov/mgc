@@ -43,6 +43,9 @@ struct SceneManager {
         //set_scene(app::SceneId::Stage3_4);
         //set_scene(app::SceneId::Stage3_5);
         //set_scene(app::SceneId::Stage3_6);
+        //set_scene(app::SceneId::Stage3_7);
+        //set_scene(app::SceneId::Stage4_1);
+        //set_scene(app::SceneId::Stage4_2);
 
         equipment_info_.weapon.add(WeaponId::Claw);
         equipment_info_.weapon.equip(WeaponId::Claw);
@@ -116,7 +119,7 @@ private:
 
         if ( fade_state == ScreenFaderState::None ) {
             scene_->update();
-            if ( scene_->has_scene_change_request() ) {
+            if ( scene_->has_scene_trans_request() ) {
                 screen_fader_.request_fade_out();
             }
         } else {
@@ -132,9 +135,10 @@ private:
     }
 
     void change_next_scene() {
-        if ( scene_ && scene_->has_scene_change_request() ) {
+        if ( scene_ && scene_->has_scene_trans_request() ) {
             scene_info_.set_prev_scene_id(scene_->id());
-            set_scene(scene_->id_next());
+            scene_info_.set_from_gate_id(scene_->scene_trans_req_info().gate_id);
+            set_scene(scene_->scene_trans_req_info().id_next);
             screen_fader_.request_fade_in();
         }
     }

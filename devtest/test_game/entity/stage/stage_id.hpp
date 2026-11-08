@@ -30,6 +30,9 @@ enum class StageId {
     Stage3_4,
     Stage3_5,
     Stage3_6,
+    Stage3_7,
+    Stage4_1,
+    Stage4_2,
     Shop,
     LogTerminal,
     Count

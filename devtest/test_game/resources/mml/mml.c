@@ -10,6 +10,7 @@
 #include "bgm/mml_bgm_stage3.h"
 #include "bgm/mml_bgm_cheer.h"
 #include "bgm/mml_bgm_boss2.h"
+#include "bgm/mml_bgm_stage4.h"
 
 
 const mgc_mml_record_t se_records[] = {
@@ -46,6 +47,7 @@ const mgc_mml_record_t bgm_records[] = {
     { .id = MML_BGM_7_STAGE3, .mml = mml_bgm_stage3 },
     { .id = MML_BGM_8_CHEER, .mml = mml_bgm_cheer },
     { .id = MML_BGM_9_BOSS2, .mml = mml_bgm_boss2 },
+    { .id = MML_BGM_10_STAGE4, .mml = mml_bgm_stage4 },
 };
 const size_t BGM_RECORDS_COUNT = countof(bgm_records);
 

@@ -14,10 +14,10 @@ void SceneObjects_Stage3_6::init() {
 
     gate_2_.spawn({MGC_CELL2PIXEL(37), MGC_CELL2PIXEL(22)});
     gate_2_.set_gate_type(prop::GateType::Type2);
-    gate_2_.close();
-//    gate_2_.set_scene_transition_request(
-//        { SceneId::Stage3_7 }
-//    );
+    gate_2_.set_scene_transition_request(
+        { SceneId::Stage3_7 }
+    );
+    gate_2_.open();
 
     gate_3_.spawn({MGC_CELL2PIXEL(52), MGC_CELL2PIXEL(12)});
     gate_3_.set_gate_type(prop::GateType::Type2);
@@ -28,13 +28,13 @@ void SceneObjects_Stage3_6::init() {
 
     mic_1_.spawn({MGC_CELL2PIXEL(20)-3, MGC_CELL2PIXEL(11)});
 
-    signboard_.spawn({MGC_CELL2PIXEL(36), MGC_CELL2PIXEL(22)});
-    signboard_.set_talkflow_request({
-        &talkscript_1,
-        MGC_TALKSCRIPT_1_PREPARING,
-        nullptr,
-        TalkflowEffectType::Mute
-    });
+//    signboard_.spawn({MGC_CELL2PIXEL(36), MGC_CELL2PIXEL(22)});
+//    signboard_.set_talkflow_request({
+//        &talkscript_1,
+//        MGC_TALKSCRIPT_1_PREPARING,
+//        nullptr,
+//        TalkflowEffectType::Mute
+//    });
 
     spotlight1_.set_position({MGC_CELL2PIXEL(25)+8, MGC_CELL2PIXEL(2)});
     spotlight1_.set_delta1({MGC_CELL2PIXEL(-3), MGC_CELL2PIXEL(11)});

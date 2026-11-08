@@ -59,6 +59,7 @@ talkscript:
             - { tag: CASE_2, value: 1, next: shop_shopping_content_case_2 }
             - { tag: CASE_3, value: 2, next: shop_shopping_content_case_3 }
             - { tag: CASE_4, value: 3, next: shop_shopping_content_case_4 }
+            - { tag: CASE_5, value: 4, next: shop_shopping_content_case_5 }
           default:
             next: shop_shopping_content_case_1
       - end: true
@@ -99,6 +100,15 @@ talkscript:
             - { item: "やめる", cancel: true }
       - end: true
 
+    shop_shopping_content_case_5:
+      - choice:
+          tag: "SHOPPING_CONTENT_CASE_5"
+          items:
+            - { item: "クッキー", value: 10, tag: COOKIE, next: shop_shopping_item_cookie }
+            - { item: "ランタン", value: 200, tag: LANTERN, next: shop_shopping_item_lantern }
+            - { item: "やめる", cancel: true }
+      - end: true
+
     shop_shopping_item_cookie:
       - message: "チョコチップが入ったクッキーです。"
         next: shop_shopping_check
@@ -120,6 +130,10 @@ talkscript:
 
     shop_shopping_item_diving_equipment:
       - message: "海の中でお魚と一緒に泳いでみませんか？\\nとっても楽しいですよ！"
+        next: shop_shopping_check
+
+    shop_shopping_item_lantern:
+      - message: "だいぶ古いランタンなのですが、すごくしっかりしているんですよ。"
         next: shop_shopping_check
 
     shop_shopping_check:

@@ -35,11 +35,11 @@ void Scene_Stage3_6::init() {
             PlayerAnimState::StandLeft
         );
         camera_.set_target_offset({MGC_CELL2PIXEL(0), MGC_CELL2PIXEL(-4)});
-//    } else if ( id_prev() == SceneId::Stage3_7 ) {
-//        scx_.player.reset_state_for_placement(
-//            {MGC_CELL2PIXEL(32), MGC_CELL2PIXEL(2)},
-//            PlayerAnimState::StandLeft
-//        );
+    } else if ( id_prev() == SceneId::Stage3_7 ) {
+        scx_.player.reset_state_for_placement(
+            {MGC_CELL2PIXEL(37), MGC_CELL2PIXEL(22)},
+            PlayerAnimState::StandLeft
+        );
     } else {
         scx_.player.reset_state_for_placement(
             {MGC_CELL2PIXEL(2), MGC_CELL2PIXEL(22)},
@@ -71,24 +71,7 @@ void Scene_Stage3_6::init() {
 
 void Scene_Stage3_6::update() {
 
-    SceneId id_next;
-    
-    if ( scx_.gamepad.just_pressed(mgc::platform::input::Key::Menu) ) {
-        set_menu_request();
-        return;
-    }
-
-    scene::update(scx_, talkflow_, &camera_);
-
-    bool r = scene::check_scene_transition_request(
-            scx_,
-            game_over_effect_,
-            id_next
-    );
-
-    if ( r ) {
-        set_scene_change_request(id_next);
-    }
+    update_common(&camera_);
 }
 
 void Scene_Stage3_6::draw(mgc::graphics::Framebuffer& fb) {

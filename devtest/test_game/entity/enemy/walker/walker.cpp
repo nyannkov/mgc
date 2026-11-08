@@ -27,8 +27,8 @@ void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right) {
 }
 
 void Walker::spawn(const mgc::math::Vec2i& pos, bool is_right, WalkerMode mode) {
-    set_hp(WalkerMaxHP);
 
+    set_hp(WalkerMaxHP);
 
     if ( is_right ) {
         anim_state_ = WalkerAnimState::StandRight;

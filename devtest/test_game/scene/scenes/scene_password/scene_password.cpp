@@ -52,7 +52,7 @@ void Scene_Password::update() {
                 if ( talkflow_listener_.choice_item_tag() == 
                     MGC_TALKSCRIPT_1_TAG_CHOICE__CONFIRM_PASSWORD_EXIT__ITEM__YES
                 ) {
-                    set_scene_change_request(SceneId::Title);
+                    set_scene_change_request({SceneId::Title});
                 } else {
                     talkflow_listener_.clear();
                     input_state_ = InputState::None;

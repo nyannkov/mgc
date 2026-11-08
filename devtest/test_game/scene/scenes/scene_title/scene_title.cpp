@@ -46,11 +46,11 @@ void Scene_Title::update() {
     switch (selected_state_) {
     case SelectedState::Start:
         if ( scx_.sound.have_all_sound_effects_finished() ) {
-            set_scene_change_request(SceneId::TowerFront);
+            set_scene_change_request({SceneId::TowerFront});
         }
         break;
     case SelectedState::Password:
-        set_scene_change_request(SceneId::Password);
+        set_scene_change_request({SceneId::Password});
         break;
     default:
         update_select();

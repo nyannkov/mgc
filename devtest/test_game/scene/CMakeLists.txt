@@ -35,6 +35,9 @@ add_subdirectory(scenes/scene_stage_3_3)
 add_subdirectory(scenes/scene_stage_3_4)
 add_subdirectory(scenes/scene_stage_3_5)
 add_subdirectory(scenes/scene_stage_3_6)
+add_subdirectory(scenes/scene_stage_3_7)
+add_subdirectory(scenes/scene_stage_4_1)
+add_subdirectory(scenes/scene_stage_4_2)
 add_subdirectory(scenes/scene_shop)
 add_subdirectory(scenes/scene_log_terminal)
 add_subdirectory(scenes/scene_game_over)
@@ -68,6 +71,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     scene_stage_3_4
     scene_stage_3_5
     scene_stage_3_6
+    scene_stage_3_7
+    scene_stage_4_1
+    scene_stage_4_2
     scene_shop
     scene_log_terminal
     scene_game_over

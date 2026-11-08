@@ -33,6 +33,7 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
         case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_2:/*FALLTHROUGH*/
         case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_3:/*FALLTHROUGH*/
         case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_4:/*FALLTHROUGH*/
+        case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5:/*FALLTHROUGH*/
             last_item_value_ = value;
             last_item_tag_ = item_tag;
             last_choice_tag_ = tag;
@@ -54,6 +55,9 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
             case SceneId::Stage3_3:
                 return MGC_TALKSCRIPT_1_TAG_SELECT__SELECT_SHOPPING_CONTENT__CASE__CASE_4;
 
+            case SceneId::Stage4_2:
+                return MGC_TALKSCRIPT_1_TAG_SELECT__SELECT_SHOPPING_CONTENT__CASE__CASE_5;
+
             default:
                 return MGC_TALKSCRIPT_1_TAG_SELECT__SELECT_SHOPPING_CONTENT__CASE__CASE_1;
             }
@@ -67,6 +71,9 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
 
             case SceneId::Stage3_3:
                 return MGC_TALKSCRIPT_1_TAG_SELECT__SELECT_SMALL_TALKING_CONTENT__CASE__CASE_3;
+
+            case SceneId::Stage4_2:
+                return MGC_TALKSCRIPT_1_TAG_SELECT__SELECT_SMALL_TALKING_CONTENT__CASE__CASE_3;//TODO
 
             default:
                 return MGC_TALKSCRIPT_1_TAG_SELECT__SELECT_SMALL_TALKING_CONTENT__CASE__CASE_1;
@@ -123,7 +130,17 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
                 default:
                     return true;
                 }
+            } else if ( last_choice_tag_ == MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5 ) {
+                switch ( last_item_tag_ ) {
+                case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5__ITEM__COOKIE:
+                    return player_.equipment_info().item.has_item_at(ItemId::Cookie);
 
+                case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5__ITEM__LANTERN:
+                    return player_.equipment_info().item.has_item_at(ItemId::Lantern);
+
+                default:
+                    return true;
+                }
             } else { 
                 return true;
             }
@@ -184,6 +201,19 @@ struct TalkflowListenerAtShopping : ITalkflowListenerT {
 
                 case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_4__ITEM__FIREWORK:
                     player_.equipment_info().weapon.add(WeaponId::FireworksBall);
+                    break;
+
+                default:
+                    break;
+                }
+            } else if ( last_choice_tag_ == MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5 ) {
+                switch ( last_item_tag_ ) {
+                case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5__ITEM__COOKIE:
+                    player_.equipment_info().item.add(ItemId::Cookie);
+                    break;
+
+                case MGC_TALKSCRIPT_1_TAG_CHOICE__SHOPPING_CONTENT_CASE_5__ITEM__LANTERN:
+                    player_.equipment_info().item.add(ItemId::Lantern);
                     break;
 
                 default:

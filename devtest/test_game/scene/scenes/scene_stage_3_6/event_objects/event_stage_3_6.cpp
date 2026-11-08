@@ -110,6 +110,7 @@ void Event_Stage3_6::spawn(const mgc::math::Vec2i& pos) {
 
     set_event_state(EventState::Playing);
     unlock_control();
+    objs_.gate2().close();
 }
 
 void Event_Stage3_6::spawn() {
@@ -240,7 +241,7 @@ void Event_Stage3_6::update() {
         switch ( objs_.rocker().rocker_state() ) {
         case enemy::RockerState::StepForward:
         case enemy::RockerState::StepBackward:
-            //invite_skyfish({MGC_CELL2PIXEL(13), MGC_CELL2PIXEL(10)}, visit_[3], objs_.skyfish()[0]);
+            invite_skyfish({MGC_CELL2PIXEL(13), MGC_CELL2PIXEL(10)}, visit_[3], objs_.skyfish()[0]);
             //invite_skyfish({MGC_CELL2PIXEL(25), MGC_CELL2PIXEL(10)}, visit_[4], objs_.skyfish()[1]);
             //invite_balloon({MGC_CELL2PIXEL(12), MGC_CELL2PIXEL(15)}, visit_[5], objs_.balloon()[0]);
             //invite_balloon({MGC_CELL2PIXEL(24), MGC_CELL2PIXEL(14)}, visit_[6], objs_.balloon()[1]);
@@ -293,6 +294,7 @@ void Event_Stage3_6::update() {
         cp_info_.advance_checkpoint(Checkpoint::WonTheStage3Boss);
         detail_ = EventDetail::Fadein;
         //objs_.stage().set_ladder_enabled(true);
+        objs_.gate2().open();
         break;
 
     default:

@@ -47,24 +47,7 @@ void Scene_Shop::init() {
 
 void Scene_Shop::update() {
 
-    SceneId id_next;
-    
-    if ( scx_.gamepad.just_pressed(mgc::platform::input::Key::Menu) ) {
-        set_menu_request();
-        return;
-    }
-
-    scene::update(scx_, talkflow_, &camera_);
-
-    bool r = scene::check_scene_transition_request(
-            scx_,
-            game_over_effect_,
-            id_next
-    );
-
-    if ( r ) {
-        set_scene_change_request(id_next);
-    }
+    update_common(&camera_);
 }
 
 void Scene_Shop::draw(mgc::graphics::Framebuffer& fb) {

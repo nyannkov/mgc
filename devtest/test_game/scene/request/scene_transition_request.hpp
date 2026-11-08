@@ -7,7 +7,8 @@
 namespace app {
 
 struct SceneTransitionRequest {
-    SceneId id_next;
+    SceneId id_next = SceneId::Title;
+    uint32_t gate_id = 0;
 };
 
 } // namespace app

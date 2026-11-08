@@ -41,7 +41,7 @@ void Scene_GameOver::update() {
 
     if ( talkflow_.has_finished() ) {
         talkflow_.reset_state();
-        set_scene_change_request(id_next_);
+        set_scene_change_request({id_next_});
         player_.revive();
     }
 }

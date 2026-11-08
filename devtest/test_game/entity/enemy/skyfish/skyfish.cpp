@@ -26,6 +26,9 @@ SkyFish::SkyFish(
 }
 
 void SkyFish::spawn(const mgc::math::Vec2i& pos, bool is_right) {
+
+    set_hp(SkyFishMaxHP);
+    this->set_visible(true);
     
     this->set_enemy_state(EnemyState::Spawning);
 

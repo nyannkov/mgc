@@ -5,6 +5,7 @@
 #include "interface/iscene_objects.hpp"
 #include "interface/ievent_objects.hpp"
 #include "utils/game_over_effect/game_over_effect.hpp"
+#include "scene/request/scene_transition_request.hpp"
 
 namespace app {
 namespace scene {
@@ -30,7 +31,7 @@ void update(
 bool check_scene_transition_request(
     const SceneContext& scx, 
     const GameOverEffect& game_over_effect,
-    SceneId& id_next
+    SceneTransitionRequest& scene_trans_request
 );
 
 void draw(

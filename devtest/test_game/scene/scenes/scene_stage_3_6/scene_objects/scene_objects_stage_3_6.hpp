@@ -174,6 +174,7 @@ struct SceneObjects_Stage3_6 : ISceneObjects {
     auto& spectator() { return spectator_; }
     auto& target_balloons() { return target_balloons_; }
     auto& block() { return block_1_; }
+    auto& gate2() { return gate_2_; }
 
     void all_enemy_despawn() {
         for ( auto* enemy : enemies() ) {

@@ -303,14 +303,14 @@ void update(
 bool check_scene_transition_request(
     const SceneContext& scx, 
     const GameOverEffect& game_over_effect,
-    SceneId& id_next
+    SceneTransitionRequest& scene_trans_request
 ) {
     const SceneTransitionRequest * request = nullptr;
     if ( scx.objs ) {
         for ( auto* prop : scx.objs->props() ) {
             request = prop->take_scene_transition_request();
             if ( request ) {
-                id_next = request->id_next;
+                scene_trans_request = *request;
                 return true;
             }
         }
@@ -320,14 +320,14 @@ bool check_scene_transition_request(
         for ( auto* cs : scx.evts->events() ) {
             request = cs->take_scene_transition_request();
             if ( request ) {
-                id_next = request->id_next;
+                scene_trans_request = *request;
                 return true;
             }
         }
     }
 
     if ( game_over_effect.has_finished() ) {
-        id_next = SceneId::GameOver;
+        scene_trans_request = {SceneId::GameOver};
         return true;
     }
 
