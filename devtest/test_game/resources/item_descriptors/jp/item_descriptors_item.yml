@@ -13,7 +13,7 @@ item_descriptors:
         - { id: IndigoJewel, name: '藍玉', description: '？？？', tile_index: 7 }
         - { id: BlueJewel, name: '青玉', description: '？？？', tile_index: 8 }
         - { id: Test10, name: 'test10', description: '魚', tile_index: 9 }
-        - { id: Test11, name: 'test11', description: '魚', tile_index: 10 }
+        - { id: YellowJewel, name: '黄玉', description: '？？？', tile_index: 10 }
         - { id: Test12, name: 'test12', description: '魚', tile_index: 11 }
         - { id: Test13, name: 'test13', description: '魚', tile_index: 12 }
         - { id: Test14, name: '-', description: '-', tile_index: 13 }

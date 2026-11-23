@@ -45,7 +45,9 @@ struct SceneManager {
         //set_scene(app::SceneId::Stage3_6);
         //set_scene(app::SceneId::Stage3_7);
         //set_scene(app::SceneId::Stage4_1);
+        //set_scene(app::SceneId::Stage4_1);
         //set_scene(app::SceneId::Stage4_2);
+        //set_scene(app::SceneId::Stage4_3);
 
         equipment_info_.weapon.add(WeaponId::Claw);
         equipment_info_.weapon.equip(WeaponId::Claw);
@@ -58,6 +60,8 @@ struct SceneManager {
         //equipment_info_.weapon.equip(WeaponId::FireworksBall);
         //equipment_info_.item.add(ItemId::DivingEquipment);
         //equipment_info_.item.add(ItemId::VioletJewel);
+        //equipment_info_.item.add(ItemId::YellowJewel);
+        //equipment_info_.item.add(ItemId::Lantern);
         //ctx_.world_state.player.add_money(1000);
         //ctx_.world_state.checkpoint_info.advance_checkpoint(Checkpoint::WonTheStage2Boss);
         //ctx_.world_state.checkpoint_info.advance_checkpoint(Checkpoint::WonTheStage3Boss);

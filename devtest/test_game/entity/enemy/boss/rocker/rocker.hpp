@@ -64,7 +64,11 @@ struct Rocker: Enemy {
 
     // [feature] Drawable
     using mgc::features::Drawable::draw;
-    bool draw(mgc::graphics::Framebuffer &fb, const mgc::math::Vec2i &cam_pos, const mgc::graphics::DrawOptions *options) const override;
+    bool draw(
+        mgc::graphics::Framebuffer &fb,
+        const mgc::math::Vec2i &cam_pos,
+        const mgc::graphics::DrawOptions *options
+    ) const override;
 
 private:
     SoundControllerT& sound_;

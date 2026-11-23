@@ -192,6 +192,7 @@ struct Player : mgc::entities::ActorImpl<Player, static_cast<size_t>(PlayerHitbo
     auto velocity() const { return velocity_; }
 
     auto& equipment_info() { return equipment_info_; }
+    const auto& equipment_info() const { return equipment_info_; }
 
 private:
     const GamepadT& gamepad_;

@@ -261,6 +261,12 @@ talkscript:
      - message: "設備は倒壊し、個体の意識は停止した。"
      - end: true
 
+    log_5:
+     - message: "〜計画変更について〜"
+     - message: "意識停止後の個体から、エネルギーを取り出せることが分かった。"
+     - message: "当初の計画を変更し、この状態の維持と活用を進める。"
+     - end: true
+
     found_jewel_1:
      - { message: "何か落ちている．．．。" }
      - { message: "紫色のガラス玉(？)を拾った。", end: true }
@@ -272,6 +278,10 @@ talkscript:
     found_jewel_3:
      - { message: "何か落ちている．．．。" }
      - { message: "青色のガラス玉(？)を拾った。", end: true }
+
+    found_jewel_5:
+     - { message: "何か落ちている．．．。" }
+     - { message: "黄色のガラス玉(？)を拾った。", end: true }
 
     password_success:
       - { message: "LOAD COMPLETE!", end: true }

@@ -25,6 +25,7 @@ set(CXX_SOURCES
     entity/block/pushable_block/pushable_block.cpp
     entity/block/breakable_block/breakable_block.cpp
     entity/prop/gate/gate.cpp
+    entity/prop/glow_gate/glow_gate.cpp
     entity/prop/door/door.cpp
     entity/prop/portal/portal.cpp
     entity/prop/entrance/entrance.cpp

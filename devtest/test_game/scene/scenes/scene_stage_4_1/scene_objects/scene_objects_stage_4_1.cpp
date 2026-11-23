@@ -33,6 +33,12 @@ void SceneObjects_Stage4_1::init() {
         { SceneId::Stage4_2, 4 }
     );
 
+    //glow_gate_1_.spawn({MGC_CELL2PIXEL(26), MGC_CELL2PIXEL(30)});
+    //glow_gate_1_.open();
+    //glow_gate_1_.set_scene_transition_request(
+    //    { SceneId::Stage3_7 }
+    //);
+
     //walker_1_.spawn({MGC_CELL2PIXEL(3), MGC_CELL2PIXEL(9)}, true);
 }
 

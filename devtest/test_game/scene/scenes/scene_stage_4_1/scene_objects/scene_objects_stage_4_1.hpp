@@ -9,6 +9,7 @@
 #include "entity/item/potion/potion.hpp"
 #include "entity/item/elixir/elixir.hpp"
 #include "entity/prop/gate/gate.hpp"
+#include "entity/prop/glow_gate/glow_gate.hpp"
 #include "entity/prop/teleporter/teleporter.hpp"
 #include "entity/block/pushable_block/pushable_block.hpp"
 
@@ -23,11 +24,13 @@ struct SceneObjects_Stage4_1 : ISceneObjects {
           gate_2_(scx.gamepad),
           gate_3_(scx.gamepad),
           gate_4_(scx.gamepad),
+          glow_gate_1_(scx.gamepad),
           props_ { 
             &gate_1_,
             &gate_2_,
             &gate_3_,
             &gate_4_,
+            &glow_gate_1_,
           } { 
      }
 
@@ -58,7 +61,8 @@ private:
     prop::Gate gate_2_;
     prop::Gate gate_3_;
     prop::Gate gate_4_;
-    std::array<prop::Prop*, 4> props_;
+    prop::GlowGate glow_gate_1_;
+    std::array<prop::Prop*, 5> props_;
 };
 
 } // namespace app

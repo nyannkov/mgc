@@ -363,6 +363,20 @@ add_stage_csv_gen(
     "${RESOURCE_DIR}/stage/map/stage_4_2/csv"
     --tile-or128 block one_way_block ladder needle
 )
+set(STAGE_MAP_STAGE_4_3_CSVS
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv/map_stage_4_3_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv/map_stage_4_3_ladder.csv"
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv/map_stage_4_3_water.csv"
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv/map_stage_4_3_needle.csv"
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv/map_stage_4_3_one_way_block.csv"
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv/map_stage_4_3_front.csv"
+)
+add_stage_csv_gen(
+    "${RESOURCE_DIR}/stage/map/stage_4_3/map_stage_4_3.tmx"
+    "${STAGE_MAP_STAGE_4_3_CSVS}"
+    "${RESOURCE_DIR}/stage/map/stage_4_3/csv"
+    --tile-or128 block one_way_block ladder needle
+)
 
 set(STAGE_MAP_SHOP_CSVS
     "${RESOURCE_DIR}/stage/map/shop/csv/map_shop_back_0.csv"
@@ -421,6 +435,7 @@ set(STAGE_MAP_CSVS
     ${STAGE_MAP_STAGE_3_7_CSVS}
     ${STAGE_MAP_STAGE_4_1_CSVS}
     ${STAGE_MAP_STAGE_4_2_CSVS}
+    ${STAGE_MAP_STAGE_4_3_CSVS}
     ${STAGE_MAP_SHOP_CSVS}
     ${STAGE_MAP_LOG_TERMINAL_CSVS}
 )

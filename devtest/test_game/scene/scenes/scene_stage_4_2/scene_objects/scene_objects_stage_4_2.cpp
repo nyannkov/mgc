@@ -7,17 +7,17 @@ void SceneObjects_Stage4_2::init() {
 
     gate_1_.spawn({MGC_CELL2PIXEL(88), MGC_CELL2PIXEL(34)});
     gate_1_.set_gate_type(prop::GateType::Type2);
-    gate_1_.close();
-//    gate_1_.set_scene_transition_request(
-//        { SceneId::Stage4_3 }
-//    );
-    signboard_.spawn({MGC_CELL2PIXEL(87), MGC_CELL2PIXEL(34)});
-    signboard_.set_talkflow_request({
-        &talkscript_1,
-        MGC_TALKSCRIPT_1_PREPARING,
-        nullptr,
-        TalkflowEffectType::Mute
-    });
+    gate_1_.open();
+    gate_1_.set_scene_transition_request(
+        { SceneId::Stage4_3 }
+    );
+//    signboard_.spawn({MGC_CELL2PIXEL(87), MGC_CELL2PIXEL(34)});
+//    signboard_.set_talkflow_request({
+//        &talkscript_1,
+//        MGC_TALKSCRIPT_1_PREPARING,
+//        nullptr,
+//        TalkflowEffectType::Mute
+//    });
 
     gate_2_.spawn({MGC_CELL2PIXEL(21), MGC_CELL2PIXEL(18)});
     gate_2_.set_gate_type(prop::GateType::Type2);
